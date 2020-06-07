@@ -4,10 +4,10 @@ dsp::BufferUnit::BufferUnit() : Consumer(Connection::Type::BIPOLAR), unitBufferS
 
 void dsp::BufferUnit::setNumChannels(std::size_t size) {
     lock();
-    for (const auto& input : inputs) {
+    for (const auto &input : inputs) {
         input->setNumChannels(size);
     }
-    for (const auto& output : outputs) {
+    for (const auto &output : outputs) {
         output->setNumChannels(size);
     }
     std::size_t numChannels = getNumChannels();
@@ -28,7 +28,7 @@ void dsp::BufferUnit::setUnitBufferSize(std::size_t size) {
     unlock();
 }
 
-std::vector<DSP_FLOAT>& dsp::BufferUnit::getUnitBuffer(std::size_t index) {
+std::vector<DSP_FLOAT> &dsp::BufferUnit::getUnitBuffer(std::size_t index) {
     return buffers[index];
 }
 
@@ -36,7 +36,7 @@ void dsp::BufferUnit::process() {
     Consumer::process();
     size_t start = index % unitBufferSize;
     for (int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT>& inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::size_t position = start;
         for (int k = 0; k < getBufferSize(); k++) {
             buffers[i][position] = inputBuffer[k];

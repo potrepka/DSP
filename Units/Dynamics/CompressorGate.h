@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ChannelMix.h"
 #include "AbsoluteValue.h"
-#include "ToDecibels.h"
-#include "GainComputer.h"
+#include "ChannelMix.h"
 #include "Envelope.h"
+#include "GainComputer.h"
 #include "GainUnit.h"
+#include "ToDecibels.h"
 
 namespace dsp {
 
@@ -42,7 +42,6 @@ private:
     static const std::size_t GAIN_COMPUTER;
     static const std::size_t ENVELOPE;
     static const std::size_t GAIN_UNIT;
-
 };
 
-}
+} // namespace dsp

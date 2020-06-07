@@ -19,7 +19,6 @@ private:
     static const std::size_t DRY_SIGNAL;
     static const std::size_t WET_SIGNAL;
     static const std::size_t MIX;
-
 };
 
-}
+} // namespace dsp

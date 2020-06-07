@@ -19,7 +19,6 @@ private:
     static const std::size_t ATTACK;
     static const std::size_t RELEASE;
     std::vector<DSP_FLOAT> outputPrevious;
-
 };
 
-}
+} // namespace dsp

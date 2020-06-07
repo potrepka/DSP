@@ -21,7 +21,6 @@ private:
     static const std::size_t COMPRESSION_RATIO;
     static const std::size_t GATE_RATIO;
     static const std::size_t KNEE;
-
 };
 
-}
+} // namespace dsp

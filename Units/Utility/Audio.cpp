@@ -20,7 +20,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Audio::getAudioOutput() {
 }
 
 void dsp::Audio::process() {
-    for (const auto& channel : getAudioOutput()->getChannels()) {
+    for (const auto &channel : getAudioOutput()->getChannels()) {
         channel->copyBuffers();
     }
 }

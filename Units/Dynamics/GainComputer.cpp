@@ -31,19 +31,19 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::GainComputer::getKnee() {
 void dsp::GainComputer::process() {
     Filter::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT>& inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT>& outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT>& thresholdBuffer = getThreshold()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT>& compressionRatioBuffer = getCompressionRatio()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT>& gateRatioBuffer = getGateRatio()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT>& kneeBuffer = getKnee()->getChannel(i)->getBuffer();
+        std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        std::vector<DSP_FLOAT> &thresholdBuffer = getThreshold()->getChannel(i)->getBuffer();
+        std::vector<DSP_FLOAT> &compressionRatioBuffer = getCompressionRatio()->getChannel(i)->getBuffer();
+        std::vector<DSP_FLOAT> &gateRatioBuffer = getGateRatio()->getChannel(i)->getBuffer();
+        std::vector<DSP_FLOAT> &kneeBuffer = getKnee()->getChannel(i)->getBuffer();
         for (int k = 0; k < getBufferSize(); k++) {
-            DSP_FLOAT& input = inputBuffer[k];
-            DSP_FLOAT& output = outputBuffer[k];
-            DSP_FLOAT& threshold = thresholdBuffer[k];
-            DSP_FLOAT& compressionRatio = compressionRatioBuffer[k];
-            DSP_FLOAT& gateRatio = gateRatioBuffer[k];
-            DSP_FLOAT& knee = kneeBuffer[k];
+            DSP_FLOAT &input = inputBuffer[k];
+            DSP_FLOAT &output = outputBuffer[k];
+            DSP_FLOAT &threshold = thresholdBuffer[k];
+            DSP_FLOAT &compressionRatio = compressionRatioBuffer[k];
+            DSP_FLOAT &gateRatio = gateRatioBuffer[k];
+            DSP_FLOAT &knee = kneeBuffer[k];
 
             DSP_FLOAT halfKnee = 0.5 * knee;
             DSP_FLOAT kneeLow = threshold - halfKnee;

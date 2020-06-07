@@ -14,7 +14,7 @@ void dsp::Connection::setBufferSize(unsigned int bufferSize) {
     buffer.resize(bufferSize);
 }
 
-std::vector<DSP_FLOAT>& dsp::Connection::getBuffer() {
+std::vector<DSP_FLOAT> &dsp::Connection::getBuffer() {
     return buffer;
 }
 
@@ -44,11 +44,11 @@ dsp::Input::~Input() {
     disconnectAll();
 }
 
-std::vector<dsp::Output*> dsp::Input::getConnections() {
+std::vector<dsp::Output *> dsp::Input::getConnections() {
     return connections;
 }
 
-void dsp::Input::connect(Output* output) {
+void dsp::Input::connect(Output *output) {
     lock();
     output->lock();
 
@@ -59,7 +59,7 @@ void dsp::Input::connect(Output* output) {
     unlock();
 }
 
-void dsp::Input::disconnect(Output* output) {
+void dsp::Input::disconnect(Output *output) {
     lock();
     output->lock();
 
@@ -72,38 +72,35 @@ void dsp::Input::disconnect(Output* output) {
 
 void dsp::Input::disconnectAll() {
     lock();
-    for (Output* output : connections) {
+    for (Output *output : connections) {
         output->lock();
     }
-    for (Output* output : connections) {
+    for (Output *output : connections) {
         output->removeConnection(this);
     }
     connections.clear();
-    for (Output* output : connections) {
+    for (Output *output : connections) {
         output->unlock();
     }
     unlock();
 }
 
-void dsp::Input::addConnection(Output* output) {
+void dsp::Input::addConnection(Output *output) {
     if (std::find(connections.begin(), connections.end(), output) == connections.end()) {
         connections.push_back(output);
     }
 }
 
-void dsp::Input::removeConnection(Output* output) {
+void dsp::Input::removeConnection(Output *output) {
     connections.erase(std::remove(connections.begin(), connections.end(), output), connections.end());
 }
 
 void dsp::Input::copyBuffers() {
     fillBuffer(value);
     lock();
-    for (Output* output : connections) {
-        std::transform(buffer.begin(),
-                       buffer.end(),
-                       output->getBuffer().begin(),
-                       buffer.begin(),
-                       std::plus<DSP_FLOAT>());
+    for (Output *output : connections) {
+        std::transform(
+                buffer.begin(), buffer.end(), output->getBuffer().begin(), buffer.begin(), std::plus<DSP_FLOAT>());
     }
     unlock();
 }
@@ -114,11 +111,11 @@ dsp::Output::~Output() {
     disconnectAll();
 }
 
-std::vector<dsp::Input*> dsp::Output::getConnections() {
+std::vector<dsp::Input *> dsp::Output::getConnections() {
     return connections;
 }
 
-void dsp::Output::connect(Input* input) {
+void dsp::Output::connect(Input *input) {
     lock();
     input->lock();
 
@@ -129,7 +126,7 @@ void dsp::Output::connect(Input* input) {
     unlock();
 }
 
-void dsp::Output::disconnect(Input* input) {
+void dsp::Output::disconnect(Input *input) {
     lock();
     input->lock();
 
@@ -142,35 +139,35 @@ void dsp::Output::disconnect(Input* input) {
 
 void dsp::Output::disconnectAll() {
     lock();
-    for (Input* input : connections) {
+    for (Input *input : connections) {
         input->lock();
     }
-    for (Input* input : connections) {
+    for (Input *input : connections) {
         input->removeConnection(this);
     }
     connections.clear();
-    for (Input* input : connections) {
+    for (Input *input : connections) {
         input->unlock();
     }
     unlock();
 }
 
-void dsp::Output::addConnection(Input* input) {
+void dsp::Output::addConnection(Input *input) {
     connections.push_back(input);
 }
 
-void dsp::Output::removeConnection(Input* input) {
+void dsp::Output::removeConnection(Input *input) {
     connections.erase(std::remove(connections.begin(), connections.end(), input), connections.end());
 }
 
-void dsp::operator>>(DSP_FLOAT value, Input& input) {
+void dsp::operator>>(DSP_FLOAT value, Input &input) {
     input.setValue(value);
 }
 
-void dsp::operator>>(Output& output, Input& input) {
+void dsp::operator>>(Output &output, Input &input) {
     input.connect(&output);
 }
 
-void dsp::operator!=(Output& output, Input& input) {
+void dsp::operator!=(Output &output, Input &input) {
     output.disconnect(&input);
 }

@@ -1,64 +1,58 @@
 #include "Unit.h"
 
-template<class T>
-dsp::Unit::ConnectionParameter<T>::ConnectionParameter(unsigned int bufferSize, Connection::Type type, DSP_FLOAT value) {
+template <class T>
+dsp::Unit::ConnectionParameter<T>::ConnectionParameter(unsigned int bufferSize,
+                                                       Connection::Type type,
+                                                       DSP_FLOAT value) {
     this->bufferSize = bufferSize;
     this->type = type;
     this->value = value;
 }
 
-template<class T>
-unsigned int dsp::Unit::ConnectionParameter<T>::getBufferSize() {
+template <class T> unsigned int dsp::Unit::ConnectionParameter<T>::getBufferSize() {
     return bufferSize;
 }
 
-template<class T>
-void dsp::Unit::ConnectionParameter<T>::setBufferSize(unsigned int bufferSize) {
+template <class T> void dsp::Unit::ConnectionParameter<T>::setBufferSize(unsigned int bufferSize) {
     lock();
-    for (const auto& channel : channels) {
+    for (const auto &channel : channels) {
         channel->setBufferSize(bufferSize);
     }
     this->bufferSize = bufferSize;
     unlock();
 }
 
-template<class T>
-dsp::Connection::Type dsp::Unit::ConnectionParameter<T>::getType() {
+template <class T> dsp::Connection::Type dsp::Unit::ConnectionParameter<T>::getType() {
     return type;
 }
 
-template<class T>
-void dsp::Unit::ConnectionParameter<T>::setType(Connection::Type type) {
+template <class T> void dsp::Unit::ConnectionParameter<T>::setType(Connection::Type type) {
     lock();
-    for (const auto& channel : channels) {
+    for (const auto &channel : channels) {
         channel->setType(type);
     }
     this->type = type;
     unlock();
 }
 
-template<class T>
-DSP_FLOAT dsp::Unit::ConnectionParameter<T>::getValue() {
+template <class T> DSP_FLOAT dsp::Unit::ConnectionParameter<T>::getValue() {
     return value;
 }
 
-template<class T>
-void dsp::Unit::ConnectionParameter<T>::setValue(DSP_FLOAT value) {
+template <class T> void dsp::Unit::ConnectionParameter<T>::setValue(DSP_FLOAT value) {
     lock();
-    for (const auto& channel : channels) {
+    for (const auto &channel : channels) {
         channel->setValue(value);
     }
     this->value = value;
     unlock();
 }
 
-template<class T>
-std::size_t dsp::Unit::ConnectionParameter<T>::getNumChannels() {
+template <class T> std::size_t dsp::Unit::ConnectionParameter<T>::getNumChannels() {
     return channels.size();
 }
 
-template<class T>
-void dsp::Unit::ConnectionParameter<T>::setNumChannels(std::size_t size) {
+template <class T> void dsp::Unit::ConnectionParameter<T>::setNumChannels(std::size_t size) {
     lock();
     if (size < channels.size()) {
         channels.erase(channels.begin() + size, channels.end());
@@ -70,21 +64,21 @@ void dsp::Unit::ConnectionParameter<T>::setNumChannels(std::size_t size) {
     unlock();
 }
 
-template<class T>
-std::vector<std::shared_ptr<T>> dsp::Unit::ConnectionParameter<T>::getChannels() {
+template <class T> std::vector<std::shared_ptr<T>> dsp::Unit::ConnectionParameter<T>::getChannels() {
     return channels;
 }
 
-template<class T>
-std::shared_ptr<T> dsp::Unit::ConnectionParameter<T>::getChannel(std::size_t index) {
+template <class T> std::shared_ptr<T> dsp::Unit::ConnectionParameter<T>::getChannel(std::size_t index) {
     return channels[index];
 }
 
-dsp::Unit::InputParameter::InputParameter(unsigned int bufferSize, Connection::Type type, DSP_FLOAT value) : ConnectionParameter(bufferSize, type, value) {}
+dsp::Unit::InputParameter::InputParameter(unsigned int bufferSize, Connection::Type type, DSP_FLOAT value)
+        : ConnectionParameter(bufferSize, type, value) {}
 
 template class dsp::Unit::ConnectionParameter<dsp::Input>;
 
-dsp::Unit::OutputParameter::OutputParameter(unsigned int bufferSize, Connection::Type type, DSP_FLOAT value) : ConnectionParameter(bufferSize, type, value) {}
+dsp::Unit::OutputParameter::OutputParameter(unsigned int bufferSize, Connection::Type type, DSP_FLOAT value)
+        : ConnectionParameter(bufferSize, type, value) {}
 
 template class dsp::Unit::ConnectionParameter<dsp::Output>;
 
@@ -96,7 +90,7 @@ unsigned int dsp::Unit::getSampleRate() {
 
 void dsp::Unit::setSampleRate(unsigned int sampleRate) {
     lock();
-    for (const auto& unit : units) {
+    for (const auto &unit : units) {
         unit->setSampleRate(sampleRate);
     }
     this->sampleRate = sampleRate;
@@ -109,13 +103,13 @@ unsigned int dsp::Unit::getBufferSize() {
 
 void dsp::Unit::setBufferSize(unsigned int bufferSize) {
     lock();
-    for (const auto& unit : units) {
+    for (const auto &unit : units) {
         unit->setBufferSize(bufferSize);
     }
-    for (const auto& input : inputs) {
+    for (const auto &input : inputs) {
         input->setBufferSize(bufferSize);
     }
-    for (const auto& output : outputs) {
+    for (const auto &output : outputs) {
         output->setBufferSize(bufferSize);
     }
     this->bufferSize = bufferSize;
@@ -192,10 +186,10 @@ std::size_t dsp::Unit::getNumChannels() {
 
 void dsp::Unit::setNumChannels(std::size_t size) {
     lock();
-    for (const auto& input : inputs) {
+    for (const auto &input : inputs) {
         input->setNumChannels(size);
     }
-    for (const auto& output : outputs) {
+    for (const auto &output : outputs) {
         output->setNumChannels(size);
     }
     unlock();
@@ -209,13 +203,13 @@ std::shared_ptr<dsp::Unit> dsp::Unit::getUnit(std::size_t index) {
     return units[index];
 }
 
-void dsp::Unit::pushUnit(Unit* unit) {
+void dsp::Unit::pushUnit(Unit *unit) {
     lock();
     units.emplace_back(unit);
     unlock();
 }
 
-void dsp::Unit::insertUnit(std::size_t index, Unit* unit) {
+void dsp::Unit::insertUnit(std::size_t index, Unit *unit) {
     lock();
     units.emplace(units.begin() + index, unit);
     unlock();
@@ -230,53 +224,53 @@ void dsp::Unit::removeUnit(std::size_t index) {
 void dsp::Unit::sortUnits() {
     lock();
     if (units.size() > 0) {
-        std::unordered_set<Unit*> unitSet;
-        std::unordered_map<Input*, Unit*> inputToUnit;
-        std::unordered_map<Output*, Unit*> outputToUnit;
-        for (const auto& unit : units) {
+        std::unordered_set<Unit *> unitSet;
+        std::unordered_map<Input *, Unit *> inputToUnit;
+        std::unordered_map<Output *, Unit *> outputToUnit;
+        for (const auto &unit : units) {
             unit->lock();
             unitSet.insert(unit.get());
-            for (const auto& input : inputs) {
+            for (const auto &input : inputs) {
                 input->lock();
-                for (const auto& channel : input->getChannels()) {
+                for (const auto &channel : input->getChannels()) {
                     channel->lock();
                     inputToUnit[channel.get()] = unit.get();
                 }
             }
-            for (const auto& output : outputs) {
+            for (const auto &output : outputs) {
                 output->lock();
-                for (const auto& channel : output->getChannels()) {
+                for (const auto &channel : output->getChannels()) {
                     channel->lock();
                     outputToUnit[channel.get()] = unit.get();
                 }
             }
         }
-        std::queue<Unit*> queue;
-        for (const auto& unit : units) {
+        std::queue<Unit *> queue;
+        for (const auto &unit : units) {
             if ([&] {
-                for (const auto& input : unit->inputs) {
-                    for (const auto& channel : input->getChannels()) {
-                        for (const auto& output : channel->getConnections()) {
-                            if (unitSet.find(outputToUnit[output]) != unitSet.end()) {
-                                return false;
+                    for (const auto &input : unit->inputs) {
+                        for (const auto &channel : input->getChannels()) {
+                            for (const auto &output : channel->getConnections()) {
+                                if (unitSet.find(outputToUnit[output]) != unitSet.end()) {
+                                    return false;
+                                }
                             }
                         }
                     }
-                }
-                return true;
-            }()) {
+                    return true;
+                }()) {
                 queue.push(unit.get());
             }
         }
-        std::unordered_set<Unit*> explored;
-        std::vector<Unit*> order;
+        std::unordered_set<Unit *> explored;
+        std::vector<Unit *> order;
         while (!queue.empty()) {
-            Unit* unit = queue.front();
+            Unit *unit = queue.front();
             explored.insert(unit);
-            for (const auto& output : unit->outputs) {
-                for (const auto& channel : output->getChannels()) {
-                    for (const auto& input : channel->getConnections()) {
-                        Unit* child = inputToUnit[input];
+            for (const auto &output : unit->outputs) {
+                for (const auto &channel : output->getChannels()) {
+                    for (const auto &input : channel->getConnections()) {
+                        Unit *child = inputToUnit[input];
                         if (unitSet.find(child) != unitSet.end() && explored.find(child) == explored.end()) {
                             queue.push(child);
                         }
@@ -286,26 +280,26 @@ void dsp::Unit::sortUnits() {
             order.push_back(unit);
             queue.pop();
         }
-        for (const auto& unit : units) {
-            for (const auto& output : outputs) {
-                for (const auto& channel : output->getChannels()) {
+        for (const auto &unit : units) {
+            for (const auto &output : outputs) {
+                for (const auto &channel : output->getChannels()) {
                     channel->unlock();
                 }
                 output->unlock();
             }
-            for (const auto& input : inputs) {
-                for (const auto& channel : input->getChannels()) {
+            for (const auto &input : inputs) {
+                for (const auto &channel : input->getChannels()) {
                     channel->unlock();
                 }
                 input->unlock();
             }
             unit->unlock();
         }
-        std::unordered_map<Unit*, std::size_t> orderMap;
+        std::unordered_map<Unit *, std::size_t> orderMap;
         for (std::size_t i = 0; i < order.size(); i++) {
             orderMap[order[i]] = i;
         }
-        std::sort(units.begin(), units.end(), [&orderMap](const auto& a, const auto& b) {
+        std::sort(units.begin(), units.end(), [&orderMap](const auto &a, const auto &b) {
             return orderMap[a.get()] < orderMap[b.get()];
         });
     }
@@ -314,7 +308,7 @@ void dsp::Unit::sortUnits() {
 
 void dsp::Unit::run() {
     lock();
-    for (const auto& unit : units) {
+    for (const auto &unit : units) {
         unit->run();
     }
     process();
@@ -327,19 +321,19 @@ void dsp::Unit::disconnect() {}
 
 void dsp::Unit::process() {}
 
-void dsp::operator>>(DSP_FLOAT value, dsp::Unit::InputParameter& input) {
+void dsp::operator>>(DSP_FLOAT value, dsp::Unit::InputParameter &input) {
     for (std::size_t i = 0; i < input.getNumChannels(); i++) {
         value >> *input.getChannel(i);
     }
 }
 
-void dsp::operator>>(dsp::Unit::OutputParameter& output, dsp::Unit::InputParameter& input) {
+void dsp::operator>>(dsp::Unit::OutputParameter &output, dsp::Unit::InputParameter &input) {
     for (std::size_t i = 0; i < input.getNumChannels(); i++) {
         *output.getChannel(i % output.getNumChannels()) >> *input.getChannel(i);
     }
 }
 
-void dsp::operator!=(dsp::Unit::OutputParameter& output, dsp::Unit::InputParameter& input) {
+void dsp::operator!=(dsp::Unit::OutputParameter &output, dsp::Unit::InputParameter &input) {
     for (std::size_t i = 0; i < input.getNumChannels(); i++) {
         *output.getChannel(i % output.getNumChannels()) != *input.getChannel(i);
     }

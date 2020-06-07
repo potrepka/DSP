@@ -16,7 +16,6 @@ protected:
 
 private:
     static const std::size_t INPUT_SIGNAL;
-
 };
 
-}
+} // namespace dsp

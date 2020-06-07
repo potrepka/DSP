@@ -34,7 +34,9 @@ FFTConvolver::FFTConvolver()
         : _blockSize(0), _segSize(0), _segCount(0), _fftComplexSize(0), _segments(), _segmentsIR(), _fftBuffer(),
           _fft(), _preMultiplied(), _conv(), _overlap(), _current(0), _inputBuffer(), _inputBufferFill(0) {}
 
-FFTConvolver::~FFTConvolver() { reset(); }
+FFTConvolver::~FFTConvolver() {
+    reset();
+}
 
 void FFTConvolver::reset() {
     for (size_t i = 0; i < _segCount; ++i) {

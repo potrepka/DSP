@@ -17,10 +17,10 @@
 #include "Biquad.h"
 #include "BiquadAPF.h"
 #include "BiquadBPF.h"
-#include "BiquadHighShelf.h"
 #include "BiquadHPF.h"
-#include "BiquadLowShelf.h"
+#include "BiquadHighShelf.h"
 #include "BiquadLPF.h"
+#include "BiquadLowShelf.h"
 #include "BiquadNotch.h"
 #include "BiquadPeak.h"
 

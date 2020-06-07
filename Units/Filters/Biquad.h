@@ -21,7 +21,7 @@ protected:
     DSP_FLOAT b1;
     DSP_FLOAT b2;
     void process() override;
-    virtual void calculateCoefficients(const DSP_FLOAT& frequency, const DSP_FLOAT& q, const DSP_FLOAT& gain) = 0;
+    virtual void calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FLOAT &q, const DSP_FLOAT &gain) = 0;
 
 private:
     static const std::size_t FREQUENCY;
@@ -31,7 +31,6 @@ private:
     std::vector<DSP_FLOAT> x2;
     std::vector<DSP_FLOAT> y1;
     std::vector<DSP_FLOAT> y2;
-
 };
 
-}
+} // namespace dsp

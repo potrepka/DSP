@@ -31,8 +31,10 @@ bool SSEEnabled() {
 #endif
 }
 
-void Sum(Sample *FFTCONVOLVER_RESTRICT result, const Sample *FFTCONVOLVER_RESTRICT a,
-         const Sample *FFTCONVOLVER_RESTRICT b, size_t len) {
+void Sum(Sample *FFTCONVOLVER_RESTRICT result,
+         const Sample *FFTCONVOLVER_RESTRICT a,
+         const Sample *FFTCONVOLVER_RESTRICT b,
+         size_t len) {
     const size_t end4 = 4 * (len / 4);
     for (size_t i = 0; i < end4; i += 4) {
         result[i + 0] = a[i + 0] + b[i + 0];
@@ -51,9 +53,12 @@ void ComplexMultiplyAccumulate(SplitComplex &result, const SplitComplex &a, cons
     ComplexMultiplyAccumulate(result.re(), result.im(), a.re(), a.im(), b.re(), b.im(), result.size());
 }
 
-void ComplexMultiplyAccumulate(Sample *FFTCONVOLVER_RESTRICT re, Sample *FFTCONVOLVER_RESTRICT im,
-                               const Sample *FFTCONVOLVER_RESTRICT reA, const Sample *FFTCONVOLVER_RESTRICT imA,
-                               const Sample *FFTCONVOLVER_RESTRICT reB, const Sample *FFTCONVOLVER_RESTRICT imB,
+void ComplexMultiplyAccumulate(Sample *FFTCONVOLVER_RESTRICT re,
+                               Sample *FFTCONVOLVER_RESTRICT im,
+                               const Sample *FFTCONVOLVER_RESTRICT reA,
+                               const Sample *FFTCONVOLVER_RESTRICT imA,
+                               const Sample *FFTCONVOLVER_RESTRICT reB,
+                               const Sample *FFTCONVOLVER_RESTRICT imB,
                                const size_t len) {
 #if defined(FFTCONVOLVER_USE_SSE)
     const size_t end4 = 4 * (len / 4);

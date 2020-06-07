@@ -12,7 +12,6 @@ public:
 
 private:
     std::mutex mtx;
-
 };
 
-}
+} // namespace dsp

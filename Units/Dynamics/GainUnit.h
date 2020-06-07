@@ -15,7 +15,6 @@ protected:
 
 private:
     static const std::size_t GAIN;
-
 };
 
-}
+} // namespace dsp

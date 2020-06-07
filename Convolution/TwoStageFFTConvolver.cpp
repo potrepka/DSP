@@ -31,7 +31,9 @@ TwoStageFFTConvolver::TwoStageFFTConvolver()
           _tailPrecalculated0(0), _tailConvolver(), _tailOutput(), _tailPrecalculated(0), _tailInput(),
           _tailInputFill(0), _precalculatedPos(0), _backgroundProcessingInput() {}
 
-TwoStageFFTConvolver::~TwoStageFFTConvolver() { reset(); }
+TwoStageFFTConvolver::~TwoStageFFTConvolver() {
+    reset();
+}
 
 void TwoStageFFTConvolver::reset() {
     _headBlockSize = 0;
@@ -148,8 +150,8 @@ void TwoStageFFTConvolver::process(const Sample *input, Sample *output, size_t l
             if (_tailPrecalculated0.size() > 0 && _tailInputFill % _headBlockSize == 0) {
                 assert(_tailInputFill >= _headBlockSize);
                 const size_t blockOffset = _tailInputFill - _headBlockSize;
-                _tailConvolver0.process(_tailInput.data() + blockOffset, _tailOutput0.data() + blockOffset,
-                                        _headBlockSize);
+                _tailConvolver0.process(
+                        _tailInput.data() + blockOffset, _tailOutput0.data() + blockOffset, _headBlockSize);
                 if (_tailInputFill == _tailBlockSize) {
                     SampleBuffer::Swap(_tailPrecalculated0, _tailOutput0);
                 }
@@ -174,7 +176,9 @@ void TwoStageFFTConvolver::process(const Sample *input, Sample *output, size_t l
     }
 }
 
-void TwoStageFFTConvolver::startBackgroundProcessing() { doBackgroundProcessing(); }
+void TwoStageFFTConvolver::startBackgroundProcessing() {
+    doBackgroundProcessing();
+}
 
 void TwoStageFFTConvolver::waitForBackgroundProcessing() {}
 

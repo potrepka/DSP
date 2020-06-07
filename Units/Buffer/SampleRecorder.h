@@ -21,7 +21,6 @@ private:
     static const std::size_t GATE;
     std::vector<std::vector<DSP_FLOAT>> samples;
     std::vector<DSP_FLOAT> gatePrevious;
-
 };
 
-}
+} // namespace dsp

@@ -9,10 +9,10 @@ dsp::SampleRecorder::SampleRecorder() : Consumer(Connection::Type::BIPOLAR) {
 
 void dsp::SampleRecorder::setNumChannels(std::size_t size) {
     lock();
-    for (const auto& input : inputs) {
+    for (const auto &input : inputs) {
         input->setNumChannels(size);
     }
-    for (const auto& output : outputs) {
+    for (const auto &output : outputs) {
         output->setNumChannels(size);
     }
     std::size_t numChannels = getNumChannels();
@@ -39,9 +39,9 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleRecorder::getGate() {
 void dsp::SampleRecorder::process() {
     Consumer::process();
     for (int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT>& inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT>& resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT>& gateBuffer = getGate()->getChannel(i)->getBuffer();
+        std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
+        std::vector<DSP_FLOAT> &gateBuffer = getGate()->getChannel(i)->getBuffer();
         int bufferStart = 0;
         std::size_t size = samples[i].size();
         std::size_t index = size;

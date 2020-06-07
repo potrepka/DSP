@@ -1,4 +1,3 @@
 #include "DSP.h"
 
-dsp::DSP::DSP() {
-}
+dsp::DSP::DSP() {}

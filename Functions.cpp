@@ -16,7 +16,7 @@ DSP_FLOAT dsp::toSeconds(DSP_FLOAT hertz) {
     return 1.0 / hertz;
 }
 
-DSP_FLOAT dsp::linear(std::vector<DSP_FLOAT>& table, const DSP_FLOAT index) {
+DSP_FLOAT dsp::linear(std::vector<DSP_FLOAT> &table, const DSP_FLOAT index) {
     int indexFloor = static_cast<int>(index);
     DSP_FLOAT mu = index - indexFloor;
     DSP_FLOAT x1 = table[indexFloor % table.size()];
@@ -24,7 +24,7 @@ DSP_FLOAT dsp::linear(std::vector<DSP_FLOAT>& table, const DSP_FLOAT index) {
     return x1 + mu * (x2 - x1);
 }
 
-DSP_FLOAT dsp::hermite(std::vector<DSP_FLOAT>& table, const DSP_FLOAT index) {
+DSP_FLOAT dsp::hermite(std::vector<DSP_FLOAT> &table, const DSP_FLOAT index) {
     int indexFloor = static_cast<int>(index);
     DSP_FLOAT mu = index - indexFloor;
     DSP_FLOAT x0 = table[(indexFloor + table.size() - 1) % table.size()];

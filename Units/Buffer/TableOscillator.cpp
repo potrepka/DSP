@@ -16,19 +16,19 @@ std::vector<DSP_FLOAT> dsp::TableOscillator::getTable(std::size_t index) {
     return tables[index];
 }
 
-void dsp::TableOscillator::setTable(std::size_t index, const std::vector<DSP_FLOAT>& table) {
+void dsp::TableOscillator::setTable(std::size_t index, const std::vector<DSP_FLOAT> &table) {
     lock();
     tables[index] = table;
     unlock();
 }
 
-void dsp::TableOscillator::pushTable(const std::vector<DSP_FLOAT>& table) {
+void dsp::TableOscillator::pushTable(const std::vector<DSP_FLOAT> &table) {
     lock();
     tables.push_back(table);
     unlock();
 }
 
-void dsp::TableOscillator::insertTable(std::size_t index, const std::vector<DSP_FLOAT>& table) {
+void dsp::TableOscillator::insertTable(std::size_t index, const std::vector<DSP_FLOAT> &table) {
     lock();
     tables.insert(tables.begin() + index, table);
     unlock();
@@ -54,9 +54,9 @@ void dsp::TableOscillator::process() {
         std::vector<DSP_FLOAT> points;
         points.resize(4);
         for (std::size_t i = 0; i < getNumChannels(); i++) {
-            std::vector<DSP_FLOAT>& outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT>& phaseBuffer = getPhase()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT>& positionBuffer = getPosition()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &positionBuffer = getPosition()->getChannel(i)->getBuffer();
             for (int k = 0; k < getBufferSize(); k++) {
                 DSP_FLOAT positionIndex = positionBuffer[k] * (tables.size() - 1);
                 int positionBefore = static_cast<int>(positionIndex) - 1;

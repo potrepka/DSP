@@ -24,14 +24,12 @@ void dsp::ChannelMix::process() {
                            buffer.begin(),
                            std::plus<DSP_FLOAT>());
         }
-        std::transform(buffer.begin(),
-                       buffer.end(),
-                       buffer.begin(),
-                       [this](DSP_FLOAT x) { return x / getNumChannels(); });
+        std::transform(
+                buffer.begin(), buffer.end(), buffer.begin(), [this](DSP_FLOAT x) { return x / getNumChannels(); });
         for (std::size_t i = 0; i < getNumChannels(); i++) {
-            std::vector<DSP_FLOAT>& inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT>& outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT>& mixBuffer = getMix()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &mixBuffer = getMix()->getChannel(i)->getBuffer();
             for (int k = 0; k < getNumChannels(); k++) {
                 outputBuffer[k] = inputBuffer[k] + mixBuffer[k] * (buffer[k] - inputBuffer[k]);
             }

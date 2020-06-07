@@ -55,7 +55,9 @@ public:
     virtual void ifft(float *data, const float *re, const float *im) = 0;
 };
 
-constexpr bool IsPowerOf2(size_t val) { return (val == 1 || (val & (val - 1)) == 0); }
+constexpr bool IsPowerOf2(size_t val) {
+    return (val == 1 || (val & (val - 1)) == 0);
+}
 
 template <typename TypeDest, typename TypeSrc> void ConvertBuffer(TypeDest *dest, const TypeSrc *src, size_t len) {
     for (size_t i = 0; i < len; ++i) {
@@ -721,7 +723,9 @@ public:
     AppleAccelerateFFT(const AppleAccelerateFFT &) = delete;
     AppleAccelerateFFT &operator=(const AppleAccelerateFFT &) = delete;
 
-    virtual ~AppleAccelerateFFT() { init(0); }
+    virtual ~AppleAccelerateFFT() {
+        init(0);
+    }
 
     virtual void init(size_t size) override {
         if (_fftSetup) {
@@ -808,7 +812,9 @@ public:
     FFTW3FFT(const FFTW3FFT &) = delete;
     FFTW3FFT &operator=(const FFTW3FFT &) = delete;
 
-    virtual ~FFTW3FFT() { init(0); }
+    virtual ~FFTW3FFT() {
+        init(0);
+    }
 
     virtual void init(size_t size) override {
         if (_size != size) {
@@ -897,10 +903,16 @@ void AudioFFT::init(size_t size) {
     _impl->init(size);
 }
 
-void AudioFFT::fft(const float *data, float *re, float *im) { _impl->fft(data, re, im); }
+void AudioFFT::fft(const float *data, float *re, float *im) {
+    _impl->fft(data, re, im);
+}
 
-void AudioFFT::ifft(float *data, const float *re, const float *im) { _impl->ifft(data, re, im); }
+void AudioFFT::ifft(float *data, const float *re, const float *im) {
+    _impl->ifft(data, re, im);
+}
 
-size_t AudioFFT::ComplexSize(size_t size) { return (size / 2) + 1; }
+size_t AudioFFT::ComplexSize(size_t size) {
+    return (size / 2) + 1;
+}
 
 } // namespace audiofft

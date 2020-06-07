@@ -16,7 +16,6 @@ protected:
 private:
     static const std::size_t MIX;
     std::vector<DSP_FLOAT> buffer;
-
 };
 
-}
+} // namespace dsp

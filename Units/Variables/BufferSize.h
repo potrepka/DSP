@@ -9,7 +9,6 @@ class BufferSize : public Generator {
 public:
     BufferSize();
     void setBufferSize(unsigned int bufferSize);
-
 };
 
-}
+} // namespace dsp

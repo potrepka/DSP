@@ -11,7 +11,6 @@ public:
 
 private:
     void process() override;
-
 };
 
-}
+} // namespace dsp

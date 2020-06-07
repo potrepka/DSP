@@ -15,7 +15,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Consumer::getInputSignal() {
 }
 
 void dsp::Consumer::process() {
-    for (const auto& channel : getInputSignal()->getChannels()) {
+    for (const auto &channel : getInputSignal()->getChannels()) {
         channel->copyBuffers();
     }
 }

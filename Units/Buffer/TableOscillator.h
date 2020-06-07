@@ -10,9 +10,9 @@ public:
     TableOscillator();
     std::size_t getNumTables();
     std::vector<DSP_FLOAT> getTable(std::size_t index);
-    void setTable(std::size_t index, const std::vector<DSP_FLOAT>& table);
-    void pushTable(const std::vector<DSP_FLOAT>& table);
-    void insertTable(std::size_t index, const std::vector<DSP_FLOAT>& table);
+    void setTable(std::size_t index, const std::vector<DSP_FLOAT> &table);
+    void pushTable(const std::vector<DSP_FLOAT> &table);
+    void insertTable(std::size_t index, const std::vector<DSP_FLOAT> &table);
     void removeTable(std::size_t index);
     std::shared_ptr<InputParameter> getPhase();
     std::shared_ptr<InputParameter> getPosition();
@@ -24,7 +24,6 @@ private:
     static const std::size_t PHASE;
     static const std::size_t POSITION;
     std::vector<std::vector<DSP_FLOAT>> tables;
-
 };
 
-}
+} // namespace dsp
