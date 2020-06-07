@@ -19,6 +19,28 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Audio::getAudioOutput() {
     return getInput(0);
 }
 
+void dsp::Audio::readInterleaved(DSP_FLOAT *inputBuffer) {
+    lock();
+    for (int i = 0; i < getAudioInput()->getNumChannels(); i++) {
+        std::vector<DSP_FLOAT> &audioInput = getAudioInput()->getChannel(i)->getBuffer();
+        for (int k = 0, sample = i; k < getBufferSize(); k++, sample += getAudioInput()->getNumChannels()) {
+            audioInput[k] = inputBuffer[sample];
+        }
+    }
+    unlock();
+}
+
+void dsp::Audio::writeInterleaved(DSP_FLOAT *outputBuffer) {
+    lock();
+    for (int i = 0; i < getAudioOutput()->getNumChannels(); i++) {
+        std::vector<DSP_FLOAT> &audioOutput = getAudioOutput()->getChannel(i)->getBuffer();
+        for (int k = 0, sample = i; k < getBufferSize(); k++, sample += getAudioOutput()->getNumChannels()) {
+            outputBuffer[sample] = audioOutput[k];
+        }
+    }
+    unlock();
+}
+
 void dsp::Audio::process() {
     for (const auto &channel : getAudioOutput()->getChannels()) {
         channel->copyBuffers();

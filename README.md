@@ -26,30 +26,18 @@ int main() {
     unit->setSampleRate(SAMPLE_RATE);
     unit->setBufferSize(BUFFER_SIZE);
 
-    *data->audio->getAudioInput() >> *unit->getInputSignal();
-    *unit->getOutputSignal() >> *data->audio->getAudioOutput();
+    *audio->getAudioInput() >> *unit->getInputSignal();
+    *unit->getOutputSignal() >> *audio->getAudioOutput();
 
-    data->audio->pushUnit(unit);
+    audio->pushUnit(unit);
 
     // INTERLEAVED
-    vector<DSP_FLOAT>& inputBuffer(NUM_INPUT_CHANNELS * BUFFER_SIZE);
-    vector<DSP_FLOAT>& outputBuffer(NUM_OUTPUT_CHANNELS * BUFFER_SIZE);
+    vector<DSP_FLOAT> inputBuffer(NUM_INPUT_CHANNELS * BUFFER_SIZE);
+    vector<DSP_FLOAT> outputBuffer(NUM_OUTPUT_CHANNELS * BUFFER_SIZE);
 
-    for (int i = 0; i < NUM_INPUT_CHANNELS; i++) {
-        std::vector<DSP_FLOAT>& input = audio->getAudioInput()->getChannel(i)->getBuffer();
-        for (int frame = 0, sample = i; frame < BUFFER_SIZE; frame++, sample += NUM_INPUT_CHANNELS) {
-            input[frame] = inputBuffer[sample];
-        }
-    }
-
-    data->audio->run();
-
-    for (int i = 0; i < NUM_OUTPUT_CHANNELS; i++) {
-        std::vector<DSP_FLOAT>& output = audio->getAudioOutput()->getChannel(i)->getBuffer();
-        for (int frame = 0, sample = i; frame < BUFFER_SIZE; frame++, sample += NUM_OUTPUT_CHANNELS) {
-            outputBuffer[sample] = output[frame];
-        }
-    }
+    audio->readInterleaved(inputBuffer.data());
+    audio->run();
+    audio->writeInterleaved(outputBuffer.data());
 }
 ```
 
