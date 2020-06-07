@@ -13,6 +13,7 @@ class CompressorGate : public Filter {
 
 public:
     CompressorGate();
+    ~CompressorGate();
     void setNumChannels(std::size_t size) override;
     std::shared_ptr<InputParameter> getLink();
     std::shared_ptr<InputParameter> getThreshold();
@@ -21,6 +22,7 @@ public:
     std::shared_ptr<InputParameter> getKnee();
     std::shared_ptr<InputParameter> getAttack();
     std::shared_ptr<InputParameter> getRelease();
+    std::shared_ptr<OutputParameter> getGainDelta();
 
 protected:
     void connect() override;
@@ -36,12 +38,21 @@ private:
     static const std::size_t ATTACK;
     static const std::size_t RELEASE;
 
+    static const std::size_t GAIN_DELTA;
+
     static const std::size_t CHANNEL_MIX;
     static const std::size_t ABSOLUTE_VALUE;
     static const std::size_t TO_DECIBELS;
     static const std::size_t GAIN_COMPUTER;
     static const std::size_t ENVELOPE;
     static const std::size_t GAIN_UNIT;
+
+    std::shared_ptr<ChannelMix> channelMix;
+    std::shared_ptr<AbsoluteValue> absoluteValue;
+    std::shared_ptr<ToDecibels> decibels;
+    std::shared_ptr<GainComputer> gainComputer;
+    std::shared_ptr<Envelope> envelope;
+    std::shared_ptr<GainUnit> gainUnit;
 };
 
 } // namespace dsp

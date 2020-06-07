@@ -140,7 +140,7 @@ void dsp::Unit::pushInput(std::shared_ptr<InputParameter> input) {
 
 void dsp::Unit::pushInput(Connection::Type type, DSP_FLOAT value) {
     lock();
-    inputs.emplace_back(new InputParameter(bufferSize, type, value));
+    inputs.push_back(std::make_shared<InputParameter>(bufferSize, type, value));
     unlock();
 }
 
@@ -152,25 +152,49 @@ void dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
 
 void dsp::Unit::pushOutput(Connection::Type type, DSP_FLOAT value) {
     lock();
-    outputs.emplace_back(new OutputParameter(bufferSize, type, value));
+    outputs.push_back(std::make_shared<OutputParameter>(bufferSize, type, value));
+    unlock();
+}
+
+void dsp::Unit::insertInput(std::size_t index, std::shared_ptr<InputParameter> input) {
+    lock();
+    inputs.insert(inputs.begin() + index, input);
     unlock();
 }
 
 void dsp::Unit::insertInput(std::size_t index, Connection::Type type, DSP_FLOAT value) {
     lock();
-    inputs.emplace(inputs.begin() + index, new InputParameter(bufferSize, type, value));
+    inputs.insert(inputs.begin() + index, std::make_shared<InputParameter>(bufferSize, type, value));
+    unlock();
+}
+
+void dsp::Unit::insertOutput(std::size_t index, std::shared_ptr<OutputParameter> output) {
+    lock();
+    outputs.insert(outputs.begin() + index, output);
     unlock();
 }
 
 void dsp::Unit::insertOutput(std::size_t index, Connection::Type type, DSP_FLOAT value) {
     lock();
-    outputs.emplace(outputs.begin() + index, new OutputParameter(bufferSize, type, value));
+    outputs.insert(outputs.begin() + index, std::make_shared<OutputParameter>(bufferSize, type, value));
+    unlock();
+}
+
+void dsp::Unit::removeInput(std::shared_ptr<InputParameter> input) {
+    lock();
+    inputs.erase(std::remove(inputs.begin(), inputs.end(), input), inputs.end());
     unlock();
 }
 
 void dsp::Unit::removeInput(std::size_t index) {
     lock();
     inputs.erase(inputs.begin() + index);
+    unlock();
+}
+
+void dsp::Unit::removeOutput(std::shared_ptr<OutputParameter> output) {
+    lock();
+    outputs.erase(std::remove(outputs.begin(), outputs.end(), output), outputs.end());
     unlock();
 }
 
@@ -203,15 +227,21 @@ std::shared_ptr<dsp::Unit> dsp::Unit::getUnit(std::size_t index) {
     return units[index];
 }
 
-void dsp::Unit::pushUnit(Unit *unit) {
+void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit) {
     lock();
-    units.emplace_back(unit);
+    units.push_back(unit);
     unlock();
 }
 
-void dsp::Unit::insertUnit(std::size_t index, Unit *unit) {
+void dsp::Unit::insertUnit(std::size_t index, std::shared_ptr<Unit> unit) {
     lock();
-    units.emplace(units.begin() + index, unit);
+    units.insert(units.begin() + index, unit);
+    unlock();
+}
+
+void dsp::Unit::removeUnit(std::shared_ptr<Unit> unit) {
+    lock();
+    units.erase(std::remove(units.begin(), units.end(), unit), units.end());
     unlock();
 }
 
@@ -230,14 +260,14 @@ void dsp::Unit::sortUnits() {
         for (const auto &unit : units) {
             unit->lock();
             unitSet.insert(unit.get());
-            for (const auto &input : inputs) {
+            for (const auto &input : unit->inputs) {
                 input->lock();
                 for (const auto &channel : input->getChannels()) {
                     channel->lock();
                     inputToUnit[channel.get()] = unit.get();
                 }
             }
-            for (const auto &output : outputs) {
+            for (const auto &output : unit->outputs) {
                 output->lock();
                 for (const auto &channel : output->getChannels()) {
                     channel->lock();
@@ -263,7 +293,8 @@ void dsp::Unit::sortUnits() {
             }
         }
         std::unordered_set<Unit *> explored;
-        std::vector<Unit *> order;
+        std::unordered_map<Unit *, std::size_t> orderMap;
+        std::size_t increment = 0;
         while (!queue.empty()) {
             Unit *unit = queue.front();
             explored.insert(unit);
@@ -277,27 +308,24 @@ void dsp::Unit::sortUnits() {
                     }
                 }
             }
-            order.push_back(unit);
+            orderMap[unit] = increment;
+            increment++;
             queue.pop();
         }
         for (const auto &unit : units) {
-            for (const auto &output : outputs) {
+            for (const auto &output : unit->outputs) {
                 for (const auto &channel : output->getChannels()) {
                     channel->unlock();
                 }
                 output->unlock();
             }
-            for (const auto &input : inputs) {
+            for (const auto &input : unit->inputs) {
                 for (const auto &channel : input->getChannels()) {
                     channel->unlock();
                 }
                 input->unlock();
             }
             unit->unlock();
-        }
-        std::unordered_map<Unit *, std::size_t> orderMap;
-        for (std::size_t i = 0; i < order.size(); i++) {
-            orderMap[order[i]] = i;
         }
         std::sort(units.begin(), units.end(), [&orderMap](const auto &a, const auto &b) {
             return orderMap[a.get()] < orderMap[b.get()];

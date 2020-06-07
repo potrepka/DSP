@@ -66,9 +66,13 @@ public:
     void pushInput(Connection::Type type, DSP_FLOAT value = 0);
     void pushOutput(std::shared_ptr<OutputParameter> output);
     void pushOutput(Connection::Type type, DSP_FLOAT value = 0);
+    void insertInput(std::size_t index, std::shared_ptr<InputParameter> input);
     void insertInput(std::size_t index, Connection::Type type, DSP_FLOAT value = 0);
+    void insertOutput(std::size_t index, std::shared_ptr<OutputParameter> output);
     void insertOutput(std::size_t index, Connection::Type type, DSP_FLOAT value = 0);
+    void removeInput(std::shared_ptr<InputParameter> input);
     void removeInput(std::size_t index);
+    void removeOutput(std::shared_ptr<OutputParameter> output);
     void removeOutput(std::size_t index);
 
     virtual std::size_t getNumChannels();
@@ -76,8 +80,9 @@ public:
 
     std::size_t getNumUnits();
     std::shared_ptr<Unit> getUnit(std::size_t index);
-    void pushUnit(Unit *unit);
-    void insertUnit(std::size_t index, Unit *unit);
+    void pushUnit(std::shared_ptr<Unit> unit);
+    void insertUnit(std::size_t index, std::shared_ptr<Unit> unit);
+    void removeUnit(std::shared_ptr<Unit> unit);
     void removeUnit(std::size_t index);
     void sortUnits();
 
