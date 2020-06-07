@@ -16,8 +16,8 @@ int main() {
     const unsigned int BUFFER_SIZE = 512;
 
     dsp::Audio* audio = new dsp::Audio();
-    audio->getAudioInput()->setNumChannels(NUM_CHANNELS);
-    audio->getAudioOutput()->setNumChannels(NUM_CHANNELS);
+    audio->getAudioInput()->setNumChannels(NUM_INPUT_CHANNELS);
+    audio->getAudioOutput()->setNumChannels(NUM_OUTPUT_CHANNELS);
     audio->setSampleRate(SAMPLE_RATE);
     audio->setBufferSize(BUFFER_SIZE);
 
