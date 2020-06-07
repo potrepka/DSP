@@ -19,22 +19,30 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Audio::getAudioOutput() {
     return getInput(0);
 }
 
-void dsp::Audio::readInterleaved(DSP_FLOAT *inputBuffer) {
+void dsp::Audio::zero() {
     lock();
-    for (int i = 0; i < getAudioInput()->getNumChannels(); i++) {
+    for (const auto &channel : getAudioInput()->getChannels()) {
+        channel->fillBuffer(0);
+    }
+    unlock();
+}
+
+void dsp::Audio::readInterleaved(DSP_FLOAT *inputBuffer, unsigned int numInputChannels, unsigned int numFrames) {
+    lock();
+    for (int i = 0; i < numInputChannels; i++) {
         std::vector<DSP_FLOAT> &audioInput = getAudioInput()->getChannel(i)->getBuffer();
-        for (int k = 0, sample = i; k < getBufferSize(); k++, sample += getAudioInput()->getNumChannels()) {
+        for (int k = 0, sample = i; k < numFrames; k++, sample += numInputChannels) {
             audioInput[k] = inputBuffer[sample];
         }
     }
     unlock();
 }
 
-void dsp::Audio::writeInterleaved(DSP_FLOAT *outputBuffer) {
+void dsp::Audio::writeInterleaved(DSP_FLOAT *outputBuffer, unsigned int numOutputChannels, unsigned int numFrames) {
     lock();
-    for (int i = 0; i < getAudioOutput()->getNumChannels(); i++) {
+    for (int i = 0; i < numOutputChannels; i++) {
         std::vector<DSP_FLOAT> &audioOutput = getAudioOutput()->getChannel(i)->getBuffer();
-        for (int k = 0, sample = i; k < getBufferSize(); k++, sample += getAudioOutput()->getNumChannels()) {
+        for (int k = 0, sample = i; k < numFrames; k++, sample += numOutputChannels) {
             outputBuffer[sample] = audioOutput[k];
         }
     }
