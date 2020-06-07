@@ -1,7 +1,9 @@
 # DSP
 
 DSP is a lightweight C++ library for digital signal processing. The project is
-still in development. Feedback and contributions are welcome!
+still in development.
+
+Feedback and contributions are welcome!
 
 ## Usage
 
