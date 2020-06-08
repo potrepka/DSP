@@ -9,6 +9,7 @@ class Generator : virtual public Unit {
 public:
     Generator(Connection::Type type);
     std::shared_ptr<OutputParameter> getOutputSignal();
+    void setOutputSignal(std::shared_ptr<OutputParameter> output);
 
 protected:
     void process() override;

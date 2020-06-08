@@ -35,8 +35,7 @@ dsp::CompressorGate::CompressorGate() : Processor(Connection::Type::BIPOLAR, Con
     pushUnit(envelope);
     pushUnit(gainUnit);
 
-    inputs[0] = gainUnit->getInputSignal();
-    outputs[0] = gainUnit->getOutputSignal();
+    setInputSignal(gainUnit->getInputSignal());
     pushInput(channelMix->getInputSignal());
     pushInput(channelMix->getMix());
     pushInput(gainComputer->getThreshold());
@@ -45,6 +44,8 @@ dsp::CompressorGate::CompressorGate() : Processor(Connection::Type::BIPOLAR, Con
     pushInput(gainComputer->getKnee());
     pushInput(envelope->getAttack());
     pushInput(envelope->getRelease());
+
+    setOutputSignal(gainUnit->getOutputSignal());
     pushOutput(envelope->getOutputSignal());
 
     connect();

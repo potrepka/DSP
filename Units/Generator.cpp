@@ -10,6 +10,10 @@ std::shared_ptr<dsp::Unit::OutputParameter> dsp::Generator::getOutputSignal() {
     return getOutput(OUTPUT_SIGNAL);
 }
 
+void dsp::Generator::setOutputSignal(std::shared_ptr<OutputParameter> output) {
+    setOutput(OUTPUT_SIGNAL, output);
+}
+
 void dsp::Generator::process() {
     Unit::process();
 }

@@ -120,11 +120,11 @@ std::shared_ptr<dsp::Unit::OutputParameter> dsp::Unit::getOutput(std::size_t ind
     return outputs[index];
 }
 
-void dsp::Unit::getInput(std::size_t index, std::shared_ptr<InputParameter> input) {
+void dsp::Unit::setInput(std::size_t index, std::shared_ptr<InputParameter> input) {
     inputs[index] = input;
 }
 
-void dsp::Unit::getOutput(std::size_t index, std::shared_ptr<dsp::Unit::OutputParameter> output) {
+void dsp::Unit::setOutput(std::size_t index, std::shared_ptr<dsp::Unit::OutputParameter> output) {
     outputs[index] = output;
 }
 

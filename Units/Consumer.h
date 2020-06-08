@@ -9,6 +9,7 @@ class Consumer : virtual public Unit {
 public:
     Consumer(Connection::Type type);
     std::shared_ptr<InputParameter> getInputSignal();
+    void setInputSignal(std::shared_ptr<InputParameter> input);
 
 protected:
     void process() override;

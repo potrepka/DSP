@@ -62,8 +62,8 @@ public:
     std::size_t getNumOutputs();
     std::shared_ptr<InputParameter> getInput(std::size_t index);
     std::shared_ptr<OutputParameter> getOutput(std::size_t index);
-    void getInput(std::size_t index, std::shared_ptr<InputParameter> input);
-    void getOutput(std::size_t index, std::shared_ptr<OutputParameter> input);
+    void setInput(std::size_t index, std::shared_ptr<InputParameter> input);
+    void setOutput(std::size_t index, std::shared_ptr<OutputParameter> output);
     void pushInput(std::shared_ptr<InputParameter> input);
     void pushInput(Connection::Type type, DSP_FLOAT value = 0);
     void pushOutput(std::shared_ptr<OutputParameter> output);
