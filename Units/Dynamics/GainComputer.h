@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Filter.h"
+#include "Processor.h"
 
 namespace dsp {
 
-class GainComputer : public Filter {
+class GainComputer : public Processor {
 
 public:
     GainComputer();

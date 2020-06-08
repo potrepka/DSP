@@ -1,11 +1,11 @@
 #include "AbsoluteValue.h"
 
-dsp::AbsoluteValue::AbsoluteValue() : Filter(Connection::Type::BIPOLAR) {
+dsp::AbsoluteValue::AbsoluteValue() : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR) {
     getOutputSignal()->setType(Connection::Type::UNIPOLAR);
 }
 
 void dsp::AbsoluteValue::process() {
-    Filter::process();
+    Processor::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),
                        getInputSignal()->getChannel(i)->getBuffer().end(),

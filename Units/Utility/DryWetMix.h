@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Filter.h"
+#include "Processor.h"
 
 namespace dsp {
 
-class DryWetMix : public Filter {
+class DryWetMix : public Processor {
 
 public:
     DryWetMix();

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Filter.h"
+#include "Processor.h"
 
 namespace dsp {
 
-class ToHertz : public Filter {
+class ToHertz : public Processor {
 
 public:
     ToHertz();

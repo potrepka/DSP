@@ -5,10 +5,10 @@
 
 namespace dsp {
 
-class Filter : public Consumer, public Generator {
+class Processor : public Consumer, public Generator {
 
 public:
-    Filter(Connection::Type type);
+    Processor(Connection::Type typeIn, Connection::Type typeOut);
 
 protected:
     void process() override;

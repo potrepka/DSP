@@ -2,7 +2,7 @@
 
 const std::size_t dsp::GainUnit::GAIN = 1;
 
-dsp::GainUnit::GainUnit() : Filter(Connection::Type::BIPOLAR) {
+dsp::GainUnit::GainUnit() : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR) {
     pushInput(Connection::Type::DECIBELS);
 }
 
@@ -11,7 +11,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::GainUnit::getGain() {
 }
 
 void dsp::GainUnit::process() {
-    Filter::process();
+    Processor::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),
                        getInputSignal()->getChannel(i)->getBuffer().end(),

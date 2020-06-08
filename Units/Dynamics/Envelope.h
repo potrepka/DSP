@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Filter.h"
+#include "Processor.h"
 
 namespace dsp {
 
-class Envelope : public Filter {
+class Envelope : public Processor {
 
 public:
     Envelope();

@@ -3,7 +3,7 @@
 const std::size_t dsp::Envelope::ATTACK = 1;
 const std::size_t dsp::Envelope::RELEASE = 2;
 
-dsp::Envelope::Envelope() : Filter(Connection::Type::UNIPOLAR) {
+dsp::Envelope::Envelope() : Processor(Connection::Type::UNIPOLAR, Connection::Type::UNIPOLAR) {
     pushInput(Connection::Type::SECONDS);
     pushInput(Connection::Type::SECONDS);
 }

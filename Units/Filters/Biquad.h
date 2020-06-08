@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Filter.h"
+#include "Processor.h"
 
 namespace dsp {
 
-class Biquad : public Filter {
+class Biquad : public Processor {
 
 public:
     Biquad();

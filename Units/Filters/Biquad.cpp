@@ -4,7 +4,7 @@ const std::size_t dsp::Biquad::FREQUENCY = 1;
 const std::size_t dsp::Biquad::Q = 2;
 const std::size_t dsp::Biquad::GAIN = 3;
 
-dsp::Biquad::Biquad() : Filter(dsp::Connection::Type::BIPOLAR) {
+dsp::Biquad::Biquad() : Processor(dsp::Connection::Type::BIPOLAR, dsp::Connection::Type::BIPOLAR) {
     pushInput(Connection::Type::HERTZ);
     pushInput(Connection::Type::RATIO, sqrt(0.5));
     pushInput(Connection::Type::DECIBELS);
@@ -33,7 +33,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getGain() {
 }
 
 void dsp::Biquad::process() {
-    Filter::process();
+    Processor::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();

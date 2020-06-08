@@ -5,7 +5,7 @@ const std::size_t dsp::GainComputer::COMPRESSION_RATIO = 2;
 const std::size_t dsp::GainComputer::GATE_RATIO = 3;
 const std::size_t dsp::GainComputer::KNEE = 4;
 
-dsp::GainComputer::GainComputer() : Filter(Connection::Type::DECIBELS) {
+dsp::GainComputer::GainComputer() : Processor(Connection::Type::DECIBELS, Connection::Type::DECIBELS) {
     pushInput(Connection::Type::DECIBELS);
     pushInput(Connection::Type::RATIO, 1);
     pushInput(Connection::Type::RATIO, 1);
@@ -29,7 +29,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::GainComputer::getKnee() {
 }
 
 void dsp::GainComputer::process() {
-    Filter::process();
+    Processor::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();

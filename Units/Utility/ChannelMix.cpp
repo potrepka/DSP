@@ -2,7 +2,7 @@
 
 const std::size_t dsp::ChannelMix::MIX = 1;
 
-dsp::ChannelMix::ChannelMix() : Filter(Connection::Type::BIPOLAR) {
+dsp::ChannelMix::ChannelMix() : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR) {
     pushInput(Connection::Type::UNIPOLAR);
 }
 
@@ -18,7 +18,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::ChannelMix::getMix() {
 }
 
 void dsp::ChannelMix::process() {
-    Filter::process();
+    Processor::process();
     if (getNumChannels() > 0) {
         std::fill(buffer.begin(), buffer.end(), 0);
         for (std::size_t i = 0; i < getNumChannels(); i++) {

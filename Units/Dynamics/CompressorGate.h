@@ -9,7 +9,7 @@
 
 namespace dsp {
 
-class CompressorGate : public Filter {
+class CompressorGate : public Processor {
 
 public:
     CompressorGate();

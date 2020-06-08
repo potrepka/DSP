@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Filter.h"
+#include "Processor.h"
 
 namespace dsp {
 
-class ChannelMix : public Filter {
+class ChannelMix : public Processor {
 
 public:
     ChannelMix();

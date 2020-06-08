@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Filter.h"
+#include "Processor.h"
 
 namespace dsp {
 
-class AbsoluteValue : public Filter {
+class AbsoluteValue : public Processor {
 
 public:
     AbsoluteValue();
