@@ -51,11 +51,11 @@ int main() {
 ## Future Direction
 
 The following are possible directions for future development:
-- Biquad poles
 - FFT
 - Convolution
 - Variable delay
 - Elliptic filter
+- Cascading filters
 - Noise generators
 - ADSR
 - Real-time audio
