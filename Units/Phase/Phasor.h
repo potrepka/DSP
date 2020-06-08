@@ -19,7 +19,6 @@ private:
     static const std::size_t FREQUENCY;
     static const std::size_t RESET_TRIGGER;
     std::vector<DSP_FLOAT> phase;
-
 };
 
-}
+} // namespace dsp
