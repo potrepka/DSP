@@ -34,15 +34,17 @@ std::vector<DSP_FLOAT> &dsp::BufferUnit::getUnitBuffer(std::size_t index) {
 
 void dsp::BufferUnit::process() {
     Consumer::process();
-    size_t start = index % unitBufferSize;
-    for (int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::size_t position = start;
-        for (int k = 0; k < getBufferSize(); k++) {
-            buffers[i][position] = inputBuffer[k];
-            position++;
-            if (position >= unitBufferSize) {
-                position -= unitBufferSize;
+    if (unitBufferSize > 0) {
+        size_t start = index % unitBufferSize;
+        for (int i = 0; i < getNumChannels(); i++) {
+            std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+            std::size_t position = start;
+            for (int k = 0; k < getBufferSize(); k++) {
+                buffers[i][position] = inputBuffer[k];
+                position++;
+                if (position >= unitBufferSize) {
+                    position -= unitBufferSize;
+                }
             }
         }
     }
