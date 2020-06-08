@@ -27,7 +27,7 @@ public:
         void setValue(DSP_FLOAT value);
 
         std::size_t getNumChannels();
-        void setNumChannels(std::size_t size);
+        void setNumChannels(std::size_t numChannels);
         std::vector<std::shared_ptr<T>> getChannels();
         std::shared_ptr<T> getChannel(std::size_t index);
 
@@ -62,6 +62,8 @@ public:
     std::size_t getNumOutputs();
     std::shared_ptr<InputParameter> getInput(std::size_t index);
     std::shared_ptr<OutputParameter> getOutput(std::size_t index);
+    void getInput(std::size_t index, std::shared_ptr<InputParameter> input);
+    void getOutput(std::size_t index, std::shared_ptr<OutputParameter> input);
     void pushInput(std::shared_ptr<InputParameter> input);
     void pushInput(Connection::Type type, DSP_FLOAT value = 0);
     void pushOutput(std::shared_ptr<OutputParameter> output);
@@ -75,8 +77,8 @@ public:
     void removeOutput(std::shared_ptr<OutputParameter> output);
     void removeOutput(std::size_t index);
 
-    virtual std::size_t getNumChannels();
-    virtual void setNumChannels(std::size_t size);
+    std::size_t getNumChannels();
+    virtual void setNumChannels(std::size_t numChannels);
 
     std::size_t getNumUnits();
     std::shared_ptr<Unit> getUnit(std::size_t index);
@@ -92,6 +94,11 @@ protected:
     std::vector<std::shared_ptr<InputParameter>> inputs;
     std::vector<std::shared_ptr<OutputParameter>> outputs;
     std::vector<std::shared_ptr<Unit>> units;
+
+    void setSampleRateNoLock(unsigned int sampleRate);
+    void setBufferSizeNoLock(unsigned int bufferSize);
+    void setNumChannelsNoLock(std::size_t numChannels);
+
     virtual void connect();
     virtual void disconnect();
     virtual void process();
@@ -99,6 +106,7 @@ protected:
 private:
     unsigned int sampleRate;
     unsigned int bufferSize;
+    std::size_t numChannels;
 };
 
 void operator>>(DSP_FLOAT value, std::shared_ptr<Unit::InputParameter> input);

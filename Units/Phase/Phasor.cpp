@@ -8,15 +8,9 @@ dsp::Phasor::Phasor() : Generator(Connection::Type::UNIPOLAR) {
     pushInput(Connection::Type::BINARY);
 }
 
-void dsp::Phasor::setNumChannels(std::size_t size) {
+void dsp::Phasor::setNumChannels(std::size_t numChannels) {
     lock();
-    for (const auto &input : inputs) {
-        input->setNumChannels(size);
-    }
-    for (const auto &output : outputs) {
-        output->setNumChannels(size);
-    }
-    std::size_t numChannels = getNumChannels();
+    Unit::setNumChannelsNoLock(numChannels);
     phase.resize(numChannels, 0);
     unlock();
 }

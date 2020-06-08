@@ -8,7 +8,6 @@ class Consumer : virtual public Unit {
 
 public:
     Consumer(Connection::Type type);
-    std::size_t getNumChannels() override;
     std::shared_ptr<InputParameter> getInputSignal();
 
 protected:

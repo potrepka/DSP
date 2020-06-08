@@ -8,6 +8,7 @@ class ChannelMix : public Filter {
 
 public:
     ChannelMix();
+    void setBufferSize(unsigned int bufferSize) override;
     std::shared_ptr<InputParameter> getMix();
 
 protected:

@@ -16,15 +16,10 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Envelope::getRelease() {
     return getInput(RELEASE);
 }
 
-void dsp::Envelope::setNumChannels(std::size_t size) {
+void dsp::Envelope::setNumChannels(std::size_t numChannels) {
     lock();
-    for (const auto &input : inputs) {
-        input->setNumChannels(size);
-    }
-    for (const auto &output : outputs) {
-        output->setNumChannels(size);
-    }
-    outputPrevious.resize(size, 0);
+    Unit::setNumChannelsNoLock(numChannels);
+    outputPrevious.resize(numChannels, 0);
     unlock();
 }
 

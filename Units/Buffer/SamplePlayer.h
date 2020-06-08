@@ -8,7 +8,7 @@ class SamplePlayer : Generator {
 
 public:
     SamplePlayer();
-    void setNumChannels(std::size_t size) override;
+    void setNumChannels(std::size_t numChannels) override;
     std::vector<DSP_FLOAT> getSample(std::size_t index);
     void setSample(std::size_t index, const std::vector<DSP_FLOAT> &sample);
     std::shared_ptr<InputParameter> getResetTrigger();

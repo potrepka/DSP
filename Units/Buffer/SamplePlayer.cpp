@@ -12,15 +12,9 @@ dsp::SamplePlayer::SamplePlayer() : Generator(Connection::Type::BIPOLAR) {
     pushInput(Connection::Type::RATIO);
 }
 
-void dsp::SamplePlayer::setNumChannels(std::size_t size) {
+void dsp::SamplePlayer::setNumChannels(std::size_t numChannels) {
     lock();
-    for (const auto &input : inputs) {
-        input->setNumChannels(size);
-    }
-    for (const auto &output : outputs) {
-        output->setNumChannels(size);
-    }
-    std::size_t numChannels = getNumChannels();
+    Unit::setNumChannelsNoLock(numChannels);
     samples.resize(numChannels);
     position.resize(numChannels, 0);
     unlock();

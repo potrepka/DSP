@@ -8,7 +8,7 @@ class Biquad : public Filter {
 
 public:
     Biquad();
-    void setNumChannels(std::size_t size) override;
+    void setNumChannels(std::size_t numChannels) override;
     std::shared_ptr<InputParameter> getFrequency();
     std::shared_ptr<InputParameter> getQ();
     std::shared_ptr<InputParameter> getGain();

@@ -14,7 +14,6 @@ class CompressorGate : public Filter {
 public:
     CompressorGate();
     ~CompressorGate();
-    void setNumChannels(std::size_t size) override;
     std::shared_ptr<InputParameter> getLink();
     std::shared_ptr<InputParameter> getThreshold();
     std::shared_ptr<InputParameter> getCompressionRatio();

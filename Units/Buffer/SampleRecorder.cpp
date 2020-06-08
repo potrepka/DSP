@@ -7,15 +7,9 @@ dsp::SampleRecorder::SampleRecorder() : Consumer(Connection::Type::BIPOLAR) {
     pushInput(Connection::Type::BINARY);
 }
 
-void dsp::SampleRecorder::setNumChannels(std::size_t size) {
+void dsp::SampleRecorder::setNumChannels(std::size_t numChannels) {
     lock();
-    for (const auto &input : inputs) {
-        input->setNumChannels(size);
-    }
-    for (const auto &output : outputs) {
-        output->setNumChannels(size);
-    }
-    std::size_t numChannels = getNumChannels();
+    Unit::setNumChannelsNoLock(numChannels);
     samples.resize(numChannels);
     gatePrevious.resize(numChannels, 0);
     unlock();

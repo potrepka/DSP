@@ -8,7 +8,7 @@ class Envelope : public Filter {
 
 public:
     Envelope();
-    void setNumChannels(std::size_t size) override;
+    void setNumChannels(std::size_t numChannels) override;
     std::shared_ptr<InputParameter> getAttack();
     std::shared_ptr<InputParameter> getRelease();
 

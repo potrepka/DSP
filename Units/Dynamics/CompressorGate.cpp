@@ -54,16 +54,6 @@ dsp::CompressorGate::~CompressorGate() {
     disconnect();
 }
 
-void dsp::CompressorGate::setNumChannels(std::size_t size) {
-    lock();
-    disconnect();
-    for (const auto &unit : units) {
-        unit->setNumChannels(size);
-    }
-    connect();
-    unlock();
-}
-
 std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getLink() {
     return getInput(LINK);
 }

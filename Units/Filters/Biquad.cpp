@@ -10,15 +10,9 @@ dsp::Biquad::Biquad() : Filter(dsp::Connection::Type::BIPOLAR) {
     pushInput(Connection::Type::DECIBELS);
 }
 
-void dsp::Biquad::setNumChannels(std::size_t size) {
+void dsp::Biquad::setNumChannels(std::size_t numChannels) {
     lock();
-    for (const auto &input : inputs) {
-        input->setNumChannels(size);
-    }
-    for (const auto &output : outputs) {
-        output->setNumChannels(size);
-    }
-    std::size_t numChannels = getNumChannels();
+    Unit::setNumChannelsNoLock(numChannels);
     x1.resize(numChannels, 0);
     x2.resize(numChannels, 0);
     y1.resize(numChannels, 0);
