@@ -25,7 +25,7 @@ int main() {
     audio->setSampleRate(SAMPLE_RATE);
     audio->setBufferSize(BUFFER_SIZE);
 
-    // TODO: do something more interesting than pass input to output
+    // TODO: Do something more interesting than pass input to output
     pass = std::make_shared<dsp::PassUnit>(dsp::Connection::Type::BIPOLAR);
     pass->setNumChannels(PASS_CHANNELS);
 
