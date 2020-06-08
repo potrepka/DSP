@@ -27,6 +27,9 @@
 // Math
 #include "AbsoluteValue.h"
 
+// Phase
+#include "Phasor.h"
+
 // Transforms
 #include "ToAmplitude.h"
 #include "ToDecibels.h"
