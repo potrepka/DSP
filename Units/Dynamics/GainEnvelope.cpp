@@ -1,29 +1,29 @@
-#include "Envelope.h"
+#include "GainEnvelope.h"
 
-const std::size_t dsp::Envelope::ATTACK = 1;
-const std::size_t dsp::Envelope::RELEASE = 2;
+const std::size_t dsp::GainEnvelope::ATTACK = 1;
+const std::size_t dsp::GainEnvelope::RELEASE = 2;
 
-dsp::Envelope::Envelope() : Processor(Connection::Type::UNIPOLAR, Connection::Type::UNIPOLAR) {
+dsp::GainEnvelope::GainEnvelope() : Processor(Connection::Type::DECIBELS, Connection::Type::DECIBELS) {
     pushInput(Connection::Type::SECONDS);
     pushInput(Connection::Type::SECONDS);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Envelope::getAttack() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::GainEnvelope::getAttack() {
     return getInput(ATTACK);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Envelope::getRelease() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::GainEnvelope::getRelease() {
     return getInput(RELEASE);
 }
 
-void dsp::Envelope::setNumChannels(std::size_t numChannels) {
+void dsp::GainEnvelope::setNumChannels(std::size_t numChannels) {
     lock();
     Unit::setNumChannelsNoLock(numChannels);
     outputPrevious.resize(numChannels, 0);
     unlock();
 }
 
-void dsp::Envelope::process() {
+void dsp::GainEnvelope::process() {
     Generator::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();

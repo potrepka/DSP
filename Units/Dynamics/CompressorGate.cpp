@@ -23,16 +23,14 @@ dsp::CompressorGate::CompressorGate() : Processor(Connection::Type::BIPOLAR, Con
     absoluteValue = std::make_shared<AbsoluteValue>();
     decibels = std::make_shared<ToDecibels>();
     gainComputer = std::make_shared<GainComputer>();
-    envelope = std::make_shared<Envelope>();
-    envelope->getInputSignal()->setType(Connection::Type::DECIBELS);
-    envelope->getOutputSignal()->setType(Connection::Type::DECIBELS);
+    gainEnvelope = std::make_shared<GainEnvelope>();
     gainUnit = std::make_shared<GainUnit>();
 
     pushUnit(channelMix);
     pushUnit(absoluteValue);
     pushUnit(decibels);
     pushUnit(gainComputer);
-    pushUnit(envelope);
+    pushUnit(gainEnvelope);
     pushUnit(gainUnit);
 
     setInputSignal(gainUnit->getInputSignal());
@@ -42,11 +40,11 @@ dsp::CompressorGate::CompressorGate() : Processor(Connection::Type::BIPOLAR, Con
     pushInput(gainComputer->getCompressionRatio());
     pushInput(gainComputer->getGateRatio());
     pushInput(gainComputer->getKnee());
-    pushInput(envelope->getAttack());
-    pushInput(envelope->getRelease());
+    pushInput(gainEnvelope->getAttack());
+    pushInput(gainEnvelope->getRelease());
 
     setOutputSignal(gainUnit->getOutputSignal());
-    pushOutput(envelope->getOutputSignal());
+    pushOutput(gainEnvelope->getOutputSignal());
 
     connect();
 }
@@ -91,14 +89,14 @@ void dsp::CompressorGate::connect() {
     channelMix->getOutputSignal() >> absoluteValue->getInputSignal();
     absoluteValue->getOutputSignal() >> decibels->getInputSignal();
     decibels->getOutputSignal() >> gainComputer->getInputSignal();
-    gainComputer->getOutputSignal() >> envelope->getInputSignal();
-    envelope->getOutputSignal() >> gainUnit->getGain();
+    gainComputer->getOutputSignal() >> gainEnvelope->getInputSignal();
+    gainEnvelope->getOutputSignal() >> gainUnit->getGain();
 }
 
 void dsp::CompressorGate::disconnect() {
     channelMix->getOutputSignal() != absoluteValue->getInputSignal();
     absoluteValue->getOutputSignal() != decibels->getInputSignal();
     decibels->getOutputSignal() != gainComputer->getInputSignal();
-    gainComputer->getOutputSignal() != envelope->getInputSignal();
-    envelope->getOutputSignal() != gainUnit->getGain();
+    gainComputer->getOutputSignal() != gainEnvelope->getInputSignal();
+    gainEnvelope->getOutputSignal() != gainUnit->getGain();
 }

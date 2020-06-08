@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class Envelope : public Processor {
+class GainEnvelope : public Processor {
 
 public:
-    Envelope();
+    GainEnvelope();
     void setNumChannels(std::size_t numChannels) override;
     std::shared_ptr<InputParameter> getAttack();
     std::shared_ptr<InputParameter> getRelease();

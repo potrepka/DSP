@@ -9,8 +9,8 @@
 
 // Dynamics
 #include "CompressorGate.h"
-#include "Envelope.h"
 #include "GainComputer.h"
+#include "GainEnvelope.h"
 #include "GainUnit.h"
 
 // Filters

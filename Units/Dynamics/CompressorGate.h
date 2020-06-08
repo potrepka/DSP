@@ -2,8 +2,8 @@
 
 #include "AbsoluteValue.h"
 #include "ChannelMix.h"
-#include "Envelope.h"
 #include "GainComputer.h"
+#include "GainEnvelope.h"
 #include "GainUnit.h"
 #include "ToDecibels.h"
 
@@ -50,7 +50,7 @@ private:
     std::shared_ptr<AbsoluteValue> absoluteValue;
     std::shared_ptr<ToDecibels> decibels;
     std::shared_ptr<GainComputer> gainComputer;
-    std::shared_ptr<Envelope> envelope;
+    std::shared_ptr<GainEnvelope> gainEnvelope;
     std::shared_ptr<GainUnit> gainUnit;
 };
 
