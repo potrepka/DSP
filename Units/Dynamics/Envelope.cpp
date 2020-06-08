@@ -42,7 +42,11 @@ void dsp::Envelope::process() {
             } else {
                 samples = releaseBuffer[k] * getSampleRate();
             }
-            outputPrevious[i] += (inputBuffer[k] - outputPrevious[i]) * pow(0.001, 1.0 / samples);
+            if (samples == 0) {
+                outputPrevious[i] = inputBuffer[k];
+            } else {
+                outputPrevious[i] += (inputBuffer[k] - outputPrevious[i]) * pow(0.001, 1.0 / samples);
+            }
             outputBuffer[k] = outputPrevious[i];
         }
     }

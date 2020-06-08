@@ -101,8 +101,8 @@ private:
     unsigned int bufferSize;
 };
 
-void operator>>(DSP_FLOAT value, Unit::InputParameter &input);
-void operator>>(Unit::OutputParameter &output, Unit::InputParameter &input);
-void operator!=(Unit::OutputParameter &output, Unit::InputParameter &input);
+void operator>>(DSP_FLOAT value, std::shared_ptr<Unit::InputParameter> input);
+void operator>>(std::shared_ptr<Unit::OutputParameter> output, std::shared_ptr<Unit::InputParameter> input);
+void operator!=(std::shared_ptr<Unit::OutputParameter> output, std::shared_ptr<Unit::InputParameter> input);
 
 } // namespace dsp

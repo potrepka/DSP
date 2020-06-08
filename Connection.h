@@ -36,43 +36,43 @@ protected:
     DSP_FLOAT value;
 };
 
-class Input : public Connection, public Lockable {
+class Input : public Connection, public Lockable, public std::enable_shared_from_this<Input> {
     friend class Output;
 
 public:
     Input(unsigned int bufferSize, Type type, DSP_FLOAT value);
     ~Input();
-    std::vector<Output *> getConnections();
-    void connect(Output *output);
-    void disconnect(Output *output);
+    std::vector<std::shared_ptr<Output>> getConnections();
+    void connect(std::shared_ptr<Output> output);
+    void disconnect(std::shared_ptr<Output> output);
     void disconnectAll();
     void copyBuffers();
 
 private:
-    std::vector<Output *> connections;
-    void addConnection(Output *output);
-    void removeConnection(Output *output);
+    std::vector<std::shared_ptr<Output>> connections;
+    void addConnection(std::shared_ptr<Output> output);
+    void removeConnection(std::shared_ptr<Output> output);
 };
 
-class Output : public Connection, public Lockable {
+class Output : public Connection, public Lockable, public std::enable_shared_from_this<Output> {
     friend class Input;
 
 public:
     Output(unsigned int bufferSize, Type type, DSP_FLOAT value);
     ~Output();
-    std::vector<Input *> getConnections();
-    void connect(Input *input);
-    void disconnect(Input *input);
+    std::vector<std::shared_ptr<Input>> getConnections();
+    void connect(std::shared_ptr<Input> input);
+    void disconnect(std::shared_ptr<Input> input);
     void disconnectAll();
 
 private:
-    std::vector<Input *> connections;
-    void addConnection(Input *input);
-    void removeConnection(Input *input);
+    std::vector<std::shared_ptr<Input>> connections;
+    void addConnection(std::shared_ptr<Input> input);
+    void removeConnection(std::shared_ptr<Input> input);
 };
 
-void operator>>(DSP_FLOAT value, Input &input);
-void operator>>(Output &output, Input &input);
-void operator!=(Output &output, Input &input);
+void operator>>(DSP_FLOAT value, std::shared_ptr<Input> input);
+void operator>>(std::shared_ptr<Output> output, std::shared_ptr<Input> input);
+void operator!=(std::shared_ptr<Output> output, std::shared_ptr<Input> input);
 
 } // namespace dsp

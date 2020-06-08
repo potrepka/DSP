@@ -9,6 +9,5 @@ std::size_t dsp::Filter::getNumChannels() {
 }
 
 void dsp::Filter::process() {
-    Consumer::process();
-    Generator::process();
+    Unit::process();
 }

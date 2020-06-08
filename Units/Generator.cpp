@@ -15,7 +15,5 @@ std::shared_ptr<dsp::Unit::OutputParameter> dsp::Generator::getOutputSignal() {
 }
 
 void dsp::Generator::process() {
-    for (const auto &channel : getOutputSignal()->getChannels()) {
-        channel->fillBuffer(channel->getValue());
-    }
+    Unit::process();
 }

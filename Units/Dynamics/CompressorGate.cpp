@@ -96,18 +96,18 @@ std::shared_ptr<dsp::Unit::OutputParameter> dsp::CompressorGate::getGainDelta() 
     return getOutput(GAIN_DELTA);
 }
 
-void dsp::CompressorGate::disconnect() {
-    *channelMix->getOutputSignal() != *absoluteValue->getInputSignal();
-    *absoluteValue->getOutputSignal() != *decibels->getInputSignal();
-    *decibels->getOutputSignal() != *gainComputer->getInputSignal();
-    *gainComputer->getOutputSignal() != *envelope->getInputSignal();
-    *envelope->getOutputSignal() != *gainUnit->getGain();
+void dsp::CompressorGate::connect() {
+    channelMix->getOutputSignal() >> absoluteValue->getInputSignal();
+    absoluteValue->getOutputSignal() >> decibels->getInputSignal();
+    decibels->getOutputSignal() >> gainComputer->getInputSignal();
+    gainComputer->getOutputSignal() >> envelope->getInputSignal();
+    envelope->getOutputSignal() >> gainUnit->getGain();
 }
 
-void dsp::CompressorGate::connect() {
-    *channelMix->getOutputSignal() >> *absoluteValue->getInputSignal();
-    *absoluteValue->getOutputSignal() >> *decibels->getInputSignal();
-    *decibels->getOutputSignal() >> *gainComputer->getInputSignal();
-    *gainComputer->getOutputSignal() >> *envelope->getInputSignal();
-    *envelope->getOutputSignal() >> *gainUnit->getGain();
+void dsp::CompressorGate::disconnect() {
+    channelMix->getOutputSignal() != absoluteValue->getInputSignal();
+    absoluteValue->getOutputSignal() != decibels->getInputSignal();
+    decibels->getOutputSignal() != gainComputer->getInputSignal();
+    gainComputer->getOutputSignal() != envelope->getInputSignal();
+    envelope->getOutputSignal() != gainUnit->getGain();
 }

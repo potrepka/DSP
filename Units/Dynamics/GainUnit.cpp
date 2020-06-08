@@ -17,6 +17,6 @@ void dsp::GainUnit::process() {
                        getInputSignal()->getChannel(i)->getBuffer().end(),
                        getGain()->getChannel(i)->getBuffer().begin(),
                        getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                       [](DSP_FLOAT x, DSP_FLOAT y) { return pow(10.0, x * 0.05) * y; });
+                       [](DSP_FLOAT x, DSP_FLOAT y) { return x * toAmplitude(y); });
     }
 }
