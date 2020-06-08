@@ -10,34 +10,40 @@ This project is still in development. Feedback and contributions are welcome!
 #include "DSP.h"
 
 int main() {
-    const unsigned int NUM_INPUT_CHANNELS = 2;
-    const unsigned int NUM_OUTPUT_CHANNELS = 2;
+    const unsigned int INPUT_CHANNELS = 2;
+    const unsigned int OUTPUT_CHANNELS = 2;
+    const unsigned int PASS_CHANNELS = 2;
     const unsigned int SAMPLE_RATE = 44100;
     const unsigned int BUFFER_SIZE = 512;
 
-    dsp::Audio* audio = new dsp::Audio();
-    audio->getAudioInput()->setNumChannels(NUM_INPUT_CHANNELS);
-    audio->getAudioOutput()->setNumChannels(NUM_OUTPUT_CHANNELS);
+    std::shared_ptr<dsp::Audio> audio;
+    std::shared_ptr<dsp::PassUnit> pass;
+
+    audio = std::make_shared<dsp::Audio>();
+    audio->getAudioInput()->setNumChannels(INPUT_CHANNELS);
+    audio->getAudioOutput()->setNumChannels(OUTPUT_CHANNELS);
     audio->setSampleRate(SAMPLE_RATE);
     audio->setBufferSize(BUFFER_SIZE);
 
-    dsp::PassUnit* unit = new dsp::PassUnit(dsp::Connection::Type::BIPOLAR);
-    unit->setNumChannels(NUM_INPUT_CHANNELS);
-    unit->setSampleRate(SAMPLE_RATE);
-    unit->setBufferSize(BUFFER_SIZE);
+    // TODO: do something more interesting than pass input to output
+    pass = std::make_shared<dsp::PassUnit>(dsp::Connection::Type::BIPOLAR);
+    pass->setNumChannels(PASS_CHANNELS);
 
-    *audio->getAudioInput() >> *unit->getInputSignal();
-    *unit->getOutputSignal() >> *audio->getAudioOutput();
+    audio->pushUnit(pass);
 
-    audio->pushUnit(unit);
+    audio->getAudioInput() >> pass->getInputSignal();
+    pass->getOutputSignal() >> audio->getAudioOutput();
 
-    // INTERLEAVED
-    vector<DSP_FLOAT> inputBuffer(NUM_INPUT_CHANNELS * BUFFER_SIZE);
-    vector<DSP_FLOAT> outputBuffer(NUM_OUTPUT_CHANNELS * BUFFER_SIZE);
+    // Interleaved
+    std::vector<DSP_FLOAT> inputBuffer(INPUT_CHANNELS * BUFFER_SIZE);
+    std::vector<DSP_FLOAT> outputBuffer(OUTPUT_CHANNELS * BUFFER_SIZE);
 
-    audio->readInterleaved(inputBuffer.data());
+    // Process audio
+    audio->zeroBuffers();
+    audio->readInterleaved(inputBuffer.data(), INPUT_CHANNELS, BUFFER_SIZE);
     audio->run();
-    audio->writeInterleaved(outputBuffer.data());
+    audio->copyBuffers();
+    audio->writeInterleaved(outputBuffer.data(), OUTPUT_CHANNELS, BUFFER_SIZE);
 }
 ```
 
@@ -46,9 +52,12 @@ int main() {
 The following are possible directions for future development:
 - FFT
 - Convolution
+- Variable delay
 - Elliptic filter
 - Noise generators
+- ADSR
 - Real-time audio
 - MIDI
+- Sequencer
 - Frequency response
 - SIMD instructions
