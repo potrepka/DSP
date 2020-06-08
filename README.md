@@ -31,10 +31,11 @@ int main() {
 
     audio->pushUnit(pass);
 
+    // Connect units
     audio->getAudioInput() >> pass->getInputSignal();
     pass->getOutputSignal() >> audio->getAudioOutput();
 
-    // Interleaved
+    // Interleaved buffers
     std::vector<DSP_FLOAT> inputBuffer(INPUT_CHANNELS * BUFFER_SIZE);
     std::vector<DSP_FLOAT> outputBuffer(OUTPUT_CHANNELS * BUFFER_SIZE);
 
