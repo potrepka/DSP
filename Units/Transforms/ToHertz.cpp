@@ -1,8 +1,8 @@
-#include "ToHertz.h"
+#include "SecondsToHertz.h"
 
-dsp::ToHertz::ToHertz() : Processor(Connection::Type::SECONDS, Connection::Type::HERTZ) {}
+dsp::SecondsToHertz::SecondsToHertz() : Processor(Connection::Type::SECONDS, Connection::Type::HERTZ) {}
 
-void dsp::ToHertz::process() {
+void dsp::SecondsToHertz::process() {
     Processor::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),

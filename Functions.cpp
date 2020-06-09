@@ -1,19 +1,11 @@
 #include "Functions.h"
 
-DSP_FLOAT dsp::toAmplitude(DSP_FLOAT decibels) {
+DSP_FLOAT dsp::decibelsToAmplitude(DSP_FLOAT decibels) {
     return pow(10.0, 0.05 * decibels);
 }
 
-DSP_FLOAT dsp::toDecibels(DSP_FLOAT amplitude) {
+DSP_FLOAT dsp::amplitudeToDecibels(DSP_FLOAT amplitude) {
     return 20.0 * log10(amplitude);
-}
-
-DSP_FLOAT dsp::toHertz(DSP_FLOAT seconds) {
-    return 1.0 / seconds;
-}
-
-DSP_FLOAT dsp::toSeconds(DSP_FLOAT hertz) {
-    return 1.0 / hertz;
 }
 
 DSP_FLOAT dsp::linear(std::vector<DSP_FLOAT> &table, const DSP_FLOAT index) {

@@ -1,13 +1,13 @@
-#include "ToDecibels.h"
+#include "HertzToSeconds.h"
 
-dsp::ToDecibels::ToDecibels() : Processor(Connection::Type::UNIPOLAR, Connection::Type::DECIBELS) {}
+dsp::HertzToSeconds::HertzToSeconds() : Processor(Connection::Type::HERTZ, Connection::Type::SECONDS) {}
 
-void dsp::ToDecibels::process() {
+void dsp::HertzToSeconds::process() {
     Processor::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),
                        getInputSignal()->getChannel(i)->getBuffer().end(),
                        getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                       toDecibels);
+                       [](DSP_FLOAT x) { return 1.0 / x; });
     }
 }

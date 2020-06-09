@@ -15,14 +15,6 @@
 
 // Filters
 #include "Biquad.h"
-#include "BiquadAPF.h"
-#include "BiquadBPF.h"
-#include "BiquadHPF.h"
-#include "BiquadHighShelf.h"
-#include "BiquadLPF.h"
-#include "BiquadLowShelf.h"
-#include "BiquadNotch.h"
-#include "BiquadPeak.h"
 
 // Math
 #include "AbsoluteValue.h"
@@ -31,10 +23,10 @@
 #include "Phasor.h"
 
 // Transforms
-#include "ToAmplitude.h"
-#include "ToDecibels.h"
-#include "ToHertz.h"
-#include "ToSeconds.h"
+#include "AmplitudeToDecibels.h"
+#include "DecibelsToAmplitude.h"
+#include "HertzToSeconds.h"
+#include "SecondsToHertz.h"
 
 // Utility
 #include "Audio.h"

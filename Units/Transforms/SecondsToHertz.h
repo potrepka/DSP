@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class ToSeconds : public Processor {
+class SecondsToHertz : public Processor {
 
 public:
-    ToSeconds();
+    SecondsToHertz();
 
 protected:
     void process() override;
