@@ -136,8 +136,12 @@ void dsp::Biquad::process() {
             DSP_FLOAT &frequency = frequencyBuffer[k];
             DSP_FLOAT &q = qBuffer[k];
             DSP_FLOAT &gain = gainBuffer[k];
-            calculateCoefficients(frequency, q, gain);
-            outputBuffer[k] = (b0 * inputBuffer[k] + b1 * x1[i] + b2 * x2[i] - a1 * y1[i] - a2 * y2[i]) / a0;
+            if (q == 0) {
+                outputBuffer[k] = 0;
+            } else {
+                calculateCoefficients(frequency, q, gain);
+                outputBuffer[k] = (b0 * inputBuffer[k] + b1 * x1[i] + b2 * x2[i] - a1 * y1[i] - a2 * y2[i]) / a0;
+            }
             x2[i] = x1[i];
             x1[i] = inputBuffer[k];
             y2[i] = y1[i];
