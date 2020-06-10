@@ -45,7 +45,7 @@ void dsp::Audio::writeInterleaved(DSP_FLOAT *outputBuffer, unsigned int numOutpu
     for (int i = 0; i < numOutputChannels; i++) {
         std::vector<DSP_FLOAT> &audioOutput = getAudioOutput()->getChannel(i)->getBuffer();
         for (int k = 0, sample = i; k < numFrames; k++, sample += numOutputChannels) {
-            outputBuffer[sample] = audioOutput[k];
+            outputBuffer[sample] = clip(audioOutput[k]);
         }
     }
     unlock();
