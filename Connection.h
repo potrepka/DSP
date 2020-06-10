@@ -15,7 +15,7 @@ class Output;
 class Connection {
 
 public:
-    enum class Type { BIPOLAR, UNIPOLAR, SECONDS, HERTZ, DECIBELS, BINARY, INTEGER, RATIO, FFT_REAL, FFT_IMAG };
+    enum class Type { BIPOLAR, UNIPOLAR, SECONDS, HERTZ, DECIBELS, BINARY, INTEGER, RATIO, FFT_REAL, FFT_IMAGINARY };
 
     Connection(unsigned int bufferSize, Type type, DSP_FLOAT value);
 
