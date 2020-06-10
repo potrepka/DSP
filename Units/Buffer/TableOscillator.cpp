@@ -49,7 +49,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::TableOscillator::getPosition() {
 }
 
 void dsp::TableOscillator::process() {
-    Generator::process();
+    Unit::process();
     if (tables.size() > 0) {
         std::vector<DSP_FLOAT> points;
         points.resize(4);

@@ -11,9 +11,6 @@ public:
     std::shared_ptr<OutputParameter> getOutputSignal();
     void setOutputSignal(std::shared_ptr<OutputParameter> output);
 
-protected:
-    void process() override;
-
 private:
     static const std::size_t OUTPUT_SIGNAL;
 };

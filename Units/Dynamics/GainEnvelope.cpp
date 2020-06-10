@@ -24,7 +24,7 @@ void dsp::GainEnvelope::setNumChannels(std::size_t numChannels) {
 }
 
 void dsp::GainEnvelope::process() {
-    Generator::process();
+    Unit::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();

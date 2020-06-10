@@ -31,7 +31,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleRecorder::getGate() {
 }
 
 void dsp::SampleRecorder::process() {
-    Consumer::process();
+    Unit::process();
     for (int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();

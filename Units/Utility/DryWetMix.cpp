@@ -22,7 +22,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::DryWetMix::getMix() {
 }
 
 void dsp::DryWetMix::process() {
-    Processor::process();
+    Unit::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &dryBuffer = getDrySignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &wetBuffer = getWetSignal()->getChannel(i)->getBuffer();

@@ -125,7 +125,7 @@ void dsp::Biquad::calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FL
 }
 
 void dsp::Biquad::process() {
-    Processor::process();
+    Unit::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();

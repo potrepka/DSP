@@ -13,7 +13,3 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Consumer::getInputSignal() {
 void dsp::Consumer::setInputSignal(std::shared_ptr<InputParameter> input) {
     setInput(INPUT_SIGNAL, input);
 }
-
-void dsp::Consumer::process() {
-    Unit::process();
-}

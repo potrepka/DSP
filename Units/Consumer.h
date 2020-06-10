@@ -11,9 +11,6 @@ public:
     std::shared_ptr<InputParameter> getInputSignal();
     void setInputSignal(std::shared_ptr<InputParameter> input);
 
-protected:
-    void process() override;
-
 private:
     static const std::size_t INPUT_SIGNAL;
 };
