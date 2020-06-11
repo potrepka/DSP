@@ -51,8 +51,6 @@ int main() {
 ## Future Direction
 
 The following are possible directions for future development:
-- FFT
-- Convolution
 - Variable delay
 - Elliptic filter
 - Cascading filters
