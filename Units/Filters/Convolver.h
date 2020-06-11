@@ -28,7 +28,7 @@ private:
     std::size_t tailSize;
     std::vector<float> input;
     std::vector<float> output;
-    void init(std::size_t index);
+    void initConvolver(std::size_t index);
 };
 
-}
+} // namespace dsp

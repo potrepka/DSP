@@ -28,4 +28,4 @@ private:
     bool inverted;
 };
 
-}
+} // namespace dsp

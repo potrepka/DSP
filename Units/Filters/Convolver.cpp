@@ -1,6 +1,7 @@
 #include "Convolver.h"
 
-dsp::Convolver::Convolver() : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR), headSize(0), tailSize(0) {}
+dsp::Convolver::Convolver()
+        : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR), headSize(0), tailSize(0) {}
 
 void dsp::Convolver::setBufferSize(unsigned int bufferSize) {
     lock();
@@ -32,7 +33,7 @@ std::vector<DSP_FLOAT> dsp::Convolver::getSample(std::size_t index) {
 void dsp::Convolver::setSample(std::size_t index, const std::vector<DSP_FLOAT> &sample) {
     lock();
     samples[index] = sample;
-    init(index);
+    initConvolver(index);
     unlock();
 }
 
@@ -48,7 +49,7 @@ void dsp::Convolver::setHeadSize(std::size_t size) {
     lock();
     headSize = size;
     for (std::size_t i = 0; i < getNumChannels(); i++) {
-        init(i);
+        initConvolver(i);
     }
     unlock();
 }
@@ -57,7 +58,7 @@ void dsp::Convolver::setTailSize(std::size_t size) {
     lock();
     tailSize = size;
     for (std::size_t i = 0; i < getNumChannels(); i++) {
-        init(i);
+        initConvolver(i);
     }
     unlock();
 }
@@ -77,7 +78,7 @@ void dsp::Convolver::process() {
     }
 }
 
-void dsp::Convolver::init(std::size_t index) {
+void dsp::Convolver::initConvolver(std::size_t index) {
     std::vector<fftconvolver::Sample> sample(samples[index].size());
     std::copy(samples[index].begin(), samples[index].end(), sample.begin());
     convolvers[index]->init(headSize, tailSize, sample.data(), sample.size());
