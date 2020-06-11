@@ -37,7 +37,7 @@ void dsp::GainComputer::process() {
         std::vector<DSP_FLOAT> &compressionRatioBuffer = getCompressionRatio()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &gateRatioBuffer = getGateRatio()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &kneeBuffer = getKnee()->getChannel(i)->getBuffer();
-        for (int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); k++) {
             DSP_FLOAT &input = inputBuffer[k];
             DSP_FLOAT &output = outputBuffer[k];
             DSP_FLOAT &threshold = thresholdBuffer[k];

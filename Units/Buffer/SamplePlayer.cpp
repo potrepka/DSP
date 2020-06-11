@@ -48,14 +48,14 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getSpeed() {
 
 void dsp::SamplePlayer::process() {
     Unit::process();
-    for (int i = 0; i < getNumChannels(); i++) {
+    for (std::size_t i = 0; i < getNumChannels(); i++) {
         if (samples[i].size() > 0) {
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &gateBuffer = getGate()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &startPositionBuffer = getStartPosition()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
-            for (int k = 0; k < getBufferSize(); k++) {
+            for (unsigned int k = 0; k < getBufferSize(); k++) {
                 if (resetTriggerBuffer[k]) {
                     position[i] = fmod(startPositionBuffer[k] * getSampleRate(), samples[i].size());
                 }

@@ -64,7 +64,7 @@ void dsp::Convolver::setTailSize(std::size_t size) {
 
 void dsp::Convolver::process() {
     Unit::process();
-    for (int i = 0; i < getNumChannels(); i++) {
+    for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         if (samples[i].size() > 0) {

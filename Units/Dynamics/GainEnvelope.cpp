@@ -30,7 +30,7 @@ void dsp::GainEnvelope::process() {
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &attackBuffer = getAttack()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &releaseBuffer = getRelease()->getChannel(i)->getBuffer();
-        for (int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); k++) {
             DSP_FLOAT samples;
             if (abs(inputBuffer[k]) > abs(outputPrevious[i])) {
                 samples = attackBuffer[k] * getSampleRate();

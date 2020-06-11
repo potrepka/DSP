@@ -15,7 +15,7 @@ std::size_t dsp::BufferUnit::getUnitBufferSize() {
 
 void dsp::BufferUnit::setUnitBufferSize(std::size_t size) {
     lock();
-    for (int i = 0; i < buffers.size(); i++) {
+    for (std::size_t i = 0; i < buffers.size(); i++) {
         buffers[i].resize(size);
     }
     unitBufferSize = size;
@@ -30,10 +30,10 @@ void dsp::BufferUnit::process() {
     Unit::process();
     if (unitBufferSize > 0) {
         size_t start = index % unitBufferSize;
-        for (int i = 0; i < getNumChannels(); i++) {
+        for (std::size_t i = 0; i < getNumChannels(); i++) {
             std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
             std::size_t position = start;
-            for (int k = 0; k < getBufferSize(); k++) {
+            for (unsigned int k = 0; k < getBufferSize(); k++) {
                 buffers[i][position] = inputBuffer[k];
                 position++;
                 if (position >= unitBufferSize) {

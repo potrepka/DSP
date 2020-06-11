@@ -28,7 +28,7 @@ std::shared_ptr<dsp::Unit::OutputParameter> dsp::FFT::getImaginary() {
 
 void dsp::FFT::process() {
     Unit::process();
-    for (int i = 0; i < getNumChannels(); i++) {
+    for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &realBuffer = getReal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();

@@ -32,14 +32,14 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleRecorder::getGate() {
 
 void dsp::SampleRecorder::process() {
     Unit::process();
-    for (int i = 0; i < getNumChannels(); i++) {
+    for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &gateBuffer = getGate()->getChannel(i)->getBuffer();
         int bufferStart = 0;
         std::size_t size = samples[i].size();
         std::size_t index = size;
-        for (int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (resetTriggerBuffer[k]) {
                 bufferStart = k;
                 size = 0;
@@ -50,7 +50,7 @@ void dsp::SampleRecorder::process() {
             }
         }
         samples[i].resize(size);
-        for (int k = bufferStart; k < getBufferSize(); k++) {
+        for (unsigned int k = bufferStart; k < getBufferSize(); k++) {
             if (gateBuffer[k]) {
                 samples[i][index] = inputBuffer[k];
                 index++;

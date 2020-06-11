@@ -25,11 +25,11 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Phasor::getResetTrigger() {
 
 void dsp::Phasor::process() {
     Unit::process();
-    for (int i = 0; i < getNumChannels(); i++) {
+    for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-        for (int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (resetTriggerBuffer[k]) {
                 phase[i] = 0;
             }

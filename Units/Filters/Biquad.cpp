@@ -132,7 +132,7 @@ void dsp::Biquad::process() {
         std::vector<DSP_FLOAT> &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &qBuffer = getQ()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &gainBuffer = getGain()->getChannel(i)->getBuffer();
-        for (int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); k++) {
             DSP_FLOAT &frequency = frequencyBuffer[k];
             DSP_FLOAT &q = qBuffer[k];
             DSP_FLOAT &gain = gainBuffer[k];

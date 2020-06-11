@@ -34,7 +34,7 @@ void dsp::ChannelMix::process() {
             std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &mixBuffer = getMix()->getChannel(i)->getBuffer();
-            for (int k = 0; k < getBufferSize(); k++) {
+            for (unsigned int k = 0; k < getBufferSize(); k++) {
                 outputBuffer[k] = inputBuffer[k] + mixBuffer[k] * (buffer[k] - inputBuffer[k]);
             }
         }
