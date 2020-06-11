@@ -14,7 +14,7 @@ dsp::SamplePlayer::SamplePlayer() : Generator(Connection::Type::BIPOLAR) {
 
 void dsp::SamplePlayer::setNumChannels(std::size_t numChannels) {
     lock();
-    Unit::setNumChannelsNoLock(numChannels);
+    setNumChannelsNoLock(numChannels);
     samples.resize(numChannels);
     position.resize(numChannels, 0);
     unlock();

@@ -8,7 +8,7 @@ dsp::BufferOscillator::BufferOscillator() : Generator(Connection::Type::BIPOLAR)
 
 void dsp::BufferOscillator::setNumChannels(std::size_t numChannels) {
     lock();
-    Unit::setNumChannelsNoLock(numChannels);
+    setNumChannelsNoLock(numChannels);
     buffers.resize(numChannels, nullptr);
     unlock();
 }

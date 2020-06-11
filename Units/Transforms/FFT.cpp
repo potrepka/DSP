@@ -10,7 +10,7 @@ dsp::FFT::FFT() : Consumer(Connection::Type::BIPOLAR), inverted(false) {
 
 void dsp::FFT::setBufferSize(unsigned int bufferSize) {
     lock();
-    Unit::setBufferSizeNoLock(bufferSize);
+    setBufferSizeNoLock(bufferSize);
     fft.init(bufferSize);
     input.resize(bufferSize);
     real.resize(audiofft::AudioFFT::ComplexSize(bufferSize));

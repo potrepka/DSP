@@ -4,7 +4,7 @@ dsp::BufferUnit::BufferUnit() : Consumer(Connection::Type::BIPOLAR), unitBufferS
 
 void dsp::BufferUnit::setNumChannels(std::size_t numChannels) {
     lock();
-    Unit::setNumChannelsNoLock(numChannels);
+    setNumChannelsNoLock(numChannels);
     buffers.resize(numChannels, std::vector<DSP_FLOAT>(unitBufferSize, 0));
     unlock();
 }

@@ -8,7 +8,7 @@ dsp::ChannelMix::ChannelMix() : Processor(Connection::Type::BIPOLAR, Connection:
 
 void dsp::ChannelMix::setBufferSize(unsigned int bufferSize) {
     lock();
-    Unit::setBufferSizeNoLock(bufferSize);
+    setBufferSizeNoLock(bufferSize);
     buffer.resize(bufferSize);
     unlock();
 }

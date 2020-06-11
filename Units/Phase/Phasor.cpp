@@ -10,7 +10,7 @@ dsp::Phasor::Phasor() : Generator(Connection::Type::UNIPOLAR) {
 
 void dsp::Phasor::setNumChannels(std::size_t numChannels) {
     lock();
-    Unit::setNumChannelsNoLock(numChannels);
+    setNumChannelsNoLock(numChannels);
     phase.resize(numChannels, 0);
     unlock();
 }

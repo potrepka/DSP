@@ -4,7 +4,7 @@ dsp::Convolver::Convolver() : Processor(Connection::Type::BIPOLAR, Connection::T
 
 void dsp::Convolver::setBufferSize(unsigned int bufferSize) {
     lock();
-    Unit::setBufferSizeNoLock(bufferSize);
+    setBufferSizeNoLock(bufferSize);
     input.resize(bufferSize);
     output.resize(bufferSize);
     unlock();
@@ -12,7 +12,7 @@ void dsp::Convolver::setBufferSize(unsigned int bufferSize) {
 
 void dsp::Convolver::setNumChannels(std::size_t numChannels) {
     lock();
-    Unit::setNumChannelsNoLock(numChannels);
+    setNumChannelsNoLock(numChannels);
     samples.resize(numChannels);
     std::size_t currentSize = convolvers.size();
     if (numChannels < currentSize) {

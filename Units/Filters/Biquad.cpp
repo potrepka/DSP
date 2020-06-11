@@ -13,7 +13,7 @@ dsp::Biquad::Biquad()
 
 void dsp::Biquad::setNumChannels(std::size_t numChannels) {
     lock();
-    Unit::setNumChannelsNoLock(numChannels);
+    setNumChannelsNoLock(numChannels);
     x1.resize(numChannels, 0);
     x2.resize(numChannels, 0);
     y1.resize(numChannels, 0);

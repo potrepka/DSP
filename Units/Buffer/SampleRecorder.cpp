@@ -9,7 +9,7 @@ dsp::SampleRecorder::SampleRecorder() : Consumer(Connection::Type::BIPOLAR) {
 
 void dsp::SampleRecorder::setNumChannels(std::size_t numChannels) {
     lock();
-    Unit::setNumChannelsNoLock(numChannels);
+    setNumChannelsNoLock(numChannels);
     samples.resize(numChannels);
     gatePrevious.resize(numChannels, 0);
     unlock();
