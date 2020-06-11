@@ -36,7 +36,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::BufferOscillator::getPhase() {
 void dsp::BufferOscillator::process() {
     Unit::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
-        if (buffers[i] != nullptr) {
+        if (buffers[i] != nullptr && buffers[i]->size() > 0) {
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
             for (int k = 0; k < getBufferSize(); k++) {

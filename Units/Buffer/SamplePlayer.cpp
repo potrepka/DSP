@@ -49,23 +49,25 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getSpeed() {
 void dsp::SamplePlayer::process() {
     Unit::process();
     for (int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &gateBuffer = getGate()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &startPositionBuffer = getStartPosition()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
-        for (int k = 0; k < getBufferSize(); k++) {
-            if (resetTriggerBuffer[k]) {
-                position[i] = fmod(startPositionBuffer[k] * getSampleRate(), samples[i].size());
-            }
-            if (gateBuffer[k]) {
-                std::size_t k1 = static_cast<int>(position[i]);
-                std::size_t k0 = (k1 + samples[i].size() - 1) % samples[i].size();
-                std::size_t k2 = (k1 + 1) % samples[i].size();
-                std::size_t k3 = (k1 + 2) % samples[i].size();
-                std::vector<DSP_FLOAT> points{samples[i][k0], samples[i][k1], samples[i][k2], samples[i][k3]};
-                outputBuffer[k] = linear(points, 1 + position[i] - k1);
-                position[i] = fmod(position[i] + speedBuffer[k], samples[i].size());
+        if (samples[i].size() > 0) {
+            std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &gateBuffer = getGate()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &startPositionBuffer = getStartPosition()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
+            for (int k = 0; k < getBufferSize(); k++) {
+                if (resetTriggerBuffer[k]) {
+                    position[i] = fmod(startPositionBuffer[k] * getSampleRate(), samples[i].size());
+                }
+                if (gateBuffer[k]) {
+                    std::size_t k1 = static_cast<int>(position[i]);
+                    std::size_t k0 = (k1 + samples[i].size() - 1) % samples[i].size();
+                    std::size_t k2 = (k1 + 1) % samples[i].size();
+                    std::size_t k3 = (k1 + 2) % samples[i].size();
+                    std::vector<DSP_FLOAT> points{samples[i][k0], samples[i][k1], samples[i][k2], samples[i][k3]};
+                    outputBuffer[k] = linear(points, 1 + position[i] - k1);
+                    position[i] = fmod(position[i] + speedBuffer[k], samples[i].size());
+                }
             }
         }
     }
