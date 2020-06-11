@@ -148,13 +148,6 @@ private:
     std::unique_ptr<detail::AudioFFTImpl> _impl;
 };
 
-/**
- * @deprecated
- * @brief Let's keep an AudioFFTBase type around for now because it has been here already in the 1st version in order to
- * avoid breaking existing code.
- */
-typedef AudioFFT AudioFFTBase;
-
 } // namespace audiofft
 
 #endif // Header guard
