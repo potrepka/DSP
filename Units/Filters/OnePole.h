@@ -4,7 +4,7 @@
 
 namespace dsp {
 
-class OnePole : Processor {
+class OnePole : public Processor {
 
 public:
     enum class Mode { LOW_PASS, HIGH_PASS };

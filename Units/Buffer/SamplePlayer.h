@@ -4,7 +4,7 @@
 
 namespace dsp {
 
-class SamplePlayer : Generator {
+class SamplePlayer : public Generator {
 
 public:
     SamplePlayer();
