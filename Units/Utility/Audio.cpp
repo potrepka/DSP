@@ -16,7 +16,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Audio::getAudioOutput() {
 void dsp::Audio::zeroBuffers() {
     lock();
     for (const auto &channel : getAudioInput()->getChannels()) {
-        channel->fillBuffer(0);
+        channel->fillBuffer(0.0);
     }
     unlock();
 }

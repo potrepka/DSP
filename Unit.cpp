@@ -83,7 +83,11 @@ dsp::Unit::OutputParameter::OutputParameter(unsigned int bufferSize, Connection:
 
 template class dsp::Unit::ConnectionParameter<dsp::Output>;
 
-dsp::Unit::Unit() : numChannels(0), sampleRate(0), bufferSize(0) {}
+dsp::Unit::Unit() : sampleRate(0), bufferSize(0), numChannels(0) {}
+
+DSP_FLOAT dsp::Unit::getOneOverSampleRate() {
+    return oneOverSampleRate;
+}
 
 unsigned int dsp::Unit::getSampleRate() {
     return sampleRate;
@@ -351,6 +355,7 @@ void dsp::Unit::setSampleRateNoLock(unsigned int sampleRate) {
         unit->setSampleRate(sampleRate);
     }
     this->sampleRate = sampleRate;
+    oneOverSampleRate = 1.0 / sampleRate;
 }
 
 void dsp::Unit::setBufferSizeNoLock(unsigned int bufferSize) {

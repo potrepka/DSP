@@ -7,8 +7,8 @@ const std::size_t dsp::GainComputer::KNEE = 4;
 
 dsp::GainComputer::GainComputer() : Processor(Connection::Type::DECIBELS, Connection::Type::DECIBELS) {
     pushInput(Connection::Type::DECIBELS);
-    pushInput(Connection::Type::RATIO, 1);
-    pushInput(Connection::Type::RATIO, 1);
+    pushInput(Connection::Type::RATIO, 1.0);
+    pushInput(Connection::Type::RATIO, 1.0);
     pushInput(Connection::Type::DECIBELS);
 }
 
@@ -65,13 +65,13 @@ void dsp::GainComputer::process() {
                 }
             } else if (input > threshold) {
                 if (input == std::numeric_limits<DSP_FLOAT>::infinity()) {
-                    output = 0;
+                    output = 0.0;
                 } else {
                     output = (threshold - input) * (1.0 - 1.0 / compressionRatio);
                 }
             } else {
                 if (input == -std::numeric_limits<DSP_FLOAT>::infinity()) {
-                    output = 0;
+                    output = 0.0;
                 } else {
                     output = (threshold - input) * (1.0 - gateRatio);
                 }

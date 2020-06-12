@@ -5,7 +5,7 @@ dsp::Multiply::Multiply(Connection::Type type) : Processor(type, type) {}
 void dsp::Multiply::process() {
     Unit::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
-        getOutputSignal()->getChannel(i)->fillBuffer(1);
+        getOutputSignal()->getChannel(i)->fillBuffer(1.0);
         for (const auto &input : inputs) {
             std::transform(getOutputSignal()->getChannel(i)->getBuffer().begin(),
                            getOutputSignal()->getChannel(i)->getBuffer().end(),

@@ -14,10 +14,10 @@ dsp::Biquad::Biquad()
 void dsp::Biquad::setNumChannels(std::size_t numChannels) {
     lock();
     setNumChannelsNoLock(numChannels);
-    x1.resize(numChannels, 0);
-    x2.resize(numChannels, 0);
-    y1.resize(numChannels, 0);
-    y2.resize(numChannels, 0);
+    x1.resize(numChannels, 0.0);
+    x2.resize(numChannels, 0.0);
+    y1.resize(numChannels, 0.0);
+    y2.resize(numChannels, 0.0);
     unlock();
 }
 
@@ -42,7 +42,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getGain() {
 }
 
 void dsp::Biquad::calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FLOAT &q, const DSP_FLOAT &gain) {
-    double omega = TAU * frequency / getSampleRate();
+    double omega = TAU * frequency * getOneOverSampleRate();
     double sinW = sin(omega);
     double cosW = cos(omega);
     double alpha = sinW / (2.0 * q);
@@ -133,8 +133,8 @@ void dsp::Biquad::process() {
         std::vector<DSP_FLOAT> &qBuffer = getQ()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &gainBuffer = getGain()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
-            if (qBuffer[k] == 0) {
-                outputBuffer[k] = 0;
+            if (qBuffer[k] == 0.0) {
+                outputBuffer[k] = 0.0;
             } else {
                 calculateCoefficients(frequencyBuffer[k], qBuffer[k], gainBuffer[k]);
                 outputBuffer[k] = (b0 * inputBuffer[k] + b1 * x1[i] + b2 * x2[i] - a1 * y1[i] - a2 * y2[i]) / a0;

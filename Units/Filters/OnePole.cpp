@@ -9,7 +9,7 @@ dsp::OnePole::OnePole() : Processor(Connection::Type::BIPOLAR, Connection::Type:
 void dsp::OnePole::setNumChannels(std::size_t numChannels) {
     lock();
     setNumChannelsNoLock(numChannels);
-    y1.resize(numChannels, 0);
+    y1.resize(numChannels, 0.0);
     unlock();
 }
 
@@ -35,11 +35,11 @@ void dsp::OnePole::process() {
             DSP_FLOAT a0, b1;
             switch (mode) {
                 case Mode::LOW_PASS:
-                    b1 = exp(-TAU * frequencyBuffer[k] / getSampleRate());
+                    b1 = exp(-TAU * frequencyBuffer[k] * getOneOverSampleRate());
                     a0 = 1.0 - b1;
                     break;
                 case Mode::HIGH_PASS:
-                    b1 = -exp(-TAU * frequencyBuffer[k] / getSampleRate());
+                    b1 = -exp(-TAU * frequencyBuffer[k] * getOneOverSampleRate());
                     a0 = 1.0 + b1;
                     break;
             }

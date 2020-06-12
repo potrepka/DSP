@@ -52,6 +52,8 @@ public:
 
     Unit();
 
+    DSP_FLOAT getOneOverSampleRate();
+
     unsigned int getSampleRate();
     virtual void setSampleRate(unsigned int sampleRate);
 
@@ -65,13 +67,13 @@ public:
     void setInput(std::size_t index, std::shared_ptr<InputParameter> input);
     void setOutput(std::size_t index, std::shared_ptr<OutputParameter> output);
     void pushInput(std::shared_ptr<InputParameter> input);
-    void pushInput(Connection::Type type, DSP_FLOAT value = 0);
+    void pushInput(Connection::Type type, DSP_FLOAT value = 0.0);
     void pushOutput(std::shared_ptr<OutputParameter> output);
-    void pushOutput(Connection::Type type, DSP_FLOAT value = 0);
+    void pushOutput(Connection::Type type, DSP_FLOAT value = 0.0);
     void insertInput(std::size_t index, std::shared_ptr<InputParameter> input);
-    void insertInput(std::size_t index, Connection::Type type, DSP_FLOAT value = 0);
+    void insertInput(std::size_t index, Connection::Type type, DSP_FLOAT value = 0.0);
     void insertOutput(std::size_t index, std::shared_ptr<OutputParameter> output);
-    void insertOutput(std::size_t index, Connection::Type type, DSP_FLOAT value = 0);
+    void insertOutput(std::size_t index, Connection::Type type, DSP_FLOAT value = 0.0);
     void removeInput(std::shared_ptr<InputParameter> input);
     void removeInput(std::size_t index);
     void removeOutput(std::shared_ptr<OutputParameter> output);
@@ -104,6 +106,7 @@ protected:
     virtual void process();
 
 private:
+    DSP_FLOAT oneOverSampleRate;
     unsigned int sampleRate;
     unsigned int bufferSize;
     std::size_t numChannels;

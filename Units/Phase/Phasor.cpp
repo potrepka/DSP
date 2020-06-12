@@ -11,7 +11,7 @@ dsp::Phasor::Phasor() : Generator(Connection::Type::UNIPOLAR) {
 void dsp::Phasor::setNumChannels(std::size_t numChannels) {
     lock();
     setNumChannelsNoLock(numChannels);
-    phase.resize(numChannels, 0);
+    phase.resize(numChannels, 0.0);
     unlock();
 }
 
@@ -34,7 +34,7 @@ void dsp::Phasor::process() {
                 phase[i] = 0;
             }
             outputBuffer[k] = phase[i];
-            phase[i] = fmod(phase[i] + frequencyBuffer[k] / getSampleRate(), 1.0);
+            phase[i] = fmod(phase[i] + frequencyBuffer[k] * getOneOverSampleRate(), 1.0);
         }
     }
 }

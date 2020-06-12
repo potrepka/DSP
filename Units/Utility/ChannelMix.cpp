@@ -20,7 +20,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::ChannelMix::getMix() {
 void dsp::ChannelMix::process() {
     Unit::process();
     if (getNumChannels() > 0) {
-        std::fill(buffer.begin(), buffer.end(), 0);
+        std::fill(buffer.begin(), buffer.end(), 0.0);
         for (std::size_t i = 0; i < getNumChannels(); i++) {
             std::transform(buffer.begin(),
                            buffer.end(),

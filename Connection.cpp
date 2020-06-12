@@ -100,7 +100,7 @@ void dsp::Input::copyBuffers() {
     if (connections.size() == 0) {
         fillBuffer(value);
     } else {
-        fillBuffer(0);
+        fillBuffer(0.0);
     }
     for (const auto &output : connections) {
         std::transform(
