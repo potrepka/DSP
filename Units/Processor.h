@@ -8,7 +8,7 @@ namespace dsp {
 class Processor : public Consumer, public Generator {
 
 public:
-    Processor(Connection::Type typeIn, Connection::Type typeOut);
+    Processor(Connection::Type inType, Connection::Type outType);
 };
 
 } // namespace dsp
