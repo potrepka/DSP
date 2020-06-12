@@ -18,4 +18,4 @@ private:
     std::vector<std::vector<DSP_FLOAT>> values;
 };
 
-}
+} // namespace dsp

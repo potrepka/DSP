@@ -13,4 +13,4 @@ protected:
     void process() override;
 };
 
-}
+} // namespace dsp

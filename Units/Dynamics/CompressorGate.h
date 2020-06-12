@@ -1,11 +1,11 @@
 #pragma once
 
 #include "AbsoluteValue.h"
-#include "UnipolarToDecibels.h"
 #include "ChannelMix.h"
 #include "GainComputer.h"
 #include "GainEnvelope.h"
 #include "GainUnit.h"
+#include "UnipolarToDecibels.h"
 
 namespace dsp {
 

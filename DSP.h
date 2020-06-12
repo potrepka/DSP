@@ -27,10 +27,10 @@
 #include "Phasor.h"
 
 // Transforms
-#include "UnipolarToDecibels.h"
 #include "DecibelsToUnipolar.h"
 #include "HertzToSeconds.h"
 #include "SecondsToHertz.h"
+#include "UnipolarToDecibels.h"
 
 // Utility
 #include "Audio.h"

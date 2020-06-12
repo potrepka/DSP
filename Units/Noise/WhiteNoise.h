@@ -16,4 +16,4 @@ private:
     int seed;
 };
 
-}
+} // namespace dsp
