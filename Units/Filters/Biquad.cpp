@@ -133,7 +133,7 @@ void dsp::Biquad::process() {
         std::vector<DSP_FLOAT> &qBuffer = getQ()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &gainBuffer = getGain()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
-            if (q == 0) {
+            if (qBuffer[k] == 0) {
                 outputBuffer[k] = 0;
             } else {
                 calculateCoefficients(frequencyBuffer[k], qBuffer[k], gainBuffer[k]);
