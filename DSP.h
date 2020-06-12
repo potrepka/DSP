@@ -21,6 +21,7 @@
 
 // Noise
 #include "PinkNoise.h"
+#include "WhiteNoise.h"
 
 // Phase
 #include "Phasor.h"
