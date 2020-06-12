@@ -9,8 +9,6 @@ void dsp::PinkNoise::setNumChannels(std::size_t numChannels) {
     unlock();
 }
 
-#include <iostream>
-
 void dsp::PinkNoise::process() {
     Unit::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
