@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AbsoluteValue.h"
-#include "AmplitudeToDecibels.h"
+#include "UnipolarToDecibels.h"
 #include "ChannelMix.h"
 #include "GainComputer.h"
 #include "GainEnvelope.h"
@@ -39,16 +39,9 @@ private:
 
     static const std::size_t GAIN_DELTA;
 
-    static const std::size_t CHANNEL_MIX;
-    static const std::size_t ABSOLUTE_VALUE;
-    static const std::size_t TO_DECIBELS;
-    static const std::size_t GAIN_COMPUTER;
-    static const std::size_t ENVELOPE;
-    static const std::size_t GAIN_UNIT;
-
     std::shared_ptr<ChannelMix> channelMix;
     std::shared_ptr<AbsoluteValue> absoluteValue;
-    std::shared_ptr<AmplitudeToDecibels> decibels;
+    std::shared_ptr<UnipolarToDecibels> unipolarToDecibels;
     std::shared_ptr<GainComputer> gainComputer;
     std::shared_ptr<GainEnvelope> gainEnvelope;
     std::shared_ptr<GainUnit> gainUnit;

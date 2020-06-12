@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class AmplitudeToDecibels : public Processor {
+class DecibelsToUnipolar : public Processor {
 
 public:
-    AmplitudeToDecibels();
+    DecibelsToUnipolar();
 
 protected:
     void process() override;

@@ -11,24 +11,17 @@ const std::size_t dsp::CompressorGate::RELEASE = 8;
 
 const std::size_t dsp::CompressorGate::GAIN_DELTA = 1;
 
-const std::size_t dsp::CompressorGate::CHANNEL_MIX = 0;
-const std::size_t dsp::CompressorGate::ABSOLUTE_VALUE = 1;
-const std::size_t dsp::CompressorGate::TO_DECIBELS = 2;
-const std::size_t dsp::CompressorGate::GAIN_COMPUTER = 3;
-const std::size_t dsp::CompressorGate::ENVELOPE = 4;
-const std::size_t dsp::CompressorGate::GAIN_UNIT = 5;
-
 dsp::CompressorGate::CompressorGate() : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR) {
     channelMix = std::make_shared<ChannelMix>();
     absoluteValue = std::make_shared<AbsoluteValue>();
-    decibels = std::make_shared<AmplitudeToDecibels>();
+    unipolarToDecibels = std::make_shared<UnipolarToDecibels>();
     gainComputer = std::make_shared<GainComputer>();
     gainEnvelope = std::make_shared<GainEnvelope>();
     gainUnit = std::make_shared<GainUnit>();
 
     pushUnit(channelMix);
     pushUnit(absoluteValue);
-    pushUnit(decibels);
+    pushUnit(unipolarToDecibels);
     pushUnit(gainComputer);
     pushUnit(gainEnvelope);
     pushUnit(gainUnit);
@@ -87,16 +80,16 @@ std::shared_ptr<dsp::Unit::OutputParameter> dsp::CompressorGate::getGainDelta() 
 
 void dsp::CompressorGate::connect() {
     channelMix->getOutputSignal() >> absoluteValue->getInputSignal();
-    absoluteValue->getOutputSignal() >> decibels->getInputSignal();
-    decibels->getOutputSignal() >> gainComputer->getInputSignal();
+    absoluteValue->getOutputSignal() >> unipolarToDecibels->getInputSignal();
+    unipolarToDecibels->getOutputSignal() >> gainComputer->getInputSignal();
     gainComputer->getOutputSignal() >> gainEnvelope->getInputSignal();
     gainEnvelope->getOutputSignal() >> gainUnit->getGain();
 }
 
 void dsp::CompressorGate::disconnect() {
     channelMix->getOutputSignal() != absoluteValue->getInputSignal();
-    absoluteValue->getOutputSignal() != decibels->getInputSignal();
-    decibels->getOutputSignal() != gainComputer->getInputSignal();
+    absoluteValue->getOutputSignal() != unipolarToDecibels->getInputSignal();
+    unipolarToDecibels->getOutputSignal() != gainComputer->getInputSignal();
     gainComputer->getOutputSignal() != gainEnvelope->getInputSignal();
     gainEnvelope->getOutputSignal() != gainUnit->getGain();
 }

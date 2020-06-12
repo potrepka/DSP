@@ -27,8 +27,8 @@
 #include "Phasor.h"
 
 // Transforms
-#include "AmplitudeToDecibels.h"
-#include "DecibelsToAmplitude.h"
+#include "UnipolarToDecibels.h"
+#include "DecibelsToUnipolar.h"
 #include "HertzToSeconds.h"
 #include "SecondsToHertz.h"
 
