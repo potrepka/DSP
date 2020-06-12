@@ -19,6 +19,7 @@ void dsp::Convolver::setNumChannels(std::size_t numChannels) {
     if (numChannels < currentSize) {
         convolvers.resize(numChannels);
     } else {
+        convolvers.reserve(numChannels);
         for (std::size_t i = currentSize; i < numChannels; i++) {
             convolvers.emplace_back(std::make_unique<fftconvolver::TwoStageFFTConvolver>());
         }

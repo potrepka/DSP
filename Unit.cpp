@@ -57,6 +57,7 @@ template <class T> void dsp::Unit::ConnectionParameter<T>::setNumChannels(std::s
     if (numChannels < channels.size()) {
         channels.erase(channels.begin() + numChannels, channels.end());
     } else {
+        channels.reserve(numChannels);
         for (std::size_t i = channels.size(); i < numChannels; i++) {
             channels.emplace_back(new T(bufferSize, type, value));
         }
