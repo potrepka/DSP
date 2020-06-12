@@ -15,9 +15,11 @@
 
 // Filters
 #include "Biquad.h"
+#include "Convolver.h"
 
 // Math
 #include "AbsoluteValue.h"
+#include "Multiply.h"
 
 // Noise
 #include "PinkNoise.h"
@@ -27,9 +29,12 @@
 #include "Phasor.h"
 
 // Transforms
+#include "BipolarToUnipolar.h"
 #include "DecibelsToUnipolar.h"
+#include "FFT.h"
 #include "HertzToSeconds.h"
 #include "SecondsToHertz.h"
+#include "UnipolarToBipolar.h"
 #include "UnipolarToDecibels.h"
 
 // Utility
