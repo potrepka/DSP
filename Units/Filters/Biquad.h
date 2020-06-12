@@ -24,11 +24,11 @@ private:
     static const std::size_t FREQUENCY;
     static const std::size_t Q;
     static const std::size_t GAIN;
+    Mode mode;
     std::vector<DSP_FLOAT> x1;
     std::vector<DSP_FLOAT> x2;
     std::vector<DSP_FLOAT> y1;
     std::vector<DSP_FLOAT> y2;
-    Mode mode;
     DSP_FLOAT a0;
     DSP_FLOAT a1;
     DSP_FLOAT a2;
