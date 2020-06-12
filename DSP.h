@@ -19,6 +19,9 @@
 // Math
 #include "AbsoluteValue.h"
 
+// Noise
+#include "PinkNoise.h"
+
 // Phase
 #include "Phasor.h"
 
