@@ -16,6 +16,7 @@
 // Filters
 #include "Biquad.h"
 #include "Convolver.h"
+#include "OnePole.h"
 
 // Math
 #include "AbsoluteValue.h"
