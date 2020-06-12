@@ -39,11 +39,11 @@ void dsp::OnePole::process() {
                     a0 = 1.0 - b1;
                     break;
                 case Mode::HIGH_PASS:
-                    b1 = -exp(-TAU * frequencyBuffer[k] * getOneOverSampleRate());
+                    b1 = -exp(-TAU * (0.5 - frequencyBuffer[k] * getOneOverSampleRate()));
                     a0 = 1.0 + b1;
                     break;
             }
-            y1[k] = outputBuffer[k] = a0 * inputBuffer[k] + b1 * y1[k];
+            y1[i] = outputBuffer[k] = a0 * inputBuffer[k] + b1 * y1[i];
         }
     }
 }
