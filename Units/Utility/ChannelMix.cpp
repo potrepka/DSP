@@ -13,6 +13,14 @@ void dsp::ChannelMix::setBufferSize(unsigned int bufferSize) {
     unlock();
 }
 
+dsp::ChannelMix::Mode dsp::ChannelMix::getMode() {
+    return mode;
+}
+
+void dsp::ChannelMix::setMode(Mode mode) {
+    this->mode = mode;
+}
+
 std::shared_ptr<dsp::Unit::InputParameter> dsp::ChannelMix::getMix() {
     return getInput(MIX);
 }
@@ -35,7 +43,16 @@ void dsp::ChannelMix::process() {
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &mixBuffer = getMix()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
-                outputBuffer[k] = inputBuffer[k] + mixBuffer[k] * (buffer[k] - inputBuffer[k]);
+                DSP_FLOAT wet;
+                switch (mode) {
+                    case Mode::MID:
+                        wet = buffer[k] - inputBuffer[k];
+                        break;
+                    case Mode::SIDE:
+                        wet = -buffer[k];
+                        break;
+                }
+                outputBuffer[k] = inputBuffer[k] + mixBuffer[k] * wet;
             }
         }
     }
