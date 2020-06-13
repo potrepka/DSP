@@ -45,12 +45,8 @@ void dsp::ChannelMix::process() {
             for (unsigned int k = 0; k < getBufferSize(); k++) {
                 DSP_FLOAT wet;
                 switch (mode) {
-                    case Mode::MID:
-                        wet = buffer[k] - inputBuffer[k];
-                        break;
-                    case Mode::SIDE:
-                        wet = -buffer[k];
-                        break;
+                    case Mode::MID: wet = buffer[k] - inputBuffer[k]; break;
+                    case Mode::SIDE: wet = -buffer[k]; break;
                 }
                 outputBuffer[k] = inputBuffer[k] + mixBuffer[k] * wet;
             }
