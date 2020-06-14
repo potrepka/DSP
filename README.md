@@ -10,12 +10,7 @@ This project is still in development. Feedback and contributions are welcome!
 #include "DSP.h"
 
 int main() {
-    std::shared_ptr<dsp::PassUnit> pass;
-
-    // TODO: Do something more interesting than passing input to output
-    pass = std::make_shared<dsp::PassUnit>(dsp::Connection::Type::BIPOLAR);
-    pass->setNumChannels(2);
-
+    
     // Setup engine
     dsp::Engine *engine = new dsp::Engine();
     
@@ -31,6 +26,13 @@ int main() {
     unsigned int bufferSize = 512;
     
     engine->setup(inputDevice, outputDevice, sampleRate, bufferSize);
+    
+    // Setup units
+    std::shared_ptr<dsp::PassUnit> pass;
+    
+    // TODO: Do something more interesting than passing input to output
+    pass = std::make_shared<dsp::PassUnit>(dsp::Connection::Type::BIPOLAR);
+    pass->setNumChannels(2);
     
     // Add units
     engine->getAudio()->pushUnit(pass);
@@ -51,7 +53,6 @@ The following are possible directions for future development:
 - Elliptic filter
 - Cascading filters
 - ADSR
-- Real-time audio
 - MIDI
 - Sequencer
 - Frequency response
