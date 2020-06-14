@@ -10,10 +10,10 @@ This project is still in development. Feedback and contributions are welcome!
 #include "DSP.h"
 
 int main() {
-    
+
     // Setup engine
     dsp::Engine *engine = new dsp::Engine();
-    
+
     std::vector<unsigned int> inputDevices = engine->getInputDevices();
     unsigned int inputDevice = inputDevices.size() > 0 ? inputDevices[0] : -1;
 
@@ -22,27 +22,27 @@ int main() {
 
     std::vector<unsigned int> sampleRates = engine->getAvailableSampleRates(inputDevice, outputDevice);
     unsigned int sampleRate = sampleRates.size() > 0 ? sampleRates[0] : 0;
-    
+
     unsigned int bufferSize = 512;
-    
+
     engine->setup(inputDevice, outputDevice, sampleRate, bufferSize);
-    
+
     // Setup units
     std::shared_ptr<dsp::PassUnit> pass;
-    
+
     // TODO: Do something more interesting than passing input to output
     pass = std::make_shared<dsp::PassUnit>(dsp::Connection::Type::BIPOLAR);
     pass->setNumChannels(2);
-    
+
     // Add units
-    engine->getAudio()->pushUnit(pass);
+    engine->pushUnit(pass);
 
     // Connect units
-    engine->getAudio()->getAudioInput() >> pass->getInputSignal();
-    pass->getOutputSignal() >> engine->getAudio()->getAudioOutput();
-    
+    engine->getAudioInput() >> pass->getInputSignal();
+    pass->getOutputSignal() >> engine->getAudioOutput();
+
     delete engine;
-    
+
     return 0;
 }
 ```
