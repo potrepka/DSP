@@ -1280,9 +1280,10 @@ bool RtApiCore ::probeDeviceOpen(unsigned int device,
 
     // std::cout << "Current physical stream format:" << std::endl;
     // std::cout << "   mBitsPerChan = " << description.mBitsPerChannel << std::endl;
-    // std::cout << "   aligned high = " << (description.mFormatFlags & kAudioFormatFlagIsAlignedHigh) << ", isPacked =
-    // " << (description.mFormatFlags & kAudioFormatFlagIsPacked) << std::endl; std::cout << "   bytesPerFrame = " <<
-    // description.mBytesPerFrame << std::endl; std::cout << "   sample rate = " << description.mSampleRate << std::endl;
+    // std::cout << "   aligned high = " << (description.mFormatFlags & kAudioFormatFlagIsAlignedHigh)
+    // << ", isPacked = " << (description.mFormatFlags & kAudioFormatFlagIsPacked) << std::endl; std::cout
+    // << "   bytesPerFrame = " << description.mBytesPerFrame << std::endl; std::cout << "   sample rate = "
+    // << description.mSampleRate << std::endl;
 
     if (description.mFormatID != kAudioFormatLinearPCM || description.mBitsPerChannel < 16) {
         description.mFormatID = kAudioFormatLinearPCM;
