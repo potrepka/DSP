@@ -42,6 +42,8 @@ int main() {
     pass->getOutputSignal() >> engine->getAudio()->getAudioOutput();
     
     delete engine;
+    
+    return 0;
 }
 ```
 
