@@ -1,12 +1,15 @@
 #include "Engine.h"
 
-dsp::Engine::Engine() {
+dsp::Engine::Engine() : numInputChannels(0), numOutputChannels(0), sampleRate(0), bufferSize(0) {
     audio = new Audio();
 }
 
 dsp::Engine::~Engine() {
 #if USE_RTAUDIO
     try {
+        if (dac.isStreamRunning()) {
+            dac.stopStream();
+        }
         if (dac.isStreamOpen()) {
             dac.closeStream();
         }
@@ -14,10 +17,6 @@ dsp::Engine::~Engine() {
 #endif
 
     delete audio;
-}
-
-dsp::Audio *dsp::Engine::getAudio() {
-    return audio;
 }
 
 std::vector<unsigned int> dsp::Engine::getInputDevices() {
@@ -97,6 +96,9 @@ void dsp::Engine::setup(unsigned int inputDevice,
                         unsigned int bufferSize) {
 #if USE_RTAUDIO
     try {
+        if (dac.isStreamRunning()) {
+            dac.stopStream();
+        }
         if (dac.isStreamOpen()) {
             dac.closeStream();
         }
@@ -125,7 +127,7 @@ void dsp::Engine::setup(unsigned int inputDevice,
                        format,
                        sampleRate,
                        &bufferSize,
-                       &dsp::tick,
+                       &dsp::Engine::tick,
                        this);
     } catch (RtAudioError &error) { error.printMessage(); }
 
@@ -169,7 +171,7 @@ std::string dsp::Engine::getDeviceName(unsigned int device) {
 #if USE_RTAUDIO
     try {
         deviceName = dac.getDeviceInfo(device).name;
-        deviceName = deviceName.substr(inputDeviceName.find(":") + 2);
+        deviceName = deviceName.substr(deviceName.find(":") + 2);
     } catch (RtAudioError &error) { deviceName = "None"; }
 #endif
     return deviceName;
@@ -199,13 +201,49 @@ unsigned int dsp::Engine::getBufferSize() {
     return bufferSize;
 }
 
+std::shared_ptr<dsp::Unit::OutputParameter> dsp::Engine::getAudioInput() {
+    return audio->getAudioInput();
+}
+
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Engine::getAudioOutput() {
+    return audio->getAudioOutput();
+}
+
+std::size_t dsp::Engine::getNumUnits() {
+    return audio->getNumUnits();
+}
+
+std::shared_ptr<dsp::Unit> dsp::Engine::getUnit(std::size_t index) {
+    return audio->getUnit(index);
+}
+
+void dsp::Engine::pushUnit(std::shared_ptr<Unit> unit) {
+    audio->pushUnit(unit);
+}
+
+void dsp::Engine::insertUnit(std::size_t index, std::shared_ptr<Unit> unit) {
+    audio->insertUnit(index, unit);
+}
+
+void dsp::Engine::removeUnit(std::shared_ptr<Unit> unit) {
+    audio->removeUnit(unit);
+}
+
+void dsp::Engine::removeUnit(std::size_t index) {
+    audio->removeUnit(index);
+}
+
+void dsp::Engine::sortUnits() {
+    audio->sortUnits();
+}
+
 #if USE_RTAUDIO
-int dsp::tick(void *outputBuffer,
-              void *inputBuffer,
-              unsigned int nBufferFrames,
-              double streamTime,
-              RtAudioStreamStatus status,
-              void *pointer) {
+int dsp::Engine::tick(void *outputBuffer,
+                      void *inputBuffer,
+                      unsigned int nBufferFrames,
+                      double streamTime,
+                      RtAudioStreamStatus status,
+                      void *pointer) {
     Engine *engine = (Engine *)pointer;
     process((double *)inputBuffer,
             (double *)outputBuffer,
@@ -217,15 +255,15 @@ int dsp::tick(void *outputBuffer,
 }
 #endif
 
-void dsp::process(double *inputBuffer,
-                  double *outputBuffer,
-                  unsigned int numFrames,
-                  unsigned int numInputChannels,
-                  unsigned int numOutputChannels,
-                  Engine *engine) {
-    engine->getAudio()->zeroBuffers();
-    engine->getAudio()->readInterleaved(inputBuffer, numInputChannels, numFrames);
-    engine->getAudio()->run();
-    engine->getAudio()->copyBuffers();
-    engine->getAudio()->writeInterleaved(outputBuffer, numOutputChannels, numFrames);
+void dsp::Engine::process(double *inputBuffer,
+                          double *outputBuffer,
+                          unsigned int numFrames,
+                          unsigned int numInputChannels,
+                          unsigned int numOutputChannels,
+                          Engine *engine) {
+    engine->audio->zeroBuffers();
+    engine->audio->readInterleaved(inputBuffer, numInputChannels, numFrames);
+    engine->audio->run();
+    engine->audio->copyBuffers();
+    engine->audio->writeInterleaved(outputBuffer, numOutputChannels, numFrames);
 }

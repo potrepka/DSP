@@ -2,7 +2,7 @@
 
 #include "Audio.h"
 
-#define USE_RTAUDIO 1
+#define USE_RTAUDIO 0
 
 #if USE_RTAUDIO
 #include "RtAudio.h"
@@ -15,20 +15,34 @@ class Engine {
 public:
     Engine();
     ~Engine();
-    dsp::Audio *getAudio();
+
     std::vector<unsigned int> getInputDevices();
     std::vector<unsigned int> getOutputDevices();
     std::vector<unsigned int> getAvailableSampleRates(unsigned int inputDevice, unsigned int outputDevice);
+
     void setup(unsigned int inputDevice, unsigned int outputDevice, unsigned int sampleRate, unsigned int bufferSize);
     void start();
     void stop();
+
     std::string getDeviceName(unsigned int device);
     std::string getInputDeviceName();
     std::string getOutputDeviceName();
+
     unsigned int getNumInputChannels();
     unsigned int getNumOutputChannels();
     unsigned int getSampleRate();
     unsigned int getBufferSize();
+
+    std::shared_ptr<Unit::OutputParameter> getAudioInput();
+    std::shared_ptr<Unit::InputParameter> getAudioOutput();
+
+    std::size_t getNumUnits();
+    std::shared_ptr<Unit> getUnit(std::size_t index);
+    void pushUnit(std::shared_ptr<Unit> unit);
+    void insertUnit(std::size_t index, std::shared_ptr<Unit> unit);
+    void removeUnit(std::shared_ptr<Unit> unit);
+    void removeUnit(std::size_t index);
+    void sortUnits();
 
 private:
     Audio *audio;
@@ -41,22 +55,22 @@ private:
     unsigned int numOutputChannels;
     unsigned int sampleRate;
     unsigned int bufferSize;
-};
 
 #if USE_RTAUDIO
-int tick(void *outputBuffer,
-         void *inputBuffer,
-         unsigned int nBufferFrames,
-         double streamTime,
-         RtAudioStreamStatus status,
-         void *pointer);
+    static int tick(void *outputBuffer,
+                    void *inputBuffer,
+                    unsigned int nBufferFrames,
+                    double streamTime,
+                    RtAudioStreamStatus status,
+                    void *pointer);
 #endif
 
-void process(double *inputBuffer,
-             double *outputBuffer,
-             unsigned int numFrames,
-             unsigned int numInputChannels,
-             unsigned int numOutputChannels,
-             Engine *engine);
+    static void process(double *inputBuffer,
+                        double *outputBuffer,
+                        unsigned int numFrames,
+                        unsigned int numInputChannels,
+                        unsigned int numOutputChannels,
+                        Engine *engine);
+};
 
 } // namespace dsp
