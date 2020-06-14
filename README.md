@@ -53,7 +53,7 @@ The following are possible directions for future development:
 - Elliptic filter
 - Cascading filters
 - ADSR
-- MIDI
 - Sequencer
+- MIDI
 - Frequency response
 - SIMD instructions
