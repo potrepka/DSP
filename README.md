@@ -10,41 +10,31 @@ This project is still in development. Feedback and contributions are welcome!
 #include "DSP.h"
 
 int main() {
-    const unsigned int INPUT_CHANNELS = 2;
-    const unsigned int OUTPUT_CHANNELS = 2;
-    const unsigned int PASS_CHANNELS = 2;
-    const unsigned int SAMPLE_RATE = 44100;
-    const unsigned int BUFFER_SIZE = 512;
-
-    std::shared_ptr<dsp::Audio> audio;
     std::shared_ptr<dsp::PassUnit> pass;
-
-    audio = std::make_shared<dsp::Audio>();
-    audio->getAudioInput()->setNumChannels(INPUT_CHANNELS);
-    audio->getAudioOutput()->setNumChannels(OUTPUT_CHANNELS);
-    audio->setSampleRate(SAMPLE_RATE);
-    audio->setBufferSize(BUFFER_SIZE);
 
     // TODO: Do something more interesting than passing input to output
     pass = std::make_shared<dsp::PassUnit>(dsp::Connection::Type::BIPOLAR);
-    pass->setNumChannels(PASS_CHANNELS);
+    pass->setNumChannels(2);
 
-    audio->pushUnit(pass);
+    // Setup engine
+    dsp::Engine *engine = new dsp::Engine();
+    std::vector<unsigned int> inputDevices = engine->getInputDevices();
+    std::vector<unsigned int> outputDevices = engine->getOutputDevices();
+    unsigned int inputDevice = inputDevices.size() > 0 ? inputDevices[0] : -1;
+    unsigned int outputDevice = outputDevices.size() > 0 ? outputDevices[0] : -1;
+    std::vector<unsigned int> sampleRates = engine->getAvailableSampleRates(inputDevice, outputDevice);
+    unsigned int sampleRate = sampleRates.size() > 0 ? sampleRates[0] : 0;
+    unsigned int bufferSize = 512;
+    engine->setup(inputDevice, outputDevice, sampleRate, bufferSize);
+    
+    // Add units
+    engine->getAudio()->pushUnit(pass);
 
     // Connect units
-    audio->getAudioInput() >> pass->getInputSignal();
-    pass->getOutputSignal() >> audio->getAudioOutput();
-
-    // Interleaved buffers
-    std::vector<DSP_FLOAT> inputBuffer(INPUT_CHANNELS * BUFFER_SIZE);
-    std::vector<DSP_FLOAT> outputBuffer(OUTPUT_CHANNELS * BUFFER_SIZE);
-
-    // Process audio
-    audio->zeroBuffers();
-    audio->readInterleaved(inputBuffer.data(), INPUT_CHANNELS, BUFFER_SIZE);
-    audio->run();
-    audio->copyBuffers();
-    audio->writeInterleaved(outputBuffer.data(), OUTPUT_CHANNELS, BUFFER_SIZE);
+    engine->getAudio()->getAudioInput() >> pass->getInputSignal();
+    pass->getOutputSignal() >> engine->getAudio()->getAudioOutput();
+    
+    delete engine;
 }
 ```
 
