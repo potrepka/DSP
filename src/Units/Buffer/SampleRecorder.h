@@ -8,12 +8,12 @@ class SampleRecorder : public Consumer {
 
 public:
     SampleRecorder();
-    void setNumChannels(std::size_t numChannels) override;
     std::vector<DSP_FLOAT> getSample(std::size_t index);
     std::shared_ptr<InputParameter> getResetTrigger();
     std::shared_ptr<InputParameter> getGate();
 
 protected:
+    void setNumChannelsNoLock(std::size_t numChannels) override;
     void process() override;
 
 private:

@@ -6,13 +6,6 @@ dsp::BufferOscillator::BufferOscillator() : Generator(Connection::Type::BIPOLAR)
     pushInput(Connection::Type::UNIPOLAR);
 }
 
-void dsp::BufferOscillator::setNumChannels(std::size_t numChannels) {
-    lock();
-    setNumChannelsNoLock(numChannels);
-    buffers.resize(numChannels, nullptr);
-    unlock();
-}
-
 std::vector<DSP_FLOAT> &dsp::BufferOscillator::getBuffer(std::size_t index) {
     return *buffers[index];
 }
@@ -31,6 +24,11 @@ void dsp::BufferOscillator::removeBuffer(std::size_t index) {
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::BufferOscillator::getPhase() {
     return getInput(PHASE);
+}
+
+void dsp::BufferOscillator::setNumChannelsNoLock(std::size_t numChannels) {
+    Unit::setNumChannelsNoLock(numChannels);
+    buffers.resize(numChannels, nullptr);
 }
 
 void dsp::BufferOscillator::process() {

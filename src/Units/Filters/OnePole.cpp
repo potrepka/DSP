@@ -6,13 +6,6 @@ dsp::OnePole::OnePole() : Processor(Connection::Type::BIPOLAR, Connection::Type:
     pushInput(Connection::Type::HERTZ);
 }
 
-void dsp::OnePole::setNumChannels(std::size_t numChannels) {
-    lock();
-    setNumChannelsNoLock(numChannels);
-    y1.resize(numChannels, 0.0);
-    unlock();
-}
-
 dsp::OnePole::Mode dsp::OnePole::getMode() {
     return mode;
 }
@@ -23,6 +16,11 @@ void dsp::OnePole::setMode(Mode mode) {
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::OnePole::getFrequency() {
     return getInput(FREQUENCY);
+}
+
+void dsp::OnePole::setNumChannelsNoLock(std::size_t numChannels) {
+    Unit::setNumChannelsNoLock(numChannels);
+    y1.resize(numChannels, 0.0);
 }
 
 void dsp::OnePole::process() {

@@ -8,7 +8,9 @@ class SampleRate : public Generator {
 
 public:
     SampleRate();
-    void setSampleRate(unsigned int sampleRate);
+
+protected:
+    void setSampleRateNoLock(unsigned int sampleRate) override;
 };
 
 } // namespace dsp

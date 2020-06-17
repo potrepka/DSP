@@ -2,7 +2,7 @@
 
 #include "Audio.h"
 
-#define USE_RTAUDIO 0
+#define USE_RTAUDIO 1
 
 #if USE_RTAUDIO
 #include "RtAudio.h"
@@ -45,7 +45,7 @@ public:
     void sortUnits();
 
 private:
-    Audio *audio;
+    std::shared_ptr<Audio> audio;
 #if USE_RTAUDIO
     RtAudio dac;
 #endif

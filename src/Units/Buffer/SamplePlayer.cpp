@@ -12,14 +12,6 @@ dsp::SamplePlayer::SamplePlayer() : Generator(Connection::Type::BIPOLAR) {
     pushInput(Connection::Type::RATIO);
 }
 
-void dsp::SamplePlayer::setNumChannels(std::size_t numChannels) {
-    lock();
-    setNumChannelsNoLock(numChannels);
-    samples.resize(numChannels);
-    position.resize(numChannels, 0);
-    unlock();
-}
-
 std::vector<DSP_FLOAT> dsp::SamplePlayer::getSample(std::size_t index) {
     return samples[index];
 }
@@ -44,6 +36,12 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getStartPosition()
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getSpeed() {
     return getInput(SPEED);
+}
+
+void dsp::SamplePlayer::setNumChannelsNoLock(std::size_t numChannels) {
+    Unit::setNumChannelsNoLock(numChannels);
+    samples.resize(numChannels);
+    position.resize(numChannels, 0);
 }
 
 void dsp::SamplePlayer::process() {

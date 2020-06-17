@@ -7,14 +7,6 @@ dsp::SampleRecorder::SampleRecorder() : Consumer(Connection::Type::BIPOLAR) {
     pushInput(Connection::Type::BINARY);
 }
 
-void dsp::SampleRecorder::setNumChannels(std::size_t numChannels) {
-    lock();
-    setNumChannelsNoLock(numChannels);
-    samples.resize(numChannels);
-    gatePrevious.resize(numChannels, 0);
-    unlock();
-}
-
 std::vector<DSP_FLOAT> dsp::SampleRecorder::getSample(std::size_t index) {
     lock();
     std::vector<DSP_FLOAT> sample = samples[index];
@@ -28,6 +20,12 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleRecorder::getResetTrigger(
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleRecorder::getGate() {
     return getInput(GATE);
+}
+
+void dsp::SampleRecorder::setNumChannelsNoLock(std::size_t numChannels) {
+    Unit::setNumChannelsNoLock(numChannels);
+    samples.resize(numChannels);
+    gatePrevious.resize(numChannels, 0);
 }
 
 void dsp::SampleRecorder::process() {

@@ -9,13 +9,13 @@ class FFT : public Consumer {
 
 public:
     FFT();
-    void setBufferSize(unsigned int bufferSize) override;
     bool getInverted();
     void setInverted(bool inverted);
     std::shared_ptr<OutputParameter> getReal();
     std::shared_ptr<OutputParameter> getImaginary();
 
 protected:
+    void setBufferSizeNoLock(unsigned int bufferSize) override;
     void process() override;
 
 private:

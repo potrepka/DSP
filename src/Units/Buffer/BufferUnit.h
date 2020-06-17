@@ -8,12 +8,12 @@ class BufferUnit : public Consumer {
 
 public:
     BufferUnit();
-    void setNumChannels(std::size_t numChannels) override;
     std::size_t getUnitBufferSize();
     void setUnitBufferSize(std::size_t size);
     std::vector<DSP_FLOAT> &getUnitBuffer(std::size_t index);
 
 protected:
+    void setNumChannelsNoLock(std::size_t numChannels) override;
     void process() override;
 
 private:

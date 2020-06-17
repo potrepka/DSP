@@ -3,30 +3,6 @@
 dsp::Convolver::Convolver()
         : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR), headSize(0), tailSize(0) {}
 
-void dsp::Convolver::setBufferSize(unsigned int bufferSize) {
-    lock();
-    setBufferSizeNoLock(bufferSize);
-    input.resize(bufferSize);
-    output.resize(bufferSize);
-    unlock();
-}
-
-void dsp::Convolver::setNumChannels(std::size_t numChannels) {
-    lock();
-    setNumChannelsNoLock(numChannels);
-    samples.resize(numChannels);
-    std::size_t currentSize = convolvers.size();
-    if (numChannels < currentSize) {
-        convolvers.resize(numChannels);
-    } else {
-        convolvers.reserve(numChannels);
-        for (std::size_t i = currentSize; i < numChannels; i++) {
-            convolvers.emplace_back(std::make_unique<fftconvolver::TwoStageFFTConvolver>());
-        }
-    }
-    unlock();
-}
-
 std::vector<DSP_FLOAT> dsp::Convolver::getSample(std::size_t index) {
     return samples[index];
 }
@@ -62,6 +38,26 @@ void dsp::Convolver::setTailSize(std::size_t size) {
         initConvolver(i);
     }
     unlock();
+}
+
+void dsp::Convolver::setBufferSizeNoLock(unsigned int bufferSize) {
+    Unit::setBufferSizeNoLock(bufferSize);
+    input.resize(bufferSize);
+    output.resize(bufferSize);
+}
+
+void dsp::Convolver::setNumChannelsNoLock(std::size_t numChannels) {
+    Unit::setNumChannelsNoLock(numChannels);
+    samples.resize(numChannels);
+    std::size_t currentSize = convolvers.size();
+    if (numChannels < currentSize) {
+        convolvers.resize(numChannels);
+    } else {
+        convolvers.reserve(numChannels);
+        for (std::size_t i = currentSize; i < numChannels; i++) {
+            convolvers.emplace_back(std::make_unique<fftconvolver::TwoStageFFTConvolver>());
+        }
+    }
 }
 
 void dsp::Convolver::process() {

@@ -16,11 +16,9 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::GainEnvelope::getRelease() {
     return getInput(RELEASE);
 }
 
-void dsp::GainEnvelope::setNumChannels(std::size_t numChannels) {
-    lock();
-    setNumChannelsNoLock(numChannels);
+void dsp::GainEnvelope::setNumChannelsNoLock(std::size_t numChannels) {
+    Unit::setNumChannelsNoLock(numChannels);
     outputPrevious.resize(numChannels, 0);
-    unlock();
 }
 
 void dsp::GainEnvelope::process() {

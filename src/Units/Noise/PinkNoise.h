@@ -8,9 +8,9 @@ class PinkNoise : public Generator {
 
 public:
     PinkNoise();
-    void setNumChannels(std::size_t numChannels) override;
 
 protected:
+    void setNumChannelsNoLock(std::size_t numChannels) override;
     void process() override;
 
 private:

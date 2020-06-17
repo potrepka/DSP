@@ -8,19 +8,17 @@ dsp::Phasor::Phasor() : Generator(Connection::Type::UNIPOLAR) {
     pushInput(Connection::Type::BINARY);
 }
 
-void dsp::Phasor::setNumChannels(std::size_t numChannels) {
-    lock();
-    setNumChannelsNoLock(numChannels);
-    phase.resize(numChannels, 0.0);
-    unlock();
-}
-
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Phasor::getFrequency() {
     return getInput(FREQUENCY);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Phasor::getResetTrigger() {
     return getInput(RESET_TRIGGER);
+}
+
+void dsp::Phasor::setNumChannelsNoLock(std::size_t numChannels) {
+    Unit::setNumChannelsNoLock(numChannels);
+    phase.resize(numChannels, 0.0);
 }
 
 void dsp::Phasor::process() {

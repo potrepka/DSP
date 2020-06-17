@@ -10,12 +10,12 @@ public:
     enum class Mode { LOW_PASS, HIGH_PASS };
 
     OnePole();
-    void setNumChannels(std::size_t numChannels) override;
     Mode getMode();
     void setMode(Mode mode);
     std::shared_ptr<InputParameter> getFrequency();
 
 protected:
+    void setNumChannelsNoLock(std::size_t numChannels) override;
     void process() override;
 
 private:

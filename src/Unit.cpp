@@ -83,31 +83,7 @@ dsp::Unit::OutputParameter::OutputParameter(unsigned int bufferSize, Connection:
 
 template class dsp::Unit::ConnectionParameter<dsp::Output>;
 
-dsp::Unit::Unit() : sampleRate(0), bufferSize(0), numChannels(0) {}
-
-DSP_FLOAT dsp::Unit::getOneOverSampleRate() {
-    return oneOverSampleRate;
-}
-
-unsigned int dsp::Unit::getSampleRate() {
-    return sampleRate;
-}
-
-void dsp::Unit::setSampleRate(unsigned int sampleRate) {
-    lock();
-    setSampleRateNoLock(sampleRate);
-    unlock();
-}
-
-unsigned int dsp::Unit::getBufferSize() {
-    return bufferSize;
-}
-
-void dsp::Unit::setBufferSize(unsigned int bufferSize) {
-    lock();
-    setBufferSizeNoLock(bufferSize);
-    unlock();
-}
+dsp::Unit::Unit() : numChannels(0) {}
 
 std::size_t dsp::Unit::getNumInputs() {
     return inputs.size();
@@ -135,53 +111,53 @@ void dsp::Unit::setOutput(std::size_t index, std::shared_ptr<dsp::Unit::OutputPa
 
 void dsp::Unit::pushInput(std::shared_ptr<InputParameter> input) {
     lock();
-    input->setBufferSize(bufferSize);
+    input->setBufferSize(getBufferSize());
     inputs.push_back(input);
     unlock();
 }
 
 void dsp::Unit::pushInput(Connection::Type type, DSP_FLOAT value) {
     lock();
-    inputs.push_back(std::make_shared<InputParameter>(bufferSize, type, value));
+    inputs.push_back(std::make_shared<InputParameter>(getBufferSize(), type, value));
     unlock();
 }
 
 void dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
     lock();
-    output->setBufferSize(bufferSize);
+    output->setBufferSize(getBufferSize());
     outputs.push_back(output);
     unlock();
 }
 
 void dsp::Unit::pushOutput(Connection::Type type, DSP_FLOAT value) {
     lock();
-    outputs.push_back(std::make_shared<OutputParameter>(bufferSize, type, value));
+    outputs.push_back(std::make_shared<OutputParameter>(getBufferSize(), type, value));
     unlock();
 }
 
 void dsp::Unit::insertInput(std::size_t index, std::shared_ptr<InputParameter> input) {
     lock();
-    input->setBufferSize(bufferSize);
+    input->setBufferSize(getBufferSize());
     inputs.insert(inputs.begin() + index, input);
     unlock();
 }
 
 void dsp::Unit::insertInput(std::size_t index, Connection::Type type, DSP_FLOAT value) {
     lock();
-    inputs.insert(inputs.begin() + index, std::make_shared<InputParameter>(bufferSize, type, value));
+    inputs.insert(inputs.begin() + index, std::make_shared<InputParameter>(getBufferSize(), type, value));
     unlock();
 }
 
 void dsp::Unit::insertOutput(std::size_t index, std::shared_ptr<OutputParameter> output) {
     lock();
-    output->setBufferSize(bufferSize);
+    output->setBufferSize(getBufferSize());
     outputs.insert(outputs.begin() + index, output);
     unlock();
 }
 
 void dsp::Unit::insertOutput(std::size_t index, Connection::Type type, DSP_FLOAT value) {
     lock();
-    outputs.insert(outputs.begin() + index, std::make_shared<OutputParameter>(bufferSize, type, value));
+    outputs.insert(outputs.begin() + index, std::make_shared<OutputParameter>(getBufferSize(), type, value));
     unlock();
 }
 
@@ -229,16 +205,16 @@ std::shared_ptr<dsp::Unit> dsp::Unit::getUnit(std::size_t index) {
 
 void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit) {
     lock();
-    unit->setSampleRate(sampleRate);
-    unit->setBufferSize(bufferSize);
+    unit->setSampleRate(getSampleRate());
+    unit->setBufferSize(getBufferSize());
     units.push_back(unit);
     unlock();
 }
 
 void dsp::Unit::insertUnit(std::size_t index, std::shared_ptr<Unit> unit) {
     lock();
-    unit->setSampleRate(sampleRate);
-    unit->setBufferSize(bufferSize);
+    unit->setSampleRate(getSampleRate());
+    unit->setBufferSize(getBufferSize());
     units.insert(units.begin() + index, unit);
     unlock();
 }
@@ -351,14 +327,14 @@ void dsp::Unit::run() {
 }
 
 void dsp::Unit::setSampleRateNoLock(unsigned int sampleRate) {
+    Runnable::setSampleRateNoLock(sampleRate);
     for (const auto &unit : units) {
         unit->setSampleRate(sampleRate);
     }
-    this->sampleRate = sampleRate;
-    oneOverSampleRate = 1.0 / sampleRate;
 }
 
 void dsp::Unit::setBufferSizeNoLock(unsigned int bufferSize) {
+    Runnable::setBufferSizeNoLock(bufferSize);
     for (const auto &unit : units) {
         unit->setBufferSize(bufferSize);
     }
@@ -368,10 +344,10 @@ void dsp::Unit::setBufferSizeNoLock(unsigned int bufferSize) {
     for (const auto &output : outputs) {
         output->setBufferSize(bufferSize);
     }
-    this->bufferSize = bufferSize;
 }
 
 void dsp::Unit::setNumChannelsNoLock(std::size_t numChannels) {
+    this->numChannels = numChannels;
     if (units.size() > 0) {
         disconnect();
         for (const auto &unit : units) {
@@ -386,7 +362,6 @@ void dsp::Unit::setNumChannelsNoLock(std::size_t numChannels) {
             output->setNumChannels(numChannels);
         }
     }
-    this->numChannels = numChannels;
 }
 
 void dsp::Unit::connect() {}

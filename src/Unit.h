@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Connection.h"
+#include "Runnable.h"
 #include <map>
 #include <memory>
 #include <queue>
@@ -9,7 +10,7 @@
 
 namespace dsp {
 
-class Unit : public Lockable {
+class Unit : public Runnable {
 
 public:
     template <class T> class ConnectionParameter : public Lockable {
@@ -52,14 +53,6 @@ public:
 
     Unit();
 
-    DSP_FLOAT getOneOverSampleRate();
-
-    unsigned int getSampleRate();
-    virtual void setSampleRate(unsigned int sampleRate);
-
-    unsigned int getBufferSize();
-    virtual void setBufferSize(unsigned int bufferSize);
-
     std::size_t getNumInputs();
     std::size_t getNumOutputs();
     std::shared_ptr<InputParameter> getInput(std::size_t index);
@@ -80,7 +73,7 @@ public:
     void removeOutput(std::size_t index);
 
     std::size_t getNumChannels();
-    virtual void setNumChannels(std::size_t numChannels);
+    void setNumChannels(std::size_t numChannels);
 
     std::size_t getNumUnits();
     std::shared_ptr<Unit> getUnit(std::size_t index);
@@ -97,18 +90,15 @@ protected:
     std::vector<std::shared_ptr<OutputParameter>> outputs;
     std::vector<std::shared_ptr<Unit>> units;
 
-    void setSampleRateNoLock(unsigned int sampleRate);
-    void setBufferSizeNoLock(unsigned int bufferSize);
-    void setNumChannelsNoLock(std::size_t numChannels);
+    void setSampleRateNoLock(unsigned int sampleRate) override;
+    void setBufferSizeNoLock(unsigned int bufferSize) override;
+    virtual void setNumChannelsNoLock(std::size_t numChannels);
 
     virtual void connect();
     virtual void disconnect();
     virtual void process();
 
 private:
-    DSP_FLOAT oneOverSampleRate;
-    unsigned int sampleRate;
-    unsigned int bufferSize;
     std::size_t numChannels;
 };
 

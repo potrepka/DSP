@@ -8,11 +8,11 @@ class GainEnvelope : public Processor {
 
 public:
     GainEnvelope();
-    void setNumChannels(std::size_t numChannels) override;
     std::shared_ptr<InputParameter> getAttack();
     std::shared_ptr<InputParameter> getRelease();
 
 protected:
+    void setNumChannelsNoLock(std::size_t numChannels) override;
     void process() override;
 
 private:

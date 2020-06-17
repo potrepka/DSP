@@ -2,9 +2,7 @@
 
 dsp::BufferSize::BufferSize() : Generator(Connection::Type::INTEGER) {}
 
-void dsp::BufferSize::setBufferSize(unsigned int bufferSize) {
-    lock();
-    setBufferSizeNoLock(bufferSize);
+void dsp::BufferSize::setBufferSizeNoLock(unsigned int bufferSize) {
+    Unit::setBufferSizeNoLock(bufferSize);
     getOutputSignal()->setValue(bufferSize);
-    unlock();
 }

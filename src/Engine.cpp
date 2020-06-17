@@ -1,7 +1,7 @@
 #include "Engine.h"
 
 dsp::Engine::Engine() : numInputChannels(0), numOutputChannels(0), sampleRate(0), bufferSize(0) {
-    audio = new Audio();
+    audio = std::make_shared<Audio>();
 }
 
 dsp::Engine::~Engine() {
@@ -15,8 +15,6 @@ dsp::Engine::~Engine() {
         }
     } catch (RtAudioError &error) { error.printMessage(); }
 #endif
-
-    delete audio;
 }
 
 std::vector<unsigned int> dsp::Engine::getInputDevices() {

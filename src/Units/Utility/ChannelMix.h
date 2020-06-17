@@ -10,12 +10,12 @@ public:
     enum class Mode { MID, SIDE };
 
     ChannelMix();
-    void setBufferSize(unsigned int bufferSize) override;
     Mode getMode();
     void setMode(Mode mode);
     std::shared_ptr<InputParameter> getMix();
 
 protected:
+    void setBufferSizeNoLock(unsigned int bufferSize) override;
     void process() override;
 
 private:

@@ -6,13 +6,6 @@ dsp::ChannelMix::ChannelMix() : Processor(Connection::Type::BIPOLAR, Connection:
     pushInput(Connection::Type::UNIPOLAR);
 }
 
-void dsp::ChannelMix::setBufferSize(unsigned int bufferSize) {
-    lock();
-    setBufferSizeNoLock(bufferSize);
-    buffer.resize(bufferSize);
-    unlock();
-}
-
 dsp::ChannelMix::Mode dsp::ChannelMix::getMode() {
     return mode;
 }
@@ -23,6 +16,11 @@ void dsp::ChannelMix::setMode(Mode mode) {
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::ChannelMix::getMix() {
     return getInput(MIX);
+}
+
+void dsp::ChannelMix::setBufferSizeNoLock(unsigned int bufferSize) {
+    Unit::setBufferSizeNoLock(bufferSize);
+    buffer.resize(bufferSize);
 }
 
 void dsp::ChannelMix::process() {

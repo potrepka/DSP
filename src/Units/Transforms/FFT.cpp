@@ -8,22 +8,20 @@ dsp::FFT::FFT() : Consumer(Connection::Type::BIPOLAR), inverted(false) {
     pushOutput(Connection::Type::FFT_IMAGINARY);
 }
 
-void dsp::FFT::setBufferSize(unsigned int bufferSize) {
-    lock();
-    setBufferSizeNoLock(bufferSize);
-    fft.init(bufferSize);
-    input.resize(bufferSize);
-    real.resize(audiofft::AudioFFT::ComplexSize(bufferSize));
-    imaginary.resize(audiofft::AudioFFT::ComplexSize(bufferSize));
-    unlock();
-}
-
 std::shared_ptr<dsp::Unit::OutputParameter> dsp::FFT::getReal() {
     return getOutput(REAL);
 }
 
 std::shared_ptr<dsp::Unit::OutputParameter> dsp::FFT::getImaginary() {
     return getOutput(IMAGINARY);
+}
+
+void dsp::FFT::setBufferSizeNoLock(unsigned int bufferSize) {
+    Unit::setBufferSizeNoLock(bufferSize);
+    fft.init(bufferSize);
+    input.resize(bufferSize);
+    real.resize(audiofft::AudioFFT::ComplexSize(bufferSize));
+    imaginary.resize(audiofft::AudioFFT::ComplexSize(bufferSize));
 }
 
 void dsp::FFT::process() {
