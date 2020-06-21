@@ -58,10 +58,10 @@ void dsp::SamplePlayer::process() {
                     position[i] = fmod(startPositionBuffer[k] * getSampleRate(), samples[i].size());
                 }
                 if (gateBuffer[k]) {
-                    std::size_t k1 = static_cast<int>(position[i]);
-                    std::size_t k0 = (k1 + samples[i].size() - 1) % samples[i].size();
-                    std::size_t k2 = (k1 + 1) % samples[i].size();
-                    std::size_t k3 = (k1 + 2) % samples[i].size();
+                    const std::size_t k1 = static_cast<int>(position[i]);
+                    const std::size_t k0 = (k1 + samples[i].size() - 1) % samples[i].size();
+                    const std::size_t k2 = (k1 + 1) % samples[i].size();
+                    const std::size_t k3 = (k1 + 2) % samples[i].size();
                     std::vector<DSP_FLOAT> points{samples[i][k0], samples[i][k1], samples[i][k2], samples[i][k3]};
                     outputBuffer[k] = linear(points, 1 + position[i] - k1);
                     position[i] = fmod(position[i] + speedBuffer[k], samples[i].size());

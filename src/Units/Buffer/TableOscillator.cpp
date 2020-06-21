@@ -58,16 +58,18 @@ void dsp::TableOscillator::process() {
             std::vector<DSP_FLOAT> &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &positionBuffer = getPosition()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
-                DSP_FLOAT positionIndex = positionBuffer[k] * (tables.size() - 1);
-                int positionBefore = static_cast<int>(positionIndex) - 1;
-                for (int j = 0, p = positionBefore; j < 4; j++, p++) {
-                    if (p >= 0 && p < tables.size() && tables[p].size() > 0) {
-                        points[j] = linear(tables[p], phaseBuffer[k] * tables[p].size());
+                const DSP_FLOAT positionIndex = positionBuffer[k] * (tables.size() - 1);
+                const std::size_t indexBefore = static_cast<std::size_t>(positionIndex) - 1;
+                std::size_t index = indexBefore;
+                for (unsigned char j = 0; j < 4; j++) {
+                    if (index >= 0 && index < tables.size() && tables[index].size() > 0) {
+                        points[j] = linear(tables[index], phaseBuffer[k] * tables[index].size());
                     } else {
                         points[j] = 0.0;
                     }
+                    index++;
                 }
-                outputBuffer[k] = hermite(points, positionIndex - positionBefore);
+                outputBuffer[k] = hermite(points, positionIndex - indexBefore);
             }
         }
     }

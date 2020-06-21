@@ -63,10 +63,10 @@ void dsp::Biquad::process() {
 }
 
 void dsp::Biquad::calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FLOAT &q, const DSP_FLOAT &gain) {
-    double omega = TAU * frequency * getOneOverSampleRate();
-    double sinW = sin(omega);
-    double cosW = cos(omega);
-    double alpha = sinW / (2.0 * q);
+    const double omega = TAU * frequency * getOneOverSampleRate();
+    const double sinW = sin(omega);
+    const double cosW = cos(omega);
+    const double alpha = sinW / (2.0 * q);
 
     switch (mode) {
         case Mode::LOW_PASS:
@@ -99,12 +99,12 @@ void dsp::Biquad::calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FL
             b1 = a1;
             break;
         case Mode::LOW_SHELF: {
-            double amp = pow(10.0, gain * 0.025);
-            double ampPlus = amp + 1.0;
-            double ampMinus = amp - 1.0;
-            double alphaScaled = 2.0 * sqrt(amp) * alpha;
-            double ampPlusTimesCosW = ampPlus * cosW;
-            double ampMinusTimesCosW = ampMinus * cosW;
+            const double amp = pow(10.0, gain * 0.025);
+            const double ampPlus = amp + 1.0;
+            const double ampMinus = amp - 1.0;
+            const double alphaScaled = 2.0 * sqrt(amp) * alpha;
+            const double ampPlusTimesCosW = ampPlus * cosW;
+            const double ampMinusTimesCosW = ampMinus * cosW;
             a0 = ampPlus + ampMinusTimesCosW + alphaScaled;
             a1 = 2.0 * (ampMinus + ampPlusTimesCosW);
             a2 = ampPlus + ampMinusTimesCosW - alphaScaled;
@@ -113,12 +113,12 @@ void dsp::Biquad::calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FL
             b2 = amp * (ampPlus - ampMinusTimesCosW - alphaScaled);
         } break;
         case Mode::HIGH_SHELF: {
-            double amp = pow(10.0, gain * 0.025);
-            double ampPlus = amp + 1.0;
-            double ampMinus = amp - 1.0;
-            double alphaScaled = 2.0 * sqrt(amp) * alpha;
-            double ampPlusTimesCosW = ampPlus * cosW;
-            double ampMinusTimesCosW = ampMinus * cosW;
+            const double amp = pow(10.0, gain * 0.025);
+            const double ampPlus = amp + 1.0;
+            const double ampMinus = amp - 1.0;
+            const double alphaScaled = 2.0 * sqrt(amp) * alpha;
+            const double ampPlusTimesCosW = ampPlus * cosW;
+            const double ampMinusTimesCosW = ampMinus * cosW;
             a0 = ampPlus - ampMinusTimesCosW + alphaScaled;
             a1 = 2.0 * (ampMinus - ampPlusTimesCosW);
             a2 = ampPlus - ampMinusTimesCosW - alphaScaled;
@@ -127,9 +127,9 @@ void dsp::Biquad::calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FL
             b2 = amp * (ampPlus + ampMinusTimesCosW - alphaScaled);
         } break;
         case Mode::PEAK: {
-            double amp = pow(10.0, gain * 0.025);
-            double alphaMore = alpha * amp;
-            double alphaLess = alpha / amp;
+            const double amp = pow(10.0, gain * 0.025);
+            const double alphaMore = alpha * amp;
+            const double alphaLess = alpha / amp;
             a0 = 1.0 + alphaLess;
             a1 = -2.0 * cosW;
             a2 = 1.0 - alphaLess;
