@@ -2,6 +2,7 @@
 
 dsp::Engine::Engine() : numInputChannels(0), numOutputChannels(0), sampleRate(0), bufferSize(0) {
     audio = std::make_shared<Audio>();
+    midi = std::make_shared<Midi>();
 }
 
 dsp::Engine::~Engine() {

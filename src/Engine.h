@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Audio.h"
+#include "Midi.h"
 
 #define USE_RTAUDIO 1
 
@@ -46,6 +47,7 @@ public:
 
 private:
     std::shared_ptr<Audio> audio;
+    std::shared_ptr<Midi> midi;
 #if USE_RTAUDIO
     RtAudio dac;
 #endif
