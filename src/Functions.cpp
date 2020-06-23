@@ -1,7 +1,7 @@
 #include "Functions.h"
 
 DSP_FLOAT dsp::clip(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
-    return signal < min ? min : signal > max ? max : signal;
+    return signal < min || max < min ? min : signal > max ? max : signal;
 }
 
 DSP_FLOAT dsp::wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {

@@ -38,7 +38,7 @@ void dsp::BufferOscillator::process() {
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
-                outputBuffer[k] = linear(*buffers[i], phaseBuffer[k] * buffers[i]->size());
+                outputBuffer[k] = linear(*buffers[i], wrap(phaseBuffer[k], 0.0, 1.0) * buffers[i]->size());
             }
         }
     }
