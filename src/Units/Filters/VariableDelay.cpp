@@ -29,7 +29,7 @@ void dsp::VariableDelay::setSampleRateNoLock(unsigned int sampleRate) {
 
 void dsp::VariableDelay::setNumChannelsNoLock(std::size_t numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    buffers.resize(numChannels, std::vector<DSP_FLOAT>(getDelayBufferSize(), 0));
+    buffers.resize(numChannels, std::vector<DSP_FLOAT>(getDelayBufferSize(), 0.0));
 }
 
 void dsp::VariableDelay::process() {
@@ -39,15 +39,17 @@ void dsp::VariableDelay::process() {
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &delayTimeBuffer = getDelayTime()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
-            buffers[i][writeIndex + k] = inputBuffer[k];
-            DSP_FLOAT delayTime = clip(delayTimeBuffer[i], 0.0, maxDelayTime);
-            DSP_FLOAT readIndex = static_cast<DSP_FLOAT>(writeIndex) - delayTime * getSampleRate();
+            const std::size_t index = (writeIndex + k) % buffers[i].size();
+            const DSP_FLOAT delayTime = clip(delayTimeBuffer[i], 0.0, maxDelayTime);
+            DSP_FLOAT readIndex = static_cast<DSP_FLOAT>(index) - delayTime * getSampleRate();
             if (readIndex < 0.0) {
                 readIndex += buffers[i].size();
             }
+            buffers[i][index] = inputBuffer[k];
             outputBuffer[k] = hermite(buffers[i], readIndex);
         }
     }
+    writeIndex = (writeIndex + getBufferSize()) % getDelayBufferSize();
 }
 
 unsigned int dsp::VariableDelay::getDelayBufferSize() {
