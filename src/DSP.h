@@ -19,6 +19,7 @@
 #include "Biquad.h"
 #include "Convolver.h"
 #include "OnePole.h"
+#include "VariableDelay.h"
 
 // Math
 #include "AbsoluteValue.h"
@@ -30,6 +31,7 @@
 
 // Phase
 #include "Phasor.h"
+#include "Trigger.h"
 
 // Transforms
 #include "BipolarToUnipolar.h"
