@@ -5,7 +5,9 @@ DSP_FLOAT dsp::clip(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT
 }
 
 DSP_FLOAT dsp::wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
-    return fmod(signal - min, max - min) + min;
+    const DSP_FLOAT diff = max - min;
+    const DSP_FLOAT adjustment = floor(signal / diff) + (signal >= 0.0 ? 0.0 : -1.0);
+    return signal - diff * adjustment;
 }
 
 DSP_FLOAT dsp::decibelsToAmplitude(DSP_FLOAT decibels) {

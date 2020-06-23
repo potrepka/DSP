@@ -63,7 +63,7 @@ void dsp::TableOscillator::process() {
                 long p = indexBefore;
                 for (unsigned char j = 0; j < 4; j++) {
                     if (p >= 0 && p < tables.size() && tables[p].size() > 0) {
-                        points[j] = linear(tables[p], phaseBuffer[k] * tables[p].size());
+                        points[j] = linear(tables[p], wrap(phaseBuffer[k], 0.0, 1.0) * tables[p].size());
                     } else {
                         points[j] = 0.0;
                     }
