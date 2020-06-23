@@ -18,7 +18,7 @@ protected:
 private:
     static const std::size_t INTERVAL;
     static const std::size_t RESET_TRIGGER;
-    std::vector<unsigned int> phase;
+    std::vector<DSP_FLOAT> phase;
 };
 
 } // namespace dsp
