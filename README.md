@@ -50,7 +50,6 @@ int main() {
 ## Future Direction
 
 The following are possible directions for future development:
-- Variable delay
 - Delay effects
 - Elliptic filter
 - Cascading filters
