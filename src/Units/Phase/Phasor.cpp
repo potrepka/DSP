@@ -29,7 +29,7 @@ void dsp::Phasor::process() {
         std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (resetTriggerBuffer[k]) {
-                phase[i] = 0;
+                phase[i] = 0.0;
             }
             outputBuffer[k] = phase[i];
             phase[i] = wrap(phase[i] + frequencyBuffer[k] * getOneOverSampleRate(), 0.0, 1.0);
