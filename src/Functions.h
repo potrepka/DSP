@@ -6,7 +6,8 @@
 
 namespace dsp {
 
-DSP_FLOAT clip(const DSP_FLOAT signal);
+DSP_FLOAT clip(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max);
+DSP_FLOAT wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max);
 DSP_FLOAT decibelsToAmplitude(const DSP_FLOAT decibels);
 DSP_FLOAT amplitudeToDecibels(const DSP_FLOAT amplitude);
 DSP_FLOAT linear(std::vector<DSP_FLOAT> &table, const DSP_FLOAT index);

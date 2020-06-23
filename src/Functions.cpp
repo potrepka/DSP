@@ -1,7 +1,11 @@
 #include "Functions.h"
 
-DSP_FLOAT dsp::clip(const DSP_FLOAT signal) {
-    return signal < -1.0 ? -1.0 : signal > 1.0 ? 1.0 : signal;
+DSP_FLOAT dsp::clip(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
+    return signal < min ? min : signal > max ? max : signal;
+}
+
+DSP_FLOAT dsp::wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
+    return fmod(signal - min, max - min) + min;
 }
 
 DSP_FLOAT dsp::decibelsToAmplitude(DSP_FLOAT decibels) {
