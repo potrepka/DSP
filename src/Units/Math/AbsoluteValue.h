@@ -9,7 +9,7 @@ class AbsoluteValue : public Processor {
 public:
     AbsoluteValue();
 
-private:
+protected:
     void process() override;
 };
 
