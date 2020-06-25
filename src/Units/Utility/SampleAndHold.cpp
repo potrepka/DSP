@@ -1,6 +1,6 @@
 #include "SampleAndHold.h"
 
-const std::size_t TRIGGER = 0;
+const std::size_t dsp::SampleAndHold::TRIGGER = 0;
 
 dsp::SampleAndHold::SampleAndHold(Connection::Type type) : Processor(type, type) {
     pushInput(Connection::Type::BINARY);
