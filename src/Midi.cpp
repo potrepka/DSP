@@ -164,6 +164,20 @@ void dsp::Midi::MidiInput::pushQueue(double delta, std::vector<unsigned char> &m
     queue.push(TimedMessage(messageTime, message));
 }
 
+void dsp::Midi::MidiInput::runCallbacks(double delta, std::vector<unsigned char> &message) {
+    for (const auto &callback : callbacks) {
+        callback(delta, message);
+    }
+}
+
+void dsp::Midi::MidiInput::addCallback(void (*callback)(double, std::vector<unsigned char>)) {
+    callbacks.push_back(callback);
+}
+
+void dsp::Midi::MidiInput::removeCallback(void (*callback)(double, std::vector<unsigned char>)) {
+    callbacks.erase(std::remove(callbacks.begin(), callbacks.end(), callback), callbacks.end());
+}
+
 void dsp::Midi::MidiInput::run() {
     lock();
     for (unsigned int k = 0; k < getBufferSize(); k++) {

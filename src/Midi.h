@@ -81,6 +81,9 @@ public:
         std::shared_ptr<Input> getChannelPressure(unsigned char channel);
         std::shared_ptr<Input> getPitchBend(unsigned char channel);
         void pushQueue(double delta, std::vector<unsigned char> &message);
+        void runCallbacks(double delta, std::vector<unsigned char> &message);
+        void addCallback(void (*callback)(double, std::vector<unsigned char>));
+        void removeCallback(void (*callback)(double, std::vector<unsigned char>));
         void run();
 
     private:
@@ -91,6 +94,7 @@ public:
         double messageTime;
         unsigned long bufferSamples;
         std::priority_queue<TimedMessage, std::vector<TimedMessage>, TimedMessage::compare> queue;
+        std::vector<void (*)(double, std::vector<unsigned char>)> callbacks;
         std::vector<std::vector<DSP_FLOAT>> noteGateState;
         std::vector<std::vector<DSP_FLOAT>> notePressureState;
         std::vector<std::vector<DSP_FLOAT>> controlChangeState;
