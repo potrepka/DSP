@@ -73,7 +73,7 @@ void dsp::Midi::MidiInput::callback(double delta, std::vector<unsigned char> *me
     input->pushQueue(delta, *message);
 }
 
-dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSamples(0) {
+dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSamples(0), playingState(0.0) {
 #if USE_RTMIDI
     midiIn.setCallback(MidiInput::callback, this);
 #endif
@@ -92,6 +92,10 @@ dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSam
     programChange.resize(MIDI_CHANNELS);
     channelPressure.resize(MIDI_CHANNELS);
     pitchBend.resize(MIDI_CHANNELS);
+
+    playing = std::make_shared<Input>(getBufferSize(), Connection::Type::BINARY, 0.0);
+    reset = std::make_shared<Input>(getBufferSize(), Connection::Type::BINARY, 0.0);
+    clock = std::make_shared<Input>(getBufferSize(), Connection::Type::BINARY, 0.0);
 
     for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
         noteGateState[i].reserve(MIDI_NOTES);
@@ -163,6 +167,8 @@ void dsp::Midi::MidiInput::pushQueue(double delta, std::vector<unsigned char> &m
 void dsp::Midi::MidiInput::run() {
     lock();
     for (unsigned int k = 0; k < getBufferSize(); k++) {
+        bool resetState = false;
+        bool clockState = false;
         if (queue.top().getTime() <= bufferSamples * getOneOverSampleRate()) {
             const TimedMessage &message = queue.top();
             const TimedMessage::Type type = message.getType();
@@ -185,12 +191,15 @@ void dsp::Midi::MidiInput::run() {
                 case TimedMessage::MIDI_TIME_CODE:
                 case TimedMessage::MIDI_SONG_POS_POINTER:
                 case TimedMessage::MIDI_SONG_SELECT:
-                case TimedMessage::MIDI_TUNE_REQUEST:
+                case TimedMessage::MIDI_TUNE_REQUEST: break;
 
-                case TimedMessage::MIDI_TIME_CLOCK:
+                case TimedMessage::MIDI_TIME_CLOCK: clockState = true; break;
                 case TimedMessage::MIDI_START:
-                case TimedMessage::MIDI_CONTINUE:
-                case TimedMessage::MIDI_STOP:
+                    playingState = true;
+                    resetState = true;
+                    break;
+                case TimedMessage::MIDI_CONTINUE: playingState = true; break;
+                case TimedMessage::MIDI_STOP: playingState = false; break;
 
                 case TimedMessage::MIDI_UNKNOWN:
                 case TimedMessage::MIDI_SYSEX:
@@ -209,12 +218,15 @@ void dsp::Midi::MidiInput::run() {
             channelPressure[i]->getBuffer()[k] = channelPressureState[i];
             pitchBend[i]->getBuffer()[k] = pitchBendState[i];
         }
+        playing->getBuffer()[k] = playingState ? 1.0 : 0.0;
+        reset->getBuffer()[k] = resetState ? 1.0 : 0.0;
+        clock->getBuffer()[k] = clockState ? 1.0 : 0.0;
         bufferSamples++;
     }
     unlock();
 }
 
-dsp::Midi::MidiOutput::MidiOutput(unsigned int port) {
+dsp::Midi::MidiOutput::MidiOutput(unsigned int port) : playingState(false) {
     setPort(port);
 
     noteGateState.resize(MIDI_CHANNELS);
@@ -230,6 +242,10 @@ dsp::Midi::MidiOutput::MidiOutput(unsigned int port) {
     programChange.resize(MIDI_CHANNELS);
     channelPressure.resize(MIDI_CHANNELS);
     pitchBend.resize(MIDI_CHANNELS);
+
+    playing = std::make_shared<Output>(getBufferSize(), Connection::Type::BINARY, 0.0);
+    reset = std::make_shared<Output>(getBufferSize(), Connection::Type::BINARY, 0.0);
+    clock = std::make_shared<Output>(getBufferSize(), Connection::Type::BINARY, 0.0);
 
     for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
         noteGateState[i].reserve(MIDI_NOTES);
@@ -304,6 +320,7 @@ void dsp::Midi::MidiOutput::sendMessageWithDelay(int64_t nanoseconds, std::vecto
 
 void dsp::Midi::MidiOutput::run() {
     lock();
+    TimedMessage message1(0.0, std::vector<unsigned char>(1));
     TimedMessage message2(0.0, std::vector<unsigned char>(2));
     TimedMessage message3(0.0, std::vector<unsigned char>(3));
     for (unsigned int k = 0; k < getBufferSize(); k++) {
@@ -353,6 +370,18 @@ void dsp::Midi::MidiOutput::run() {
                 pitchBendState[i] = message3.getShort(1, 2);
                 message3.setByte(0, TimedMessage::Type::MIDI_PITCH_BEND + i);
                 sendMessageWithDelay(nanoseconds, message3.getMessage());
+            }
+            if (playingState != playing->getBuffer()[k]) {
+                playingState = playing->getBuffer()[k];
+                message1.setByte(0,
+                                 playingState ? (reset->getBuffer()[k] ? TimedMessage::Type::MIDI_START
+                                                                       : TimedMessage::Type::MIDI_CONTINUE)
+                                              : TimedMessage::Type::MIDI_STOP);
+                sendMessageWithDelay(nanoseconds, message1.getMessage());
+            }
+            if (clock->getBuffer()[k]) {
+                message1.setByte(0, TimedMessage::Type::MIDI_TIME_CLOCK);
+                sendMessageWithDelay(nanoseconds, message1.getMessage());
             }
         }
     }

@@ -97,12 +97,16 @@ public:
         std::vector<DSP_FLOAT> programChangeState;
         std::vector<DSP_FLOAT> channelPressureState;
         std::vector<DSP_FLOAT> pitchBendState;
+        DSP_FLOAT playingState;
         std::vector<std::vector<std::shared_ptr<Input>>> noteGate;
         std::vector<std::vector<std::shared_ptr<Input>>> notePressure;
         std::vector<std::vector<std::shared_ptr<Input>>> controlChange;
         std::vector<std::shared_ptr<Input>> programChange;
         std::vector<std::shared_ptr<Input>> channelPressure;
         std::vector<std::shared_ptr<Input>> pitchBend;
+        std::shared_ptr<Input> playing;
+        std::shared_ptr<Input> reset;
+        std::shared_ptr<Input> clock;
     };
 
     class MidiOutput : public Runnable {
@@ -131,12 +135,16 @@ public:
         std::vector<unsigned char> programChangeState;
         std::vector<unsigned char> channelPressureState;
         std::vector<unsigned short> pitchBendState;
+        bool playingState;
         std::vector<std::vector<std::shared_ptr<Output>>> noteGate;
         std::vector<std::vector<std::shared_ptr<Output>>> notePressure;
         std::vector<std::vector<std::shared_ptr<Output>>> controlChange;
         std::vector<std::shared_ptr<Output>> programChange;
         std::vector<std::shared_ptr<Output>> channelPressure;
         std::vector<std::shared_ptr<Output>> pitchBend;
+        std::shared_ptr<Output> playing;
+        std::shared_ptr<Output> reset;
+        std::shared_ptr<Output> clock;
     };
 
     Midi();
