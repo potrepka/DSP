@@ -1,16 +1,13 @@
 #pragma once
 
-#include "Processor.h"
+#include "OneOver.h"
 
 namespace dsp {
 
-class HertzToSeconds : public Processor {
+class HertzToSeconds : public OneOver {
 
 public:
     HertzToSeconds();
-
-protected:
-    void process() override;
 };
 
 } // namespace dsp
