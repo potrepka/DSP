@@ -24,7 +24,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getDelay() {
 
 void dsp::Trigger::setNumChannelsNoLock(std::size_t numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    phase.resize(numChannels, 0.0);
+    sampleCount.resize(numChannels, std::numeric_limits<DSP_FLOAT>::infinity());
 }
 
 void dsp::Trigger::process() {
@@ -35,16 +35,18 @@ void dsp::Trigger::process() {
         std::vector<DSP_FLOAT> &intervalBuffer = getInterval()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &delayBuffer = getInterval()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
-            if (resetTriggerBuffer[k]) {
-                phase[i] = 1.0;
+            DSP_FLOAT interval = intervalBuffer[k] * getSampleRate();
+            if (resetTriggerBuffer[k] || sampleCount[i] == std::numeric_limits<DSP_FLOAT>::infinity()) {
+                sampleCount[i] = interval;
             }
-            if (phase[i] - delayBuffer[k] >= 1.0) {
-                phase[i] -= 1.0;
+            DSP_FLOAT delayed = sampleCount[i] - delayBuffer[k] * getSampleRate();
+            if (delayed >= interval) {
+                sampleCount[i] = interval == 0.0 ? 0.0 : sampleCount[i] - floor(delayed / interval) * interval;
                 outputBuffer[k] = 1.0;
             } else {
                 outputBuffer[k] = 0.0;
             }
-            phase[i] += fmin(1.0, abs(getOneOverSampleRate() / intervalBuffer[k]));
+            sampleCount[i] += 1.0;
         }
     }
 }

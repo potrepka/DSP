@@ -20,7 +20,7 @@ private:
     static const std::size_t RESET_TRIGGER;
     static const std::size_t INTERVAL;
     static const std::size_t DELAY;
-    std::vector<DSP_FLOAT> phase;
+    std::vector<DSP_FLOAT> sampleCount;
 };
 
 } // namespace dsp
