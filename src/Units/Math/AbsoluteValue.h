@@ -7,7 +7,7 @@ namespace dsp {
 class AbsoluteValue : public Processor {
 
 public:
-    AbsoluteValue();
+    AbsoluteValue(Connection::Type type);
 
 protected:
     void process() override;

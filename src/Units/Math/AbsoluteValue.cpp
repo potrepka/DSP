@@ -1,6 +1,6 @@
 #include "AbsoluteValue.h"
 
-dsp::AbsoluteValue::AbsoluteValue() : Processor(Connection::Type::BIPOLAR, Connection::Type::UNIPOLAR) {}
+dsp::AbsoluteValue::AbsoluteValue(Connection::Type type) : Processor(type, type) {}
 
 void dsp::AbsoluteValue::process() {
     Unit::process();
