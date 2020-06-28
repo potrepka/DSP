@@ -10,10 +10,12 @@
 #include "TableOscillator.h"
 
 // Dynamics
+#include "AHR.h"
 #include "CompressorGate.h"
 #include "GainComputer.h"
 #include "GainEnvelope.h"
 #include "GainUnit.h"
+#include "HardClip.h"
 
 // Filters
 #include "Biquad.h"
@@ -23,6 +25,10 @@
 
 // Math
 #include "AbsoluteValue.h"
+#include "Divide.h"
+#include "Invert.h"
+#include "Maximum.h"
+#include "Minimum.h"
 #include "Multiply.h"
 
 // Noise
@@ -38,15 +44,16 @@
 #include "DecibelsToRatio.h"
 #include "FFT.h"
 #include "HertzToSeconds.h"
+#include "RatioToDecibels.h"
 #include "SecondsToHertz.h"
 #include "UnipolarToBipolar.h"
-#include "RatioToDecibels.h"
 
 // Utility
 #include "Audio.h"
 #include "ChannelMix.h"
 #include "DryWetMix.h"
 #include "PassUnit.h"
+#include "SampleAndHold.h"
 
 // Variables
 #include "BufferSize.h"
