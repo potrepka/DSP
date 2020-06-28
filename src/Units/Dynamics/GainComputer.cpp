@@ -7,8 +7,8 @@ const std::size_t dsp::GainComputer::KNEE = 4;
 
 dsp::GainComputer::GainComputer() : Processor(Connection::Type::DECIBELS, Connection::Type::DECIBELS) {
     pushInput(Connection::Type::DECIBELS);
-    pushInput(Connection::Type::RATIO, 1.0);
-    pushInput(Connection::Type::RATIO, 1.0);
+    pushInput(Connection::Type::RATIO, Connection::Space::TIME, 1.0);
+    pushInput(Connection::Type::RATIO, Connection::Space::TIME, 1.0);
     pushInput(Connection::Type::DECIBELS);
 }
 

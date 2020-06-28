@@ -7,7 +7,7 @@ const std::size_t dsp::Biquad::GAIN = 3;
 dsp::Biquad::Biquad()
         : Processor(dsp::Connection::Type::BIPOLAR, dsp::Connection::Type::BIPOLAR), mode(Mode::LOW_PASS) {
     pushInput(Connection::Type::HERTZ);
-    pushInput(Connection::Type::RATIO, sqrt(0.5));
+    pushInput(Connection::Type::RATIO, Connection::Space::TIME, sqrt(0.5));
     pushInput(Connection::Type::DECIBELS);
 }
 

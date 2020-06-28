@@ -1,8 +1,9 @@
 #include "Connection.h"
 
-dsp::Connection::Connection(unsigned int bufferSize, Type type, DSP_FLOAT value) {
+dsp::Connection::Connection(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value) {
     buffer.resize(bufferSize);
     this->type = type;
+    this->space = space;
     this->value = value;
 }
 
@@ -30,6 +31,14 @@ void dsp::Connection::setType(Type type) {
     this->type = type;
 }
 
+dsp::Connection::Space dsp::Connection::getSpace() {
+    return space;
+}
+
+void dsp::Connection::setSpace(Space space) {
+    this->space = space;
+}
+
 DSP_FLOAT dsp::Connection::getValue() {
     return value;
 }
@@ -38,7 +47,8 @@ void dsp::Connection::setValue(DSP_FLOAT value) {
     this->value = value;
 }
 
-dsp::Input::Input(unsigned int bufferSize, Type type, DSP_FLOAT value) : Connection(bufferSize, type, value) {}
+dsp::Input::Input(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value)
+        : Connection(bufferSize, type, space, value) {}
 
 dsp::Input::~Input() {
     disconnectAll();
@@ -109,7 +119,8 @@ void dsp::Input::copyBuffers() {
     unlock();
 }
 
-dsp::Output::Output(unsigned int bufferSize, Type type, DSP_FLOAT value) : Connection(bufferSize, type, value) {}
+dsp::Output::Output(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value)
+        : Connection(bufferSize, type, space, value) {}
 
 dsp::Output::~Output() {
     disconnectAll();

@@ -3,9 +3,9 @@
 const std::size_t dsp::FFT::REAL = 0;
 const std::size_t dsp::FFT::IMAGINARY = 1;
 
-dsp::FFT::FFT() : Consumer(Connection::Type::BIPOLAR), inverted(false) {
-    pushOutput(Connection::Type::FFT_REAL);
-    pushOutput(Connection::Type::FFT_IMAGINARY);
+dsp::FFT::FFT() : Consumer(Connection::Type::BIPOLAR) {
+    pushOutput(Connection::Type::BIPOLAR, Connection::Space::FREQUENCY);
+    pushOutput(Connection::Type::BIPOLAR, Connection::Space::FREQUENCY);
 }
 
 std::shared_ptr<dsp::Unit::OutputParameter> dsp::FFT::getReal() {
@@ -30,12 +30,9 @@ void dsp::FFT::process() {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &realBuffer = getReal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();
+
         std::copy(inputBuffer.begin(), inputBuffer.end(), input.begin());
-        if (inverted) {
-            fft.ifft(input.data(), real.data(), imaginary.data());
-        } else {
-            fft.fft(input.data(), real.data(), imaginary.data());
-        }
+        fft.fft(input.data(), real.data(), imaginary.data());
         std::copy(real.begin(), real.end(), realBuffer.begin());
         std::copy(imaginary.begin(), imaginary.end(), imaginaryBuffer.begin());
     }

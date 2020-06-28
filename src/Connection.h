@@ -15,9 +15,10 @@ class Output;
 class Connection {
 
 public:
-    enum class Type { BIPOLAR, UNIPOLAR, SECONDS, HERTZ, DECIBELS, BINARY, INTEGER, RATIO, FFT_REAL, FFT_IMAGINARY };
+    enum class Type { BIPOLAR, UNIPOLAR, SECONDS, HERTZ, DECIBELS, BINARY, INTEGER, RATIO };
+    enum class Space { TIME, FREQUENCY };
 
-    Connection(unsigned int bufferSize, Type type, DSP_FLOAT value);
+    Connection(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
 
     unsigned int getBufferSize();
     void setBufferSize(unsigned int bufferSize);
@@ -27,12 +28,16 @@ public:
     Type getType();
     void setType(Type type);
 
+    Space getSpace();
+    void setSpace(Space space);
+
     DSP_FLOAT getValue();
     void setValue(DSP_FLOAT value);
 
 protected:
     std::vector<DSP_FLOAT> buffer;
     Type type;
+    Space space;
     DSP_FLOAT value;
 };
 
@@ -40,7 +45,7 @@ class Input : public Connection, public Lockable, public std::enable_shared_from
     friend class Output;
 
 public:
-    Input(unsigned int bufferSize, Type type, DSP_FLOAT value);
+    Input(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
     ~Input();
     std::vector<std::shared_ptr<Output>> getConnections();
     void connect(std::shared_ptr<Output> output);
@@ -58,7 +63,7 @@ class Output : public Connection, public Lockable, public std::enable_shared_fro
     friend class Input;
 
 public:
-    Output(unsigned int bufferSize, Type type, DSP_FLOAT value);
+    Output(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
     ~Output();
     std::vector<std::shared_ptr<Input>> getConnections();
     void connect(std::shared_ptr<Input> input);

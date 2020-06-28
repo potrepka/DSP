@@ -3,9 +3,11 @@
 template <class T>
 dsp::Unit::ConnectionParameter<T>::ConnectionParameter(unsigned int bufferSize,
                                                        Connection::Type type,
+                                                       Connection::Space space,
                                                        DSP_FLOAT value) {
     this->bufferSize = bufferSize;
     this->type = type;
+    this->space = space;
     this->value = value;
 }
 
@@ -35,6 +37,19 @@ template <class T> void dsp::Unit::ConnectionParameter<T>::setType(Connection::T
     unlock();
 }
 
+template <class T> dsp::Connection::Space dsp::Unit::ConnectionParameter<T>::getSpace() {
+    return space;
+}
+
+template <class T> void dsp::Unit::ConnectionParameter<T>::setSpace(Connection::Space space) {
+    lock();
+    for (const auto &channel : channels) {
+        channel->setSpace(space);
+    }
+    this->space = space;
+    unlock();
+}
+
 template <class T> DSP_FLOAT dsp::Unit::ConnectionParameter<T>::getValue() {
     return value;
 }
@@ -59,7 +74,7 @@ template <class T> void dsp::Unit::ConnectionParameter<T>::setNumChannels(std::s
     } else {
         channels.reserve(numChannels);
         for (std::size_t i = channels.size(); i < numChannels; i++) {
-            channels.emplace_back(new T(bufferSize, type, value));
+            channels.emplace_back(new T(bufferSize, type, space, value));
         }
     }
     unlock();
@@ -73,13 +88,19 @@ template <class T> std::shared_ptr<T> dsp::Unit::ConnectionParameter<T>::getChan
     return channels[index];
 }
 
-dsp::Unit::InputParameter::InputParameter(unsigned int bufferSize, Connection::Type type, DSP_FLOAT value)
-        : ConnectionParameter(bufferSize, type, value) {}
+dsp::Unit::InputParameter::InputParameter(unsigned int bufferSize,
+                                          Connection::Type type,
+                                          Connection::Space space,
+                                          DSP_FLOAT value)
+        : ConnectionParameter(bufferSize, type, space, value) {}
 
 template class dsp::Unit::ConnectionParameter<dsp::Input>;
 
-dsp::Unit::OutputParameter::OutputParameter(unsigned int bufferSize, Connection::Type type, DSP_FLOAT value)
-        : ConnectionParameter(bufferSize, type, value) {}
+dsp::Unit::OutputParameter::OutputParameter(unsigned int bufferSize,
+                                            Connection::Type type,
+                                            Connection::Space space,
+                                            DSP_FLOAT value)
+        : ConnectionParameter(bufferSize, type, space, value) {}
 
 template class dsp::Unit::ConnectionParameter<dsp::Output>;
 
@@ -116,9 +137,9 @@ void dsp::Unit::pushInput(std::shared_ptr<InputParameter> input) {
     unlock();
 }
 
-void dsp::Unit::pushInput(Connection::Type type, DSP_FLOAT value) {
+void dsp::Unit::pushInput(Connection::Type type, Connection::Space space, DSP_FLOAT value) {
     lock();
-    inputs.push_back(std::make_shared<InputParameter>(getBufferSize(), type, value));
+    inputs.push_back(std::make_shared<InputParameter>(getBufferSize(), type, space, value));
     unlock();
 }
 
@@ -129,9 +150,9 @@ void dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
     unlock();
 }
 
-void dsp::Unit::pushOutput(Connection::Type type, DSP_FLOAT value) {
+void dsp::Unit::pushOutput(Connection::Type type, Connection::Space space, DSP_FLOAT value) {
     lock();
-    outputs.push_back(std::make_shared<OutputParameter>(getBufferSize(), type, value));
+    outputs.push_back(std::make_shared<OutputParameter>(getBufferSize(), type, space, value));
     unlock();
 }
 
@@ -142,9 +163,9 @@ void dsp::Unit::insertInput(std::size_t index, std::shared_ptr<InputParameter> i
     unlock();
 }
 
-void dsp::Unit::insertInput(std::size_t index, Connection::Type type, DSP_FLOAT value) {
+void dsp::Unit::insertInput(std::size_t index, Connection::Type type, Connection::Space space, DSP_FLOAT value) {
     lock();
-    inputs.insert(inputs.begin() + index, std::make_shared<InputParameter>(getBufferSize(), type, value));
+    inputs.insert(inputs.begin() + index, std::make_shared<InputParameter>(getBufferSize(), type, space, value));
     unlock();
 }
 
@@ -155,9 +176,9 @@ void dsp::Unit::insertOutput(std::size_t index, std::shared_ptr<OutputParameter>
     unlock();
 }
 
-void dsp::Unit::insertOutput(std::size_t index, Connection::Type type, DSP_FLOAT value) {
+void dsp::Unit::insertOutput(std::size_t index, Connection::Type type, Connection::Space space, DSP_FLOAT value) {
     lock();
-    outputs.insert(outputs.begin() + index, std::make_shared<OutputParameter>(getBufferSize(), type, value));
+    outputs.insert(outputs.begin() + index, std::make_shared<OutputParameter>(getBufferSize(), type, space, value));
     unlock();
 }
 
