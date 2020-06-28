@@ -53,7 +53,6 @@ The following are possible directions for future development:
 - Delay effects
 - Elliptic filter
 - Cascading filters
-- ADSR
 - Sequencer
 - MIDI
 - Frequency response
