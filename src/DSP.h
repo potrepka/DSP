@@ -35,12 +35,12 @@
 
 // Transforms
 #include "BipolarToUnipolar.h"
-#include "DecibelsToUnipolar.h"
+#include "DecibelsToRatio.h"
 #include "FFT.h"
 #include "HertzToSeconds.h"
 #include "SecondsToHertz.h"
 #include "UnipolarToBipolar.h"
-#include "UnipolarToDecibels.h"
+#include "RatioToDecibels.h"
 
 // Utility
 #include "Audio.h"

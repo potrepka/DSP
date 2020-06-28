@@ -1,8 +1,8 @@
-#include "DecibelsToUnipolar.h"
+#include "DecibelsToRatio.h"
 
-dsp::DecibelsToUnipolar::DecibelsToUnipolar() : Processor(Connection::Type::DECIBELS, Connection::Type::UNIPOLAR) {}
+dsp::DecibelsToRatio::DecibelsToRatio() : Processor(Connection::Type::DECIBELS, Connection::Type::RATIO) {}
 
-void dsp::DecibelsToUnipolar::process() {
+void dsp::DecibelsToRatio::process() {
     Unit::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),

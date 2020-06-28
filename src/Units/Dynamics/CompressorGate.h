@@ -5,7 +5,7 @@
 #include "GainComputer.h"
 #include "GainEnvelope.h"
 #include "GainUnit.h"
-#include "UnipolarToDecibels.h"
+#include "RatioToDecibels.h"
 
 namespace dsp {
 
@@ -41,7 +41,7 @@ private:
 
     std::shared_ptr<ChannelMix> channelMix;
     std::shared_ptr<AbsoluteValue> absoluteValue;
-    std::shared_ptr<UnipolarToDecibels> unipolarToDecibels;
+    std::shared_ptr<RatioToDecibels> unipolarToDecibels;
     std::shared_ptr<GainComputer> gainComputer;
     std::shared_ptr<GainEnvelope> gainEnvelope;
     std::shared_ptr<GainUnit> gainUnit;
