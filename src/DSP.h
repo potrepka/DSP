@@ -31,6 +31,7 @@
 #include "Maximum.h"
 #include "Minimum.h"
 #include "Multiply.h"
+#include "OneOver.h"
 #include "Quantizer.h"
 
 // Noise
