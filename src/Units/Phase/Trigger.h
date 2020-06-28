@@ -10,6 +10,7 @@ public:
     Trigger();
     std::shared_ptr<InputParameter> getResetTrigger();
     std::shared_ptr<InputParameter> getInterval();
+    std::shared_ptr<InputParameter> getDelay();
 
 protected:
     void setNumChannelsNoLock(std::size_t numChannels) override;
@@ -18,6 +19,7 @@ protected:
 private:
     static const std::size_t RESET_TRIGGER;
     static const std::size_t INTERVAL;
+    static const std::size_t DELAY;
     std::vector<DSP_FLOAT> phase;
 };
 
