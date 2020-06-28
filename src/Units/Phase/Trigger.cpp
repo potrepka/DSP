@@ -39,8 +39,8 @@ void dsp::Trigger::process() {
                 phase[i] = 1.0;
             }
             if (phase[i] - delayBuffer[k] >= 1.0) {
-                outputBuffer[k] = 1.0;
                 phase[i] -= 1.0;
+                outputBuffer[k] = 1.0;
             } else {
                 outputBuffer[k] = 0.0;
             }
