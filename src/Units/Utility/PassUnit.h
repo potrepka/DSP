@@ -1,16 +1,13 @@
 #pragma once
 
-#include "Processor.h"
+#include "Identity.h"
 
 namespace dsp {
 
-class PassUnit : public Processor {
+class PassUnit : public Identity {
 
 public:
     PassUnit(Connection::Type type);
-
-protected:
-    void process() override;
 };
 
 } // namespace dsp
