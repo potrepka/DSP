@@ -4,8 +4,8 @@ const std::size_t dsp::DryWetMix::DRY_SIGNAL = 0;
 const std::size_t dsp::DryWetMix::WET_SIGNAL = 1;
 const std::size_t dsp::DryWetMix::MIX = 2;
 
-dsp::DryWetMix::DryWetMix() : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR) {
-    pushInput(Connection::Type::BIPOLAR);
+dsp::DryWetMix::DryWetMix(Connection::Type type) : Processor(type, type) {
+    pushInput(type);
     pushInput(Connection::Type::UNIPOLAR);
 }
 

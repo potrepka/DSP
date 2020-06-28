@@ -7,7 +7,7 @@ namespace dsp {
 class DryWetMix : public Processor {
 
 public:
-    DryWetMix();
+    DryWetMix(Connection::Type type);
     std::shared_ptr<InputParameter> getDrySignal();
     std::shared_ptr<InputParameter> getWetSignal();
     std::shared_ptr<InputParameter> getMix();
