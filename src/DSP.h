@@ -31,6 +31,7 @@
 #include "Maximum.h"
 #include "Minimum.h"
 #include "Multiply.h"
+#include "Quantizer.h"
 
 // Noise
 #include "PinkNoise.h"
@@ -45,6 +46,7 @@
 #include "DecibelsToRatio.h"
 #include "FFT.h"
 #include "HertzToSeconds.h"
+#include "Identity.h"
 #include "RatioToDecibels.h"
 #include "SecondsToHertz.h"
 #include "UnipolarToBipolar.h"
