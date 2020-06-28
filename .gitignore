@@ -1,4 +1,2 @@
 src/Pipe.h
 src/Pipe.cpp
-src/Units/Dynamics/ADSR.h
-src/Units/Dynamics/ADSR.cpp
