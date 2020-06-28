@@ -16,6 +16,7 @@
 #include "GainEnvelope.h"
 #include "GainUnit.h"
 #include "HardClip.h"
+#include "PowerDistortion.h"
 
 // Filters
 #include "Biquad.h"
