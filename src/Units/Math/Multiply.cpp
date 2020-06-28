@@ -2,6 +2,10 @@
 
 dsp::Multiply::Multiply(Connection::Type type) : Processor(type, type) {}
 
+void dsp::Multiply::pushInput() {
+    Unit::pushInput(Connection::Type::RATIO);
+}
+
 void dsp::Multiply::process() {
     Unit::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {

@@ -8,6 +8,7 @@ class Multiply : public Processor {
 
 public:
     Multiply(Connection::Type type);
+    void pushInput();
 
 protected:
     void process() override;
