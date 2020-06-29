@@ -1,9 +1,13 @@
 #include "Runnable.h"
 
-dsp::Runnable::Runnable() : oneOverSampleRate(0.0), sampleRate(0), bufferSize(0) {}
+dsp::Runnable::Runnable() : oneOverSampleRate(0.0), oneOverBufferSize(0.0), sampleRate(0), bufferSize(0) {}
 
 DSP_FLOAT dsp::Runnable::getOneOverSampleRate() {
     return oneOverSampleRate;
+}
+
+DSP_FLOAT dsp::Runnable::getOneOverBufferSize() {
+    return oneOverBufferSize;
 }
 
 unsigned int dsp::Runnable::getSampleRate() {
@@ -33,4 +37,5 @@ void dsp::Runnable::setSampleRateNoLock(unsigned int sampleRate) {
 
 void dsp::Runnable::setBufferSizeNoLock(unsigned int bufferSize) {
     this->bufferSize = bufferSize;
+    oneOverBufferSize = 1.0 / bufferSize;
 }

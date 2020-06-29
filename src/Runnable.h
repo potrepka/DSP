@@ -11,6 +11,7 @@ public:
     Runnable();
 
     DSP_FLOAT getOneOverSampleRate();
+    DSP_FLOAT getOneOverBufferSize();
 
     unsigned int getSampleRate();
     void setSampleRate(unsigned int sampleRate);
@@ -24,6 +25,7 @@ protected:
 
 private:
     DSP_FLOAT oneOverSampleRate;
+    DSP_FLOAT oneOverBufferSize;
     unsigned int sampleRate;
     unsigned int bufferSize;
 };
