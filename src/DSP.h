@@ -43,14 +43,18 @@
 #include "Trigger.h"
 
 // Transforms
+#include "BinaryToInteger.h"
+#include "BipolarToRatio.h"
 #include "BipolarToUnipolar.h"
 #include "DecibelsToRatio.h"
 #include "FFT.h"
 #include "HertzToSeconds.h"
 #include "Identity.h"
+#include "IFFT.h"
 #include "RatioToDecibels.h"
 #include "SecondsToHertz.h"
 #include "UnipolarToBipolar.h"
+#include "UnipolarToRatio.h"
 
 // Utility
 #include "Audio.h"
