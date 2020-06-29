@@ -3,7 +3,7 @@
 const std::size_t dsp::SampleAndHold::TRIGGER = 0;
 
 dsp::SampleAndHold::SampleAndHold(Connection::Type type) : Processor(type, type) {
-    pushInput(Connection::Type::INTEGER);
+    pushInput(Connection::Type::BINARY);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleAndHold::getTrigger() {

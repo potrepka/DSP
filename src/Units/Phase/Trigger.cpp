@@ -5,7 +5,7 @@ const std::size_t dsp::Trigger::INTERVAL = 1;
 const std::size_t dsp::Trigger::DELAY = 2;
 
 dsp::Trigger::Trigger() : Generator(Connection::Type::UNIPOLAR) {
-    pushInput(Connection::Type::INTEGER);
+    pushInput(Connection::Type::BINARY);
     pushInput(Connection::Type::SECONDS);
     pushInput(Connection::Type::SECONDS);
 }

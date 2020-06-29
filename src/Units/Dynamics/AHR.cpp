@@ -6,7 +6,7 @@ const std::size_t dsp::AHR::HOLD = 2;
 const std::size_t dsp::AHR::RELEASE = 3;
 
 dsp::AHR::AHR() : Generator(Connection::Type::UNIPOLAR), position(0) {
-    pushInput(Connection::Type::INTEGER);
+    pushInput(Connection::Type::BINARY);
     pushInput(Connection::Type::SECONDS);
     pushInput(Connection::Type::SECONDS);
     pushInput(Connection::Type::SECONDS);
