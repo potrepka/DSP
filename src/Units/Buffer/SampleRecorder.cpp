@@ -4,7 +4,7 @@ const std::size_t dsp::SampleRecorder::RESET_TRIGGER = 1;
 const std::size_t dsp::SampleRecorder::GATE = 2;
 
 dsp::SampleRecorder::SampleRecorder() : Consumer(Connection::Type::BIPOLAR) {
-    pushInput(Connection::Type::BINARY);
+    pushInput(Connection::Type::INTEGER);
 }
 
 std::vector<DSP_FLOAT> dsp::SampleRecorder::getSample(std::size_t index) {

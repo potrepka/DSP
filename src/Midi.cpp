@@ -95,9 +95,9 @@ dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSam
 
     playingState = 0.0;
 
-    playing = std::make_shared<Input>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
-    reset = std::make_shared<Input>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
-    clock = std::make_shared<Input>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
+    playing = std::make_shared<Input>(getBufferSize(), Connection::Type::INTEGER, Connection::Space::TIME, 0.0);
+    reset = std::make_shared<Input>(getBufferSize(), Connection::Type::INTEGER, Connection::Space::TIME, 0.0);
+    clock = std::make_shared<Input>(getBufferSize(), Connection::Type::INTEGER, Connection::Space::TIME, 0.0);
 
     for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
         noteGateState[i].reserve(MIDI_NOTES);
@@ -267,9 +267,9 @@ dsp::Midi::MidiOutput::MidiOutput(unsigned int port) : playingState(false) {
 
     playingState = false;
 
-    playing = std::make_shared<Output>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
-    reset = std::make_shared<Output>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
-    clock = std::make_shared<Output>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
+    playing = std::make_shared<Output>(getBufferSize(), Connection::Type::INTEGER, Connection::Space::TIME, 0.0);
+    reset = std::make_shared<Output>(getBufferSize(), Connection::Type::INTEGER, Connection::Space::TIME, 0.0);
+    clock = std::make_shared<Output>(getBufferSize(), Connection::Type::INTEGER, Connection::Space::TIME, 0.0);
 
     for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
         noteGateState[i].reserve(MIDI_NOTES);

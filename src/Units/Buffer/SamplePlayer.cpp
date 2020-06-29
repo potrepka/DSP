@@ -6,8 +6,8 @@ const std::size_t dsp::SamplePlayer::START_POSITION = 2;
 const std::size_t dsp::SamplePlayer::SPEED = 3;
 
 dsp::SamplePlayer::SamplePlayer() : Generator(Connection::Type::BIPOLAR) {
-    pushInput(Connection::Type::BINARY);
-    pushInput(Connection::Type::BINARY);
+    pushInput(Connection::Type::INTEGER);
+    pushInput(Connection::Type::INTEGER);
     pushInput(Connection::Type::SECONDS);
     pushInput(Connection::Type::RATIO);
 }

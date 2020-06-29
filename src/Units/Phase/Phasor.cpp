@@ -5,7 +5,7 @@ const std::size_t dsp::Phasor::RESET_TRIGGER = 1;
 
 dsp::Phasor::Phasor() : Generator(Connection::Type::UNIPOLAR) {
     pushInput(Connection::Type::HERTZ);
-    pushInput(Connection::Type::BINARY);
+    pushInput(Connection::Type::INTEGER);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Phasor::getFrequency() {
