@@ -61,7 +61,7 @@
 #include "ChannelMix.h"
 #include "DryWetMix.h"
 #include "Gate.h"
-#include "PassUnit.h"
+#include "PassThrough.h"
 #include "SampleAndHold.h"
 
 // Variables

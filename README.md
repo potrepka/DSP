@@ -28,10 +28,10 @@ int main() {
     engine->setup(inputDevice, outputDevice, sampleRate, bufferSize);
 
     // Setup units
-    std::shared_ptr<dsp::PassUnit> pass;
+    std::shared_ptr<dsp::PassThrough> pass;
 
     // TODO: Do something more interesting than passing input to output
-    pass = std::make_shared<dsp::PassUnit>(dsp::Connection::Type::BIPOLAR);
+    pass = std::make_shared<dsp::PassThrough>(dsp::Connection::Type::BIPOLAR);
     pass->setNumChannels(2);
 
     // Add units
