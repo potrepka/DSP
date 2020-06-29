@@ -73,41 +73,40 @@ void dsp::Midi::MidiInput::callback(double delta, std::vector<unsigned char> *me
     input->pushQueue(delta, *message);
 }
 
-dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSamples(0), playingState(0.0) {
+dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSamples(0) {
 #if USE_RTMIDI
     midiIn.setCallback(MidiInput::callback, this);
 #endif
     setPort(port);
 
-    noteGateState.resize(MIDI_CHANNELS);
     notePressureState.resize(MIDI_CHANNELS);
     controlChangeState.resize(MIDI_CHANNELS);
     programChangeState.resize(MIDI_CHANNELS);
     channelPressureState.resize(MIDI_CHANNELS);
     pitchBendState.resize(MIDI_CHANNELS);
 
-    noteGate.resize(MIDI_CHANNELS);
+    noteOn.resize(MIDI_CHANNELS);
+    noteOff.resize(MIDI_CHANNELS);
     notePressure.resize(MIDI_CHANNELS);
     controlChange.resize(MIDI_CHANNELS);
     programChange.resize(MIDI_CHANNELS);
     channelPressure.resize(MIDI_CHANNELS);
     pitchBend.resize(MIDI_CHANNELS);
 
-    playingState = 0.0;
-
-    playing = std::make_shared<Input>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
+    play = std::make_shared<Input>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
+    stop = std::make_shared<Input>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
     reset = std::make_shared<Input>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
     clock = std::make_shared<Input>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
 
     for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
-        noteGateState[i].reserve(MIDI_NOTES);
         notePressureState[i].reserve(MIDI_NOTES);
         controlChangeState[i].reserve(MIDI_NOTES);
         programChangeState[i] = 0.0;
         channelPressureState[i] = 0.0;
         pitchBendState[i] = 0.0;
 
-        noteGate[i].reserve(MIDI_NOTES);
+        noteOn[i].reserve(MIDI_NOTES);
+        noteOff[i].reserve(MIDI_NOTES);
         notePressure[i].reserve(MIDI_NOTES);
         controlChange[i].reserve(MIDI_NOTES);
         programChange[i] =
@@ -118,11 +117,12 @@ dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSam
                 std::make_shared<Input>(getBufferSize(), Connection::Type::BIPOLAR, Connection::Space::TIME, 0.0);
 
         for (unsigned char n = 0; n < MIDI_NOTES; n++) {
-            noteGateState[i][n] = 0.0;
             notePressureState[i][n] = 0.0;
             controlChangeState[i][n] = 0.0;
 
-            noteGate[i][n] =
+            noteOn[i][n] =
+                    std::make_shared<Input>(getBufferSize(), Connection::Type::UNIPOLAR, Connection::Space::TIME, 0.0);
+            noteOff[i][n] =
                     std::make_shared<Input>(getBufferSize(), Connection::Type::UNIPOLAR, Connection::Space::TIME, 0.0);
             notePressure[i][n] =
                     std::make_shared<Input>(getBufferSize(), Connection::Type::UNIPOLAR, Connection::Space::TIME, 0.0);
@@ -143,8 +143,12 @@ void dsp::Midi::MidiInput::setPort(unsigned int port) {
 #endif
 }
 
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNoteGate(unsigned char channel, unsigned char note) {
-    return noteGate[channel][note];
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNoteOnTrigger(unsigned char channel, unsigned char note) {
+    return noteOn[channel][note];
+}
+
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNoteOffTrigger(unsigned char channel, unsigned char note) {
+    return noteOff[channel][note];
 }
 
 std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNotePressure(unsigned char channel, unsigned char note) {
@@ -165,6 +169,22 @@ std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getChannelPressure(unsigned ch
 
 std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getPitchBend(unsigned char channel) {
     return pitchBend[channel];
+}
+
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getPlayTrigger() {
+    return play;
+}
+
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getStopTrigger() {
+    return stop;
+}
+
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getResetTrigger() {
+    return reset;
+}
+
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getClockTrigger() {
+    return clock;
 }
 
 void dsp::Midi::MidiInput::pushQueue(double delta, std::vector<unsigned char> &message) {
@@ -189,6 +209,10 @@ void dsp::Midi::MidiInput::removeCallback(void (*callback)(double, std::vector<u
 void dsp::Midi::MidiInput::run() {
     lock();
     for (unsigned int k = 0; k < getBufferSize(); k++) {
+        bool noteOnState = false;
+        bool noteOffState = false;
+        bool playState = false;
+        bool stopState = false;
         bool resetState = false;
         bool clockState = false;
         if (queue.top().getTime() <= bufferSamples * getOneOverSampleRate()) {
@@ -196,9 +220,10 @@ void dsp::Midi::MidiInput::run() {
             const TimedMessage::Type type = message.getType();
             const unsigned char channel = message.getChannel();
             switch (type) {
-                case TimedMessage::MIDI_NOTE_OFF: noteGateState[channel][message.getByte(1)] = 0; break;
+                case TimedMessage::MIDI_NOTE_OFF: noteOffState = true; break;
                 case TimedMessage::MIDI_NOTE_ON:
-                    noteGateState[channel][message.getByte(1)] = message.getByteAsUnipolar(2);
+                    noteOnState = true;
+                    notePressureState[channel][message.getByte(1)] = message.getByteAsUnipolar(2);
                     break;
                 case TimedMessage::MIDI_POLY_AFTERTOUCH:
                     notePressureState[channel][message.getByte(1)] = message.getByteAsUnipolar(2);
@@ -217,11 +242,11 @@ void dsp::Midi::MidiInput::run() {
 
                 case TimedMessage::MIDI_TIME_CLOCK: clockState = true; break;
                 case TimedMessage::MIDI_START:
-                    playingState = true;
+                    playState = true;
                     resetState = true;
                     break;
-                case TimedMessage::MIDI_CONTINUE: playingState = true; break;
-                case TimedMessage::MIDI_STOP: playingState = false; break;
+                case TimedMessage::MIDI_CONTINUE: playState = true; break;
+                case TimedMessage::MIDI_STOP: stopState = true; break;
 
                 case TimedMessage::MIDI_UNKNOWN:
                 case TimedMessage::MIDI_SYSEX:
@@ -232,7 +257,8 @@ void dsp::Midi::MidiInput::run() {
         }
         for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
             for (unsigned char n = 0; n < MIDI_NOTES; n++) {
-                noteGate[i][n]->getBuffer()[k] = noteGateState[i][n];
+                noteOn[i][n]->getBuffer()[k] = noteOnState ? 1.0 : 0.0;
+                noteOff[i][n]->getBuffer()[k] = noteOffState ? 1.0 : 0.0;
                 notePressure[i][n]->getBuffer()[k] = notePressureState[i][n];
                 controlChange[i][n]->getBuffer()[k] = controlChangeState[i][n];
             }
@@ -240,7 +266,8 @@ void dsp::Midi::MidiInput::run() {
             channelPressure[i]->getBuffer()[k] = channelPressureState[i];
             pitchBend[i]->getBuffer()[k] = pitchBendState[i];
         }
-        playing->getBuffer()[k] = playingState ? 1.0 : 0.0;
+        play->getBuffer()[k] = playState ? 1.0 : 0.0;
+        stop->getBuffer()[k] = stopState ? 1.0 : 0.0;
         reset->getBuffer()[k] = resetState ? 1.0 : 0.0;
         clock->getBuffer()[k] = clockState ? 1.0 : 0.0;
         bufferSamples++;
@@ -248,38 +275,37 @@ void dsp::Midi::MidiInput::run() {
     unlock();
 }
 
-dsp::Midi::MidiOutput::MidiOutput(unsigned int port) : playingState(false) {
+dsp::Midi::MidiOutput::MidiOutput(unsigned int port) {
     setPort(port);
 
-    noteGateState.resize(MIDI_CHANNELS);
     notePressureState.resize(MIDI_CHANNELS);
     controlChangeState.resize(MIDI_CHANNELS);
     programChangeState.resize(MIDI_CHANNELS);
     channelPressureState.resize(MIDI_CHANNELS);
     pitchBendState.resize(MIDI_CHANNELS);
 
-    noteGate.resize(MIDI_CHANNELS);
+    noteOn.resize(MIDI_CHANNELS);
+    noteOff.resize(MIDI_CHANNELS);
     notePressure.resize(MIDI_CHANNELS);
     controlChange.resize(MIDI_CHANNELS);
     programChange.resize(MIDI_CHANNELS);
     channelPressure.resize(MIDI_CHANNELS);
     pitchBend.resize(MIDI_CHANNELS);
 
-    playingState = false;
-
-    playing = std::make_shared<Output>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
+    play = std::make_shared<Output>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
+    stop = std::make_shared<Output>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
     reset = std::make_shared<Output>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
     clock = std::make_shared<Output>(getBufferSize(), Connection::Type::BINARY, Connection::Space::TIME, 0.0);
 
     for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
-        noteGateState[i].reserve(MIDI_NOTES);
         notePressureState[i].reserve(MIDI_NOTES);
         controlChangeState[i].reserve(MIDI_NOTES);
         programChangeState[i] = 0;
         channelPressureState[i] = 0;
         pitchBendState[i] = 0;
 
-        noteGate[i].reserve(MIDI_NOTES);
+        noteOn[i].reserve(MIDI_NOTES);
+        noteOff[i].reserve(MIDI_NOTES);
         notePressure[i].reserve(MIDI_NOTES);
         controlChange[i].reserve(MIDI_NOTES);
         programChange[i] =
@@ -290,11 +316,12 @@ dsp::Midi::MidiOutput::MidiOutput(unsigned int port) : playingState(false) {
                 std::make_shared<Output>(getBufferSize(), Connection::Type::BIPOLAR, Connection::Space::TIME, 0.0);
 
         for (unsigned char n = 0; n < MIDI_NOTES; n++) {
-            noteGateState[i][n] = 0;
             notePressureState[i][n] = 0;
             controlChangeState[i][n] = 0;
 
-            noteGate[i][n] =
+            noteOn[i][n] =
+                    std::make_shared<Output>(getBufferSize(), Connection::Type::UNIPOLAR, Connection::Space::TIME, 0.0);
+            noteOff[i][n] =
                     std::make_shared<Output>(getBufferSize(), Connection::Type::UNIPOLAR, Connection::Space::TIME, 0.0);
             notePressure[i][n] =
                     std::make_shared<Output>(getBufferSize(), Connection::Type::UNIPOLAR, Connection::Space::TIME, 0.0);
@@ -315,8 +342,12 @@ void dsp::Midi::MidiOutput::setPort(unsigned int port) {
 #endif
 }
 
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNoteGate(unsigned char channel, unsigned char note) {
-    return noteGate[channel][note];
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNoteOnTrigger(unsigned char channel, unsigned char note) {
+    return noteOn[channel][note];
+}
+
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNoteOffTrigger(unsigned char channel, unsigned char note) {
+    return noteOff[channel][note];
 }
 
 std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNotePressure(unsigned char channel, unsigned char note) {
@@ -339,6 +370,22 @@ std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getPitchBend(unsigned char c
     return pitchBend[channel];
 }
 
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getPlayTrigger() {
+    return play;
+}
+
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getStopTrigger() {
+    return stop;
+}
+
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getResetTrigger() {
+    return reset;
+}
+
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getClockTrigger() {
+    return clock;
+}
+
 void dsp::Midi::MidiOutput::sendMessageWithDelay(int64_t nanoseconds, std::vector<unsigned char> message) {
 #if USE_RTMIDI
     std::thread([this, nanoseconds, message]() mutable {
@@ -357,23 +404,25 @@ void dsp::Midi::MidiOutput::run() {
         int64_t nanoseconds = static_cast<int64_t>(1000000000 * getOneOverSampleRate() * k);
         for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
             for (unsigned char n = 0; n < MIDI_NOTES; n++) {
-                message3.setByteUsingUnipolar(2, noteGate[i][n]->getBuffer()[k]);
-                if (noteGateState[i][n] != message3.getByte(2)) {
-                    noteGateState[i][n] = message3.getByte(2);
-                    if (noteGateState[i][n] == 0) {
-                        message3.setByte(0, TimedMessage::Type::MIDI_NOTE_OFF + i);
-                    } else {
-                        message3.setByte(0, TimedMessage::Type::MIDI_NOTE_ON + i);
-                    }
+                if (noteOff[i][n]->getBuffer()[k]) {
+                    message3.setByte(0, TimedMessage::Type::MIDI_NOTE_OFF);
                     message3.setByte(1, n);
+                    message3.setByte(2, 0);
                     sendMessageWithDelay(nanoseconds, message3.getMessage());
                 }
-                message3.setByteUsingUnipolar(2, notePressure[i][n]->getBuffer()[k]);
-                if (notePressureState[i][n] != message3.getByte(2)) {
-                    notePressureState[i][n] = message3.getByte(2);
-                    message3.setByte(0, TimedMessage::Type::MIDI_POLY_AFTERTOUCH + i);
+                if (noteOn[i][n]->getBuffer()[k]) {
+                    message3.setByte(0, TimedMessage::Type::MIDI_NOTE_ON);
                     message3.setByte(1, n);
+                    message3.setByteUsingUnipolar(2, notePressure[i][n]->getBuffer()[k]);
                     sendMessageWithDelay(nanoseconds, message3.getMessage());
+                } else {
+                    message3.setByteUsingUnipolar(2, notePressure[i][n]->getBuffer()[k]);
+                    if (notePressureState[i][n] != message3.getByte(2)) {
+                        notePressureState[i][n] = message3.getByte(2);
+                        message3.setByte(0, TimedMessage::Type::MIDI_POLY_AFTERTOUCH + i);
+                        message3.setByte(1, n);
+                        sendMessageWithDelay(nanoseconds, message3.getMessage());
+                    }
                 }
                 message3.setByteUsingUnipolar(2, controlChange[i][n]->getBuffer()[k]);
                 if (controlChangeState[i][n] != message3.getByte(2)) {
@@ -401,12 +450,13 @@ void dsp::Midi::MidiOutput::run() {
                 message3.setByte(0, TimedMessage::Type::MIDI_PITCH_BEND + i);
                 sendMessageWithDelay(nanoseconds, message3.getMessage());
             }
-            if (playingState != playing->getBuffer()[k]) {
-                playingState = playing->getBuffer()[k];
-                message1.setByte(0,
-                                 playingState ? (reset->getBuffer()[k] ? TimedMessage::Type::MIDI_START
-                                                                       : TimedMessage::Type::MIDI_CONTINUE)
-                                              : TimedMessage::Type::MIDI_STOP);
+            if (play->getBuffer()[k]) {
+                message1.setByte(0, reset->getBuffer()[k] ? TimedMessage::Type::MIDI_START
+                                                          : TimedMessage::Type::MIDI_CONTINUE);
+                sendMessageWithDelay(nanoseconds, message1.getMessage());
+            }
+            if (stop->getBuffer()[k]) {
+                message1.setByte(0, TimedMessage::Type::MIDI_STOP);
                 sendMessageWithDelay(nanoseconds, message1.getMessage());
             }
             if (clock->getBuffer()[k]) {
