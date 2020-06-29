@@ -8,12 +8,15 @@ class Multiply : public Processor {
 
 public:
     Multiply(Connection::Type type, Connection::Space space = Connection::Space::TIME);
-    void pushInput();
+    void pushInputBinary();
+    void pushInputInteger();
+    void pushInputRatio();
 
 protected:
     void process() override;
 
 private:
+    Connection::Type type;
     Connection::Space space;
 };
 

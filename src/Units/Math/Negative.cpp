@@ -1,8 +1,8 @@
-#include "Invert.h"
+#include "Negative.h"
 
-dsp::Invert::Invert(Connection::Type type, Connection::Space space) : Processor(type, type, space) {}
+dsp::Negative::Negative(Connection::Type type, Connection::Space space) : Processor(type, type, space) {}
 
-void dsp::Invert::process() {
+void dsp::Negative::process() {
     Unit::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),

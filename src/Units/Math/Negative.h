@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class Invert : public Processor {
+class Negative : public Processor {
 
 public:
-    Invert(Connection::Type type, Connection::Space space = Connection::Space::TIME);
+    Negative(Connection::Type type, Connection::Space space = Connection::Space::TIME);
 
 protected:
     void process() override;

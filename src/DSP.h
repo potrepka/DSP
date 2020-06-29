@@ -28,10 +28,10 @@
 #include "AbsoluteValue.h"
 #include "Divide.h"
 #include "Identity.h"
-#include "Invert.h"
 #include "Maximum.h"
 #include "Minimum.h"
 #include "Multiply.h"
+#include "Negative.h"
 #include "OneOver.h"
 #include "Quantizer.h"
 
