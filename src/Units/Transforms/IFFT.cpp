@@ -34,6 +34,8 @@ void dsp::IFFT::process() {
         std::copy(realBuffer.begin(), realBuffer.end(), real.begin());
         std::copy(imaginaryBuffer.begin(), imaginaryBuffer.end(), imaginary.begin());
         fft.ifft(output.data(), real.data(), imaginary.data());
-        std::copy(output.begin(), output.end(), outputBuffer.begin());
+        std::transform(output.begin(), output.end(), outputBuffer.begin(), [this](DSP_FLOAT x) {
+            return x * getBufferSize();
+        });
     }
 }

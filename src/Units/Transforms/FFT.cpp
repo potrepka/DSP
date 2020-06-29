@@ -31,7 +31,9 @@ void dsp::FFT::process() {
         std::vector<DSP_FLOAT> &realBuffer = getReal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();
 
-        std::copy(inputBuffer.begin(), inputBuffer.end(), input.begin());
+        std::transform(inputBuffer.begin(), inputBuffer.end(), input.begin(), [this](DSP_FLOAT x) {
+            return x * getOneOverBufferSize();
+        });
         fft.fft(input.data(), real.data(), imaginary.data());
         std::copy(real.begin(), real.end(), realBuffer.begin());
         std::copy(imaginary.begin(), imaginary.end(), imaginaryBuffer.begin());
