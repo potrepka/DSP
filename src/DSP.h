@@ -60,6 +60,7 @@
 #include "Audio.h"
 #include "ChannelMix.h"
 #include "DryWetMix.h"
+#include "Gate.h"
 #include "PassUnit.h"
 #include "SampleAndHold.h"
 
