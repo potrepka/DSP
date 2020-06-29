@@ -451,8 +451,8 @@ void dsp::Midi::MidiOutput::run() {
                 sendMessageWithDelay(nanoseconds, message3.getMessage());
             }
             if (play->getBuffer()[k]) {
-                message1.setByte(0, reset->getBuffer()[k] ? TimedMessage::Type::MIDI_START
-                                                          : TimedMessage::Type::MIDI_CONTINUE);
+                message1.setByte(
+                        0, reset->getBuffer()[k] ? TimedMessage::Type::MIDI_START : TimedMessage::Type::MIDI_CONTINUE);
                 sendMessageWithDelay(nanoseconds, message1.getMessage());
             }
             if (stop->getBuffer()[k]) {
