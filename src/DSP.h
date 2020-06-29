@@ -27,6 +27,7 @@
 // Math
 #include "AbsoluteValue.h"
 #include "Divide.h"
+#include "Identity.h"
 #include "Invert.h"
 #include "Maximum.h"
 #include "Minimum.h"
@@ -50,7 +51,6 @@
 #include "FFT.h"
 #include "HertzToSeconds.h"
 #include "IFFT.h"
-#include "Identity.h"
 #include "RatioToDecibels.h"
 #include "SecondsToHertz.h"
 #include "UnipolarToBipolar.h"
