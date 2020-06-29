@@ -2,8 +2,8 @@
 
 const std::size_t dsp::ChannelMix::MIX = 1;
 
-dsp::ChannelMix::ChannelMix() : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR) {
-    pushInput(Connection::Type::UNIPOLAR);
+dsp::ChannelMix::ChannelMix(Connection::Type type, Connection::Space space) : Processor(type, type, space) {
+    pushInput(Connection::Type::UNIPOLAR, space);
 }
 
 dsp::ChannelMix::Mode dsp::ChannelMix::getMode() {

@@ -4,9 +4,9 @@ const std::size_t dsp::DryWetMix::DRY_SIGNAL = 0;
 const std::size_t dsp::DryWetMix::WET_SIGNAL = 1;
 const std::size_t dsp::DryWetMix::MIX = 2;
 
-dsp::DryWetMix::DryWetMix(Connection::Type type) : Processor(type, type) {
-    pushInput(type);
-    pushInput(Connection::Type::UNIPOLAR);
+dsp::DryWetMix::DryWetMix(Connection::Type type, Connection::Space space) : Processor(type, type, space) {
+    pushInput(type, space);
+    pushInput(Connection::Type::UNIPOLAR, space);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::DryWetMix::getDrySignal() {

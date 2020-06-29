@@ -7,7 +7,7 @@ namespace dsp {
 class Quantizer : public Processor {
 
 public:
-    Quantizer(Connection::Type type);
+    Quantizer(Connection::Type type, Connection::Space space = Connection::Space::TIME);
     std::shared_ptr<InputParameter> getQuantum();
 
 protected:

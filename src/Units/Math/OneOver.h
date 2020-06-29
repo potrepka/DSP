@@ -7,7 +7,7 @@ namespace dsp {
 class OneOver : public Processor {
 
 public:
-    OneOver();
+    OneOver(Connection::Space space = Connection::Space::TIME);
 
 protected:
     void process() override;

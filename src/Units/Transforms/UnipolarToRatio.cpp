@@ -1,3 +1,4 @@
 #include "UnipolarToRatio.h"
 
-dsp::UnipolarToRatio::UnipolarToRatio() : Identity(Connection::Type::UNIPOLAR, Connection::Type::RATIO) {}
+dsp::UnipolarToRatio::UnipolarToRatio(Connection::Space space)
+        : Identity(Connection::Type::UNIPOLAR, Connection::Type::RATIO, space) {}

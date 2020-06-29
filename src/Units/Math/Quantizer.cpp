@@ -2,8 +2,8 @@
 
 const std::size_t dsp::Quantizer::QUANTUM = 1;
 
-dsp::Quantizer::Quantizer(Connection::Type type) : Processor(type, type) {
-    pushInput(Connection::Type::RATIO);
+dsp::Quantizer::Quantizer(Connection::Type type, Connection::Space space) : Processor(type, type, space) {
+    pushInput(Connection::Type::RATIO, space);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Quantizer::getQuantum() {

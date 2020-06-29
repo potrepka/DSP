@@ -1,3 +1,4 @@
 #include "Processor.h"
 
-dsp::Processor::Processor(Connection::Type inType, Connection::Type outType) : Consumer(inType), Generator(outType) {}
+dsp::Processor::Processor(Connection::Type inType, Connection::Type outType, Connection::Space space)
+        : Consumer(inType, space), Generator(outType, space) {}

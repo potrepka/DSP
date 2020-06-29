@@ -7,7 +7,7 @@ namespace dsp {
 class BipolarToRatio : public Identity {
 
 public:
-    BipolarToRatio();
+    BipolarToRatio(Connection::Space space = Connection::Space::TIME);
 };
 
 } // namespace dsp

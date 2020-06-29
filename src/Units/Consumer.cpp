@@ -2,8 +2,8 @@
 
 const std::size_t dsp::Consumer::INPUT_SIGNAL = 0;
 
-dsp::Consumer::Consumer(Connection::Type type) {
-    pushInput(type);
+dsp::Consumer::Consumer(Connection::Type type, Connection::Space space) {
+    pushInput(type, space);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Consumer::getInputSignal() {

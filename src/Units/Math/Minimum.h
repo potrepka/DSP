@@ -7,7 +7,7 @@ namespace dsp {
 class Minimum : public Processor {
 
 public:
-    Minimum(Connection::Type type);
+    Minimum(Connection::Type type, Connection::Space space = Connection::Space::TIME);
     void pushInput();
 
 protected:
@@ -15,6 +15,7 @@ protected:
 
 private:
     Connection::Type type;
+    Connection::Space space;
 };
 
 } // namespace dsp

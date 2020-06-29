@@ -2,7 +2,7 @@
 
 const std::size_t dsp::Divide::DIVISOR = 1;
 
-dsp::Divide::Divide(Connection::Type type) : Processor(type, Connection::Type::RATIO) {
+dsp::Divide::Divide(Connection::Type type, Connection::Space space) : Processor(type, Connection::Type::RATIO, space) {
     pushInput(type);
 }
 

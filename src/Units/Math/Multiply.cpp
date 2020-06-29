@@ -1,9 +1,9 @@
 #include "Multiply.h"
 
-dsp::Multiply::Multiply(Connection::Type type) : Processor(type, type) {}
+dsp::Multiply::Multiply(Connection::Type type, Connection::Space space) : Processor(type, type, space), space(space) {}
 
 void dsp::Multiply::pushInput() {
-    Unit::pushInput(Connection::Type::RATIO);
+    Unit::pushInput(Connection::Type::RATIO, space);
 }
 
 void dsp::Multiply::process() {

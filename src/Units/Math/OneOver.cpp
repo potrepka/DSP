@@ -1,6 +1,6 @@
 #include "OneOver.h"
 
-dsp::OneOver::OneOver() : Processor(Connection::Type::RATIO, Connection::Type::RATIO) {}
+dsp::OneOver::OneOver(Connection::Space space) : Processor(Connection::Type::RATIO, Connection::Type::RATIO, space) {}
 
 void dsp::OneOver::process() {
     Unit::process();

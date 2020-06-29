@@ -7,7 +7,7 @@ namespace dsp {
 class UnipolarToRatio : public Identity {
 
 public:
-    UnipolarToRatio();
+    UnipolarToRatio(Connection::Space space = Connection::Space::TIME);
 };
 
 } // namespace dsp

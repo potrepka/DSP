@@ -1,6 +1,6 @@
 #include "Invert.h"
 
-dsp::Invert::Invert(Connection::Type type) : Processor(type, type) {}
+dsp::Invert::Invert(Connection::Type type, Connection::Space space) : Processor(type, type, space) {}
 
 void dsp::Invert::process() {
     Unit::process();

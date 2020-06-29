@@ -1,6 +1,7 @@
 #include "Identity.h"
 
-dsp::Identity::Identity(Connection::Type inType, Connection::Type outType) : Processor(inType, outType) {}
+dsp::Identity::Identity(Connection::Type inType, Connection::Type outType, Connection::Space space)
+        : Processor(inType, outType, space) {}
 
 void dsp::Identity::process() {
     Unit::process();

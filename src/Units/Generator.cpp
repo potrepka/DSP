@@ -2,8 +2,8 @@
 
 const std::size_t dsp::Generator::OUTPUT_SIGNAL = 0;
 
-dsp::Generator::Generator(Connection::Type type) {
-    pushOutput(type);
+dsp::Generator::Generator(Connection::Type type, Connection::Space space) {
+    pushOutput(type, space);
 }
 
 std::shared_ptr<dsp::Unit::OutputParameter> dsp::Generator::getOutputSignal() {

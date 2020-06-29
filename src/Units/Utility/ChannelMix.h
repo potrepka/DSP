@@ -9,7 +9,7 @@ class ChannelMix : public Processor {
 public:
     enum class Mode { MID, SIDE };
 
-    ChannelMix();
+    ChannelMix(Connection::Type type, Connection::Space space = Connection::Space::TIME);
     Mode getMode();
     void setMode(Mode mode);
     std::shared_ptr<InputParameter> getMix();

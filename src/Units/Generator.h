@@ -7,7 +7,7 @@ namespace dsp {
 class Generator : virtual public Unit {
 
 public:
-    Generator(Connection::Type type);
+    Generator(Connection::Type type, Connection::Space space = Connection::Space::TIME);
     std::shared_ptr<OutputParameter> getOutputSignal();
     void setOutputSignal(std::shared_ptr<OutputParameter> output);
 
