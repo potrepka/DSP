@@ -18,8 +18,12 @@ void dsp::PowerDistortion::process() {
                        getDrive()->getChannel(i)->getBuffer().begin(),
                        getOutputSignal()->getChannel(i)->getBuffer().begin(),
                        [](DSP_FLOAT x, DSP_FLOAT y) {
-                           x = clip(x, -1.0, 1.0);
-                           return x < 0.0f ? powf(1.0f + x, y) - 1.0f : 1.0f - powf(1.0f - x, y);
+                           if (y == 0.0) {
+                               return 0.0;
+                           } else {
+                               x = clip(x, -1.0, 1.0);
+                               return x < 0.0 ? pow(1.0 + x, y) - 1.0 : 1.0 - pow(1.0 - x, y);
+                           }
                        });
     }
 }
