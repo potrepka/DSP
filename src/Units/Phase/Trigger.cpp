@@ -39,11 +39,11 @@ void dsp::Trigger::process() {
                 sampleCount[i] = 0.0;
             }
             outputBuffer[k] = sampleCount[i] < 1.0 ? 1.0 : 0.0;
-            if (intervalBuffer[k] == 0.0) {
+            DSP_FLOAT interval = abs(intervalBuffer[k] * getSampleRate());
+            if (interval == 0.0) {
                 sampleCount[i] = 0.0;
             } else {
                 sampleCount[i] += 1.0;
-                DSP_FLOAT interval = intervalBuffer[k] * getSampleRate();
                 DSP_FLOAT delayed = sampleCount[i] - delayBuffer[k] * getSampleRate();
                 if (delayed >= interval) {
                     sampleCount[i] -= floor(delayed / interval) * interval;
