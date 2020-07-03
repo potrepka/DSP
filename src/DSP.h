@@ -44,7 +44,7 @@
 #include "Trigger.h"
 
 // Transforms
-#include "BinaryToLinear.h"
+#include "BinaryToInteger.h"
 #include "BipolarToRatio.h"
 #include "BipolarToUnipolar.h"
 #include "DecibelsToRatio.h"

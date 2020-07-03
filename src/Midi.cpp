@@ -110,7 +110,7 @@ dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSam
         notePressure[i].reserve(MIDI_NOTES);
         controlChange[i].reserve(MIDI_NOTES);
         programChange[i] =
-                std::make_shared<Input>(getBufferSize(), Connection::Type::LINEAR, Connection::Space::TIME, 0.0);
+                std::make_shared<Input>(getBufferSize(), Connection::Type::INTEGER, Connection::Space::TIME, 0.0);
         channelPressure[i] =
                 std::make_shared<Input>(getBufferSize(), Connection::Type::UNIPOLAR, Connection::Space::TIME, 0.0);
         pitchBend[i] =
@@ -309,7 +309,7 @@ dsp::Midi::MidiOutput::MidiOutput(unsigned int port) {
         notePressure[i].reserve(MIDI_NOTES);
         controlChange[i].reserve(MIDI_NOTES);
         programChange[i] =
-                std::make_shared<Output>(getBufferSize(), Connection::Type::LINEAR, Connection::Space::TIME, 0.0);
+                std::make_shared<Output>(getBufferSize(), Connection::Type::INTEGER, Connection::Space::TIME, 0.0);
         channelPressure[i] =
                 std::make_shared<Output>(getBufferSize(), Connection::Type::UNIPOLAR, Connection::Space::TIME, 0.0);
         pitchBend[i] =
