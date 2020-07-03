@@ -1,6 +1,6 @@
 #include "RatioToDecibels.h"
 
-dsp::RatioToDecibels::RatioToDecibels() : Processor(Connection::Type::RATIO, Connection::Type::DECIBELS) {}
+dsp::RatioToDecibels::RatioToDecibels() : Processor(Connection::Type::UNIPOLAR, Connection::Type::DECIBELS) {}
 
 void dsp::RatioToDecibels::process() {
     Unit::process();
