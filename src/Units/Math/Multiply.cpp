@@ -7,14 +7,13 @@ void dsp::Multiply::pushInputBinary() {
     Unit::pushInput(Connection::Type::BINARY, space);
 }
 
-void dsp::Multiply::pushInputInteger() {
+void dsp::Multiply::pushInputLinear() {
     assert(type != Connection::Type::BINARY);
-    Unit::pushInput(Connection::Type::INTEGER, space);
+    Unit::pushInput(Connection::Type::LINEAR, space);
 }
 
 void dsp::Multiply::pushInputRatio() {
     assert(type != Connection::Type::BINARY);
-    assert(type != Connection::Type::INTEGER);
     Unit::pushInput(Connection::Type::RATIO, space);
 }
 

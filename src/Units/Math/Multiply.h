@@ -9,7 +9,7 @@ class Multiply : public Processor {
 public:
     Multiply(Connection::Type type, Connection::Space space = Connection::Space::TIME);
     void pushInputBinary();
-    void pushInputInteger();
+    void pushInputLinear();
     void pushInputRatio();
 
 protected:
