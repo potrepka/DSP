@@ -3,6 +3,8 @@
 const std::size_t dsp::ChannelMix::MIX = 1;
 
 dsp::ChannelMix::ChannelMix(Connection::Type type, Connection::Space space) : Processor(type, type, space) {
+    assert(type != Connection::Type::BINARY);
+    assert(type != Connection::Type::INTEGER);
     pushInput(Connection::Type::UNIPOLAR, space);
 }
 

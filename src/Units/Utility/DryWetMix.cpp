@@ -5,6 +5,8 @@ const std::size_t dsp::DryWetMix::WET_SIGNAL = 1;
 const std::size_t dsp::DryWetMix::MIX = 2;
 
 dsp::DryWetMix::DryWetMix(Connection::Type type, Connection::Space space) : Processor(type, type, space) {
+    assert(type != Connection::Type::BINARY);
+    assert(type != Connection::Type::INTEGER);
     pushInput(type, space);
     pushInput(Connection::Type::UNIPOLAR, space);
 }

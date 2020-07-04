@@ -3,6 +3,8 @@
 const std::size_t dsp::Quantizer::QUANTUM = 1;
 
 dsp::Quantizer::Quantizer(Connection::Type type, Connection::Space space) : Processor(type, type, space) {
+    assert(type != Connection::Type::BINARY);
+    assert(type != Connection::Type::INTEGER);
     pushInput(Connection::Type::RATIO, space);
 }
 
