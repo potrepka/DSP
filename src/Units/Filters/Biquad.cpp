@@ -7,8 +7,8 @@ const std::size_t dsp::Biquad::GAIN = 3;
 dsp::Biquad::Biquad()
         : Processor(dsp::Connection::Type::BIPOLAR, dsp::Connection::Type::BIPOLAR), mode(Mode::LOW_PASS) {
     pushInput(Connection::Type::HERTZ);
-    pushInput(Connection::Type::RATIO, Connection::Space::TIME, sqrt(0.5));
-    pushInput(Connection::Type::DECIBELS);
+    pushInput(Connection::Type::RATIO, Connection::Space::TIME, ONE_OVER_SQRT2);
+    pushInput(Connection::Type::LINEAR);
 }
 
 dsp::Biquad::Mode dsp::Biquad::getMode() {
@@ -99,7 +99,7 @@ void dsp::Biquad::calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FL
             b1 = a1;
             break;
         case Mode::LOW_SHELF: {
-            const double amp = pow(10.0, gain * 0.025);
+            const double amp = exp2(0.5 * gain);
             const double ampPlus = amp + 1.0;
             const double ampMinus = amp - 1.0;
             const double alphaScaled = 2.0 * sqrt(amp) * alpha;
@@ -113,7 +113,7 @@ void dsp::Biquad::calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FL
             b2 = amp * (ampPlus - ampMinusTimesCosW - alphaScaled);
         } break;
         case Mode::HIGH_SHELF: {
-            const double amp = pow(10.0, gain * 0.025);
+            const double amp = exp2(0.5 * gain);
             const double ampPlus = amp + 1.0;
             const double ampMinus = amp - 1.0;
             const double alphaScaled = 2.0 * sqrt(amp) * alpha;
@@ -127,7 +127,7 @@ void dsp::Biquad::calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FL
             b2 = amp * (ampPlus + ampMinusTimesCosW - alphaScaled);
         } break;
         case Mode::PEAK: {
-            const double amp = pow(10.0, gain * 0.025);
+            const double amp = exp2(0.5 * gain);
             const double alphaMore = alpha * amp;
             const double alphaLess = alpha / amp;
             a0 = 1.0 + alphaLess;

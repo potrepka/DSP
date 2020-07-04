@@ -14,7 +14,7 @@ const std::size_t dsp::CompressorGate::GAIN_DELTA = 1;
 dsp::CompressorGate::CompressorGate() : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR) {
     channelMix = std::make_shared<ChannelMix>(Connection::Type::BIPOLAR);
     absoluteValue = std::make_shared<AbsoluteValue>(Connection::Type::RATIO);
-    ratioToDecibels = std::make_shared<RatioToDecibels>();
+    ratioToDecibels = std::make_shared<Base2Log>();
     gainComputer = std::make_shared<GainComputer>();
     gainEnvelope = std::make_shared<GainEnvelope>();
     gainUnit = std::make_shared<GainUnit>();

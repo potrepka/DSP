@@ -3,7 +3,7 @@
 const std::size_t dsp::GainEnvelope::ATTACK = 1;
 const std::size_t dsp::GainEnvelope::RELEASE = 2;
 
-dsp::GainEnvelope::GainEnvelope() : Processor(Connection::Type::DECIBELS, Connection::Type::DECIBELS) {
+dsp::GainEnvelope::GainEnvelope() : Processor(Connection::Type::LINEAR, Connection::Type::LINEAR) {
     pushInput(Connection::Type::SECONDS);
     pushInput(Connection::Type::SECONDS);
 }

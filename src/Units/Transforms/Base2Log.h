@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class DecibelsToRatio : public Processor {
+class Base2Log : public Processor {
 
 public:
-    DecibelsToRatio();
+    Base2Log();
 
 protected:
     void process() override;

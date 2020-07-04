@@ -5,11 +5,11 @@ const std::size_t dsp::GainComputer::COMPRESSION_RATIO = 2;
 const std::size_t dsp::GainComputer::GATE_RATIO = 3;
 const std::size_t dsp::GainComputer::KNEE = 4;
 
-dsp::GainComputer::GainComputer() : Processor(Connection::Type::DECIBELS, Connection::Type::DECIBELS) {
-    pushInput(Connection::Type::DECIBELS);
+dsp::GainComputer::GainComputer() : Processor(Connection::Type::LINEAR, Connection::Type::LINEAR) {
+    pushInput(Connection::Type::LINEAR);
     pushInput(Connection::Type::RATIO, Connection::Space::TIME, 1.0);
     pushInput(Connection::Type::RATIO, Connection::Space::TIME, 1.0);
-    pushInput(Connection::Type::DECIBELS);
+    pushInput(Connection::Type::LINEAR);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::GainComputer::getThreshold() {
