@@ -52,8 +52,12 @@ int main() {
 The following are possible directions for future development:
 - Delay effects
 - Elliptic filter
-- Cascading filters
-- Sequencer
-- MIDI
-- Frequency response
+- Crossover filter
+- Cascading Butterworth filter
+- Frequency response calculation
+- Pitch detection/shifting
+- Peak/RMS detection
+- Wavetable factory
+- Pattern sequencer
+- Saving/Loading state
 - SIMD instructions
