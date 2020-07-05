@@ -53,7 +53,7 @@ The following are possible directions for future development:
 - Delay effects
 - Elliptic filter
 - Crossover filter
-- Cascading Butterworth filter
+- Cascading filters
 - Frequency response calculation
 - Pitch detection/shifting
 - Peak/RMS detection
