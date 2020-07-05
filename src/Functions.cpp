@@ -10,12 +10,28 @@ DSP_FLOAT dsp::wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT
     return signal - diff * adjustment;
 }
 
-DSP_FLOAT dsp::decibelsToAmplitude(DSP_FLOAT decibels) {
-    return pow(10.0, 0.05 * decibels);
+DSP_FLOAT dsp::bipolarToUnipolar(const DSP_FLOAT bipolar) {
+    return 0.5 * bipolar + 0.5;
 }
 
-DSP_FLOAT dsp::amplitudeToDecibels(DSP_FLOAT amplitude) {
-    return 20.0 * log10(amplitude);
+DSP_FLOAT dsp::unipolarToBipolar(const DSP_FLOAT unipolar) {
+    return 2.0 * unipolar - 1.0;
+}
+
+DSP_FLOAT dsp::decibelsToLinear(const DSP_FLOAT decibels) {
+    return ONE_OVER_6DB * decibels;
+}
+
+DSP_FLOAT dsp::linearToDecibels(const DSP_FLOAT linear) {
+    return _6DB * linear;
+}
+
+DSP_FLOAT dsp::decibelsToRatio(const DSP_FLOAT decibels) {
+    return exp2(decibelsToLinear(decibels));
+}
+
+DSP_FLOAT dsp::ratioToDecibels(const DSP_FLOAT ratio) {
+    return linearToDecibels(log2(ratio));
 }
 
 DSP_FLOAT dsp::linear(std::vector<DSP_FLOAT> &table, const DSP_FLOAT index) {

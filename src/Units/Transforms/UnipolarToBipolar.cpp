@@ -8,6 +8,6 @@ void dsp::UnipolarToBipolar::process() {
         std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),
                        getInputSignal()->getChannel(i)->getBuffer().end(),
                        getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                       [](DSP_FLOAT x) { return 2.0 * x - 1.0; });
+                       unipolarToBipolar);
     }
 }

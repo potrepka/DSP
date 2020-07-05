@@ -8,6 +8,6 @@ void dsp::AbsoluteValue::process() {
         std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),
                        getInputSignal()->getChannel(i)->getBuffer().end(),
                        getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                       [](DSP_FLOAT x) { return x < 0 ? -x : x; });
+                       [](DSP_FLOAT x) { return abs(x); });
     }
 }
