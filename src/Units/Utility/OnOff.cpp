@@ -1,24 +1,24 @@
-#include "Gate.h"
+#include "OnOff.h"
 
-const std::size_t dsp::Gate::ON_TRIGGER = 0;
-const std::size_t dsp::Gate::OFF_TRIGGER = 1;
+const std::size_t dsp::OnOff::ON_TRIGGER = 0;
+const std::size_t dsp::OnOff::OFF_TRIGGER = 1;
 
-dsp::Gate::Gate() : Generator(Connection::Type::BINARY) {}
+dsp::OnOff::OnOff() : Generator(Connection::Type::BINARY) {}
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Gate::getOnTrigger() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::OnOff::getOnTrigger() {
     return getInput(ON_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Gate::getOffTrigger() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::OnOff::getOffTrigger() {
     return getInput(OFF_TRIGGER);
 }
 
-void dsp::Gate::setNumChannelsNoLock(std::size_t numChannels) {
+void dsp::OnOff::setNumChannelsNoLock(std::size_t numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
     state.resize(numChannels, 0);
 }
 
-void dsp::Gate::process() {
+void dsp::OnOff::process() {
     Unit::process();
     for (std::size_t i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &onTriggerBuffer = getOnTrigger()->getChannel(i)->getBuffer();

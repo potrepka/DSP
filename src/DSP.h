@@ -58,7 +58,7 @@
 #include "Audio.h"
 #include "ChannelMix.h"
 #include "DryWetMix.h"
-#include "Gate.h"
+#include "OnOff.h"
 #include "PassThrough.h"
 #include "SampleAndHold.h"
 

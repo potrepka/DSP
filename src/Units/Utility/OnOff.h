@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class Gate : public Generator {
+class OnOff : public Generator {
 
 public:
-    Gate();
+    OnOff();
     std::shared_ptr<InputParameter> getOnTrigger();
     std::shared_ptr<InputParameter> getOffTrigger();
 
