@@ -4,8 +4,7 @@ const unsigned int dsp::Floor::DIVISOR = 1;
 
 dsp::Floor::Floor(Connection::Type type, Connection::Space space) : Processor(type, type, space) {
     assert(type != Connection::Type::BINARY);
-    assert(type != Connection::Type::INTEGER);
-    pushInput(Connection::Type::RATIO, space);
+    pushInput(type == Connection::Type::INTEGER ? Connection::Type::INTEGER : Connection::Type::RATIO, space);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Floor::getDivisor() {
