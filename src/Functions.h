@@ -14,7 +14,7 @@ DSP_FLOAT decibelsToLinear(const DSP_FLOAT decibels);
 DSP_FLOAT linearToDecibels(const DSP_FLOAT linear);
 DSP_FLOAT decibelsToRatio(const DSP_FLOAT decibels);
 DSP_FLOAT ratioToDecibels(const DSP_FLOAT ratio);
-DSP_FLOAT linear(std::vector<DSP_FLOAT> &table, const DSP_FLOAT index);
-DSP_FLOAT hermite(std::vector<DSP_FLOAT> &table, const DSP_FLOAT index);
+DSP_FLOAT linear(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index);
+DSP_FLOAT hermite(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index);
 
 } // namespace dsp
