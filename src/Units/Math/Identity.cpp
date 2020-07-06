@@ -10,9 +10,6 @@ void dsp::Identity::process() {
     }
 }
 
-dsp::BinaryToInteger::BinaryToInteger(Connection::Space space)
-        : Identity(Connection::Type::BINARY, Connection::Type::INTEGER, space) {}
-
 dsp::BinaryToLinear::BinaryToLinear(Connection::Space space)
         : Identity(Connection::Type::BINARY, Connection::Type::LINEAR, space) {}
 

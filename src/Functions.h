@@ -8,6 +8,8 @@ namespace dsp {
 
 DSP_FLOAT clip(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max);
 DSP_FLOAT wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max);
+DSP_FLOAT toBinary(const DSP_FLOAT value);
+DSP_FLOAT toInteger(const DSP_FLOAT value);
 DSP_FLOAT bipolarToUnipolar(const DSP_FLOAT bipolar);
 DSP_FLOAT unipolarToBipolar(const DSP_FLOAT unipolar);
 DSP_FLOAT decibelsToLinear(const DSP_FLOAT decibels);

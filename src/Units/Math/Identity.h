@@ -13,12 +13,6 @@ protected:
     void process() override;
 };
 
-class BinaryToInteger : public Identity {
-
-public:
-    BinaryToInteger(Connection::Space space = Connection::Space::TIME);
-};
-
 class BinaryToLinear : public Identity {
 
 public:

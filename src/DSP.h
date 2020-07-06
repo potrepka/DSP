@@ -31,6 +31,7 @@
 #include "Identity.h"
 #include "Maximum.h"
 #include "Minimum.h"
+#include "Modulo.h"
 #include "Multiply.h"
 #include "Negative.h"
 #include "OneOver.h"
@@ -51,6 +52,8 @@
 #include "HertzToSeconds.h"
 #include "IFFT.h"
 #include "SecondsToHertz.h"
+#include "ToBinary.h"
+#include "ToInteger.h"
 #include "UnipolarToBipolar.h"
 
 // Utility

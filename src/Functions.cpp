@@ -16,6 +16,14 @@ DSP_FLOAT dsp::wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT
     return signal - floor(adjusted / diff) * diff;
 }
 
+DSP_FLOAT dsp::toBinary(const DSP_FLOAT value) {
+    return value == 0.0 ? 0.0 : 1.0;
+}
+
+DSP_FLOAT dsp::toInteger(const DSP_FLOAT value) {
+    return floor(value);
+}
+
 DSP_FLOAT dsp::bipolarToUnipolar(const DSP_FLOAT bipolar) {
     return 0.5 * bipolar + 0.5;
 }
