@@ -8,9 +8,9 @@ class BufferOscillator : public Generator {
 
 public:
     BufferOscillator();
-    std::vector<DSP_FLOAT> &getBuffer(std::size_t index);
-    void setBuffer(std::size_t index, std::vector<DSP_FLOAT> &buffer);
-    void removeBuffer(std::size_t index);
+    std::vector<DSP_FLOAT> &getBuffer(std::size_t channel);
+    void setBuffer(std::size_t channel, std::vector<DSP_FLOAT> &buffer);
+    void removeBuffer(std::size_t channel);
     std::shared_ptr<InputParameter> getPhase();
 
 protected:
