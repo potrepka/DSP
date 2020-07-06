@@ -2,8 +2,9 @@
 
 const unsigned int dsp::PowerDistortion::DRIVE = 1;
 
-dsp::PowerDistortion::PowerDistortion() : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR) {
-    pushInput(Connection::Type::RATIO);
+dsp::PowerDistortion::PowerDistortion(Connection::Space space)
+        : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR, space) {
+    pushInput(Connection::Type::RATIO, space);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::PowerDistortion::getDrive() {
