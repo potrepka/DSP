@@ -22,8 +22,8 @@ private:
     static const std::size_t RESET_TRIGGER;
     static const std::size_t TRIGGER;
     std::vector<unsigned int> *sequence;
-    std::vector<std::size_t> memory;
-    std::vector<std::size_t> index;
+    std::vector<unsigned int> memory;
+    std::vector<unsigned int> index;
 };
 
 } // namespace dsp
