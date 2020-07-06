@@ -12,13 +12,13 @@ dsp::SamplePlayer::SamplePlayer() : Generator(Connection::Type::BIPOLAR) {
     pushInput(Connection::Type::RATIO);
 }
 
-std::vector<DSP_FLOAT> dsp::SamplePlayer::getSample(std::size_t index) {
-    return samples[index];
+std::vector<DSP_FLOAT> dsp::SamplePlayer::getSample(std::size_t channel) {
+    return samples[channel];
 }
 
-void dsp::SamplePlayer::setSample(std::size_t index, const std::vector<DSP_FLOAT> &sample) {
+void dsp::SamplePlayer::setSample(std::size_t channel, const std::vector<DSP_FLOAT> &sample) {
     lock();
-    samples[index] = sample;
+    samples[channel] = sample;
     unlock();
 }
 

@@ -8,7 +8,7 @@ class SampleRecorder : public Consumer {
 
 public:
     SampleRecorder();
-    std::vector<DSP_FLOAT> getSample(std::size_t index);
+    std::vector<DSP_FLOAT> getSample(std::size_t channel);
     std::shared_ptr<InputParameter> getResetTrigger();
     std::shared_ptr<InputParameter> getGate();
 

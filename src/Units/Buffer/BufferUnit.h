@@ -10,7 +10,7 @@ public:
     BufferUnit();
     std::size_t getUnitBufferSize();
     void setUnitBufferSize(std::size_t size);
-    std::vector<DSP_FLOAT> &getUnitBuffer(std::size_t index);
+    std::vector<DSP_FLOAT> &getUnitBuffer(std::size_t channel);
 
 protected:
     void setNumChannelsNoLock(std::size_t numChannels) override;

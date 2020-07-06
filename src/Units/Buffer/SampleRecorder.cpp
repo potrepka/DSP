@@ -7,9 +7,9 @@ dsp::SampleRecorder::SampleRecorder() : Consumer(Connection::Type::BIPOLAR) {
     pushInput(Connection::Type::BINARY);
 }
 
-std::vector<DSP_FLOAT> dsp::SampleRecorder::getSample(std::size_t index) {
+std::vector<DSP_FLOAT> dsp::SampleRecorder::getSample(std::size_t channel) {
     lock();
-    std::vector<DSP_FLOAT> sample = samples[index];
+    std::vector<DSP_FLOAT> sample = samples[channel];
     unlock();
     return sample;
 }

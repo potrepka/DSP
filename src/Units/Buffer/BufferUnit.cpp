@@ -15,8 +15,8 @@ void dsp::BufferUnit::setUnitBufferSize(std::size_t size) {
     unlock();
 }
 
-std::vector<DSP_FLOAT> &dsp::BufferUnit::getUnitBuffer(std::size_t index) {
-    return buffers[index];
+std::vector<DSP_FLOAT> &dsp::BufferUnit::getUnitBuffer(std::size_t channel) {
+    return buffers[channel];
 }
 
 void dsp::BufferUnit::setNumChannelsNoLock(std::size_t numChannels) {

@@ -8,8 +8,8 @@ class SamplePlayer : public Generator {
 
 public:
     SamplePlayer();
-    std::vector<DSP_FLOAT> getSample(std::size_t index);
-    void setSample(std::size_t index, const std::vector<DSP_FLOAT> &sample);
+    std::vector<DSP_FLOAT> getSample(std::size_t channel);
+    void setSample(std::size_t channel, const std::vector<DSP_FLOAT> &sample);
     std::shared_ptr<InputParameter> getResetTrigger();
     std::shared_ptr<InputParameter> getGate();
     std::shared_ptr<InputParameter> getStartPosition();
