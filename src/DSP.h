@@ -46,7 +46,6 @@
 // Transforms
 #include "Base2Exp.h"
 #include "Base2Log.h"
-#include "BinaryToInteger.h"
 #include "BipolarToUnipolar.h"
 #include "FFT.h"
 #include "HertzToSeconds.h"
