@@ -27,13 +27,13 @@
 // Math
 #include "AbsoluteValue.h"
 #include "Divide.h"
+#include "Floor.h"
 #include "Identity.h"
 #include "Maximum.h"
 #include "Minimum.h"
 #include "Multiply.h"
 #include "Negative.h"
 #include "OneOver.h"
-#include "Quantizer.h"
 
 // Noise
 #include "PinkNoise.h"
