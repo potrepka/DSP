@@ -61,6 +61,7 @@
 #include "OnOff.h"
 #include "PassThrough.h"
 #include "SampleAndHold.h"
+#include "Sequencer.h"
 
 // Variables
 #include "BufferSize.h"
