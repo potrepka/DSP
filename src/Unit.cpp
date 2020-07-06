@@ -435,13 +435,13 @@ void dsp::operator>>(std::shared_ptr<dsp::Unit::OutputParameter> output,
 
 void dsp::operator!=(std::shared_ptr<dsp::Unit::OutputParameter> output,
                      std::shared_ptr<dsp::Unit::InputParameter> input) {
-    input->lock();
     output->lock();
+    input->lock();
     if (output->getNumChannels() > 0) {
         for (std::size_t i = 0; i < input->getNumChannels(); i++) {
             output->getChannel(i % output->getNumChannels()) != input->getChannel(i);
         }
     }
-    output->unlock();
     input->unlock();
+    output->unlock();
 }
