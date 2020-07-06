@@ -208,11 +208,11 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Engine::getAudioOutput() {
     return audio->getAudioOutput();
 }
 
-std::size_t dsp::Engine::getNumUnits() {
+unsigned int dsp::Engine::getNumUnits() {
     return audio->getNumUnits();
 }
 
-std::shared_ptr<dsp::Unit> dsp::Engine::getUnit(std::size_t index) {
+std::shared_ptr<dsp::Unit> dsp::Engine::getUnit(unsigned int index) {
     return audio->getUnit(index);
 }
 
@@ -220,7 +220,7 @@ void dsp::Engine::pushUnit(std::shared_ptr<Unit> unit) {
     audio->pushUnit(unit);
 }
 
-void dsp::Engine::insertUnit(std::size_t index, std::shared_ptr<Unit> unit) {
+void dsp::Engine::insertUnit(unsigned int index, std::shared_ptr<Unit> unit) {
     audio->insertUnit(index, unit);
 }
 
@@ -228,7 +228,7 @@ void dsp::Engine::removeUnit(std::shared_ptr<Unit> unit) {
     audio->removeUnit(unit);
 }
 
-void dsp::Engine::removeUnit(std::size_t index) {
+void dsp::Engine::removeUnit(unsigned int index) {
     audio->removeUnit(index);
 }
 

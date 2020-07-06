@@ -1,7 +1,7 @@
 #include "FFT.h"
 
-const std::size_t dsp::FFT::REAL = 0;
-const std::size_t dsp::FFT::IMAGINARY = 1;
+const unsigned int dsp::FFT::REAL = 0;
+const unsigned int dsp::FFT::IMAGINARY = 1;
 
 dsp::FFT::FFT() : Consumer(Connection::Type::BIPOLAR) {
     pushOutput(Connection::Type::BIPOLAR, Connection::Space::FREQUENCY);
@@ -26,7 +26,7 @@ void dsp::FFT::setBufferSizeNoLock(unsigned int bufferSize) {
 
 void dsp::FFT::process() {
     Unit::process();
-    for (std::size_t i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &realBuffer = getReal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();

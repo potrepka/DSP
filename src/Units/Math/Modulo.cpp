@@ -1,6 +1,6 @@
 #include "Modulo.h"
 
-const std::size_t dsp::Modulo::DIVISOR = 1;
+const unsigned int dsp::Modulo::DIVISOR = 1;
 
 dsp::Modulo::Modulo(Connection::Type type, Connection::Space space) : Processor(type, type, space) {
     assert(type != Connection::Type::BINARY);
@@ -14,7 +14,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Modulo::getDivisor() {
 
 void dsp::Modulo::process() {
     Unit::process();
-    for (std::size_t i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),
                        getInputSignal()->getChannel(i)->getBuffer().end(),
                        getDivisor()->getChannel(i)->getBuffer().begin(),

@@ -28,16 +28,16 @@ protected:
     void disconnect() override;
 
 private:
-    static const std::size_t CONTROL_SIGNAL;
-    static const std::size_t LINK;
-    static const std::size_t THRESHOLD;
-    static const std::size_t COMPRESSION_RATIO;
-    static const std::size_t GATE_RATIO;
-    static const std::size_t KNEE;
-    static const std::size_t ATTACK;
-    static const std::size_t RELEASE;
+    static const unsigned int CONTROL_SIGNAL;
+    static const unsigned int LINK;
+    static const unsigned int THRESHOLD;
+    static const unsigned int COMPRESSION_RATIO;
+    static const unsigned int GATE_RATIO;
+    static const unsigned int KNEE;
+    static const unsigned int ATTACK;
+    static const unsigned int RELEASE;
 
-    static const std::size_t GAIN_DELTA;
+    static const unsigned int GAIN_DELTA;
 
     std::shared_ptr<ChannelMix> channelMix;
     std::shared_ptr<AbsoluteValue> absoluteValue;

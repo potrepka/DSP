@@ -32,39 +32,39 @@ unsigned char dsp::Midi::TimedMessage::getChannel() const {
     }
 }
 
-unsigned char dsp::Midi::TimedMessage::getByte(std::size_t index) const {
+unsigned char dsp::Midi::TimedMessage::getByte(unsigned int index) const {
     return message[index];
 }
 
-DSP_FLOAT dsp::Midi::TimedMessage::getByteAsUnipolar(std::size_t index) const {
+DSP_FLOAT dsp::Midi::TimedMessage::getByteAsUnipolar(unsigned int index) const {
     return message[index] == 0 ? 0.0 : (message[index] + 1) * 0.0078125;
 }
 
-void dsp::Midi::TimedMessage::setByte(std::size_t index, unsigned char value) {
+void dsp::Midi::TimedMessage::setByte(unsigned int index, unsigned char value) {
     message[index] = value;
 }
 
-void dsp::Midi::TimedMessage::setByteUsingUnipolar(std::size_t index, DSP_FLOAT value) {
+void dsp::Midi::TimedMessage::setByteUsingUnipolar(unsigned int index, DSP_FLOAT value) {
     message[index] = value == 0.0 ? 0 : static_cast<unsigned char>(value * 128 - 1);
 }
 
-unsigned short dsp::Midi::TimedMessage::getShort(std::size_t lsb, std::size_t msb) const {
+unsigned short dsp::Midi::TimedMessage::getShort(unsigned int lsb, unsigned int msb) const {
     return message[lsb] + message[msb] * 128;
 }
 
-DSP_FLOAT dsp::Midi::TimedMessage::getShortAsBipolar(std::size_t lsb, std::size_t msb) const {
+DSP_FLOAT dsp::Midi::TimedMessage::getShortAsBipolar(unsigned int lsb, unsigned int msb) const {
     unsigned short x = getShort(lsb, msb) - 8192;
     return (x > 0 ? x + 1 : x) * 0.0001220703125;
 }
 
-void dsp::Midi::TimedMessage::setShort(std::size_t lsb, std::size_t msb, unsigned short value) {
+void dsp::Midi::TimedMessage::setShort(unsigned int lsb, unsigned int msb, unsigned short value) {
     unsigned char least = value % 128;
     unsigned char most = value / 128;
     message[lsb] = least;
     message[msb] = most;
 }
 
-void dsp::Midi::TimedMessage::setShortUsingBipolar(std::size_t lsb, std::size_t msb, DSP_FLOAT bipolar) {
+void dsp::Midi::TimedMessage::setShortUsingBipolar(unsigned int lsb, unsigned int msb, DSP_FLOAT bipolar) {
     setShort(lsb, msb, static_cast<unsigned short>(bipolar * 8192 + 8192));
 }
 
@@ -507,19 +507,19 @@ std::string dsp::Midi::getMidiOutputName(unsigned int port) {
 
 dsp::Midi::Midi() {}
 
-std::size_t dsp::Midi::getNumMidiInputs() {
-    return midiInputs.size();
+unsigned int dsp::Midi::getNumMidiInputs() {
+    return static_cast<unsigned int>(midiInputs.size());
 }
 
-std::size_t dsp::Midi::getNumMidiOutputs() {
-    return midiOutputs.size();
+unsigned int dsp::Midi::getNumMidiOutputs() {
+    return static_cast<unsigned int>(midiOutputs.size());
 }
 
-std::shared_ptr<dsp::Midi::MidiInput> dsp::Midi::getMidiInput(std::size_t index) {
+std::shared_ptr<dsp::Midi::MidiInput> dsp::Midi::getMidiInput(unsigned int index) {
     return midiInputs[index];
 }
 
-std::shared_ptr<dsp::Midi::MidiOutput> dsp::Midi::getMidiOutput(std::size_t index) {
+std::shared_ptr<dsp::Midi::MidiOutput> dsp::Midi::getMidiOutput(unsigned int index) {
     return midiOutputs[index];
 }
 
@@ -535,13 +535,13 @@ void dsp::Midi::pushMidiOutput(unsigned int port) {
     unlock();
 }
 
-void dsp::Midi::removeMidiInput(std::size_t index) {
+void dsp::Midi::removeMidiInput(unsigned int index) {
     lock();
     midiInputs.erase(midiInputs.begin() + index);
     unlock();
 }
 
-void dsp::Midi::removeMidiOutput(std::size_t index) {
+void dsp::Midi::removeMidiOutput(unsigned int index) {
     lock();
     midiOutputs.erase(midiOutputs.begin() + index);
     unlock();

@@ -17,8 +17,8 @@ protected:
     void process() override;
 
 private:
-    static const std::size_t REAL;
-    static const std::size_t IMAGINARY;
+    static const unsigned int REAL;
+    static const unsigned int IMAGINARY;
     audiofft::AudioFFT fft;
     std::vector<float> real;
     std::vector<float> imaginary;

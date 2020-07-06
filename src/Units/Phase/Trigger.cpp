@@ -1,8 +1,8 @@
 #include "Trigger.h"
 
-const std::size_t dsp::Trigger::RESET_TRIGGER = 0;
-const std::size_t dsp::Trigger::INTERVAL = 1;
-const std::size_t dsp::Trigger::DELAY = 2;
+const unsigned int dsp::Trigger::RESET_TRIGGER = 0;
+const unsigned int dsp::Trigger::INTERVAL = 1;
+const unsigned int dsp::Trigger::DELAY = 2;
 
 dsp::Trigger::Trigger() : Generator(Connection::Type::BINARY) {
     pushInput(Connection::Type::BINARY);
@@ -22,14 +22,14 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getDelay() {
     return getInput(DELAY);
 }
 
-void dsp::Trigger::setNumChannelsNoLock(std::size_t numChannels) {
+void dsp::Trigger::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
     sampleCount.resize(numChannels, 0.0);
 }
 
 void dsp::Trigger::process() {
     Unit::process();
-    for (std::size_t i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &intervalBuffer = getInterval()->getChannel(i)->getBuffer();

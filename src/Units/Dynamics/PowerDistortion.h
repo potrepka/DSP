@@ -14,7 +14,7 @@ protected:
     void process() override;
 
 private:
-    static const std::size_t DRIVE;
+    static const unsigned int DRIVE;
 };
 
 } // namespace dsp

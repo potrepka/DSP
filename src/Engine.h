@@ -37,12 +37,12 @@ public:
     std::shared_ptr<Unit::OutputParameter> getAudioInput();
     std::shared_ptr<Unit::InputParameter> getAudioOutput();
 
-    std::size_t getNumUnits();
-    std::shared_ptr<Unit> getUnit(std::size_t index);
+    unsigned int getNumUnits();
+    std::shared_ptr<Unit> getUnit(unsigned int index);
     void pushUnit(std::shared_ptr<Unit> unit);
-    void insertUnit(std::size_t index, std::shared_ptr<Unit> unit);
+    void insertUnit(unsigned int index, std::shared_ptr<Unit> unit);
     void removeUnit(std::shared_ptr<Unit> unit);
-    void removeUnit(std::size_t index);
+    void removeUnit(unsigned int index);
     void sortUnits();
 
 private:

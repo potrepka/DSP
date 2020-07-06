@@ -1,7 +1,7 @@
 #include "IFFT.h"
 
-const std::size_t dsp::IFFT::REAL = 0;
-const std::size_t dsp::IFFT::IMAGINARY = 1;
+const unsigned int dsp::IFFT::REAL = 0;
+const unsigned int dsp::IFFT::IMAGINARY = 1;
 
 dsp::IFFT::IFFT() : Generator(Connection::Type::BIPOLAR) {
     pushInput(Connection::Type::BIPOLAR, Connection::Space::FREQUENCY);
@@ -26,7 +26,7 @@ void dsp::IFFT::setBufferSizeNoLock(unsigned int bufferSize) {
 
 void dsp::IFFT::process() {
     Unit::process();
-    for (std::size_t i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &realBuffer = getReal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();

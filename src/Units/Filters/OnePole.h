@@ -15,11 +15,11 @@ public:
     std::shared_ptr<InputParameter> getFrequency();
 
 protected:
-    void setNumChannelsNoLock(std::size_t numChannels) override;
+    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
-    static const std::size_t FREQUENCY;
+    static const unsigned int FREQUENCY;
     Mode mode;
     std::vector<DSP_FLOAT> y1;
 };

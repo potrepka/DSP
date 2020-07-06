@@ -12,12 +12,12 @@ public:
     std::shared_ptr<InputParameter> getRelease();
 
 protected:
-    void setNumChannelsNoLock(std::size_t numChannels) override;
+    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
-    static const std::size_t ATTACK;
-    static const std::size_t RELEASE;
+    static const unsigned int ATTACK;
+    static const unsigned int RELEASE;
     std::vector<DSP_FLOAT> outputPrevious;
 };
 

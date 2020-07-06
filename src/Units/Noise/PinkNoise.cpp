@@ -2,14 +2,14 @@
 
 dsp::PinkNoise::PinkNoise() : Generator(Connection::Type::BIPOLAR), seed(1) {}
 
-void dsp::PinkNoise::setNumChannelsNoLock(std::size_t numChannels) {
+void dsp::PinkNoise::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
     values.resize(numChannels, std::vector<DSP_FLOAT>(7));
 }
 
 void dsp::PinkNoise::process() {
     Unit::process();
-    for (std::size_t i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         DSP_FLOAT &b0 = values[i][0];
         DSP_FLOAT &b1 = values[i][1];

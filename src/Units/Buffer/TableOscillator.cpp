@@ -1,22 +1,22 @@
 #include "TableOscillator.h"
 
-const std::size_t dsp::TableOscillator::PHASE = 0;
-const std::size_t dsp::TableOscillator::POSITION = 1;
+const unsigned int dsp::TableOscillator::PHASE = 0;
+const unsigned int dsp::TableOscillator::POSITION = 1;
 
 dsp::TableOscillator::TableOscillator() : Generator(Connection::Type::BIPOLAR) {
     pushInput(Connection::Type::UNIPOLAR);
     pushInput(Connection::Type::UNIPOLAR);
 }
 
-std::size_t dsp::TableOscillator::getNumTables() {
-    return tables.size();
+unsigned int dsp::TableOscillator::getNumTables() {
+    return static_cast<unsigned int>(tables.size());
 }
 
-std::vector<DSP_FLOAT> &dsp::TableOscillator::getTable(std::size_t index) {
+std::vector<DSP_FLOAT> &dsp::TableOscillator::getTable(unsigned int index) {
     return *tables[index];
 }
 
-void dsp::TableOscillator::setTable(std::size_t index, std::vector<DSP_FLOAT> &table) {
+void dsp::TableOscillator::setTable(unsigned int index, std::vector<DSP_FLOAT> &table) {
     lock();
     tables[index] = &table;
     unlock();
@@ -28,13 +28,13 @@ void dsp::TableOscillator::pushTable(std::vector<DSP_FLOAT> &table) {
     unlock();
 }
 
-void dsp::TableOscillator::insertTable(std::size_t index, std::vector<DSP_FLOAT> &table) {
+void dsp::TableOscillator::insertTable(unsigned int index, std::vector<DSP_FLOAT> &table) {
     lock();
     tables.insert(tables.begin() + index, &table);
     unlock();
 }
 
-void dsp::TableOscillator::removeTable(std::size_t index) {
+void dsp::TableOscillator::removeTable(unsigned int index) {
     lock();
     tables.erase(tables.begin() + index);
     unlock();
@@ -53,7 +53,7 @@ void dsp::TableOscillator::process() {
     if (tables.size() > 0) {
         std::vector<DSP_FLOAT> points;
         points.resize(4);
-        for (std::size_t i = 0; i < getNumChannels(); i++) {
+        for (unsigned int i = 0; i < getNumChannels(); i++) {
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &positionBuffer = getPosition()->getChannel(i)->getBuffer();

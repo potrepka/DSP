@@ -16,9 +16,9 @@ protected:
     void process() override;
 
 private:
-    static const std::size_t DRY_SIGNAL;
-    static const std::size_t WET_SIGNAL;
-    static const std::size_t MIX;
+    static const unsigned int DRY_SIGNAL;
+    static const unsigned int WET_SIGNAL;
+    static const unsigned int MIX;
 };
 
 } // namespace dsp

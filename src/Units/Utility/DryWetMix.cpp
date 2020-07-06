@@ -1,8 +1,8 @@
 #include "DryWetMix.h"
 
-const std::size_t dsp::DryWetMix::DRY_SIGNAL = 0;
-const std::size_t dsp::DryWetMix::WET_SIGNAL = 1;
-const std::size_t dsp::DryWetMix::MIX = 2;
+const unsigned int dsp::DryWetMix::DRY_SIGNAL = 0;
+const unsigned int dsp::DryWetMix::WET_SIGNAL = 1;
+const unsigned int dsp::DryWetMix::MIX = 2;
 
 dsp::DryWetMix::DryWetMix(Connection::Type type, Connection::Space space) : Processor(type, type, space) {
     assert(type != Connection::Type::BINARY);
@@ -25,7 +25,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::DryWetMix::getMix() {
 
 void dsp::DryWetMix::process() {
     Unit::process();
-    for (std::size_t i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &dryBuffer = getDrySignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &wetBuffer = getWetSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &mixBuffer = getMix()->getChannel(i)->getBuffer();

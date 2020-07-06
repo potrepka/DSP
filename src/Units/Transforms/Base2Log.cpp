@@ -4,7 +4,7 @@ dsp::Base2Log::Base2Log() : Processor(Connection::Type::RATIO, Connection::Type:
 
 void dsp::Base2Log::process() {
     Unit::process();
-    for (std::size_t i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),
                        getInputSignal()->getChannel(i)->getBuffer().end(),
                        getOutputSignal()->getChannel(i)->getBuffer().begin(),

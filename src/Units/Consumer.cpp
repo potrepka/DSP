@@ -1,6 +1,6 @@
 #include "Consumer.h"
 
-const std::size_t dsp::Consumer::INPUT_SIGNAL = 0;
+const unsigned int dsp::Consumer::INPUT_SIGNAL = 0;
 
 dsp::Consumer::Consumer(Connection::Type type, Connection::Space space) {
     pushInput(type, space);

@@ -8,22 +8,22 @@ class SamplePlayer : public Generator {
 
 public:
     SamplePlayer();
-    std::vector<DSP_FLOAT> getSample(std::size_t channel);
-    void setSample(std::size_t channel, const std::vector<DSP_FLOAT> &sample);
+    std::vector<DSP_FLOAT> getSample(unsigned int channel);
+    void setSample(unsigned int channel, const std::vector<DSP_FLOAT> &sample);
     std::shared_ptr<InputParameter> getResetTrigger();
     std::shared_ptr<InputParameter> getGate();
     std::shared_ptr<InputParameter> getStartPosition();
     std::shared_ptr<InputParameter> getSpeed();
 
 protected:
-    void setNumChannelsNoLock(std::size_t numChannels) override;
+    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
-    static const std::size_t RESET_TRIGGER;
-    static const std::size_t GATE;
-    static const std::size_t START_POSITION;
-    static const std::size_t SPEED;
+    static const unsigned int RESET_TRIGGER;
+    static const unsigned int GATE;
+    static const unsigned int START_POSITION;
+    static const unsigned int SPEED;
     std::vector<std::vector<DSP_FLOAT>> samples;
     std::vector<DSP_FLOAT> position;
 };

@@ -12,12 +12,12 @@ public:
     std::shared_ptr<InputParameter> getResetTrigger();
 
 protected:
-    void setNumChannelsNoLock(std::size_t numChannels) override;
+    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
-    static const std::size_t FREQUENCY;
-    static const std::size_t RESET_TRIGGER;
+    static const unsigned int FREQUENCY;
+    static const unsigned int RESET_TRIGGER;
     std::vector<DSP_FLOAT> phase;
 };
 

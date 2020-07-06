@@ -1,9 +1,9 @@
 #include "GainComputer.h"
 
-const std::size_t dsp::GainComputer::THRESHOLD = 1;
-const std::size_t dsp::GainComputer::COMPRESSION_RATIO = 2;
-const std::size_t dsp::GainComputer::GATE_RATIO = 3;
-const std::size_t dsp::GainComputer::KNEE = 4;
+const unsigned int dsp::GainComputer::THRESHOLD = 1;
+const unsigned int dsp::GainComputer::COMPRESSION_RATIO = 2;
+const unsigned int dsp::GainComputer::GATE_RATIO = 3;
+const unsigned int dsp::GainComputer::KNEE = 4;
 
 dsp::GainComputer::GainComputer() : Processor(Connection::Type::LINEAR, Connection::Type::LINEAR) {
     pushInput(Connection::Type::LINEAR);
@@ -30,7 +30,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::GainComputer::getKnee() {
 
 void dsp::GainComputer::process() {
     Unit::process();
-    for (std::size_t i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &thresholdBuffer = getThreshold()->getChannel(i)->getBuffer();

@@ -1,7 +1,7 @@
 #include "Sequencer.h"
 
-const std::size_t dsp::Sequencer::RESET_TRIGGER = 0;
-const std::size_t dsp::Sequencer::TRIGGER = 1;
+const unsigned int dsp::Sequencer::RESET_TRIGGER = 0;
+const unsigned int dsp::Sequencer::TRIGGER = 1;
 
 dsp::Sequencer::Sequencer() : Generator(Connection::Type::INTEGER), sequence(nullptr), index(0) {
     pushInput(Connection::Type::BINARY);
@@ -32,7 +32,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Sequencer::getTrigger() {
     return getInput(TRIGGER);
 }
 
-void dsp::Sequencer::setNumChannelsNoLock(std::size_t numChannels) {
+void dsp::Sequencer::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
     memory.resize(numChannels, 0);
     index.resize(numChannels, 0);
@@ -41,7 +41,7 @@ void dsp::Sequencer::setNumChannelsNoLock(std::size_t numChannels) {
 void dsp::Sequencer::process() {
     Unit::process();
     if (sequence != nullptr && sequence->size() > 0) {
-        for (std::size_t i = 0; i < getNumChannels(); i++) {
+        for (unsigned int i = 0; i < getNumChannels(); i++) {
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &triggerBuffer = getTrigger()->getChannel(i)->getBuffer();

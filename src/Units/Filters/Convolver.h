@@ -9,26 +9,26 @@ class Convolver : public Processor {
 
 public:
     Convolver();
-    std::vector<DSP_FLOAT> getSample(std::size_t channel);
-    void setSample(std::size_t channel, const std::vector<DSP_FLOAT> &sample);
-    std::size_t getHeadSize();
-    std::size_t getTailSize();
-    void setTailSize(std::size_t size);
-    void setHeadSize(std::size_t size);
+    std::vector<DSP_FLOAT> getSample(unsigned int channel);
+    void setSample(unsigned int channel, const std::vector<DSP_FLOAT> &sample);
+    unsigned int getHeadSize();
+    unsigned int getTailSize();
+    void setTailSize(unsigned int size);
+    void setHeadSize(unsigned int size);
 
 protected:
     void setBufferSizeNoLock(unsigned int bufferSize) override;
-    void setNumChannelsNoLock(std::size_t numChannels) override;
+    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
     std::vector<std::vector<DSP_FLOAT>> samples;
     std::vector<std::unique_ptr<fftconvolver::TwoStageFFTConvolver>> convolvers;
-    std::size_t headSize;
-    std::size_t tailSize;
+    unsigned int headSize;
+    unsigned int tailSize;
     std::vector<float> input;
     std::vector<float> output;
-    void initConvolver(std::size_t channel);
+    void initConvolver(unsigned int channel);
 };
 
 } // namespace dsp

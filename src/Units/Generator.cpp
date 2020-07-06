@@ -1,6 +1,6 @@
 #include "Generator.h"
 
-const std::size_t dsp::Generator::OUTPUT_SIGNAL = 0;
+const unsigned int dsp::Generator::OUTPUT_SIGNAL = 0;
 
 dsp::Generator::Generator(Connection::Type type, Connection::Space space) {
     pushOutput(type, space);

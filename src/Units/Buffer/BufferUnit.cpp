@@ -2,24 +2,24 @@
 
 dsp::BufferUnit::BufferUnit() : Consumer(Connection::Type::BIPOLAR), unitBufferSize(0), index(0) {}
 
-std::size_t dsp::BufferUnit::getUnitBufferSize() {
+unsigned int dsp::BufferUnit::getUnitBufferSize() {
     return unitBufferSize;
 }
 
-void dsp::BufferUnit::setUnitBufferSize(std::size_t size) {
+void dsp::BufferUnit::setUnitBufferSize(unsigned int size) {
     lock();
-    for (std::size_t i = 0; i < buffers.size(); i++) {
+    for (unsigned int i = 0; i < buffers.size(); i++) {
         buffers[i].resize(size);
     }
     unitBufferSize = size;
     unlock();
 }
 
-std::vector<DSP_FLOAT> &dsp::BufferUnit::getUnitBuffer(std::size_t channel) {
+std::vector<DSP_FLOAT> &dsp::BufferUnit::getUnitBuffer(unsigned int channel) {
     return buffers[channel];
 }
 
-void dsp::BufferUnit::setNumChannelsNoLock(std::size_t numChannels) {
+void dsp::BufferUnit::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
     buffers.resize(numChannels, std::vector<DSP_FLOAT>(unitBufferSize, 0));
 }
@@ -27,10 +27,10 @@ void dsp::BufferUnit::setNumChannelsNoLock(std::size_t numChannels) {
 void dsp::BufferUnit::process() {
     Unit::process();
     if (unitBufferSize > 0) {
-        size_t start = index % unitBufferSize;
-        for (std::size_t i = 0; i < getNumChannels(); i++) {
+        unsigned int start = index % unitBufferSize;
+        for (unsigned int i = 0; i < getNumChannels(); i++) {
             std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-            std::size_t position = start;
+            unsigned int position = start;
             for (unsigned int k = 0; k < getBufferSize(); k++) {
                 buffers[i][position] = inputBuffer[k];
                 position++;

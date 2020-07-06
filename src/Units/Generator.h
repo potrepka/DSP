@@ -12,7 +12,7 @@ public:
     void setOutputSignal(std::shared_ptr<OutputParameter> output);
 
 private:
-    static const std::size_t OUTPUT_SIGNAL;
+    static const unsigned int OUTPUT_SIGNAL;
 };
 
 } // namespace dsp

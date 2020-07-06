@@ -30,10 +30,10 @@ public:
         DSP_FLOAT getValue();
         void setValue(DSP_FLOAT value);
 
-        std::size_t getNumChannels();
-        void setNumChannels(std::size_t numChannels);
+        unsigned int getNumChannels();
+        void setNumChannels(unsigned int numChannels);
         std::vector<std::shared_ptr<T>> getChannels();
-        std::shared_ptr<T> getChannel(std::size_t index);
+        std::shared_ptr<T> getChannel(unsigned int index);
 
     private:
         unsigned int bufferSize;
@@ -57,40 +57,40 @@ public:
 
     Unit();
 
-    std::size_t getNumInputs();
-    std::size_t getNumOutputs();
-    std::shared_ptr<InputParameter> getInput(std::size_t index);
-    std::shared_ptr<OutputParameter> getOutput(std::size_t index);
-    void setInput(std::size_t index, std::shared_ptr<InputParameter> input);
-    void setOutput(std::size_t index, std::shared_ptr<OutputParameter> output);
+    unsigned int getNumInputs();
+    unsigned int getNumOutputs();
+    std::shared_ptr<InputParameter> getInput(unsigned int index);
+    std::shared_ptr<OutputParameter> getOutput(unsigned int index);
+    void setInput(unsigned int index, std::shared_ptr<InputParameter> input);
+    void setOutput(unsigned int index, std::shared_ptr<OutputParameter> output);
     void pushInput(std::shared_ptr<InputParameter> input);
     void pushInput(Connection::Type type, Connection::Space space = Connection::Space::TIME, DSP_FLOAT value = 0.0);
     void pushOutput(std::shared_ptr<OutputParameter> output);
     void pushOutput(Connection::Type type, Connection::Space space = Connection::Space::TIME, DSP_FLOAT value = 0.0);
-    void insertInput(std::size_t index, std::shared_ptr<InputParameter> input);
-    void insertInput(std::size_t index,
+    void insertInput(unsigned int index, std::shared_ptr<InputParameter> input);
+    void insertInput(unsigned int index,
                      Connection::Type type,
                      Connection::Space space = Connection::Space::TIME,
                      DSP_FLOAT value = 0.0);
-    void insertOutput(std::size_t index, std::shared_ptr<OutputParameter> output);
-    void insertOutput(std::size_t index,
+    void insertOutput(unsigned int index, std::shared_ptr<OutputParameter> output);
+    void insertOutput(unsigned int index,
                       Connection::Type type,
                       Connection::Space space = Connection::Space::TIME,
                       DSP_FLOAT value = 0.0);
     void removeInput(std::shared_ptr<InputParameter> input);
-    void removeInput(std::size_t index);
+    void removeInput(unsigned int index);
     void removeOutput(std::shared_ptr<OutputParameter> output);
-    void removeOutput(std::size_t index);
+    void removeOutput(unsigned int index);
 
-    std::size_t getNumChannels();
-    void setNumChannels(std::size_t numChannels);
+    unsigned int getNumChannels();
+    void setNumChannels(unsigned int numChannels);
 
-    std::size_t getNumUnits();
-    std::shared_ptr<Unit> getUnit(std::size_t index);
+    unsigned int getNumUnits();
+    std::shared_ptr<Unit> getUnit(unsigned int index);
     void pushUnit(std::shared_ptr<Unit> unit);
-    void insertUnit(std::size_t index, std::shared_ptr<Unit> unit);
+    void insertUnit(unsigned int index, std::shared_ptr<Unit> unit);
     void removeUnit(std::shared_ptr<Unit> unit);
-    void removeUnit(std::size_t index);
+    void removeUnit(unsigned int index);
     void sortUnits();
 
     void run();
@@ -102,14 +102,14 @@ protected:
 
     void setSampleRateNoLock(unsigned int sampleRate) override;
     void setBufferSizeNoLock(unsigned int bufferSize) override;
-    virtual void setNumChannelsNoLock(std::size_t numChannels);
+    virtual void setNumChannelsNoLock(unsigned int numChannels);
 
     virtual void connect();
     virtual void disconnect();
     virtual void process();
 
 private:
-    std::size_t numChannels;
+    unsigned int numChannels;
 };
 
 void operator>>(DSP_FLOAT value, std::shared_ptr<Unit::InputParameter> input);

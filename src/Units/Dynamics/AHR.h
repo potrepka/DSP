@@ -14,14 +14,14 @@ public:
     std::shared_ptr<InputParameter> getRelease();
 
 protected:
-    void setNumChannelsNoLock(std::size_t numChannels) override;
+    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
-    static const std::size_t RESET_TRIGGER;
-    static const std::size_t ATTACK;
-    static const std::size_t HOLD;
-    static const std::size_t RELEASE;
+    static const unsigned int RESET_TRIGGER;
+    static const unsigned int ATTACK;
+    static const unsigned int HOLD;
+    static const unsigned int RELEASE;
     std::vector<unsigned int> position;
     std::vector<DSP_FLOAT> value;
 };

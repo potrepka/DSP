@@ -53,14 +53,14 @@ public:
         std::vector<unsigned char> getMessage() const;
         Type getType() const;
         unsigned char getChannel() const;
-        unsigned char getByte(std::size_t index) const;
-        DSP_FLOAT getByteAsUnipolar(std::size_t index) const;
-        void setByte(std::size_t index, unsigned char value);
-        void setByteUsingUnipolar(std::size_t index, DSP_FLOAT unipolar);
-        unsigned short getShort(std::size_t lsb, std::size_t msb) const;
-        DSP_FLOAT getShortAsBipolar(std::size_t lsb, std::size_t msb) const;
-        void setShort(std::size_t lsb, std::size_t msb, unsigned short value);
-        void setShortUsingBipolar(std::size_t lsb, std::size_t msb, DSP_FLOAT bipolar);
+        unsigned char getByte(unsigned int index) const;
+        DSP_FLOAT getByteAsUnipolar(unsigned int index) const;
+        void setByte(unsigned int index, unsigned char value);
+        void setByteUsingUnipolar(unsigned int index, DSP_FLOAT unipolar);
+        unsigned short getShort(unsigned int lsb, unsigned int msb) const;
+        DSP_FLOAT getShortAsBipolar(unsigned int lsb, unsigned int msb) const;
+        void setShort(unsigned int lsb, unsigned int msb, unsigned short value);
+        void setShortUsingBipolar(unsigned int lsb, unsigned int msb, DSP_FLOAT bipolar);
 
     private:
         double time;
@@ -168,14 +168,14 @@ public:
     static std::string getMidiInputName(unsigned int port);
     static std::string getMidiOutputName(unsigned int port);
 
-    std::size_t getNumMidiInputs();
-    std::size_t getNumMidiOutputs();
-    std::shared_ptr<MidiInput> getMidiInput(std::size_t index);
-    std::shared_ptr<MidiOutput> getMidiOutput(std::size_t index);
+    unsigned int getNumMidiInputs();
+    unsigned int getNumMidiOutputs();
+    std::shared_ptr<MidiInput> getMidiInput(unsigned int index);
+    std::shared_ptr<MidiOutput> getMidiOutput(unsigned int index);
     void pushMidiInput(unsigned int port);
     void pushMidiOutput(unsigned int port);
-    void removeMidiInput(std::size_t index);
-    void removeMidiOutput(std::size_t index);
+    void removeMidiInput(unsigned int index);
+    void removeMidiOutput(unsigned int index);
 
     void processInputs();
     void processOutputs();

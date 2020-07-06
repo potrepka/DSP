@@ -11,11 +11,11 @@ public:
     std::shared_ptr<InputParameter> getTrigger();
 
 protected:
-    void setNumChannelsNoLock(std::size_t numChannels) override;
+    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
-    static const std::size_t TRIGGER;
+    static const unsigned int TRIGGER;
     std::vector<DSP_FLOAT> memory;
 };
 

@@ -19,7 +19,7 @@ protected:
     void process() override;
 
 private:
-    static const std::size_t MIX;
+    static const unsigned int MIX;
     Mode mode;
     std::vector<DSP_FLOAT> buffer;
 };

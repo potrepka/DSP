@@ -1,15 +1,15 @@
 #include "CompressorGate.h"
 
-const std::size_t dsp::CompressorGate::CONTROL_SIGNAL = 1;
-const std::size_t dsp::CompressorGate::LINK = 2;
-const std::size_t dsp::CompressorGate::THRESHOLD = 3;
-const std::size_t dsp::CompressorGate::COMPRESSION_RATIO = 4;
-const std::size_t dsp::CompressorGate::GATE_RATIO = 5;
-const std::size_t dsp::CompressorGate::KNEE = 6;
-const std::size_t dsp::CompressorGate::ATTACK = 7;
-const std::size_t dsp::CompressorGate::RELEASE = 8;
+const unsigned int dsp::CompressorGate::CONTROL_SIGNAL = 1;
+const unsigned int dsp::CompressorGate::LINK = 2;
+const unsigned int dsp::CompressorGate::THRESHOLD = 3;
+const unsigned int dsp::CompressorGate::COMPRESSION_RATIO = 4;
+const unsigned int dsp::CompressorGate::GATE_RATIO = 5;
+const unsigned int dsp::CompressorGate::KNEE = 6;
+const unsigned int dsp::CompressorGate::ATTACK = 7;
+const unsigned int dsp::CompressorGate::RELEASE = 8;
 
-const std::size_t dsp::CompressorGate::GAIN_DELTA = 1;
+const unsigned int dsp::CompressorGate::GAIN_DELTA = 1;
 
 dsp::CompressorGate::CompressorGate() : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR) {
     channelMix = std::make_shared<ChannelMix>(Connection::Type::BIPOLAR);

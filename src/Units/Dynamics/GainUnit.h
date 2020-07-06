@@ -14,7 +14,7 @@ protected:
     void process() override;
 
 private:
-    static const std::size_t GAIN;
+    static const unsigned int GAIN;
 };
 
 } // namespace dsp

@@ -1,6 +1,6 @@
 #include "OnePole.h"
 
-const std::size_t dsp::OnePole::FREQUENCY = 1;
+const unsigned int dsp::OnePole::FREQUENCY = 1;
 
 dsp::OnePole::OnePole() : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR), mode(Mode::LOW_PASS) {
     pushInput(Connection::Type::HERTZ);
@@ -18,14 +18,14 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::OnePole::getFrequency() {
     return getInput(FREQUENCY);
 }
 
-void dsp::OnePole::setNumChannelsNoLock(std::size_t numChannels) {
+void dsp::OnePole::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
     y1.resize(numChannels, 0.0);
 }
 
 void dsp::OnePole::process() {
     Unit::process();
-    for (std::size_t i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();

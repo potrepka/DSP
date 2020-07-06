@@ -1,8 +1,8 @@
 #include "Biquad.h"
 
-const std::size_t dsp::Biquad::FREQUENCY = 1;
-const std::size_t dsp::Biquad::Q = 2;
-const std::size_t dsp::Biquad::GAIN = 3;
+const unsigned int dsp::Biquad::FREQUENCY = 1;
+const unsigned int dsp::Biquad::Q = 2;
+const unsigned int dsp::Biquad::GAIN = 3;
 
 dsp::Biquad::Biquad()
         : Processor(dsp::Connection::Type::BIPOLAR, dsp::Connection::Type::BIPOLAR), mode(Mode::LOW_PASS) {
@@ -31,7 +31,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getGain() {
     return getInput(GAIN);
 }
 
-void dsp::Biquad::setNumChannelsNoLock(std::size_t numChannels) {
+void dsp::Biquad::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
     x1.resize(numChannels, 0.0);
     x2.resize(numChannels, 0.0);
@@ -41,7 +41,7 @@ void dsp::Biquad::setNumChannelsNoLock(std::size_t numChannels) {
 
 void dsp::Biquad::process() {
     Unit::process();
-    for (std::size_t i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();

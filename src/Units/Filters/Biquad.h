@@ -17,13 +17,13 @@ public:
     std::shared_ptr<InputParameter> getGain();
 
 protected:
-    void setNumChannelsNoLock(std::size_t numChannels) override;
+    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
-    static const std::size_t FREQUENCY;
-    static const std::size_t Q;
-    static const std::size_t GAIN;
+    static const unsigned int FREQUENCY;
+    static const unsigned int Q;
+    static const unsigned int GAIN;
     Mode mode;
     std::vector<DSP_FLOAT> x1;
     std::vector<DSP_FLOAT> x2;

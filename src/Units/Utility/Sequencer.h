@@ -15,12 +15,12 @@ public:
     std::shared_ptr<InputParameter> getTrigger();
 
 protected:
-    void setNumChannelsNoLock(std::size_t numChannels) override;
+    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
-    static const std::size_t RESET_TRIGGER;
-    static const std::size_t TRIGGER;
+    static const unsigned int RESET_TRIGGER;
+    static const unsigned int TRIGGER;
     std::vector<unsigned int> *sequence;
     std::vector<unsigned int> memory;
     std::vector<unsigned int> index;

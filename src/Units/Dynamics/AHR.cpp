@@ -1,9 +1,9 @@
 #include "AHR.h"
 
-const std::size_t dsp::AHR::RESET_TRIGGER = 0;
-const std::size_t dsp::AHR::ATTACK = 1;
-const std::size_t dsp::AHR::HOLD = 2;
-const std::size_t dsp::AHR::RELEASE = 3;
+const unsigned int dsp::AHR::RESET_TRIGGER = 0;
+const unsigned int dsp::AHR::ATTACK = 1;
+const unsigned int dsp::AHR::HOLD = 2;
+const unsigned int dsp::AHR::RELEASE = 3;
 
 dsp::AHR::AHR() : Generator(Connection::Type::UNIPOLAR), position(0) {
     pushInput(Connection::Type::BINARY);
@@ -28,7 +28,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getRelease() {
     return getInput(RELEASE);
 }
 
-void dsp::AHR::setNumChannelsNoLock(std::size_t numChannels) {
+void dsp::AHR::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
     position.resize(numChannels, 0);
     value.resize(numChannels, 1.0);
@@ -36,7 +36,7 @@ void dsp::AHR::setNumChannelsNoLock(std::size_t numChannels) {
 
 void dsp::AHR::process() {
     Unit::process();
-    for (std::size_t i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &attackBuffer = getAttack()->getChannel(i)->getBuffer();

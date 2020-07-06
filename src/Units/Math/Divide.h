@@ -14,7 +14,7 @@ protected:
     void process() override;
 
 private:
-    static const std::size_t DIVISOR;
+    static const unsigned int DIVISOR;
 };
 
 } // namespace dsp

@@ -8,17 +8,17 @@ class BufferOscillator : public Generator {
 
 public:
     BufferOscillator();
-    std::vector<DSP_FLOAT> &getBuffer(std::size_t channel);
-    void setBuffer(std::size_t channel, std::vector<DSP_FLOAT> &buffer);
-    void removeBuffer(std::size_t channel);
+    std::vector<DSP_FLOAT> &getBuffer(unsigned int channel);
+    void setBuffer(unsigned int channel, std::vector<DSP_FLOAT> &buffer);
+    void removeBuffer(unsigned int channel);
     std::shared_ptr<InputParameter> getPhase();
 
 protected:
-    void setNumChannelsNoLock(std::size_t numChannels) override;
+    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
-    static const std::size_t PHASE;
+    static const unsigned int PHASE;
     std::vector<std::vector<DSP_FLOAT> *> buffers;
 };
 
