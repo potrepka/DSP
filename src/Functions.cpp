@@ -19,11 +19,11 @@ DSP_FLOAT dsp::unipolarToBipolar(const DSP_FLOAT unipolar) {
 }
 
 DSP_FLOAT dsp::decibelsToLinear(const DSP_FLOAT decibels) {
-    return ONE_OVER_6DB * decibels;
+    return ONE_OVER_SIX_DB * decibels;
 }
 
 DSP_FLOAT dsp::linearToDecibels(const DSP_FLOAT linear) {
-    return _6DB * linear;
+    return SIX_DB * linear;
 }
 
 DSP_FLOAT dsp::decibelsToRatio(const DSP_FLOAT decibels) {
