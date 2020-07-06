@@ -1,13 +1,19 @@
 #include "Functions.h"
 
 DSP_FLOAT dsp::clip(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
-    return signal < min || max < min ? min : signal > max ? max : signal;
+    if (min >= max) {
+        return min;
+    }
+    return signal < min ? min : signal > max ? max : signal;
 }
 
 DSP_FLOAT dsp::wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
+    if (min == max) {
+        return 0.0;
+    }
     const DSP_FLOAT diff = max - min;
-    const DSP_FLOAT adjustment = floor(signal / diff) + (signal >= 0.0 ? 0.0 : -1.0);
-    return signal - diff * adjustment;
+    const DSP_FLOAT adjusted = signal - min;
+    return signal - floor(adjusted / diff) * diff;
 }
 
 DSP_FLOAT dsp::bipolarToUnipolar(const DSP_FLOAT bipolar) {
