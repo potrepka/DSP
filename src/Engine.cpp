@@ -244,8 +244,8 @@ int dsp::Engine::tick(void *outputBuffer,
                       RtAudioStreamStatus status,
                       void *pointer) {
     Engine *engine = (Engine *)pointer;
-    process((double *)inputBuffer,
-            (double *)outputBuffer,
+    process((DSP_FLOAT *)inputBuffer,
+            (DSP_FLOAT *)outputBuffer,
             nBufferFrames,
             engine->getNumInputChannels(),
             engine->getNumOutputChannels(),
@@ -254,8 +254,8 @@ int dsp::Engine::tick(void *outputBuffer,
 }
 #endif
 
-void dsp::Engine::process(double *inputBuffer,
-                          double *outputBuffer,
+void dsp::Engine::process(DSP_FLOAT *inputBuffer,
+                          DSP_FLOAT *outputBuffer,
                           unsigned int numFrames,
                           unsigned int numInputChannels,
                           unsigned int numOutputChannels,

@@ -67,8 +67,8 @@ private:
                     void *pointer);
 #endif
 
-    static void process(double *inputBuffer,
-                        double *outputBuffer,
+    static void process(DSP_FLOAT *inputBuffer,
+                        DSP_FLOAT *outputBuffer,
                         unsigned int numFrames,
                         unsigned int numInputChannels,
                         unsigned int numOutputChannels,
