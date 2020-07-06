@@ -7,7 +7,7 @@ namespace dsp {
 class GainUnit : public Processor {
 
 public:
-    GainUnit(Connection::Space space = Connection::Space::TIME);
+    GainUnit(Space space = Space::TIME);
     std::shared_ptr<InputParameter> getGain();
 
 protected:

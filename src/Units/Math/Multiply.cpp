@@ -1,21 +1,20 @@
 #include "Multiply.h"
 
-dsp::Multiply::Multiply(Connection::Type type, Connection::Space space)
-        : Processor(type, type, space), type(type), space(space) {
-    assert(type != Connection::Type::BINARY);
-    assert(type != Connection::Type::INTEGER);
+dsp::Multiply::Multiply(Type type, Space space) : Processor(type, type, space), type(type), space(space) {
+    assert(type != Type::BINARY);
+    assert(type != Type::INTEGER);
 }
 
 void dsp::Multiply::pushInputBipolar() {
-    Unit::pushInput(Connection::Type::BIPOLAR, space);
+    Unit::pushInput(Type::BIPOLAR, space);
 }
 
 void dsp::Multiply::pushInputUnipolar() {
-    Unit::pushInput(Connection::Type::UNIPOLAR, space);
+    Unit::pushInput(Type::UNIPOLAR, space);
 }
 
 void dsp::Multiply::pushInputRatio() {
-    Unit::pushInput(Connection::Type::RATIO, space);
+    Unit::pushInput(Type::RATIO, space);
 }
 
 void dsp::Multiply::process() {

@@ -4,11 +4,10 @@ const unsigned int dsp::Biquad::FREQUENCY = 1;
 const unsigned int dsp::Biquad::Q = 2;
 const unsigned int dsp::Biquad::GAIN = 3;
 
-dsp::Biquad::Biquad()
-        : Processor(dsp::Connection::Type::BIPOLAR, dsp::Connection::Type::BIPOLAR), mode(Mode::LOW_PASS) {
-    pushInput(Connection::Type::HERTZ);
-    pushInput(Connection::Type::RATIO, Connection::Space::TIME, ONE_OVER_SQRT2);
-    pushInput(Connection::Type::LINEAR);
+dsp::Biquad::Biquad() : Processor(dsp::Type::BIPOLAR, dsp::Type::BIPOLAR), mode(Mode::LOW_PASS) {
+    pushInput(Type::HERTZ);
+    pushInput(Type::RATIO, Space::TIME, ONE_OVER_SQRT2);
+    pushInput(Type::LINEAR);
 }
 
 dsp::Biquad::Mode dsp::Biquad::getMode() {

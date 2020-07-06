@@ -3,9 +3,9 @@
 const unsigned int dsp::GainEnvelope::ATTACK = 1;
 const unsigned int dsp::GainEnvelope::RELEASE = 2;
 
-dsp::GainEnvelope::GainEnvelope() : Processor(Connection::Type::LINEAR, Connection::Type::LINEAR) {
-    pushInput(Connection::Type::SECONDS);
-    pushInput(Connection::Type::SECONDS);
+dsp::GainEnvelope::GainEnvelope() : Processor(Type::LINEAR, Type::LINEAR) {
+    pushInput(Type::SECONDS);
+    pushInput(Type::SECONDS);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::GainEnvelope::getAttack() {

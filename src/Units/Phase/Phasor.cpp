@@ -3,9 +3,9 @@
 const unsigned int dsp::Phasor::RESET_TRIGGER = 0;
 const unsigned int dsp::Phasor::FREQUENCY = 1;
 
-dsp::Phasor::Phasor() : Generator(Connection::Type::UNIPOLAR) {
-    pushInput(Connection::Type::BINARY);
-    pushInput(Connection::Type::HERTZ);
+dsp::Phasor::Phasor() : Generator(Type::UNIPOLAR) {
+    pushInput(Type::BINARY);
+    pushInput(Type::HERTZ);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Phasor::getResetTrigger() {

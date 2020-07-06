@@ -1,6 +1,6 @@
 #include "ToBinary.h"
 
-dsp::ToBinary::ToBinary(Connection::Type type) : Processor(type, Connection::Type::BINARY) {}
+dsp::ToBinary::ToBinary(Type type) : Processor(type, Type::BINARY) {}
 
 void dsp::ToBinary::process() {
     Unit::process();

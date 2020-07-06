@@ -4,10 +4,10 @@ const unsigned int dsp::Trigger::RESET_TRIGGER = 0;
 const unsigned int dsp::Trigger::INTERVAL = 1;
 const unsigned int dsp::Trigger::DELAY = 2;
 
-dsp::Trigger::Trigger() : Generator(Connection::Type::BINARY) {
-    pushInput(Connection::Type::BINARY);
-    pushInput(Connection::Type::SECONDS);
-    pushInput(Connection::Type::SECONDS);
+dsp::Trigger::Trigger() : Generator(Type::BINARY) {
+    pushInput(Type::BINARY);
+    pushInput(Type::SECONDS);
+    pushInput(Type::SECONDS);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getResetTrigger() {

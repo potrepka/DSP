@@ -2,9 +2,9 @@
 
 const unsigned int dsp::Floor::DIVISOR = 1;
 
-dsp::Floor::Floor(Connection::Type type, Connection::Space space) : Processor(type, type, space) {
-    assert(type != Connection::Type::BINARY);
-    assert(type != Connection::Type::INTEGER);
+dsp::Floor::Floor(Type type, Space space) : Processor(type, type, space) {
+    assert(type != Type::BINARY);
+    assert(type != Type::INTEGER);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Floor::getDivisor() {

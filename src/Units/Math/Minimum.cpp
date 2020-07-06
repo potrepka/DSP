@@ -1,7 +1,6 @@
 #include "Minimum.h"
 
-dsp::Minimum::Minimum(Connection::Type type, Connection::Space space)
-        : Processor(type, type, space), type(type), space(space) {}
+dsp::Minimum::Minimum(Type type, Space space) : Processor(type, type, space), type(type), space(space) {}
 
 void dsp::Minimum::pushInput() {
     Unit::pushInput(type, space);

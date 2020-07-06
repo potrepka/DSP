@@ -7,15 +7,15 @@ namespace dsp {
 class Maximum : public Processor {
 
 public:
-    Maximum(Connection::Type type, Connection::Space space = Connection::Space::TIME);
+    Maximum(Type type, Space space = Space::TIME);
     void pushInput();
 
 protected:
     void process() override;
 
 private:
-    Connection::Type type;
-    Connection::Space space;
+    Type type;
+    Space space;
 };
 
 } // namespace dsp

@@ -1,6 +1,6 @@
 #include "Processor.h"
 
-dsp::Processor::Processor(Connection::Type inType, Connection::Type outType, Connection::Space space)
+dsp::Processor::Processor(Type inType, Type outType, Space space)
         : Consumer(inType, space), Generator(outType, space) {}
 
 void dsp::Processor::transform(std::function<DSP_FLOAT(DSP_FLOAT)> transform) {

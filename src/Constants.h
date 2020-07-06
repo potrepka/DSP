@@ -16,6 +16,10 @@
 
 namespace dsp {
 
+enum class Type { BIPOLAR, UNIPOLAR, SECONDS, HERTZ, RATIO, LINEAR, INTEGER, BINARY };
+
+enum class Space { TIME, FREQUENCY_REAL, FREQUENCY_IMAGINARY, FREQUENCY_MAGNITUDE, FREQUENCY_PHASE };
+
 enum class Interpolation { LINEAR, HERMITE };
 
 } // namespace dsp

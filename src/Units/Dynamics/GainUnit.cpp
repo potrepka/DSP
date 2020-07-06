@@ -2,9 +2,8 @@
 
 const unsigned int dsp::GainUnit::GAIN = 1;
 
-dsp::GainUnit::GainUnit(Connection::Space space)
-        : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR, space) {
-    pushInput(Connection::Type::LINEAR, space);
+dsp::GainUnit::GainUnit(Space space) : Processor(Type::BIPOLAR, Type::BIPOLAR, space) {
+    pushInput(Type::LINEAR, space);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::GainUnit::getGain() {

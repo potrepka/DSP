@@ -23,7 +23,7 @@ void dsp::Connection::fillBuffer(DSP_FLOAT value) {
     std::fill(buffer.begin(), buffer.end(), value);
 }
 
-dsp::Connection::Type dsp::Connection::getType() {
+dsp::Type dsp::Connection::getType() {
     return type;
 }
 
@@ -31,7 +31,7 @@ void dsp::Connection::setType(Type type) {
     this->type = type;
 }
 
-dsp::Connection::Space dsp::Connection::getSpace() {
+dsp::Space dsp::Connection::getSpace() {
     return space;
 }
 

@@ -3,8 +3,8 @@
 const unsigned int dsp::SampleRecorder::RESET_TRIGGER = 1;
 const unsigned int dsp::SampleRecorder::GATE = 2;
 
-dsp::SampleRecorder::SampleRecorder() : Consumer(Connection::Type::BIPOLAR) {
-    pushInput(Connection::Type::BINARY);
+dsp::SampleRecorder::SampleRecorder() : Consumer(Type::BIPOLAR) {
+    pushInput(Type::BINARY);
 }
 
 std::vector<DSP_FLOAT> dsp::SampleRecorder::getSample(unsigned int channel) {

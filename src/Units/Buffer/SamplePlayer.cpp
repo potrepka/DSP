@@ -5,11 +5,11 @@ const unsigned int dsp::SamplePlayer::GATE = 1;
 const unsigned int dsp::SamplePlayer::START_POSITION = 2;
 const unsigned int dsp::SamplePlayer::SPEED = 3;
 
-dsp::SamplePlayer::SamplePlayer() : Generator(Connection::Type::BIPOLAR) {
-    pushInput(Connection::Type::BINARY);
-    pushInput(Connection::Type::BINARY);
-    pushInput(Connection::Type::SECONDS);
-    pushInput(Connection::Type::RATIO);
+dsp::SamplePlayer::SamplePlayer() : Generator(Type::BIPOLAR) {
+    pushInput(Type::BINARY);
+    pushInput(Type::BINARY);
+    pushInput(Type::SECONDS);
+    pushInput(Type::RATIO);
 }
 
 std::vector<DSP_FLOAT> dsp::SamplePlayer::getSample(unsigned int channel) {

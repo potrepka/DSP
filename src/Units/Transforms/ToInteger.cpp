@@ -1,6 +1,6 @@
 #include "ToInteger.h"
 
-dsp::ToInteger::ToInteger(Connection::Type type) : Processor(type, Connection::Type::INTEGER) {}
+dsp::ToInteger::ToInteger(Type type) : Processor(type, Type::INTEGER) {}
 
 void dsp::ToInteger::process() {
     Unit::process();

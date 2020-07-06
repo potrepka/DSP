@@ -7,7 +7,7 @@ namespace dsp {
 class ToInteger : public Processor {
 
 public:
-    ToInteger(Connection::Type type);
+    ToInteger(Type type);
 
 protected:
     void process() override;

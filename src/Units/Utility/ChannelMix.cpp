@@ -2,10 +2,10 @@
 
 const unsigned int dsp::ChannelMix::MIX = 1;
 
-dsp::ChannelMix::ChannelMix(Connection::Type type, Connection::Space space) : Processor(type, type, space) {
-    assert(type != Connection::Type::BINARY);
-    assert(type != Connection::Type::INTEGER);
-    pushInput(Connection::Type::UNIPOLAR, space);
+dsp::ChannelMix::ChannelMix(Type type, Space space) : Processor(type, type, space) {
+    assert(type != Type::BINARY);
+    assert(type != Type::INTEGER);
+    pushInput(Type::UNIPOLAR, space);
 }
 
 dsp::ChannelMix::Mode dsp::ChannelMix::getMode() {

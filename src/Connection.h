@@ -15,9 +15,6 @@ class Output;
 class Connection {
 
 public:
-    enum class Type { BIPOLAR, UNIPOLAR, SECONDS, HERTZ, RATIO, LINEAR, INTEGER, BINARY };
-    enum class Space { TIME, FREQUENCY_REAL, FREQUENCY_IMAGINARY, FREQUENCY_MAGNITUDE, FREQUENCY_PHASE };
-
     Connection(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
 
     unsigned int getBufferSize();

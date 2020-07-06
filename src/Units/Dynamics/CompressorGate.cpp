@@ -11,15 +11,15 @@ const unsigned int dsp::CompressorGate::RELEASE = 8;
 
 const unsigned int dsp::CompressorGate::GAIN_DELTA = 1;
 
-dsp::CompressorGate::CompressorGate() : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR) {
-    channelMix = std::make_shared<ChannelMix>(Connection::Type::BIPOLAR);
-    absoluteValue = std::make_shared<AbsoluteValue>(Connection::Type::RATIO);
+dsp::CompressorGate::CompressorGate() : Processor(Type::BIPOLAR, Type::BIPOLAR) {
+    channelMix = std::make_shared<ChannelMix>(Type::BIPOLAR);
+    absoluteValue = std::make_shared<AbsoluteValue>(Type::RATIO);
     ratioToDecibels = std::make_shared<Base2Log>();
     gainComputer = std::make_shared<GainComputer>();
     gainEnvelope = std::make_shared<GainEnvelope>();
     gainUnit = std::make_shared<GainUnit>();
 
-    absoluteValue->getInputSignal()->setType(Connection::Type::BIPOLAR);
+    absoluteValue->getInputSignal()->setType(Type::BIPOLAR);
 
     pushUnit(channelMix);
     pushUnit(absoluteValue);

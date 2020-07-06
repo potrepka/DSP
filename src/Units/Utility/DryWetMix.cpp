@@ -4,11 +4,11 @@ const unsigned int dsp::DryWetMix::DRY_SIGNAL = 0;
 const unsigned int dsp::DryWetMix::WET_SIGNAL = 1;
 const unsigned int dsp::DryWetMix::MIX = 2;
 
-dsp::DryWetMix::DryWetMix(Connection::Type type, Connection::Space space) : Processor(type, type, space) {
-    assert(type != Connection::Type::BINARY);
-    assert(type != Connection::Type::INTEGER);
+dsp::DryWetMix::DryWetMix(Type type, Space space) : Processor(type, type, space) {
+    assert(type != Type::BINARY);
+    assert(type != Type::INTEGER);
     pushInput(type, space);
-    pushInput(Connection::Type::UNIPOLAR, space);
+    pushInput(Type::UNIPOLAR, space);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::DryWetMix::getDrySignal() {

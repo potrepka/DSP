@@ -1,6 +1,6 @@
 #include "Base2Log.h"
 
-dsp::Base2Log::Base2Log() : Processor(Connection::Type::RATIO, Connection::Type::LINEAR) {}
+dsp::Base2Log::Base2Log() : Processor(Type::RATIO, Type::LINEAR) {}
 
 void dsp::Base2Log::process() {
     Unit::process();

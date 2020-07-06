@@ -1,6 +1,6 @@
 #include "BipolarToUnipolar.h"
 
-dsp::BipolarToUnipolar::BipolarToUnipolar() : Processor(Connection::Type::BIPOLAR, Connection::Type::UNIPOLAR) {}
+dsp::BipolarToUnipolar::BipolarToUnipolar() : Processor(Type::BIPOLAR, Type::UNIPOLAR) {}
 
 void dsp::BipolarToUnipolar::process() {
     Unit::process();

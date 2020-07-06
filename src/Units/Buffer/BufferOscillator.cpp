@@ -2,8 +2,8 @@
 
 const unsigned int dsp::BufferOscillator::PHASE = 0;
 
-dsp::BufferOscillator::BufferOscillator() : Generator(Connection::Type::BIPOLAR) {
-    pushInput(Connection::Type::UNIPOLAR);
+dsp::BufferOscillator::BufferOscillator() : Generator(Type::BIPOLAR) {
+    pushInput(Type::UNIPOLAR);
 }
 
 std::vector<DSP_FLOAT> &dsp::BufferOscillator::getBuffer(unsigned int channel) {

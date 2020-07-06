@@ -3,9 +3,9 @@
 const unsigned int dsp::Sequencer::RESET_TRIGGER = 0;
 const unsigned int dsp::Sequencer::TRIGGER = 1;
 
-dsp::Sequencer::Sequencer() : Generator(Connection::Type::INTEGER), sequence(nullptr), index(0) {
-    pushInput(Connection::Type::BINARY);
-    pushInput(Connection::Type::BINARY);
+dsp::Sequencer::Sequencer() : Generator(Type::INTEGER), sequence(nullptr), index(0) {
+    pushInput(Type::BINARY);
+    pushInput(Type::BINARY);
 }
 
 std::vector<unsigned int> &dsp::Sequencer::getSequence() {

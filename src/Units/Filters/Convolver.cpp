@@ -1,7 +1,6 @@
 #include "Convolver.h"
 
-dsp::Convolver::Convolver()
-        : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR), headSize(0), tailSize(0) {}
+dsp::Convolver::Convolver() : Processor(Type::BIPOLAR, Type::BIPOLAR), headSize(0), tailSize(0) {}
 
 std::vector<DSP_FLOAT> dsp::Convolver::getSample(unsigned int channel) {
     return samples[channel];

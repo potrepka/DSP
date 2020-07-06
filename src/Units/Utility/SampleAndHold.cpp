@@ -2,8 +2,8 @@
 
 const unsigned int dsp::SampleAndHold::TRIGGER = 0;
 
-dsp::SampleAndHold::SampleAndHold(Connection::Type type) : Processor(type, type) {
-    pushInput(Connection::Type::BINARY);
+dsp::SampleAndHold::SampleAndHold(Type type) : Processor(type, type) {
+    pushInput(Type::BINARY);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleAndHold::getTrigger() {

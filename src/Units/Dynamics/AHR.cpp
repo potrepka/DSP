@@ -5,11 +5,11 @@ const unsigned int dsp::AHR::ATTACK = 1;
 const unsigned int dsp::AHR::HOLD = 2;
 const unsigned int dsp::AHR::RELEASE = 3;
 
-dsp::AHR::AHR() : Generator(Connection::Type::UNIPOLAR), position(0) {
-    pushInput(Connection::Type::BINARY);
-    pushInput(Connection::Type::SECONDS);
-    pushInput(Connection::Type::SECONDS);
-    pushInput(Connection::Type::SECONDS);
+dsp::AHR::AHR() : Generator(Type::UNIPOLAR), position(0) {
+    pushInput(Type::BINARY);
+    pushInput(Type::SECONDS);
+    pushInput(Type::SECONDS);
+    pushInput(Type::SECONDS);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getResetTrigger() {

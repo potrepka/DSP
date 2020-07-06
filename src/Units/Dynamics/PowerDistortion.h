@@ -7,7 +7,7 @@ namespace dsp {
 class PowerDistortion : public Processor {
 
 public:
-    PowerDistortion(Connection::Space space = Connection::Space::TIME);
+    PowerDistortion(Space space = Space::TIME);
     std::shared_ptr<InputParameter> getDrive();
 
 protected:

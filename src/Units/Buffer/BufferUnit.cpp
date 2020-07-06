@@ -1,6 +1,6 @@
 #include "BufferUnit.h"
 
-dsp::BufferUnit::BufferUnit() : Consumer(Connection::Type::BIPOLAR), unitBufferSize(0), index(0) {}
+dsp::BufferUnit::BufferUnit() : Consumer(Type::BIPOLAR), unitBufferSize(0), index(0) {}
 
 unsigned int dsp::BufferUnit::getUnitBufferSize() {
     return unitBufferSize;

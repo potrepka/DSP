@@ -3,9 +3,9 @@
 const unsigned int dsp::TableOscillator::PHASE = 0;
 const unsigned int dsp::TableOscillator::POSITION = 1;
 
-dsp::TableOscillator::TableOscillator() : Generator(Connection::Type::BIPOLAR) {
-    pushInput(Connection::Type::UNIPOLAR);
-    pushInput(Connection::Type::UNIPOLAR);
+dsp::TableOscillator::TableOscillator() : Generator(Type::BIPOLAR) {
+    pushInput(Type::UNIPOLAR);
+    pushInput(Type::UNIPOLAR);
 }
 
 unsigned int dsp::TableOscillator::getNumTables() {

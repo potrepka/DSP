@@ -2,7 +2,7 @@
 
 const unsigned int dsp::Generator::OUTPUT_SIGNAL = 0;
 
-dsp::Generator::Generator(Connection::Type type, Connection::Space space) {
+dsp::Generator::Generator(Type type, Space space) {
     pushOutput(type, space);
 }
 

@@ -16,16 +16,16 @@ public:
     template <class T> class ConnectionParameter : public Lockable {
 
     public:
-        ConnectionParameter(unsigned int bufferSize, Connection::Type type, Connection::Space space, DSP_FLOAT value);
+        ConnectionParameter(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
 
         unsigned int getBufferSize();
         void setBufferSize(unsigned int bufferSize);
 
-        Connection::Type getType();
-        void setType(Connection::Type type);
+        Type getType();
+        void setType(Type type);
 
-        Connection::Space getSpace();
-        void setSpace(Connection::Space space);
+        Space getSpace();
+        void setSpace(Space space);
 
         DSP_FLOAT getValue();
         void setValue(DSP_FLOAT value);
@@ -37,8 +37,8 @@ public:
 
     private:
         unsigned int bufferSize;
-        Connection::Type type;
-        Connection::Space space;
+        Type type;
+        Space space;
         DSP_FLOAT value;
         std::vector<std::shared_ptr<T>> channels;
     };
@@ -46,13 +46,13 @@ public:
     class InputParameter : public ConnectionParameter<Input> {
 
     public:
-        InputParameter(unsigned int bufferSize, Connection::Type type, Connection::Space space, DSP_FLOAT value);
+        InputParameter(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
     };
 
     class OutputParameter : public ConnectionParameter<Output> {
 
     public:
-        OutputParameter(unsigned int bufferSize, Connection::Type type, Connection::Space space, DSP_FLOAT value);
+        OutputParameter(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
     };
 
     Unit();
@@ -64,19 +64,13 @@ public:
     void setInput(unsigned int index, std::shared_ptr<InputParameter> input);
     void setOutput(unsigned int index, std::shared_ptr<OutputParameter> output);
     void pushInput(std::shared_ptr<InputParameter> input);
-    void pushInput(Connection::Type type, Connection::Space space = Connection::Space::TIME, DSP_FLOAT value = 0.0);
+    void pushInput(Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
     void pushOutput(std::shared_ptr<OutputParameter> output);
-    void pushOutput(Connection::Type type, Connection::Space space = Connection::Space::TIME, DSP_FLOAT value = 0.0);
+    void pushOutput(Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
     void insertInput(unsigned int index, std::shared_ptr<InputParameter> input);
-    void insertInput(unsigned int index,
-                     Connection::Type type,
-                     Connection::Space space = Connection::Space::TIME,
-                     DSP_FLOAT value = 0.0);
+    void insertInput(unsigned int index, Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
     void insertOutput(unsigned int index, std::shared_ptr<OutputParameter> output);
-    void insertOutput(unsigned int index,
-                      Connection::Type type,
-                      Connection::Space space = Connection::Space::TIME,
-                      DSP_FLOAT value = 0.0);
+    void insertOutput(unsigned int index, Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
     void removeInput(std::shared_ptr<InputParameter> input);
     void removeInput(unsigned int index);
     void removeOutput(std::shared_ptr<OutputParameter> output);

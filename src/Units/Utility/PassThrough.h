@@ -7,7 +7,7 @@ namespace dsp {
 class PassThrough : public Identity {
 
 public:
-    PassThrough(Connection::Type type, Connection::Space space = Connection::Space::TIME);
+    PassThrough(Type type, Space space = Space::TIME);
 };
 
 } // namespace dsp

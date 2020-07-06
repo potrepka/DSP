@@ -7,7 +7,7 @@ namespace dsp {
 class Floor : public Processor {
 
 public:
-    Floor(Connection::Type type, Connection::Space space = Connection::Space::TIME);
+    Floor(Type type, Space space = Space::TIME);
     std::shared_ptr<InputParameter> getDivisor();
 
 protected:

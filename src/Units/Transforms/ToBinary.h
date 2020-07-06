@@ -7,7 +7,7 @@ namespace dsp {
 class ToBinary : public Processor {
 
 public:
-    ToBinary(Connection::Type type);
+    ToBinary(Type type);
 
 protected:
     void process() override;

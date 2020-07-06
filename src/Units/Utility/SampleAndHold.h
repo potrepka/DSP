@@ -7,7 +7,7 @@ namespace dsp {
 class SampleAndHold : public Processor {
 
 public:
-    SampleAndHold(Connection::Type type);
+    SampleAndHold(Type type);
     std::shared_ptr<InputParameter> getTrigger();
 
 protected:

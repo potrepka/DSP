@@ -7,7 +7,7 @@ namespace dsp {
 class HardClip : public Processor {
 
 public:
-    HardClip(Connection::Space space = Connection::Space::TIME);
+    HardClip(Space space = Space::TIME);
 
 protected:
     void process() override;

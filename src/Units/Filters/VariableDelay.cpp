@@ -2,9 +2,8 @@
 
 const unsigned int dsp::VariableDelay::DELAY_TIME = 1;
 
-dsp::VariableDelay::VariableDelay()
-        : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR), maxDelayTime(0.0), writeIndex(0) {
-    pushInput(Connection::Type::SECONDS);
+dsp::VariableDelay::VariableDelay() : Processor(Type::BIPOLAR, Type::BIPOLAR), maxDelayTime(0.0), writeIndex(0) {
+    pushInput(Type::SECONDS);
 }
 
 unsigned int dsp::VariableDelay::getMaxDelayTime() {

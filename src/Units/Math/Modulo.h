@@ -7,7 +7,7 @@ namespace dsp {
 class Modulo : public Processor {
 
 public:
-    Modulo(Connection::Type type, Connection::Space space = Connection::Space::TIME);
+    Modulo(Type type, Space space = Space::TIME);
     std::shared_ptr<InputParameter> getDivisor();
 
 protected:

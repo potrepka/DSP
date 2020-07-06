@@ -7,7 +7,7 @@ namespace dsp {
 class Multiply : public Processor {
 
 public:
-    Multiply(Connection::Type type, Connection::Space space = Connection::Space::TIME);
+    Multiply(Type type, Space space = Space::TIME);
     void pushInputBipolar();
     void pushInputUnipolar();
     void pushInputRatio();
@@ -16,8 +16,8 @@ protected:
     void process() override;
 
 private:
-    Connection::Type type;
-    Connection::Space space;
+    Type type;
+    Space space;
 };
 
 } // namespace dsp

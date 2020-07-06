@@ -7,7 +7,7 @@ namespace dsp {
 class Divide : public Processor {
 
 public:
-    Divide(Connection::Type type, Connection::Space space = Connection::Space::TIME);
+    Divide(Type type, Space space = Space::TIME);
     std::shared_ptr<InputParameter> getDivisor();
 
 protected:

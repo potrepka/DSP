@@ -8,7 +8,7 @@ namespace dsp {
 class Processor : public Consumer, public Generator {
 
 public:
-    Processor(Connection::Type inType, Connection::Type outType, Connection::Space space = Connection::Space::TIME);
+    Processor(Type inType, Type outType, Space space = Space::TIME);
 
 protected:
     void transform(std::function<DSP_FLOAT(DSP_FLOAT)> transform);

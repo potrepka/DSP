@@ -3,9 +3,9 @@
 const unsigned int dsp::FFT::REAL = 0;
 const unsigned int dsp::FFT::IMAGINARY = 1;
 
-dsp::FFT::FFT() : Consumer(Connection::Type::BIPOLAR) {
-    pushOutput(Connection::Type::BIPOLAR, Connection::Space::FREQUENCY_REAL);
-    pushOutput(Connection::Type::BIPOLAR, Connection::Space::FREQUENCY_IMAGINARY);
+dsp::FFT::FFT() : Consumer(Type::BIPOLAR) {
+    pushOutput(Type::BIPOLAR, Space::FREQUENCY_REAL);
+    pushOutput(Type::BIPOLAR, Space::FREQUENCY_IMAGINARY);
 }
 
 std::shared_ptr<dsp::Unit::OutputParameter> dsp::FFT::getReal() {

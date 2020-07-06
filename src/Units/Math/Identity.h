@@ -7,7 +7,7 @@ namespace dsp {
 class Identity : public Processor {
 
 public:
-    Identity(Connection::Type inType, Connection::Type outType, Connection::Space space = Connection::Space::TIME);
+    Identity(Type inType, Type outType, Space space = Space::TIME);
 
 protected:
     void process() override;
@@ -16,25 +16,25 @@ protected:
 class BinaryToLinear : public Identity {
 
 public:
-    BinaryToLinear(Connection::Space space = Connection::Space::TIME);
+    BinaryToLinear(Space space = Space::TIME);
 };
 
 class BinaryToRatio : public Identity {
 
 public:
-    BinaryToRatio(Connection::Space space = Connection::Space::TIME);
+    BinaryToRatio(Space space = Space::TIME);
 };
 
 class IntegerToLinear : public Identity {
 
 public:
-    IntegerToLinear(Connection::Space space = Connection::Space::TIME);
+    IntegerToLinear(Space space = Space::TIME);
 };
 
 class IntegerToRatio : public Identity {
 
 public:
-    IntegerToRatio(Connection::Space space = Connection::Space::TIME);
+    IntegerToRatio(Space space = Space::TIME);
 };
 
 } // namespace dsp

@@ -1,7 +1,6 @@
 #include "Maximum.h"
 
-dsp::Maximum::Maximum(Connection::Type type, Connection::Space space)
-        : Processor(type, type, space), type(type), space(space) {}
+dsp::Maximum::Maximum(Type type, Space space) : Processor(type, type, space), type(type), space(space) {}
 
 void dsp::Maximum::pushInput() {
     Unit::pushInput(type, space);

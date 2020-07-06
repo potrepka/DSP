@@ -2,7 +2,7 @@
 
 const unsigned int dsp::Consumer::INPUT_SIGNAL = 0;
 
-dsp::Consumer::Consumer(Connection::Type type, Connection::Space space) {
+dsp::Consumer::Consumer(Type type, Space space) {
     pushInput(type, space);
 }
 

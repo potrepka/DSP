@@ -7,7 +7,7 @@ namespace dsp {
 class GainComputer : public Processor {
 
 public:
-    GainComputer(Connection::Space space = Connection::Space::TIME);
+    GainComputer(Space space = Space::TIME);
     std::shared_ptr<InputParameter> getThreshold();
     std::shared_ptr<InputParameter> getCompressionRatio();
     std::shared_ptr<InputParameter> getGateRatio();

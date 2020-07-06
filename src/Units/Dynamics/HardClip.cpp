@@ -1,7 +1,6 @@
 #include "HardClip.h"
 
-dsp::HardClip::HardClip(Connection::Space space)
-        : Processor(Connection::Type::BIPOLAR, Connection::Type::BIPOLAR, space) {}
+dsp::HardClip::HardClip(Space space) : Processor(Type::BIPOLAR, Type::BIPOLAR, space) {}
 
 void dsp::HardClip::process() {
     Unit::process();

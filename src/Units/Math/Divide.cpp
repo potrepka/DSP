@@ -2,7 +2,7 @@
 
 const unsigned int dsp::Divide::DIVISOR = 1;
 
-dsp::Divide::Divide(Connection::Type type, Connection::Space space) : Processor(type, Connection::Type::RATIO, space) {
+dsp::Divide::Divide(Type type, Space space) : Processor(type, Type::RATIO, space) {
     pushInput(type, space);
 }
 

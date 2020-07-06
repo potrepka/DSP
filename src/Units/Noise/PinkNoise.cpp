@@ -1,6 +1,6 @@
 #include "PinkNoise.h"
 
-dsp::PinkNoise::PinkNoise() : Generator(Connection::Type::BIPOLAR), seed(1) {}
+dsp::PinkNoise::PinkNoise() : Generator(Type::BIPOLAR), seed(1) {}
 
 void dsp::PinkNoise::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);

@@ -7,7 +7,7 @@ namespace dsp {
 class Negative : public Processor {
 
 public:
-    Negative(Connection::Type type, Connection::Space space = Connection::Space::TIME);
+    Negative(Type type, Space space = Space::TIME);
 
 protected:
     void process() override;

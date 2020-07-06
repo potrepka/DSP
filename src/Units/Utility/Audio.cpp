@@ -1,8 +1,8 @@
 #include "Audio.h"
 
 dsp::Audio::Audio() {
-    pushOutput(Connection::Type::BIPOLAR);
-    pushInput(Connection::Type::BIPOLAR);
+    pushOutput(Type::BIPOLAR);
+    pushInput(Type::BIPOLAR);
 }
 
 std::shared_ptr<dsp::Unit::OutputParameter> dsp::Audio::getAudioInput() {

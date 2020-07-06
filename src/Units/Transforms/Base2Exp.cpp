@@ -1,6 +1,6 @@
 #include "Base2Exp.h"
 
-dsp::Base2Exp::Base2Exp() : Processor(Connection::Type::LINEAR, Connection::Type::RATIO) {}
+dsp::Base2Exp::Base2Exp() : Processor(Type::LINEAR, Type::RATIO) {}
 
 void dsp::Base2Exp::process() {
     Unit::process();
