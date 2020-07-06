@@ -12,11 +12,5 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Divide::getDivisor() {
 
 void dsp::Divide::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),
-                       getInputSignal()->getChannel(i)->getBuffer().end(),
-                       getDivisor()->getChannel(i)->getBuffer().begin(),
-                       getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                       std::divides<DSP_FLOAT>());
-    }
+    transform(getDivisor(), std::divides<DSP_FLOAT>());
 }

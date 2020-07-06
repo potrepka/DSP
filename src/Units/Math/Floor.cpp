@@ -13,11 +13,5 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Floor::getDivisor() {
 
 void dsp::Floor::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),
-                       getInputSignal()->getChannel(i)->getBuffer().end(),
-                       getDivisor()->getChannel(i)->getBuffer().begin(),
-                       getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                       [](DSP_FLOAT x, DSP_FLOAT y) { return y == 0.0 ? x : floor(x / y) * y; });
-    }
+    transform(getDivisor(), [](DSP_FLOAT x, DSP_FLOAT y) { return y == 0.0 ? x : floor(x / y) * y; });
 }

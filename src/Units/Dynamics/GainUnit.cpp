@@ -13,11 +13,5 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::GainUnit::getGain() {
 
 void dsp::GainUnit::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::transform(getInputSignal()->getChannel(i)->getBuffer().begin(),
-                       getInputSignal()->getChannel(i)->getBuffer().end(),
-                       getGain()->getChannel(i)->getBuffer().begin(),
-                       getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                       [](DSP_FLOAT x, DSP_FLOAT y) { return x * exp2(y); });
-    }
+    transform(getGain(), [](DSP_FLOAT x, DSP_FLOAT y) { return x * exp2(y); });
 }
