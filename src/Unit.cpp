@@ -403,25 +403,45 @@ void dsp::Unit::process() {
 }
 
 void dsp::operator>>(DSP_FLOAT value, std::shared_ptr<dsp::Unit::InputParameter> input) {
+    input->lock();
     for (std::size_t i = 0; i < input->getNumChannels(); i++) {
         value >> input->getChannel(i);
     }
+    input->unlock();
+}
+
+void dsp::operator>>(std::vector<DSP_FLOAT> values, std::shared_ptr<Unit::InputParameter> input) {
+    input->lock();
+    if (values.size() > 0) {
+        for (std::size_t i = 0; i < input->getNumChannels(); i++) {
+            values[i % values.size()] >> input->getChannel(i);
+        }
+    }
+    input->unlock();
 }
 
 void dsp::operator>>(std::shared_ptr<dsp::Unit::OutputParameter> output,
                      std::shared_ptr<dsp::Unit::InputParameter> input) {
+    input->lock();
+    output->lock();
     if (output->getNumChannels() > 0) {
         for (std::size_t i = 0; i < input->getNumChannels(); i++) {
             output->getChannel(i % output->getNumChannels()) >> input->getChannel(i);
         }
     }
+    output->unlock();
+    input->unlock();
 }
 
 void dsp::operator!=(std::shared_ptr<dsp::Unit::OutputParameter> output,
                      std::shared_ptr<dsp::Unit::InputParameter> input) {
+    input->lock();
+    output->lock();
     if (output->getNumChannels() > 0) {
         for (std::size_t i = 0; i < input->getNumChannels(); i++) {
             output->getChannel(i % output->getNumChannels()) != input->getChannel(i);
         }
     }
+    output->unlock();
+    input->unlock();
 }
