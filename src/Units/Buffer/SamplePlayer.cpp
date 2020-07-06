@@ -22,12 +22,12 @@ void dsp::SamplePlayer::setSample(unsigned int channel, const std::vector<DSP_FL
     unlock();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getGate() {
-    return getInput(GATE);
-}
-
 std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getResetTrigger() {
     return getInput(RESET_TRIGGER);
+}
+
+std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getGate() {
+    return getInput(GATE);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getStartPosition() {
