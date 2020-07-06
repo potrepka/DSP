@@ -4,8 +4,8 @@ const unsigned int dsp::IFFT::REAL = 0;
 const unsigned int dsp::IFFT::IMAGINARY = 1;
 
 dsp::IFFT::IFFT() : Generator(Connection::Type::BIPOLAR) {
-    pushInput(Connection::Type::BIPOLAR, Connection::Space::FREQUENCY);
-    pushInput(Connection::Type::BIPOLAR, Connection::Space::FREQUENCY);
+    pushInput(Connection::Type::BIPOLAR, Connection::Space::FREQUENCY_REAL);
+    pushInput(Connection::Type::BIPOLAR, Connection::Space::FREQUENCY_IMAGINARY);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::IFFT::getReal() {
