@@ -30,18 +30,14 @@ void dsp::OnePole::process() {
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
-            DSP_FLOAT a0, b1;
+            DSP_FLOAT radians = PI * frequencyBuffer[k] * getOneOverSampleRate();
+            DSP_FLOAT delta = tan(radians / (1.0 + radians)) * (inputBuffer[k] - y1[i]);
+            y1[i] += delta;
             switch (mode) {
-                case Mode::LOW_PASS:
-                    b1 = exp(-TAU * frequencyBuffer[k] * getOneOverSampleRate());
-                    a0 = 1.0 - b1;
-                    break;
-                case Mode::HIGH_PASS:
-                    b1 = -exp(-TAU * (0.5 - frequencyBuffer[k] * getOneOverSampleRate()));
-                    a0 = 1.0 + b1;
-                    break;
+                case Mode::LOW_PASS: outputBuffer[k] = y1[i]; break;
+                case Mode::HIGH_PASS: outputBuffer[k] = inputBuffer[k] - y1[i]; break;
             }
-            y1[i] = outputBuffer[k] = a0 * inputBuffer[k] + b1 * y1[i];
+            y1[i] += delta;
         }
     }
 }
