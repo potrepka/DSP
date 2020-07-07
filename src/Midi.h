@@ -15,49 +15,54 @@ namespace dsp {
 
 class Midi : public Runnable {
 
+    enum MessageType {
+        MIDI_UNKNOWN = 0x00,
+        MIDI_NOTE_OFF = 0x80,
+        MIDI_NOTE_ON = 0x90,
+        MIDI_POLY_AFTERTOUCH = 0xA0,
+        MIDI_CONTROL_CHANGE = 0xB0,
+        MIDI_PROGRAM_CHANGE = 0xC0,
+        MIDI_AFTERTOUCH = 0xD0,
+        MIDI_PITCH_BEND = 0xE0,
+        MIDI_SYSEX = 0xF0,
+        MIDI_TIME_CODE = 0xF1,
+        MIDI_SONG_POS_POINTER = 0xF2,
+        MIDI_SONG_SELECT = 0xF3,
+        MIDI_TUNE_REQUEST = 0xF6,
+        MIDI_SYSEX_END = 0xF7,
+        MIDI_TIME_CLOCK = 0xF8,
+        MIDI_START = 0xFA,
+        MIDI_CONTINUE = 0xFB,
+        MIDI_STOP = 0xFC,
+        MIDI_ACTIVE_SENSING = 0xFE,
+        MIDI_SYSTEM_RESET = 0xFF
+    };
+
 public:
     class TimedMessage {
 
     public:
         static const unsigned char MIDI_CHANNELS;
         static const unsigned char MIDI_NOTES;
-        enum MessageType {
-            MIDI_UNKNOWN = 0x00,
-            MIDI_NOTE_OFF = 0x80,
-            MIDI_NOTE_ON = 0x90,
-            MIDI_POLY_AFTERTOUCH = 0xA0,
-            MIDI_CONTROL_CHANGE = 0xB0,
-            MIDI_PROGRAM_CHANGE = 0xC0,
-            MIDI_AFTERTOUCH = 0xD0,
-            MIDI_PITCH_BEND = 0xE0,
-            MIDI_SYSEX = 0xF0,
-            MIDI_TIME_CODE = 0xF1,
-            MIDI_SONG_POS_POINTER = 0xF2,
-            MIDI_SONG_SELECT = 0xF3,
-            MIDI_TUNE_REQUEST = 0xF6,
-            MIDI_SYSEX_END = 0xF7,
-            MIDI_TIME_CLOCK = 0xF8,
-            MIDI_START = 0xFA,
-            MIDI_CONTINUE = 0xFB,
-            MIDI_STOP = 0xFC,
-            MIDI_ACTIVE_SENSING = 0xFE,
-            MIDI_SYSTEM_RESET = 0xFF
-        };
         struct compare {
             bool operator()(const TimedMessage &left, const TimedMessage &right) const {
                 return left.time < right.time;
             }
         };
-        static std::string getMessageTypeName(MessageType type);
         TimedMessage(double time, std::vector<unsigned char> bytes);
+
         double getTime() const;
-        std::vector<unsigned char> getBytes() const;
-        MessageType getMessageType() const;
+        MessageType getType() const;
+        std::string getTypeName() const;
         unsigned char getChannel() const;
+
+        std::vector<unsigned char> getBytes() const;
+
         unsigned char getByte(unsigned int index) const;
         DSP_FLOAT getByteAsUnipolar(unsigned int index) const;
         void setByte(unsigned int index, unsigned char value);
         void setByteUsingUnipolar(unsigned int index, DSP_FLOAT unipolar);
+
         unsigned short getShort(unsigned int lsb, unsigned int msb) const;
         DSP_FLOAT getShortAsBipolar(unsigned int lsb, unsigned int msb) const;
         void setShort(unsigned int lsb, unsigned int msb, unsigned short value);
@@ -167,7 +172,7 @@ public:
         std::shared_ptr<Output> clock;
     };
 
-    Midi();
+    static std::string getMessageTypeName(MessageType type);
 
     static unsigned int getNumMidiInputPorts();
     static unsigned int getNumMidiOutputPorts();

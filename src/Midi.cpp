@@ -3,31 +3,6 @@
 const unsigned char MIDI_CHANNELS = 16;
 const unsigned char MIDI_NOTES = 128;
 
-std::string dsp::Midi::TimedMessage::getMessageTypeName(MessageType type) {
-    switch (type) {
-        case MIDI_UNKNOWN: return "Unknown";
-        case MIDI_NOTE_OFF: return "Note Off";
-        case MIDI_NOTE_ON: return "Note On";
-        case MIDI_POLY_AFTERTOUCH: return "Note Pressure";
-        case MIDI_CONTROL_CHANGE: return "Control Change";
-        case MIDI_PROGRAM_CHANGE: return "Program Change";
-        case MIDI_AFTERTOUCH: return "Channel Pressure";
-        case MIDI_PITCH_BEND: return "Pitch Bend";
-        case MIDI_SYSEX: return "System Exclusive";
-        case MIDI_TIME_CODE: return "Time Code";
-        case MIDI_SONG_POS_POINTER: return "Song Position Pointer";
-        case MIDI_SONG_SELECT: return "Song Select";
-        case MIDI_TUNE_REQUEST: return "Tune Request";
-        case MIDI_SYSEX_END: return "System Exclusive End";
-        case MIDI_TIME_CLOCK: return "Time Clock";
-        case MIDI_START: return "Start";
-        case MIDI_CONTINUE: return "Continue";
-        case MIDI_STOP: return "Stop";
-        case MIDI_ACTIVE_SENSING: return "Active Sensing";
-        case MIDI_SYSTEM_RESET: return "System Reset";
-    }
-}
-
 dsp::Midi::TimedMessage::TimedMessage(double time, std::vector<unsigned char> bytes) {
     this->time = time;
     this->bytes = bytes;
@@ -37,16 +12,16 @@ double dsp::Midi::TimedMessage::getTime() const {
     return time;
 }
 
-std::vector<unsigned char> dsp::Midi::TimedMessage::getBytes() const {
-    return bytes;
-}
-
-dsp::Midi::TimedMessage::MessageType dsp::Midi::TimedMessage::getMessageType() const {
+dsp::Midi::MessageType dsp::Midi::TimedMessage::getType() const {
     if (bytes[0] >= MIDI_SYSEX) {
         return (MessageType)bytes[0];
     } else {
         return (MessageType)(bytes[0] & 0xF0);
     }
+}
+
+std::string dsp::Midi::TimedMessage::getTypeName() const {
+    return getMessageTypeName(getType());
 }
 
 unsigned char dsp::Midi::TimedMessage::getChannel() const {
@@ -55,6 +30,10 @@ unsigned char dsp::Midi::TimedMessage::getChannel() const {
     } else {
         return (unsigned int)(bytes[0] & 0x0F) + 1;
     }
+}
+
+std::vector<unsigned char> dsp::Midi::TimedMessage::getBytes() const {
+    return bytes;
 }
 
 unsigned char dsp::Midi::TimedMessage::getByte(unsigned int index) const {
@@ -232,42 +211,42 @@ void dsp::Midi::MidiInput::run() {
         bool clockState = false;
         if (queue.top().getTime() <= bufferSamples * getOneOverSampleRate()) {
             const TimedMessage &message = queue.top();
-            const TimedMessage::MessageType type = message.getMessageType();
+            const MessageType type = message.getType();
             const unsigned char channel = message.getChannel();
             switch (type) {
-                case TimedMessage::MIDI_NOTE_OFF: noteOffState = true; break;
-                case TimedMessage::MIDI_NOTE_ON:
+                case MIDI_NOTE_OFF: noteOffState = true; break;
+                case MIDI_NOTE_ON:
                     noteOnState = true;
                     notePressureState[channel][message.getByte(1)] = message.getByteAsUnipolar(2);
                     break;
-                case TimedMessage::MIDI_POLY_AFTERTOUCH:
+                case MIDI_POLY_AFTERTOUCH:
                     notePressureState[channel][message.getByte(1)] = message.getByteAsUnipolar(2);
                     break;
-                case TimedMessage::MIDI_CONTROL_CHANGE:
+                case MIDI_CONTROL_CHANGE:
                     controlChangeState[channel][message.getByte(1)] = message.getByteAsUnipolar(2);
                     break;
-                case TimedMessage::MIDI_PROGRAM_CHANGE: programChangeState[channel] = message.getByte(1); break;
-                case TimedMessage::MIDI_AFTERTOUCH: channelPressureState[channel] = message.getByteAsUnipolar(1); break;
-                case TimedMessage::MIDI_PITCH_BEND: pitchBendState[channel] = message.getShortAsBipolar(1, 2); break;
+                case MIDI_PROGRAM_CHANGE: programChangeState[channel] = message.getByte(1); break;
+                case MIDI_AFTERTOUCH: channelPressureState[channel] = message.getByteAsUnipolar(1); break;
+                case MIDI_PITCH_BEND: pitchBendState[channel] = message.getShortAsBipolar(1, 2); break;
 
-                case TimedMessage::MIDI_TIME_CODE:
-                case TimedMessage::MIDI_SONG_POS_POINTER:
-                case TimedMessage::MIDI_SONG_SELECT:
-                case TimedMessage::MIDI_TUNE_REQUEST: break;
+                case MIDI_TIME_CODE:
+                case MIDI_SONG_POS_POINTER:
+                case MIDI_SONG_SELECT:
+                case MIDI_TUNE_REQUEST: break;
 
-                case TimedMessage::MIDI_TIME_CLOCK: clockState = true; break;
-                case TimedMessage::MIDI_START:
+                case MIDI_TIME_CLOCK: clockState = true; break;
+                case MIDI_START:
                     playState = true;
                     resetState = true;
                     break;
-                case TimedMessage::MIDI_CONTINUE: playState = true; break;
-                case TimedMessage::MIDI_STOP: stopState = true; break;
+                case MIDI_CONTINUE: playState = true; break;
+                case MIDI_STOP: stopState = true; break;
 
-                case TimedMessage::MIDI_UNKNOWN:
-                case TimedMessage::MIDI_SYSEX:
-                case TimedMessage::MIDI_SYSEX_END:
-                case TimedMessage::MIDI_ACTIVE_SENSING:
-                case TimedMessage::MIDI_SYSTEM_RESET: break;
+                case MIDI_UNKNOWN:
+                case MIDI_SYSEX:
+                case MIDI_SYSEX_END:
+                case MIDI_ACTIVE_SENSING:
+                case MIDI_SYSTEM_RESET: break;
             }
         }
         for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
@@ -417,13 +396,13 @@ void dsp::Midi::MidiOutput::run() {
         for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
             for (unsigned char n = 0; n < MIDI_NOTES; n++) {
                 if (noteOff[i][n]->getBuffer()[k]) {
-                    message3.setByte(0, TimedMessage::MessageType::MIDI_NOTE_OFF);
+                    message3.setByte(0, MIDI_NOTE_OFF);
                     message3.setByte(1, n);
                     message3.setByte(2, 0);
                     sendMessageWithDelay(nanoseconds, message3.getBytes());
                 }
                 if (noteOn[i][n]->getBuffer()[k]) {
-                    message3.setByte(0, TimedMessage::MessageType::MIDI_NOTE_ON);
+                    message3.setByte(0, MIDI_NOTE_ON);
                     message3.setByte(1, n);
                     message3.setByteUsingUnipolar(2, notePressure[i][n]->getBuffer()[k]);
                     sendMessageWithDelay(nanoseconds, message3.getBytes());
@@ -431,7 +410,7 @@ void dsp::Midi::MidiOutput::run() {
                     message3.setByteUsingUnipolar(2, notePressure[i][n]->getBuffer()[k]);
                     if (notePressureState[i][n] != message3.getByte(2)) {
                         notePressureState[i][n] = message3.getByte(2);
-                        message3.setByte(0, TimedMessage::MessageType::MIDI_POLY_AFTERTOUCH + i);
+                        message3.setByte(0, MIDI_POLY_AFTERTOUCH + i);
                         message3.setByte(1, n);
                         sendMessageWithDelay(nanoseconds, message3.getBytes());
                     }
@@ -439,7 +418,7 @@ void dsp::Midi::MidiOutput::run() {
                 message3.setByteUsingUnipolar(2, controlChange[i][n]->getBuffer()[k]);
                 if (controlChangeState[i][n] != message3.getByte(2)) {
                     controlChangeState[i][n] = message3.getByte(2);
-                    message3.setByte(0, TimedMessage::MessageType::MIDI_CONTROL_CHANGE + i);
+                    message3.setByte(0, MIDI_CONTROL_CHANGE + i);
                     message3.setByte(1, n);
                     sendMessageWithDelay(nanoseconds, message3.getBytes());
                 }
@@ -447,33 +426,31 @@ void dsp::Midi::MidiOutput::run() {
             message2.setByte(1, programChange[i]->getBuffer()[k]);
             if (programChangeState[i] != message2.getByte(1)) {
                 programChangeState[i] = message2.getByte(1);
-                message2.setByte(0, TimedMessage::MessageType::MIDI_PROGRAM_CHANGE + i);
+                message2.setByte(0, MIDI_PROGRAM_CHANGE + i);
                 sendMessageWithDelay(nanoseconds, message2.getBytes());
             }
             message2.setByteUsingUnipolar(1, channelPressure[i]->getBuffer()[k]);
             if (channelPressureState[i] != message2.getByte(1)) {
                 channelPressureState[i] = message2.getByte(1);
-                message2.setByte(0, TimedMessage::MessageType::MIDI_AFTERTOUCH + i);
+                message2.setByte(0, MIDI_AFTERTOUCH + i);
                 sendMessageWithDelay(nanoseconds, message2.getBytes());
             }
             message3.setShortUsingBipolar(1, 2, pitchBend[i]->getBuffer()[k]);
             if (pitchBendState[i] != message3.getShort(1, 2)) {
                 pitchBendState[i] = message3.getShort(1, 2);
-                message3.setByte(0, TimedMessage::MessageType::MIDI_PITCH_BEND + i);
+                message3.setByte(0, MIDI_PITCH_BEND + i);
                 sendMessageWithDelay(nanoseconds, message3.getBytes());
             }
             if (play->getBuffer()[k]) {
-                message1.setByte(0,
-                                 reset->getBuffer()[k] ? TimedMessage::MessageType::MIDI_START
-                                                       : TimedMessage::MessageType::MIDI_CONTINUE);
+                message1.setByte(0, reset->getBuffer()[k] ? MIDI_START : MIDI_CONTINUE);
                 sendMessageWithDelay(nanoseconds, message1.getBytes());
             }
             if (stop->getBuffer()[k]) {
-                message1.setByte(0, TimedMessage::MessageType::MIDI_STOP);
+                message1.setByte(0, MIDI_STOP);
                 sendMessageWithDelay(nanoseconds, message1.getBytes());
             }
             if (clock->getBuffer()[k]) {
-                message1.setByte(0, TimedMessage::MessageType::MIDI_TIME_CLOCK);
+                message1.setByte(0, MIDI_TIME_CLOCK);
                 sendMessageWithDelay(nanoseconds, message1.getBytes());
             }
         }
@@ -494,6 +471,31 @@ void dsp::Midi::MidiOutput::sendMessageWithDelay(int64_t nanoseconds, std::vecto
 RtMidiIn dsp::Midi::midiIn;
 RtMidiOut dsp::Midi::midiOut;
 #endif
+
+std::string dsp::Midi::getMessageTypeName(MessageType type) {
+    switch (type) {
+        case MIDI_UNKNOWN: return "Unknown";
+        case MIDI_NOTE_OFF: return "Note Off";
+        case MIDI_NOTE_ON: return "Note On";
+        case MIDI_POLY_AFTERTOUCH: return "Note Pressure";
+        case MIDI_CONTROL_CHANGE: return "Control Change";
+        case MIDI_PROGRAM_CHANGE: return "Program Change";
+        case MIDI_AFTERTOUCH: return "Channel Pressure";
+        case MIDI_PITCH_BEND: return "Pitch Bend";
+        case MIDI_SYSEX: return "System Exclusive";
+        case MIDI_TIME_CODE: return "Time Code";
+        case MIDI_SONG_POS_POINTER: return "Song Position Pointer";
+        case MIDI_SONG_SELECT: return "Song Select";
+        case MIDI_TUNE_REQUEST: return "Tune Request";
+        case MIDI_SYSEX_END: return "System Exclusive End";
+        case MIDI_TIME_CLOCK: return "Time Clock";
+        case MIDI_START: return "Start";
+        case MIDI_CONTINUE: return "Continue";
+        case MIDI_STOP: return "Stop";
+        case MIDI_ACTIVE_SENSING: return "Active Sensing";
+        case MIDI_SYSTEM_RESET: return "System Reset";
+    }
+}
 
 unsigned int dsp::Midi::getNumMidiInputPorts() {
 #if USE_RTMIDI
@@ -526,8 +528,6 @@ std::string dsp::Midi::getMidiOutputName(unsigned int port) {
     return "None";
 #endif
 }
-
-dsp::Midi::Midi() {}
 
 unsigned int dsp::Midi::getNumMidiInputs() {
     return static_cast<unsigned int>(midiInputs.size());
