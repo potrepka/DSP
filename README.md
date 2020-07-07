@@ -15,9 +15,8 @@ int main() {
     dsp::Engine *engine = new dsp::Engine();
 
     std::vector<unsigned int> inputDevices = engine->getInputDevices();
-    unsigned int inputDevice = inputDevices.size() > 0 ? inputDevices[0] : -1;
-
     std::vector<unsigned int> outputDevices = engine->getOutputDevices();
+    unsigned int inputDevice = inputDevices.size() > 0 ? inputDevices[0] : -1;
     unsigned int outputDevice = outputDevices.size() > 0 ? outputDevices[0] : -1;
 
     std::vector<unsigned int> sampleRates = engine->getAvailableSampleRates(inputDevice, outputDevice);
