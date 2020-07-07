@@ -21,7 +21,7 @@ protected:
 private:
     static const unsigned int FREQUENCY;
     Mode mode;
-    std::vector<DSP_FLOAT> y1;
+    std::vector<DSP_FLOAT> state;
 };
 
 } // namespace dsp

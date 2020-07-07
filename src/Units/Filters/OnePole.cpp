@@ -20,7 +20,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::OnePole::getFrequency() {
 
 void dsp::OnePole::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    y1.resize(numChannels, 0.0);
+    state.resize(numChannels, 0.0);
 }
 
 void dsp::OnePole::process() {
@@ -31,13 +31,13 @@ void dsp::OnePole::process() {
         std::vector<DSP_FLOAT> &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             DSP_FLOAT radians = PI * frequencyBuffer[k] * getOneOverSampleRate();
-            DSP_FLOAT delta = tan(radians / (1.0 + radians)) * (inputBuffer[k] - y1[i]);
-            y1[i] += delta;
+            DSP_FLOAT delta = tan(radians / (1.0 + radians)) * (inputBuffer[k] - state[i]);
+            state[i] += delta;
             switch (mode) {
-                case Mode::LOW_PASS: outputBuffer[k] = y1[i]; break;
-                case Mode::HIGH_PASS: outputBuffer[k] = inputBuffer[k] - y1[i]; break;
+                case Mode::LOW_PASS: outputBuffer[k] = state[i]; break;
+                case Mode::HIGH_PASS: outputBuffer[k] = inputBuffer[k] - state[i]; break;
             }
-            y1[i] += delta;
+            state[i] += delta;
         }
     }
 }
