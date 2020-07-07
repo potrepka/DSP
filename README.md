@@ -16,12 +16,13 @@ int main() {
 
     std::vector<unsigned int> inputDevices = engine->getInputDevices();
     std::vector<unsigned int> outputDevices = engine->getOutputDevices();
+    
     unsigned int inputDevice = inputDevices.size() > 0 ? inputDevices[0] : -1;
     unsigned int outputDevice = outputDevices.size() > 0 ? outputDevices[0] : -1;
 
     std::vector<unsigned int> sampleRates = engine->getAvailableSampleRates(inputDevice, outputDevice);
+    
     unsigned int sampleRate = sampleRates.size() > 0 ? sampleRates[0] : 0;
-
     unsigned int bufferSize = 512;
 
     engine->setup(inputDevice, outputDevice, sampleRate, bufferSize);
