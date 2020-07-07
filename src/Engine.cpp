@@ -236,6 +236,38 @@ void dsp::Engine::sortUnits() {
     audio->sortUnits();
 }
 
+unsigned int dsp::Engine::getNumMidiInputs() {
+    return midi->getNumMidiInputs();
+}
+
+unsigned int dsp::Engine::getNumMidiOutputs() {
+    return midi->getNumMidiOutputs();
+}
+
+std::shared_ptr<dsp::Midi::MidiInput> dsp::Engine::getMidiInput(unsigned int index) {
+    return midi->getMidiInput(index);
+}
+
+std::shared_ptr<dsp::Midi::MidiOutput> dsp::Engine::getMidiOutput(unsigned int index) {
+    return midi->getMidiOutput(index);
+}
+
+void dsp::Engine::pushMidiInput(unsigned int port) {
+    midi->pushMidiInput(port);
+}
+
+void dsp::Engine::pushMidiOutput(unsigned int port) {
+    midi->pushMidiOutput(port);
+}
+
+void dsp::Engine::removeMidiInput(unsigned int index) {
+    midi->removeMidiInput(index);
+}
+
+void dsp::Engine::removeMidiOutput(unsigned int index) {
+    midi->removeMidiOutput(index);
+}
+
 #if USE_RTAUDIO
 int dsp::Engine::tick(void *outputBuffer,
                       void *inputBuffer,
@@ -262,7 +294,9 @@ void dsp::Engine::process(DSP_FLOAT *inputBuffer,
                           Engine *engine) {
     engine->audio->zeroBuffers();
     engine->audio->readInterleaved(inputBuffer, numInputChannels, numFrames);
+    engine->midi->processInputs();
     engine->audio->run();
+    engine->midi->processOutputs();
     engine->audio->copyBuffers();
     engine->audio->writeInterleaved(outputBuffer, numOutputChannels, numFrames);
 }

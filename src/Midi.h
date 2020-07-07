@@ -21,7 +21,7 @@ public:
     public:
         static const unsigned char MIDI_CHANNELS;
         static const unsigned char MIDI_NOTES;
-        enum Type {
+        enum MessageType {
             MIDI_UNKNOWN = 0x00,
             MIDI_NOTE_OFF = 0x80,
             MIDI_NOTE_ON = 0x90,
@@ -48,10 +48,11 @@ public:
                 return left.time < right.time;
             }
         };
-        TimedMessage(double time, std::vector<unsigned char> message);
+        static std::string getMessageTypeName(MessageType type);
+        TimedMessage(double time, std::vector<unsigned char> bytes);
         double getTime() const;
-        std::vector<unsigned char> getMessage() const;
-        Type getType() const;
+        std::vector<unsigned char> getBytes() const;
+        MessageType getMessageType() const;
         unsigned char getChannel() const;
         unsigned char getByte(unsigned int index) const;
         DSP_FLOAT getByteAsUnipolar(unsigned int index) const;
@@ -64,7 +65,7 @@ public:
 
     private:
         double time;
-        std::vector<unsigned char> message;
+        std::vector<unsigned char> bytes;
     };
 
     class MidiInput : public Runnable {
@@ -85,13 +86,17 @@ public:
         std::shared_ptr<Input> getStopTrigger();
         std::shared_ptr<Input> getResetTrigger();
         std::shared_ptr<Input> getClockTrigger();
-        void pushQueue(double delta, std::vector<unsigned char> &message);
-        void runCallbacks(double delta, std::vector<unsigned char> &message);
-        void addCallback(void (*callback)(double, std::vector<unsigned char>));
-        void removeCallback(void (*callback)(double, std::vector<unsigned char>));
+
+        unsigned int getNumCallbacks();
+        std::function<void(TimedMessage)> getCallback(unsigned int index);
+        void pushCallback(std::function<void(TimedMessage)> callback);
+        void removeCallback(unsigned int index);
+
         void run();
 
     private:
+        void pushQueue(double delta, std::vector<unsigned char> bytes);
+        void runCallbacks(TimedMessage message);
 #if USE_RTMIDI
         RtMidiIn midiIn;
 #endif
@@ -99,7 +104,7 @@ public:
         double messageTime;
         unsigned long bufferSamples;
         std::priority_queue<TimedMessage, std::vector<TimedMessage>, TimedMessage::compare> queue;
-        std::vector<void (*)(double, std::vector<unsigned char>)> callbacks;
+        std::vector<std::shared_ptr<std::function<void(TimedMessage)>>> callbacks;
         std::vector<std::vector<DSP_FLOAT>> notePressureState;
         std::vector<std::vector<DSP_FLOAT>> controlChangeState;
         std::vector<DSP_FLOAT> programChangeState;
@@ -135,10 +140,11 @@ public:
         std::shared_ptr<Output> getStopTrigger();
         std::shared_ptr<Output> getResetTrigger();
         std::shared_ptr<Output> getClockTrigger();
-        void sendMessageWithDelay(int64_t nanoseconds, std::vector<unsigned char> message);
+
         void run();
 
     private:
+        void sendMessageWithDelay(int64_t nanoseconds, std::vector<unsigned char> bytes);
 #if USE_RTMIDI
         RtMidiOut midiOut;
 #endif

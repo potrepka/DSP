@@ -45,6 +45,15 @@ public:
     void removeUnit(unsigned int index);
     void sortUnits();
 
+    unsigned int getNumMidiInputs();
+    unsigned int getNumMidiOutputs();
+    std::shared_ptr<Midi::MidiInput> getMidiInput(unsigned int index);
+    std::shared_ptr<Midi::MidiOutput> getMidiOutput(unsigned int index);
+    void pushMidiInput(unsigned int port);
+    void pushMidiOutput(unsigned int port);
+    void removeMidiInput(unsigned int index);
+    void removeMidiOutput(unsigned int index);
+
 private:
     std::shared_ptr<Audio> audio;
     std::shared_ptr<Midi> midi;
