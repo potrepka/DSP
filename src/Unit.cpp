@@ -88,15 +88,15 @@ template <class T> std::shared_ptr<T> dsp::Unit::ConnectionParameter<T>::getChan
     return channels[index];
 }
 
+template class dsp::Unit::ConnectionParameter<dsp::Input>;
+
 dsp::Unit::InputParameter::InputParameter(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value)
         : ConnectionParameter(bufferSize, type, space, value) {}
 
-template class dsp::Unit::ConnectionParameter<dsp::Input>;
+template class dsp::Unit::ConnectionParameter<dsp::Output>;
 
 dsp::Unit::OutputParameter::OutputParameter(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value)
         : ConnectionParameter(bufferSize, type, space, value) {}
-
-template class dsp::Unit::ConnectionParameter<dsp::Output>;
 
 dsp::Unit::Unit() : numChannels(0) {}
 
