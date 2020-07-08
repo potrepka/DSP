@@ -74,7 +74,7 @@ template <class T> void dsp::Unit::ConnectionParameter<T>::setNumChannels(unsign
     } else {
         channels.reserve(numChannels);
         for (unsigned int i = static_cast<unsigned int>(channels.size()); i < numChannels; i++) {
-            channels.emplace_back(new T(bufferSize, type, space, value));
+            channels.push_back(std::make_shared<T>(bufferSize, type, space, value));
         }
     }
     unlock();
