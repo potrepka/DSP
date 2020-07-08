@@ -4,7 +4,7 @@ dsp::PinkNoise::PinkNoise() : Generator(Type::BIPOLAR), seed(1) {}
 
 void dsp::PinkNoise::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    values.resize(numChannels, std::vector<DSP_FLOAT>(7));
+    values.resize(numChannels, std::vector<DSP_FLOAT>(7, 0.0));
 }
 
 void dsp::PinkNoise::process() {

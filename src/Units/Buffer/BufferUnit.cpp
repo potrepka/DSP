@@ -21,7 +21,7 @@ std::vector<DSP_FLOAT> &dsp::BufferUnit::getUnitBuffer(unsigned int channel) {
 
 void dsp::BufferUnit::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    buffers.resize(numChannels, std::vector<DSP_FLOAT>(unitBufferSize, 0));
+    buffers.resize(numChannels, std::vector<DSP_FLOAT>(unitBufferSize, 0.0));
 }
 
 void dsp::BufferUnit::process() {
