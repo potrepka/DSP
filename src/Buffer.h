@@ -14,7 +14,7 @@ public:
     void setNumChannels(unsigned int numChannels);
     unsigned int getSize();
     void setSize(unsigned int size);
-    std::vector<DSP_FLOAT> &getBuffer(unsigned int channel);
+    std::vector<DSP_FLOAT> &getChannel(unsigned int channel);
 
 private:
     unsigned int size;

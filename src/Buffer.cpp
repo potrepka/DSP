@@ -1,5 +1,14 @@
 #include "Buffer.h"
 
+template class dsp::Buffer<dsp::Type::BIPOLAR, dsp::Space::TIME>;
+template class dsp::Buffer<dsp::Type::UNIPOLAR, dsp::Space::TIME>;
+template class dsp::Buffer<dsp::Type::SECONDS, dsp::Space::TIME>;
+template class dsp::Buffer<dsp::Type::HERTZ, dsp::Space::TIME>;
+template class dsp::Buffer<dsp::Type::RATIO, dsp::Space::TIME>;
+template class dsp::Buffer<dsp::Type::LINEAR, dsp::Space::TIME>;
+template class dsp::Buffer<dsp::Type::INTEGER, dsp::Space::TIME>;
+template class dsp::Buffer<dsp::Type::BINARY, dsp::Space::TIME>;
+
 template <dsp::Type T, dsp::Space S> dsp::Buffer<T, S>::Buffer(unsigned int size) : size(size) {}
 
 template <dsp::Type T, dsp::Space S> unsigned int dsp::Buffer<T, S>::getNumChannels() {
@@ -32,6 +41,6 @@ template <dsp::Type T, dsp::Space S> void dsp::Buffer<T, S>::setSize(unsigned in
     unlock();
 }
 
-template <dsp::Type T, dsp::Space S> std::vector<DSP_FLOAT> &dsp::Buffer<T, S>::getBuffer(unsigned int channel) {
+template <dsp::Type T, dsp::Space S> std::vector<DSP_FLOAT> &dsp::Buffer<T, S>::getChannel(unsigned int channel) {
     return buffers[channel];
 }
