@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Buffer.h"
 #include "Consumer.h"
 
 namespace dsp {
@@ -8,18 +9,15 @@ class BufferUnit : public Consumer {
 
 public:
     BufferUnit();
-    unsigned int getUnitBufferSize();
-    void setUnitBufferSize(unsigned int size);
-    std::vector<DSP_FLOAT> &getUnitBuffer(unsigned int channel);
+    std::shared_ptr<Buffer> getBuffer();
+    void setBuffer(std::shared_ptr<Buffer> buffer);
 
 protected:
-    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
-    unsigned int unitBufferSize;
     unsigned int index;
-    std::vector<std::vector<DSP_FLOAT>> buffers;
+    std::shared_ptr<Buffer> buffer;
 };
 
 } // namespace dsp
