@@ -97,10 +97,10 @@ dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSam
     channelPressure.resize(MIDI_CHANNELS);
     pitchBend.resize(MIDI_CHANNELS);
 
-    play = std::make_shared<Input>(getBufferSize(), Type::BINARY, Space::TIME, 0.0);
-    stop = std::make_shared<Input>(getBufferSize(), Type::BINARY, Space::TIME, 0.0);
-    reset = std::make_shared<Input>(getBufferSize(), Type::BINARY, Space::TIME, 0.0);
-    clock = std::make_shared<Input>(getBufferSize(), Type::BINARY, Space::TIME, 0.0);
+    play = std::make_shared<Input>(getBufferSize(), Type::BINARY);
+    stop = std::make_shared<Input>(getBufferSize(), Type::BINARY);
+    reset = std::make_shared<Input>(getBufferSize(), Type::BINARY);
+    clock = std::make_shared<Input>(getBufferSize(), Type::BINARY);
 
     for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
         notePressureState[i].resize(MIDI_NOTES);
@@ -113,18 +113,18 @@ dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSam
         noteOff[i].resize(MIDI_NOTES);
         notePressure[i].resize(MIDI_NOTES);
         controlChange[i].resize(MIDI_NOTES);
-        programChange[i] = std::make_shared<Input>(getBufferSize(), Type::INTEGER, Space::TIME, 0.0);
-        channelPressure[i] = std::make_shared<Input>(getBufferSize(), Type::UNIPOLAR, Space::TIME, 0.0);
-        pitchBend[i] = std::make_shared<Input>(getBufferSize(), Type::BIPOLAR, Space::TIME, 0.0);
+        programChange[i] = std::make_shared<Input>(getBufferSize(), Type::INTEGER);
+        channelPressure[i] = std::make_shared<Input>(getBufferSize(), Type::UNIPOLAR);
+        pitchBend[i] = std::make_shared<Input>(getBufferSize(), Type::BIPOLAR);
 
         for (unsigned char n = 0; n < MIDI_NOTES; n++) {
             notePressureState[i][n] = 0.0;
             controlChangeState[i][n] = 0.0;
 
-            noteOn[i][n] = std::make_shared<Input>(getBufferSize(), Type::UNIPOLAR, Space::TIME, 0.0);
-            noteOff[i][n] = std::make_shared<Input>(getBufferSize(), Type::UNIPOLAR, Space::TIME, 0.0);
-            notePressure[i][n] = std::make_shared<Input>(getBufferSize(), Type::UNIPOLAR, Space::TIME, 0.0);
-            controlChange[i][n] = std::make_shared<Input>(getBufferSize(), Type::UNIPOLAR, Space::TIME, 0.0);
+            noteOn[i][n] = std::make_shared<Input>(getBufferSize(), Type::UNIPOLAR);
+            noteOff[i][n] = std::make_shared<Input>(getBufferSize(), Type::UNIPOLAR);
+            notePressure[i][n] = std::make_shared<Input>(getBufferSize(), Type::UNIPOLAR);
+            controlChange[i][n] = std::make_shared<Input>(getBufferSize(), Type::UNIPOLAR);
         }
     }
 }
@@ -299,10 +299,10 @@ dsp::Midi::MidiOutput::MidiOutput(unsigned int port) {
     channelPressure.resize(MIDI_CHANNELS);
     pitchBend.resize(MIDI_CHANNELS);
 
-    play = std::make_shared<Output>(getBufferSize(), Type::BINARY, Space::TIME, 0.0);
-    stop = std::make_shared<Output>(getBufferSize(), Type::BINARY, Space::TIME, 0.0);
-    reset = std::make_shared<Output>(getBufferSize(), Type::BINARY, Space::TIME, 0.0);
-    clock = std::make_shared<Output>(getBufferSize(), Type::BINARY, Space::TIME, 0.0);
+    play = std::make_shared<Output>(getBufferSize(), Type::BINARY);
+    stop = std::make_shared<Output>(getBufferSize(), Type::BINARY);
+    reset = std::make_shared<Output>(getBufferSize(), Type::BINARY);
+    clock = std::make_shared<Output>(getBufferSize(), Type::BINARY);
 
     for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
         notePressureState[i].resize(MIDI_NOTES);
@@ -315,18 +315,18 @@ dsp::Midi::MidiOutput::MidiOutput(unsigned int port) {
         noteOff[i].resize(MIDI_NOTES);
         notePressure[i].resize(MIDI_NOTES);
         controlChange[i].resize(MIDI_NOTES);
-        programChange[i] = std::make_shared<Output>(getBufferSize(), Type::INTEGER, Space::TIME, 0.0);
-        channelPressure[i] = std::make_shared<Output>(getBufferSize(), Type::UNIPOLAR, Space::TIME, 0.0);
-        pitchBend[i] = std::make_shared<Output>(getBufferSize(), Type::BIPOLAR, Space::TIME, 0.0);
+        programChange[i] = std::make_shared<Output>(getBufferSize(), Type::INTEGER);
+        channelPressure[i] = std::make_shared<Output>(getBufferSize(), Type::UNIPOLAR);
+        pitchBend[i] = std::make_shared<Output>(getBufferSize(), Type::BIPOLAR);
 
         for (unsigned char n = 0; n < MIDI_NOTES; n++) {
             notePressureState[i][n] = 0;
             controlChangeState[i][n] = 0;
 
-            noteOn[i][n] = std::make_shared<Output>(getBufferSize(), Type::UNIPOLAR, Space::TIME, 0.0);
-            noteOff[i][n] = std::make_shared<Output>(getBufferSize(), Type::UNIPOLAR, Space::TIME, 0.0);
-            notePressure[i][n] = std::make_shared<Output>(getBufferSize(), Type::UNIPOLAR, Space::TIME, 0.0);
-            controlChange[i][n] = std::make_shared<Output>(getBufferSize(), Type::UNIPOLAR, Space::TIME, 0.0);
+            noteOn[i][n] = std::make_shared<Output>(getBufferSize(), Type::UNIPOLAR);
+            noteOff[i][n] = std::make_shared<Output>(getBufferSize(), Type::UNIPOLAR);
+            notePressure[i][n] = std::make_shared<Output>(getBufferSize(), Type::UNIPOLAR);
+            controlChange[i][n] = std::make_shared<Output>(getBufferSize(), Type::UNIPOLAR);
         }
     }
 }

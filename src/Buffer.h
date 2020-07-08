@@ -6,18 +6,38 @@
 
 namespace dsp {
 
-template <Type T, Space S> class Buffer : public Lockable {
+class Buffer : public Lockable {
 
 public:
-    Buffer(unsigned int size);
+    Buffer(unsigned int numChannels,
+           unsigned int bufferSize,
+           Type type,
+           Space space = Space::TIME,
+           DSP_FLOAT defaultValue = 0.0);
+
     unsigned int getNumChannels();
     void setNumChannels(unsigned int numChannels);
-    unsigned int getSize();
-    void setSize(unsigned int size);
+
+    unsigned int getBufferSize();
+    void setBufferSize(unsigned int bufferSize);
+
+    Type getType();
+    void setType(Type type);
+
+    Space getSpace();
+    void setSpace(Space space);
+
+    DSP_FLOAT getDefaultValue();
+    void setDefaultValue(DSP_FLOAT defaultValue);
+
     std::vector<DSP_FLOAT> &getChannel(unsigned int channel);
+    void fillBuffer(DSP_FLOAT value);
 
 private:
-    unsigned int size;
+    unsigned int bufferSize;
+    Type type;
+    Space space;
+    DSP_FLOAT defaultValue;
     std::vector<std::vector<DSP_FLOAT>> buffers;
 };
 

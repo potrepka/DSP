@@ -1,46 +1,73 @@
 #include "Buffer.h"
 
-template class dsp::Buffer<dsp::Type::BIPOLAR, dsp::Space::TIME>;
-template class dsp::Buffer<dsp::Type::UNIPOLAR, dsp::Space::TIME>;
-template class dsp::Buffer<dsp::Type::SECONDS, dsp::Space::TIME>;
-template class dsp::Buffer<dsp::Type::HERTZ, dsp::Space::TIME>;
-template class dsp::Buffer<dsp::Type::RATIO, dsp::Space::TIME>;
-template class dsp::Buffer<dsp::Type::LINEAR, dsp::Space::TIME>;
-template class dsp::Buffer<dsp::Type::INTEGER, dsp::Space::TIME>;
-template class dsp::Buffer<dsp::Type::BINARY, dsp::Space::TIME>;
+dsp::Buffer::Buffer(unsigned int numChannels, unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
+        : bufferSize(bufferSize), type(type), space(space), defaultValue(defaultValue) {
+    setNumChannels(numChannels);
+    setBufferSize(bufferSize);
+}
 
-template <dsp::Type T, dsp::Space S> dsp::Buffer<T, S>::Buffer(unsigned int size) : size(size) {}
-
-template <dsp::Type T, dsp::Space S> unsigned int dsp::Buffer<T, S>::getNumChannels() {
+unsigned int dsp::Buffer::getNumChannels() {
     return static_cast<unsigned int>(buffers.size());
 }
 
-template <dsp::Type T, dsp::Space S> void dsp::Buffer<T, S>::setNumChannels(unsigned int numChannels) {
+void dsp::Buffer::setNumChannels(unsigned int numChannels) {
     lock();
     if (numChannels < buffers.size()) {
         buffers.erase(buffers.begin() + numChannels, buffers.end());
     } else {
         buffers.reserve(numChannels);
-        for (unsigned int i = static_cast<unsigned int>(buffers.size()); i < numChannels; i++) {
-            buffers.push_back(std::vector<DSP_FLOAT>(size, 0.0));
+        for (unsigned int i = getNumChannels(); i < numChannels; i++) {
+            buffers.push_back(std::vector<DSP_FLOAT>(bufferSize, defaultValue));
         }
     }
     unlock();
 }
 
-template <dsp::Type T, dsp::Space S> unsigned int dsp::Buffer<T, S>::getSize() {
-    return size;
+unsigned int dsp::Buffer::getBufferSize() {
+    return bufferSize;
 }
 
-template <dsp::Type T, dsp::Space S> void dsp::Buffer<T, S>::setSize(unsigned int size) {
+void dsp::Buffer::setBufferSize(unsigned int bufferSize) {
     lock();
-    this->size = size;
+    this->bufferSize = bufferSize;
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        buffers[i].resize(size);
+        buffers[i].resize(bufferSize);
     }
     unlock();
 }
 
-template <dsp::Type T, dsp::Space S> std::vector<DSP_FLOAT> &dsp::Buffer<T, S>::getChannel(unsigned int channel) {
+dsp::Type dsp::Buffer::getType() {
+    return type;
+}
+
+void dsp::Buffer::setType(Type type) {
+    this->type = type;
+}
+
+dsp::Space dsp::Buffer::getSpace() {
+    return space;
+}
+
+void dsp::Buffer::setSpace(Space space) {
+    this->space = space;
+}
+
+DSP_FLOAT dsp::Buffer::getDefaultValue() {
+    return defaultValue;
+}
+
+void dsp::Buffer::setDefaultValue(DSP_FLOAT defaultValue) {
+    this->defaultValue = defaultValue;
+}
+
+std::vector<DSP_FLOAT> &dsp::Buffer::getChannel(unsigned int channel) {
     return buffers[channel];
+}
+
+void dsp::Buffer::fillBuffer(DSP_FLOAT value) {
+    lock();
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
+        std::fill(buffers[i].begin(), buffers[i].end(), value);
+    }
+    unlock();
 }

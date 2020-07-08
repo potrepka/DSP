@@ -1,10 +1,8 @@
 #include "Connection.h"
 
-dsp::Connection::Connection(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value) {
-    buffer.resize(bufferSize);
-    this->type = type;
-    this->space = space;
-    this->value = value;
+dsp::Connection::Connection(unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
+        : type(type), space(space), defaultValue(defaultValue) {
+    setBufferSize(bufferSize);
 }
 
 unsigned int dsp::Connection::getBufferSize() {
@@ -12,15 +10,9 @@ unsigned int dsp::Connection::getBufferSize() {
 }
 
 void dsp::Connection::setBufferSize(unsigned int bufferSize) {
+    lock();
     buffer.resize(bufferSize);
-}
-
-std::vector<DSP_FLOAT> &dsp::Connection::getBuffer() {
-    return buffer;
-}
-
-void dsp::Connection::fillBuffer(DSP_FLOAT value) {
-    std::fill(buffer.begin(), buffer.end(), value);
+    unlock();
 }
 
 dsp::Type dsp::Connection::getType() {
@@ -39,16 +31,26 @@ void dsp::Connection::setSpace(Space space) {
     this->space = space;
 }
 
-DSP_FLOAT dsp::Connection::getValue() {
-    return value;
+DSP_FLOAT dsp::Connection::getDefaultValue() {
+    return defaultValue;
 }
 
-void dsp::Connection::setValue(DSP_FLOAT value) {
-    this->value = value;
+void dsp::Connection::setDefaultValue(DSP_FLOAT defaultValue) {
+    this->defaultValue = defaultValue;
 }
 
-dsp::Input::Input(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value)
-        : Connection(bufferSize, type, space, value) {}
+std::vector<DSP_FLOAT> &dsp::Connection::getBuffer() {
+    return buffer;
+}
+
+void dsp::Connection::fillBuffer(DSP_FLOAT value) {
+    lock();
+    std::fill(buffer.begin(), buffer.end(), value);
+    unlock();
+}
+
+dsp::Input::Input(unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
+        : Connection(bufferSize, type, space, defaultValue) {}
 
 dsp::Input::~Input() {
     disconnectAll();
@@ -108,9 +110,9 @@ void dsp::Input::removeConnection(std::shared_ptr<Output> output) {
 void dsp::Input::copyBuffers() {
     lock();
     if (connections.size() == 0) {
-        fillBuffer(value);
+        std::fill(buffer.begin(), buffer.end(), defaultValue);
     } else {
-        fillBuffer(0.0);
+        std::fill(buffer.begin(), buffer.end(), 0.0);
     }
     for (const auto &output : connections) {
         std::transform(
@@ -119,8 +121,8 @@ void dsp::Input::copyBuffers() {
     unlock();
 }
 
-dsp::Output::Output(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value)
-        : Connection(bufferSize, type, space, value) {}
+dsp::Output::Output(unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
+        : Connection(bufferSize, type, space, defaultValue) {}
 
 dsp::Output::~Output() {
     disconnectAll();
@@ -176,7 +178,7 @@ void dsp::Output::removeConnection(std::shared_ptr<Input> input) {
 }
 
 void dsp::operator>>(DSP_FLOAT value, std::shared_ptr<Input> input) {
-    input->setValue(value);
+    input->setDefaultValue(value);
 }
 
 void dsp::operator>>(std::shared_ptr<Output> output, std::shared_ptr<Input> input) {

@@ -12,15 +12,13 @@ class Unit;
 class Input;
 class Output;
 
-class Connection {
+class Connection : public Lockable {
 
 public:
-    Connection(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
+    Connection(unsigned int bufferSize, Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
 
     unsigned int getBufferSize();
     void setBufferSize(unsigned int bufferSize);
-    std::vector<DSP_FLOAT> &getBuffer();
-    void fillBuffer(DSP_FLOAT value);
 
     Type getType();
     void setType(Type type);
@@ -28,21 +26,24 @@ public:
     Space getSpace();
     void setSpace(Space space);
 
-    DSP_FLOAT getValue();
-    void setValue(DSP_FLOAT value);
+    DSP_FLOAT getDefaultValue();
+    void setDefaultValue(DSP_FLOAT defaultValue);
+
+    std::vector<DSP_FLOAT> &getBuffer();
+    void fillBuffer(DSP_FLOAT value);
 
 protected:
     std::vector<DSP_FLOAT> buffer;
     Type type;
     Space space;
-    DSP_FLOAT value;
+    DSP_FLOAT defaultValue;
 };
 
-class Input : public Connection, public Lockable, public std::enable_shared_from_this<Input> {
+class Input : public Connection, public std::enable_shared_from_this<Input> {
     friend class Output;
 
 public:
-    Input(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
+    Input(unsigned int bufferSize, Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
     ~Input();
     std::vector<std::shared_ptr<Output>> getConnections();
     void connect(std::shared_ptr<Output> output);
@@ -56,11 +57,11 @@ private:
     void removeConnection(std::shared_ptr<Output> output);
 };
 
-class Output : public Connection, public Lockable, public std::enable_shared_from_this<Output> {
+class Output : public Connection, public std::enable_shared_from_this<Output> {
     friend class Input;
 
 public:
-    Output(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
+    Output(unsigned int bufferSize, Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
     ~Output();
     std::vector<std::shared_ptr<Input>> getConnections();
     void connect(std::shared_ptr<Input> input);

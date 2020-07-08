@@ -16,7 +16,14 @@ public:
     template <class T> class ConnectionParameter : public Lockable {
 
     public:
-        ConnectionParameter(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
+        ConnectionParameter(unsigned int numChannels,
+                            unsigned int bufferSize,
+                            Type type,
+                            Space space = Space::TIME,
+                            DSP_FLOAT defaultValue = 0.0);
+
+        unsigned int getNumChannels();
+        void setNumChannels(unsigned int numChannels);
 
         unsigned int getBufferSize();
         void setBufferSize(unsigned int bufferSize);
@@ -27,11 +34,9 @@ public:
         Space getSpace();
         void setSpace(Space space);
 
-        DSP_FLOAT getValue();
-        void setValue(DSP_FLOAT value);
+        DSP_FLOAT getDefaultValue();
+        void setDefaultValue(DSP_FLOAT defaultValue);
 
-        unsigned int getNumChannels();
-        void setNumChannels(unsigned int numChannels);
         std::vector<std::shared_ptr<T>> getChannels();
         std::shared_ptr<T> getChannel(unsigned int index);
 
@@ -39,23 +44,34 @@ public:
         unsigned int bufferSize;
         Type type;
         Space space;
-        DSP_FLOAT value;
+        DSP_FLOAT defaultValue;
         std::vector<std::shared_ptr<T>> channels;
     };
 
     class InputParameter : public ConnectionParameter<Input> {
 
     public:
-        InputParameter(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
+        InputParameter(unsigned int numChannels,
+                       unsigned int bufferSize,
+                       Type type,
+                       Space space = Space::TIME,
+                       DSP_FLOAT value = 0.0);
     };
 
     class OutputParameter : public ConnectionParameter<Output> {
 
     public:
-        OutputParameter(unsigned int bufferSize, Type type, Space space, DSP_FLOAT value);
+        OutputParameter(unsigned int numChannels,
+                        unsigned int bufferSize,
+                        Type type,
+                        Space space = Space::TIME,
+                        DSP_FLOAT value = 0.0);
     };
 
     Unit();
+
+    unsigned int getNumChannels();
+    void setNumChannels(unsigned int numChannels);
 
     unsigned int getNumInputs();
     unsigned int getNumOutputs();
@@ -64,20 +80,17 @@ public:
     void setInput(unsigned int index, std::shared_ptr<InputParameter> input);
     void setOutput(unsigned int index, std::shared_ptr<OutputParameter> output);
     void pushInput(std::shared_ptr<InputParameter> input);
-    void pushInput(Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
+    void pushInput(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
     void pushOutput(std::shared_ptr<OutputParameter> output);
-    void pushOutput(Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
+    void pushOutput(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
     void insertInput(unsigned int index, std::shared_ptr<InputParameter> input);
-    void insertInput(unsigned int index, Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
+    void insertInput(unsigned int index, Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
     void insertOutput(unsigned int index, std::shared_ptr<OutputParameter> output);
-    void insertOutput(unsigned int index, Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
+    void insertOutput(unsigned int index, Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
     void removeInput(std::shared_ptr<InputParameter> input);
     void removeInput(unsigned int index);
     void removeOutput(std::shared_ptr<OutputParameter> output);
     void removeOutput(unsigned int index);
-
-    unsigned int getNumChannels();
-    void setNumChannels(unsigned int numChannels);
 
     unsigned int getNumUnits();
     std::shared_ptr<Unit> getUnit(unsigned int index);
