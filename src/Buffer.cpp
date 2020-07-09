@@ -29,11 +29,15 @@ unsigned int dsp::Buffer::getBufferSize() {
 
 void dsp::Buffer::setBufferSize(unsigned int bufferSize) {
     lock();
+    setBufferSizeNoLock(bufferSize);
+    unlock();
+}
+
+void dsp::Buffer::setBufferSizeNoLock(unsigned int bufferSize) {
     this->bufferSize = bufferSize;
     for (unsigned int i = 0; i < getNumChannels(); i++) {
         buffers[i].resize(bufferSize);
     }
-    unlock();
 }
 
 dsp::Type dsp::Buffer::getType() {
@@ -66,8 +70,12 @@ std::vector<DSP_FLOAT> &dsp::Buffer::getChannel(unsigned int channel) {
 
 void dsp::Buffer::fillBuffer(DSP_FLOAT value) {
     lock();
+    fillBufferNoLock(value);
+    unlock();
+}
+
+void dsp::Buffer::fillBufferNoLock(DSP_FLOAT value) {
     for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::fill(buffers[i].begin(), buffers[i].end(), value);
     }
-    unlock();
 }

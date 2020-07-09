@@ -20,6 +20,7 @@ public:
 
     unsigned int getBufferSize();
     void setBufferSize(unsigned int bufferSize);
+    void setBufferSizeNoLock(unsigned int bufferSize);
 
     Type getType();
     void setType(Type type);
@@ -32,6 +33,7 @@ public:
 
     std::vector<DSP_FLOAT> &getChannel(unsigned int channel);
     void fillBuffer(DSP_FLOAT value);
+    void fillBufferNoLock(DSP_FLOAT value);
 
 private:
     unsigned int bufferSize;
