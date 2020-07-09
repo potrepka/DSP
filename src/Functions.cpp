@@ -48,7 +48,10 @@ DSP_FLOAT dsp::ratioToDecibels(const DSP_FLOAT ratio) {
     return linearToDecibels(log2(ratio));
 }
 
-DSP_FLOAT dsp::linear(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index) {
+DSP_FLOAT dsp::linear(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index, DSP_FLOAT defaultValue) {
+    if (table.size() == 0) {
+        return defaultValue;
+    }
     int indexFloor = static_cast<int>(index);
     DSP_FLOAT mu = index - indexFloor;
     DSP_FLOAT x1 = table[indexFloor % table.size()];
@@ -56,7 +59,10 @@ DSP_FLOAT dsp::linear(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index
     return x1 + mu * (x2 - x1);
 }
 
-DSP_FLOAT dsp::hermite(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index) {
+DSP_FLOAT dsp::hermite(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index, DSP_FLOAT defaultValue) {
+    if (table.size() == 0) {
+        return defaultValue;
+    }
     int indexFloor = static_cast<int>(index);
     DSP_FLOAT mu = index - indexFloor;
     DSP_FLOAT x0 = table[(indexFloor + table.size() - 1) % table.size()];
