@@ -13,6 +13,7 @@ public:
     void setBuffer(std::shared_ptr<Buffer> buffer);
 
 protected:
+    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
