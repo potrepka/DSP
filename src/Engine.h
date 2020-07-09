@@ -19,7 +19,11 @@ public:
 
     std::vector<unsigned int> getInputDevices();
     std::vector<unsigned int> getOutputDevices();
-    std::vector<unsigned int> getAvailableSampleRates(unsigned int inputDevice, unsigned int outputDevice);
+    std::vector<unsigned int> getSampleRates(unsigned int inputDevice, unsigned int outputDevice);
+
+    unsigned int getDefaultInputDevice();
+    unsigned int getDefaultOutputDevice();
+    unsigned int getDefaultSampleRate(unsigned int inputDevice, unsigned int outputDevice);
 
     void setup(unsigned int inputDevice, unsigned int outputDevice, unsigned int sampleRate, unsigned int bufferSize);
     void start();
@@ -66,7 +70,6 @@ private:
     unsigned int numOutputChannels;
     unsigned int sampleRate;
     unsigned int bufferSize;
-
 #if USE_RTAUDIO
     static int tick(void *outputBuffer,
                     void *inputBuffer,
@@ -75,13 +78,15 @@ private:
                     RtAudioStreamStatus status,
                     void *pointer);
 #endif
-
     static void process(DSP_FLOAT *inputBuffer,
                         DSP_FLOAT *outputBuffer,
                         unsigned int numFrames,
                         unsigned int numInputChannels,
                         unsigned int numOutputChannels,
                         Engine *engine);
+    unsigned int getDeviceCount();
+    std::vector<unsigned int> getInputSampleRates(unsigned int inputDevice);
+    std::vector<unsigned int> getOutputSampleRates(unsigned int outputDevice);
 };
 
 } // namespace dsp
