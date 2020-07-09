@@ -1,19 +1,11 @@
 #include "BufferUnit.h"
 
-dsp::BufferUnit::BufferUnit() : Consumer(Type::BIPOLAR), index(0) {
-    buffer = std::make_shared<Buffer>(0, 0, Type::BIPOLAR);
+dsp::BufferUnit::BufferUnit(unsigned int bufferSize) : Consumer(Type::BIPOLAR), index(0) {
+    buffer = std::make_shared<Buffer>(0, bufferSize, Type::BIPOLAR);
 }
 
 std::shared_ptr<dsp::Buffer> dsp::BufferUnit::getBuffer() {
     return buffer;
-}
-
-void dsp::BufferUnit::setBuffer(std::shared_ptr<Buffer> buffer) {
-    assert(buffer != nullptr);
-    lock();
-    buffer->setNumChannels(getNumChannels());
-    this->buffer = buffer;
-    unlock();
 }
 
 void dsp::BufferUnit::setNumChannelsNoLock(unsigned int numChannels) {

@@ -8,9 +8,8 @@ namespace dsp {
 class BufferUnit : public Consumer {
 
 public:
-    BufferUnit();
+    BufferUnit(unsigned int bufferSize);
     std::shared_ptr<Buffer> getBuffer();
-    void setBuffer(std::shared_ptr<Buffer> buffer);
 
 protected:
     void setNumChannelsNoLock(unsigned int numChannels) override;
