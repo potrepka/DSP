@@ -65,7 +65,7 @@ void dsp::BufferOscillator::process() {
                 const long indexBefore = static_cast<long>(positionIndex) - 1;
                 long p = indexBefore;
                 for (unsigned char j = 0; j < 4; j++) {
-                    if (p >= 0 && p < buffers.size() && buffers[p]->getNumChannels() > 0) {
+                    if (p >= 0 && p < buffers.size() && buffers[p] != nullptr && buffers[p]->getNumChannels() > 0) {
                         points[j] = linear(buffers[p]->getChannel(i % buffers[p]->getNumChannels()),
                                            wrap(phaseBuffer[k], 0.0, 1.0) * buffers[p]->getBufferSize(),
                                            buffers[p]->getDefaultValue());
