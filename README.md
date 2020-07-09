@@ -26,7 +26,7 @@ int main() {
     // Setup units
     std::shared_ptr<dsp::PassThrough> pass;
 
-    pass = std::make_shared<dsp::PassThrough>(dsp::Connection::Type::BIPOLAR);
+    pass = std::make_shared<dsp::PassThrough>(dsp::Type::BIPOLAR);
     
     pass->setNumChannels(2);
 
@@ -51,6 +51,5 @@ The following are possible directions for future development:
 - Pitch detection/shifting
 - Peak/RMS detection
 - Wavetable factory
-- Pattern sequencer
 - Saving/Loading state
 - SIMD instructions
