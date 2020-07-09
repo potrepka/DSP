@@ -134,10 +134,8 @@ void dsp::Unit::setOutput(unsigned int index, std::shared_ptr<dsp::Unit::OutputP
 
 void dsp::Unit::pushInput(std::shared_ptr<InputParameter> input) {
     lock();
-    if (getNumChannels() > 0) {
-        input->setNumChannels(getNumChannels());
-    }
     input->setBufferSize(getBufferSize());
+    input->setNumChannels(getNumChannels());
     inputs.push_back(input);
     unlock();
 }
@@ -150,10 +148,8 @@ void dsp::Unit::pushInput(Type type, Space space, DSP_FLOAT value) {
 
 void dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
     lock();
-    if (getNumChannels() > 0) {
-        output->setNumChannels(getNumChannels());
-    }
     output->setBufferSize(getBufferSize());
+    output->setNumChannels(getNumChannels());
     outputs.push_back(output);
     unlock();
 }
@@ -166,10 +162,8 @@ void dsp::Unit::pushOutput(Type type, Space space, DSP_FLOAT value) {
 
 void dsp::Unit::insertInput(unsigned int index, std::shared_ptr<InputParameter> input) {
     lock();
-    if (getNumChannels() > 0) {
-        input->setNumChannels(getNumChannels());
-    }
     input->setBufferSize(getBufferSize());
+    input->setNumChannels(getNumChannels());
     inputs.insert(inputs.begin() + index, input);
     unlock();
 }
@@ -183,10 +177,8 @@ void dsp::Unit::insertInput(unsigned int index, Type type, Space space, DSP_FLOA
 
 void dsp::Unit::insertOutput(unsigned int index, std::shared_ptr<OutputParameter> output) {
     lock();
-    if (getNumChannels() > 0) {
-        output->setNumChannels(getNumChannels());
-    }
     output->setBufferSize(getBufferSize());
+    output->setNumChannels(getNumChannels());
     outputs.insert(outputs.begin() + index, output);
     unlock();
 }
@@ -381,20 +373,20 @@ void dsp::Unit::setBufferSizeNoLock(unsigned int bufferSize) {
 
 void dsp::Unit::setNumChannelsNoLock(unsigned int numChannels) {
     this->numChannels = numChannels;
-    if (numChannels > 0) {
-        if (units.size() > 0) {
+    if (units.size() > 0) {
+        if (numChannels > 0) {
             disconnect();
             for (const auto &unit : units) {
                 unit->setNumChannels(numChannels);
             }
             connect();
-        } else {
-            for (const auto &input : inputs) {
-                input->setNumChannels(numChannels);
-            }
-            for (const auto &output : outputs) {
-                output->setNumChannels(numChannels);
-            }
+        }
+    } else {
+        for (const auto &input : inputs) {
+            input->setNumChannels(numChannels);
+        }
+        for (const auto &output : outputs) {
+            output->setNumChannels(numChannels);
         }
     }
 }
