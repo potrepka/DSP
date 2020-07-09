@@ -276,8 +276,10 @@ void dsp::Midi::MidiInput::run() {
 void dsp::Midi::MidiInput::pushQueue(double delta, std::vector<unsigned char> bytes) {
     messageTime += delta;
     TimedMessage message(messageTime, bytes);
-    queue.push(message);
     runCallbacks(message);
+    lock();
+    queue.push(message);
+    unlock();
 }
 
 void dsp::Midi::MidiInput::runCallbacks(TimedMessage message) {
