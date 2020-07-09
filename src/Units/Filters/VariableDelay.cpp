@@ -11,6 +11,7 @@ unsigned int dsp::VariableDelay::getMaxDelayTime() {
 }
 
 void dsp::VariableDelay::setMaxDelayTime(DSP_FLOAT seconds) {
+    assert(seconds > 0);
     lock();
     maxDelayTime = seconds;
     resizeBuffers();
