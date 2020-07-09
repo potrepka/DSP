@@ -78,7 +78,7 @@ public:
     public:
         static void callback(double delta, std::vector<unsigned char> *message, void *data);
         MidiInput(unsigned int port);
-        std::string getName() const;
+        std::string getDeviceName() const;
         void setPort(unsigned int port);
         std::shared_ptr<Input> getNoteOnTrigger(unsigned char channel, unsigned char note);
         std::shared_ptr<Input> getNoteOffTrigger(unsigned char channel, unsigned char note);
@@ -105,7 +105,7 @@ public:
 #if USE_RTMIDI
         RtMidiIn midiIn;
 #endif
-        std::string name;
+        std::string deviceName;
         double messageTime;
         unsigned long bufferSamples;
         std::priority_queue<TimedMessage, std::vector<TimedMessage>, TimedMessage::compare> queue;
@@ -132,7 +132,7 @@ public:
 
     public:
         MidiOutput(unsigned int port);
-        std::string getName() const;
+        std::string getDeviceName() const;
         void setPort(unsigned int port);
         std::shared_ptr<Output> getNoteOnTrigger(unsigned char channel, unsigned char note);
         std::shared_ptr<Output> getNoteOffTrigger(unsigned char channel, unsigned char note);
@@ -153,7 +153,7 @@ public:
 #if USE_RTMIDI
         RtMidiOut midiOut;
 #endif
-        std::string name;
+        std::string deviceName;
         std::vector<std::vector<unsigned char>> notePressureState;
         std::vector<std::vector<unsigned char>> controlChangeState;
         std::vector<unsigned char> programChangeState;
