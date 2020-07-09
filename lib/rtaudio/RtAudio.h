@@ -885,52 +885,52 @@ protected:
 //
 // **************************************************************** //
 
-inline RtAudio::Api RtAudio ::getCurrentApi(void) {
+inline RtAudio::Api RtAudio::getCurrentApi(void) {
     return rtapi_->getCurrentApi();
 }
-inline unsigned int RtAudio ::getDeviceCount(void) {
+inline unsigned int RtAudio::getDeviceCount(void) {
     return rtapi_->getDeviceCount();
 }
-inline RtAudio::DeviceInfo RtAudio ::getDeviceInfo(unsigned int device) {
+inline RtAudio::DeviceInfo RtAudio::getDeviceInfo(unsigned int device) {
     return rtapi_->getDeviceInfo(device);
 }
-inline unsigned int RtAudio ::getDefaultInputDevice(void) {
+inline unsigned int RtAudio::getDefaultInputDevice(void) {
     return rtapi_->getDefaultInputDevice();
 }
-inline unsigned int RtAudio ::getDefaultOutputDevice(void) {
+inline unsigned int RtAudio::getDefaultOutputDevice(void) {
     return rtapi_->getDefaultOutputDevice();
 }
-inline void RtAudio ::closeStream(void) {
+inline void RtAudio::closeStream(void) {
     return rtapi_->closeStream();
 }
-inline void RtAudio ::startStream(void) {
+inline void RtAudio::startStream(void) {
     return rtapi_->startStream();
 }
-inline void RtAudio ::stopStream(void) {
+inline void RtAudio::stopStream(void) {
     return rtapi_->stopStream();
 }
-inline void RtAudio ::abortStream(void) {
+inline void RtAudio::abortStream(void) {
     return rtapi_->abortStream();
 }
-inline bool RtAudio ::isStreamOpen(void) const {
+inline bool RtAudio::isStreamOpen(void) const {
     return rtapi_->isStreamOpen();
 }
-inline bool RtAudio ::isStreamRunning(void) const {
+inline bool RtAudio::isStreamRunning(void) const {
     return rtapi_->isStreamRunning();
 }
-inline long RtAudio ::getStreamLatency(void) {
+inline long RtAudio::getStreamLatency(void) {
     return rtapi_->getStreamLatency();
 }
-inline unsigned int RtAudio ::getStreamSampleRate(void) {
+inline unsigned int RtAudio::getStreamSampleRate(void) {
     return rtapi_->getStreamSampleRate();
 }
-inline double RtAudio ::getStreamTime(void) {
+inline double RtAudio::getStreamTime(void) {
     return rtapi_->getStreamTime();
 }
-inline void RtAudio ::setStreamTime(double time) {
+inline void RtAudio::setStreamTime(double time) {
     return rtapi_->setStreamTime(time);
 }
-inline void RtAudio ::showWarnings(bool value) {
+inline void RtAudio::showWarnings(bool value) {
     rtapi_->showWarnings(value);
 }
 
