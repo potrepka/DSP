@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Buffer.h"
 #include "Consumer.h"
 
 namespace dsp {
@@ -8,7 +9,7 @@ class SampleRecorder : public Consumer {
 
 public:
     SampleRecorder();
-    std::vector<DSP_FLOAT> getSample(unsigned int channel);
+    std::shared_ptr<Buffer> getSample();
     std::shared_ptr<InputParameter> getResetTrigger();
     std::shared_ptr<InputParameter> getGate();
 
@@ -19,7 +20,7 @@ protected:
 private:
     static const unsigned int RESET_TRIGGER;
     static const unsigned int GATE;
-    std::vector<std::vector<DSP_FLOAT>> samples;
+    std::shared_ptr<Buffer> sample;
     std::vector<DSP_FLOAT> gatePrevious;
 };
 

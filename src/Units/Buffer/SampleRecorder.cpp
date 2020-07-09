@@ -5,12 +5,10 @@ const unsigned int dsp::SampleRecorder::GATE = 2;
 
 dsp::SampleRecorder::SampleRecorder() : Consumer(Type::BIPOLAR) {
     pushInput(Type::BINARY);
+    sample = std::make_shared<Buffer>(0, 0, Type::BIPOLAR);
 }
 
-std::vector<DSP_FLOAT> dsp::SampleRecorder::getSample(unsigned int channel) {
-    lock();
-    std::vector<DSP_FLOAT> sample = samples[channel];
-    unlock();
+std::shared_ptr<dsp::Buffer> dsp::SampleRecorder::getSample() {
     return sample;
 }
 
@@ -24,18 +22,19 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleRecorder::getGate() {
 
 void dsp::SampleRecorder::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    samples.resize(numChannels);
+    sample->setNumChannels(numChannels);
     gatePrevious.resize(numChannels, 0);
 }
 
 void dsp::SampleRecorder::process() {
     Unit::process();
+    sample->lock();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &gateBuffer = getGate()->getChannel(i)->getBuffer();
         int bufferStart = 0;
-        unsigned int size = static_cast<unsigned int>(samples[i].size());
+        unsigned int size = sample->getBufferSize();
         unsigned int index = size;
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (resetTriggerBuffer[k]) {
@@ -47,12 +46,13 @@ void dsp::SampleRecorder::process() {
                 size++;
             }
         }
-        samples[i].resize(size);
+        sample->setBufferSizeNoLock(size);
         for (unsigned int k = bufferStart; k < getBufferSize(); k++) {
             if (gateBuffer[k]) {
-                samples[i][index] = inputBuffer[k];
+                sample->getChannel(i)[index] = inputBuffer[k];
                 index++;
             }
         }
     }
+    sample->unlock();
 }
