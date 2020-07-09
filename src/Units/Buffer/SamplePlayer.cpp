@@ -64,7 +64,7 @@ void dsp::SamplePlayer::process() {
                     const unsigned int k2 = (k1 + 1) % size;
                     const unsigned int k3 = (k1 + 2) % size;
                     std::vector<DSP_FLOAT> points{samples[i][k0], samples[i][k1], samples[i][k2], samples[i][k3]};
-                    outputBuffer[k] = linear(points, 1 + position[i] - k1);
+                    outputBuffer[k] = hermite(points, 1 + position[i] - k1);
                     position[i] = wrap(position[i] + speedBuffer[k], 0.0, size);
                 }
             }
