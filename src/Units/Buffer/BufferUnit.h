@@ -16,8 +16,8 @@ protected:
     void process() override;
 
 private:
-    unsigned int index;
     std::shared_ptr<Buffer> buffer;
+    unsigned int writeIndex;
 };
 
 } // namespace dsp

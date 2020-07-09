@@ -22,7 +22,7 @@ private:
     static const unsigned int ATTACK;
     static const unsigned int HOLD;
     static const unsigned int RELEASE;
-    std::vector<unsigned int> position;
+    std::vector<unsigned int> index;
     std::vector<DSP_FLOAT> value;
 };
 

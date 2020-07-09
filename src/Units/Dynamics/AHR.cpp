@@ -5,7 +5,7 @@ const unsigned int dsp::AHR::ATTACK = 1;
 const unsigned int dsp::AHR::HOLD = 2;
 const unsigned int dsp::AHR::RELEASE = 3;
 
-dsp::AHR::AHR() : Generator(Type::UNIPOLAR), position(0) {
+dsp::AHR::AHR() : Generator(Type::UNIPOLAR), index(0) {
     pushInput(Type::BINARY);
     pushInput(Type::SECONDS);
     pushInput(Type::SECONDS);
@@ -30,7 +30,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getRelease() {
 
 void dsp::AHR::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    position.resize(numChannels, 0);
+    index.resize(numChannels, 0);
     value.resize(numChannels, 1.0);
 }
 
@@ -44,14 +44,14 @@ void dsp::AHR::process() {
         std::vector<DSP_FLOAT> &releaseBuffer = getRelease()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (resetTriggerBuffer[k]) {
-                position[i] = 0;
+                index[i] = 0;
                 value[i] = 1.0;
             }
             DSP_FLOAT attackPosition = attackBuffer[k] * getSampleRate();
-            if (position[i] < attackPosition) {
+            if (index[i] < attackPosition) {
                 value[i] = 1.0;
-                outputBuffer[k] = position[i] / attackPosition;
-            } else if (position[i] < (attackBuffer[k] + holdBuffer[k]) * getSampleRate()) {
+                outputBuffer[k] = index[i] / attackPosition;
+            } else if (index[i] < (attackBuffer[k] + holdBuffer[k]) * getSampleRate()) {
                 outputBuffer[k] = value[i] = 1.0;
             } else {
                 value[i] *= pow(0.001, 1.0 / (releaseBuffer[k] * getSampleRate()));
