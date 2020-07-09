@@ -3,10 +3,10 @@
 #include "Engine.h"
 
 // Buffer
-#include "BufferOscillator.h"
 #include "BufferUnit.h"
 #include "SamplePlayer.h"
 #include "SampleRecorder.h"
+#include "TableOscillator.h"
 
 // Dynamics
 #include "AHR.h"
