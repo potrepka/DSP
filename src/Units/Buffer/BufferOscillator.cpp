@@ -17,18 +17,21 @@ std::shared_ptr<dsp::Buffer> dsp::BufferOscillator::getBuffer(unsigned int index
 }
 
 void dsp::BufferOscillator::setBuffer(unsigned int index, std::shared_ptr<Buffer> buffer) {
+    assert(buffer != nullptr);
     lock();
     buffers[index] = buffer;
     unlock();
 }
 
 void dsp::BufferOscillator::pushBuffer(std::shared_ptr<Buffer> buffer) {
+    assert(buffer != nullptr);
     lock();
     buffers.push_back(buffer);
     unlock();
 }
 
 void dsp::BufferOscillator::insertBuffer(unsigned int index, std::shared_ptr<Buffer> buffer) {
+    assert(buffer != nullptr);
     lock();
     buffers.insert(buffers.begin() + index, buffer);
     unlock();
@@ -65,7 +68,7 @@ void dsp::BufferOscillator::process() {
                 const long indexBefore = static_cast<long>(positionIndex) - 1;
                 long p = indexBefore;
                 for (unsigned char j = 0; j < 4; j++) {
-                    if (p >= 0 && p < buffers.size() && buffers[p] != nullptr && buffers[p]->getNumChannels() > 0) {
+                    if (p >= 0 && p < buffers.size() && buffers[p]->getNumChannels() > 0) {
                         points[j] = linear(buffers[p]->getChannel(i % buffers[p]->getNumChannels()),
                                            wrap(phaseBuffer[k], 0.0, 1.0) * buffers[p]->getBufferSize(),
                                            buffers[p]->getDefaultValue());
