@@ -12,36 +12,29 @@ This project is still in development. Feedback and contributions are welcome!
 int main() {
 
     // Setup engine
-    dsp::Engine *engine = new dsp::Engine();
+    std::shared_ptr<dsp::Engine> engine = std::make_shared<dsp::Engine>();
 
-    std::vector<unsigned int> inputDevices = engine->getInputDevices();
-    std::vector<unsigned int> outputDevices = engine->getOutputDevices();
-    
-    unsigned int inputDevice = inputDevices.size() > 0 ? inputDevices[0] : -1;
-    unsigned int outputDevice = outputDevices.size() > 0 ? outputDevices[0] : -1;
-
-    std::vector<unsigned int> sampleRates = engine->getAvailableSampleRates(inputDevice, outputDevice);
-    
-    unsigned int sampleRate = sampleRates.size() > 0 ? sampleRates[0] : 0;
+    unsigned int inputDevice = engine->getDefaultInputDevice();
+    unsigned int outputDevice = engine->getDefaultOutputDevice();
+    unsigned int sampleRate = engine->getDefaultSampleRate(inputDevice, outputDevice);
     unsigned int bufferSize = 512;
 
     engine->setup(inputDevice, outputDevice, sampleRate, bufferSize);
 
+    // TODO: Do something more interesting than passing input to output
+
     // Setup units
     std::shared_ptr<dsp::PassThrough> pass;
 
-    // TODO: Do something more interesting than passing input to output
     pass = std::make_shared<dsp::PassThrough>(dsp::Connection::Type::BIPOLAR);
+    
     pass->setNumChannels(2);
 
-    // Add units
     engine->pushUnit(pass);
 
     // Connect units
     engine->getAudioInput() >> pass->getInputSignal();
     pass->getOutputSignal() >> engine->getAudioOutput();
-
-    delete engine;
 
     return 0;
 }
