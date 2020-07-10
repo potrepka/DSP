@@ -12,6 +12,11 @@ unsigned int dsp::Buffer::getNumChannels() {
 
 void dsp::Buffer::setNumChannels(unsigned int numChannels) {
     lock();
+    setNumChannelsNoLock(numChannels);
+    unlock();
+}
+
+void dsp::Buffer::setNumChannelsNoLock(unsigned int numChannels) {
     if (numChannels < buffers.size()) {
         buffers.erase(buffers.begin() + numChannels, buffers.end());
     } else {
@@ -20,7 +25,6 @@ void dsp::Buffer::setNumChannels(unsigned int numChannels) {
             buffers.push_back(std::vector<DSP_FLOAT>(bufferSize, defaultValue));
         }
     }
-    unlock();
 }
 
 unsigned int dsp::Buffer::getBufferSize() {

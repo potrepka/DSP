@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Buffer.h"
 #include "Processor.h"
 
 namespace dsp {
@@ -21,9 +22,8 @@ private:
     static const unsigned int DELAY_TIME;
     DSP_FLOAT maxDelayTime;
     unsigned int writeIndex;
-    std::vector<std::vector<DSP_FLOAT>> buffers;
+    std::shared_ptr<Buffer> buffer;
     unsigned int getDelayBufferSize();
-    void resizeBuffers();
 };
 
 } // namespace dsp

@@ -17,6 +17,7 @@ public:
 
     unsigned int getNumChannels();
     void setNumChannels(unsigned int numChannels);
+    void setNumChannelsNoLock(unsigned int numChannels);
 
     unsigned int getBufferSize();
     void setBufferSize(unsigned int bufferSize);
