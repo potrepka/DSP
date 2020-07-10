@@ -81,7 +81,11 @@ dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSam
 #if USE_RTMIDI
     try {
         midiIn.setCallback(MidiInput::callback, this);
-    } catch (RtMidiError &error) { error.printMessage(); }
+    } catch (RtMidiError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
 #endif
     setPort(port);
 
@@ -139,7 +143,11 @@ void dsp::Midi::MidiInput::setPort(unsigned int port) {
 #if USE_RTMIDI
     try {
         midiIn.openPort(port);
-    } catch (RtMidiError &error) { error.printMessage(); }
+    } catch (RtMidiError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
     deviceName = getMidiInputName(port);
 #endif
 }
@@ -345,7 +353,11 @@ void dsp::Midi::MidiOutput::setPort(unsigned int port) {
 #if USE_RTMIDI
     try {
         midiOut.openPort(port);
-    } catch (RtMidiError &error) { error.printMessage(); }
+    } catch (RtMidiError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
     deviceName = getMidiOutputName(port);
 #endif
 }
@@ -472,7 +484,11 @@ void dsp::Midi::MidiOutput::sendMessageWithDelay(int64_t nanoseconds, std::vecto
         std::this_thread::sleep_for(std::chrono::nanoseconds(nanoseconds));
         try {
             midiOut.sendMessage(&bytes);
-        } catch (RtMidiError &error) { error.printMessage(); }
+        } catch (RtMidiError &error) {
+#if DEBUG
+            error.printMessage();
+#endif
+        }
     }).detach();
 #endif
 }
@@ -514,7 +530,9 @@ unsigned int dsp::Midi::getNumMidiInputPorts() {
         portCount = midiIn.getPortCount();
     } catch (RtMidiError &error) {
         portCount = 0;
+#if DEBUG
         error.printMessage();
+#endif
     }
     return portCount;
 #else
@@ -529,7 +547,9 @@ unsigned int dsp::Midi::getNumMidiOutputPorts() {
         portCount = midiOut.getPortCount();
     } catch (RtMidiError &error) {
         portCount = 0;
+#if DEBUG
         error.printMessage();
+#endif
     }
     return portCount;
 #else
@@ -544,7 +564,9 @@ std::string dsp::Midi::getMidiInputName(unsigned int port) {
         name = midiIn.getPortName(port);
     } catch (RtMidiError &error) {
         name = "None";
+#if DEBUG
         error.printMessage();
+#endif
     }
     return name;
 #else
@@ -559,7 +581,9 @@ std::string dsp::Midi::getMidiOutputName(unsigned int port) {
         name = midiOut.getPortName(port);
     } catch (RtMidiError &error) {
         name = "None";
+#if DEBUG
         error.printMessage();
+#endif
     }
     return name;
 #else

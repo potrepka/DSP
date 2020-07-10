@@ -11,10 +11,20 @@ dsp::Engine::~Engine() {
         if (dac.isStreamRunning()) {
             dac.stopStream();
         }
+    } catch (RtAudioError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
+    try {
         if (dac.isStreamOpen()) {
             dac.closeStream();
         }
-    } catch (RtAudioError &error) { error.printMessage(); }
+    } catch (RtAudioError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
 #endif
 }
 
@@ -29,7 +39,11 @@ std::vector<unsigned int> dsp::Engine::getInputDevices() {
             if (deviceInfo.inputChannels != 0) {
                 inputDevices.push_back(i);
             }
-        } catch (RtAudioError &error) { error.printMessage(); }
+        } catch (RtAudioError &error) {
+#if DEBUG
+            error.printMessage();
+#endif
+        }
     }
 #endif
     return inputDevices;
@@ -46,7 +60,11 @@ std::vector<unsigned int> dsp::Engine::getOutputDevices() {
             if (deviceInfo.outputChannels != 0) {
                 outputDevices.push_back(i);
             }
-        } catch (RtAudioError &error) { error.printMessage(); }
+        } catch (RtAudioError &error) {
+#if DEBUG
+            error.printMessage();
+#endif
+        }
     }
 #endif
     return outputDevices;
@@ -75,7 +93,11 @@ unsigned int dsp::Engine::getDefaultInputDevice() {
             if (deviceInfo.inputChannels != 0) {
                 return i;
             }
-        } catch (RtAudioError &error) { error.printMessage(); }
+        } catch (RtAudioError &error) {
+#if DEBUG
+            error.printMessage();
+#endif
+        }
     }
 #endif
     return -1;
@@ -90,7 +112,11 @@ unsigned int dsp::Engine::getDefaultOutputDevice() {
             if (deviceInfo.outputChannels != 0) {
                 return i;
             }
-        } catch (RtAudioError &error) { error.printMessage(); }
+        } catch (RtAudioError &error) {
+#if DEBUG
+            error.printMessage();
+#endif
+        }
     }
 #endif
     return -1;
@@ -123,10 +149,20 @@ void dsp::Engine::setup(unsigned int inputDevice,
         if (dac.isStreamRunning()) {
             dac.stopStream();
         }
+    } catch (RtAudioError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
+    try {
         if (dac.isStreamOpen()) {
             dac.closeStream();
         }
-    } catch (RtAudioError &error) { error.printMessage(); }
+    } catch (RtAudioError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
 
     RtAudio::StreamParameters inputParameters;
     RtAudio::StreamParameters outputParameters;
@@ -153,7 +189,11 @@ void dsp::Engine::setup(unsigned int inputDevice,
                        &bufferSize,
                        &dsp::Engine::tick,
                        this);
-    } catch (RtAudioError &error) { error.printMessage(); }
+    } catch (RtAudioError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
 
     inputDeviceName = getDeviceName(inputDevice);
     outputDeviceName = getDeviceName(outputDevice);
@@ -178,7 +218,11 @@ void dsp::Engine::start() {
 #if USE_RTAUDIO
     try {
         dac.startStream();
-    } catch (RtAudioError &error) { error.printMessage(); }
+    } catch (RtAudioError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
 #endif
 }
 
@@ -186,7 +230,11 @@ void dsp::Engine::stop() {
 #if USE_RTAUDIO
     try {
         dac.stopStream();
-    } catch (RtAudioError &error) { error.printMessage(); }
+    } catch (RtAudioError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
 #endif
 }
 
@@ -333,7 +381,9 @@ unsigned int dsp::Engine::getDeviceCount() {
         deviceCount = dac.getDeviceCount();
     } catch (RtAudioError &error) {
         deviceCount = 0;
+#if DEBUG
         error.printMessage();
+#endif
     }
     return deviceCount;
 #else
@@ -346,7 +396,11 @@ std::vector<unsigned int> dsp::Engine::getInputSampleRates(unsigned int inputDev
 #if USE_RTAUDIO
     try {
         inputSampleRates = dac.getDeviceInfo(inputDevice).sampleRates;
-    } catch (RtAudioError &error) { error.printMessage(); }
+    } catch (RtAudioError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
 #endif
     return inputSampleRates;
 }
@@ -355,7 +409,11 @@ std::vector<unsigned int> dsp::Engine::getOutputSampleRates(unsigned int outputD
 #if USE_RTAUDIO
     try {
         outputSampleRates = dac.getDeviceInfo(outputDevice).sampleRates;
-    } catch (RtAudioError &error) { error.printMessage(); }
+    } catch (RtAudioError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
 #endif
     return outputSampleRates;
 }
