@@ -3,24 +3,18 @@
 const unsigned int dsp::Sequencer::RESET_TRIGGER = 0;
 const unsigned int dsp::Sequencer::TRIGGER = 1;
 
-dsp::Sequencer::Sequencer() : Generator(Type::INTEGER), sequence(nullptr), index(0) {
+dsp::Sequencer::Sequencer(Type type) : Generator(type) {
     pushInput(Type::BINARY);
     pushInput(Type::BINARY);
 }
 
-std::vector<unsigned int> &dsp::Sequencer::getSequence() {
-    return *sequence;
+std::shared_ptr<dsp::Buffer> dsp::Sequencer::getSequence() {
+    return sequence;
 }
 
-void dsp::Sequencer::setSequence(std::vector<unsigned int> &sequence) {
+void dsp::Sequencer::setSequence(std::shared_ptr<dsp::Buffer> sequence) {
     lock();
-    this->sequence = &sequence;
-    unlock();
-}
-
-void dsp::Sequencer::removeSequence() {
-    lock();
-    sequence = nullptr;
+    this->sequence = sequence;
     unlock();
 }
 
@@ -40,8 +34,9 @@ void dsp::Sequencer::setNumChannelsNoLock(unsigned int numChannels) {
 
 void dsp::Sequencer::process() {
     Unit::process();
-    if (sequence != nullptr && sequence->size() > 0) {
+    if (sequence != nullptr && sequence->getNumChannels() > 0 && sequence->getBufferSize() > 0) {
         for (unsigned int i = 0; i < getNumChannels(); i++) {
+            std::vector<DSP_FLOAT> &channel = sequence->getChannel(i % sequence->getNumChannels());
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &triggerBuffer = getTrigger()->getChannel(i)->getBuffer();
@@ -50,10 +45,11 @@ void dsp::Sequencer::process() {
                     index[i] = 0;
                 }
                 if (triggerBuffer[k]) {
+                    index[i] = index[i] % sequence->getBufferSize();
                     memory[i] = index[i];
-                    index[i] = (index[i] + 1) % sequence->size();
+                    index[i]++;
                 }
-                outputBuffer[k] = memory[i];
+                outputBuffer[k] = channel[memory[i]];
             }
         }
     }
