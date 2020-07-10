@@ -125,14 +125,21 @@ std::shared_ptr<dsp::Unit::OutputParameter> dsp::Unit::getOutput(unsigned int in
 }
 
 void dsp::Unit::setInput(unsigned int index, std::shared_ptr<InputParameter> input) {
+    assert(input != nullptr);
+    lock();
     inputs[index] = input;
+    unlock();
 }
 
 void dsp::Unit::setOutput(unsigned int index, std::shared_ptr<dsp::Unit::OutputParameter> output) {
+    assert(output != nullptr);
+    lock();
     outputs[index] = output;
+    unlock();
 }
 
 void dsp::Unit::pushInput(std::shared_ptr<InputParameter> input) {
+    assert(input != nullptr);
     lock();
     input->setBufferSize(getBufferSize());
     input->setNumChannels(getNumChannels());
@@ -147,6 +154,7 @@ void dsp::Unit::pushInput(Type type, Space space, DSP_FLOAT value) {
 }
 
 void dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
+    assert(output != nullptr);
     lock();
     output->setBufferSize(getBufferSize());
     output->setNumChannels(getNumChannels());
@@ -161,6 +169,7 @@ void dsp::Unit::pushOutput(Type type, Space space, DSP_FLOAT value) {
 }
 
 void dsp::Unit::insertInput(unsigned int index, std::shared_ptr<InputParameter> input) {
+    assert(input != nullptr);
     lock();
     input->setBufferSize(getBufferSize());
     input->setNumChannels(getNumChannels());
@@ -176,6 +185,7 @@ void dsp::Unit::insertInput(unsigned int index, Type type, Space space, DSP_FLOA
 }
 
 void dsp::Unit::insertOutput(unsigned int index, std::shared_ptr<OutputParameter> output) {
+    assert(output != nullptr);
     lock();
     output->setBufferSize(getBufferSize());
     output->setNumChannels(getNumChannels());
@@ -222,7 +232,15 @@ std::shared_ptr<dsp::Unit> dsp::Unit::getUnit(unsigned int index) {
     return units[index];
 }
 
+void dsp::Unit::setUnit(unsigned int index, std::shared_ptr<Unit> unit) {
+    assert(unit != nullptr);
+    lock();
+    units[index] = unit;
+    unlock();
+}
+
 void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit) {
+    assert(unit != nullptr);
     lock();
     unit->setSampleRate(getSampleRate());
     unit->setBufferSize(getBufferSize());
@@ -234,6 +252,7 @@ void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit) {
 }
 
 void dsp::Unit::insertUnit(unsigned int index, std::shared_ptr<Unit> unit) {
+    assert(unit != nullptr);
     lock();
     unit->setSampleRate(getSampleRate());
     unit->setBufferSize(getBufferSize());

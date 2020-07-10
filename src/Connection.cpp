@@ -61,6 +61,8 @@ std::vector<std::shared_ptr<dsp::Output>> dsp::Input::getConnections() {
 }
 
 void dsp::Input::connect(std::shared_ptr<Output> output) {
+    assert(output != nullptr);
+
     lock();
     output->lock();
 
@@ -72,6 +74,8 @@ void dsp::Input::connect(std::shared_ptr<Output> output) {
 }
 
 void dsp::Input::disconnect(std::shared_ptr<Output> output) {
+    assert(output != nullptr);
+
     lock();
     output->lock();
 
@@ -133,6 +137,8 @@ std::vector<std::shared_ptr<dsp::Input>> dsp::Output::getConnections() {
 }
 
 void dsp::Output::connect(std::shared_ptr<Input> input) {
+    assert(input != nullptr);
+
     lock();
     input->lock();
 
@@ -144,6 +150,8 @@ void dsp::Output::connect(std::shared_ptr<Input> input) {
 }
 
 void dsp::Output::disconnect(std::shared_ptr<Input> input) {
+    assert(input != nullptr);
+
     lock();
     input->lock();
 

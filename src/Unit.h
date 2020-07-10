@@ -94,6 +94,7 @@ public:
 
     unsigned int getNumUnits();
     std::shared_ptr<Unit> getUnit(unsigned int index);
+    void setUnit(unsigned int index, std::shared_ptr<Unit> unit);
     void pushUnit(std::shared_ptr<Unit> unit);
     void insertUnit(unsigned int index, std::shared_ptr<Unit> unit);
     void removeUnit(std::shared_ptr<Unit> unit);

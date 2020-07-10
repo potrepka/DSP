@@ -17,21 +17,18 @@ std::shared_ptr<dsp::Buffer> dsp::TableOscillator::getTable(unsigned int index) 
 }
 
 void dsp::TableOscillator::setTable(unsigned int index, std::shared_ptr<Buffer> table) {
-    assert(table != nullptr);
     lock();
     tables[index] = table;
     unlock();
 }
 
 void dsp::TableOscillator::pushTable(std::shared_ptr<Buffer> table) {
-    assert(table != nullptr);
     lock();
     tables.push_back(table);
     unlock();
 }
 
 void dsp::TableOscillator::insertTable(unsigned int index, std::shared_ptr<Buffer> table) {
-    assert(table != nullptr);
     lock();
     tables.insert(tables.begin() + index, table);
     unlock();
@@ -55,7 +52,9 @@ void dsp::TableOscillator::process() {
     Unit::process();
     if (tables.size() > 0) {
         for (const auto &table : tables) {
-            table->lock();
+            if (table != nullptr) {
+                table->lock();
+            }
         }
         std::vector<DSP_FLOAT> points;
         points.resize(4);
@@ -68,7 +67,7 @@ void dsp::TableOscillator::process() {
                 const long indexBefore = static_cast<long>(positionIndex) - 1;
                 long p = indexBefore;
                 for (unsigned char j = 0; j < 4; j++) {
-                    if (p >= 0 && p < tables.size() && tables[p]->getNumChannels() > 0) {
+                    if (p >= 0 && p < tables.size() && tables[p] != nullptr && tables[p]->getNumChannels() > 0) {
                         points[j] = linear(tables[p]->getChannel(i % tables[p]->getNumChannels()),
                                            wrap(phaseBuffer[k], 0.0, 1.0) * tables[p]->getBufferSize(),
                                            tables[p]->getDefaultValue());
@@ -81,7 +80,9 @@ void dsp::TableOscillator::process() {
             }
         }
         for (const auto &table : tables) {
-            table->unlock();
+            if (table != nullptr) {
+                table->unlock();
+            }
         }
     }
 }
