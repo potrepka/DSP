@@ -8,7 +8,7 @@ namespace dsp {
 class VariableDelay : public Processor {
 
 public:
-    VariableDelay();
+    VariableDelay(Type type);
     unsigned int getMaxDelayTime() const;
     void setMaxDelayTime(DSP_FLOAT seconds);
     std::shared_ptr<InputParameter> getDelayTime() const;

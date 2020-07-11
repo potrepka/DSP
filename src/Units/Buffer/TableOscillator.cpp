@@ -3,7 +3,7 @@
 const unsigned int dsp::TableOscillator::PHASE = 0;
 const unsigned int dsp::TableOscillator::POSITION = 1;
 
-dsp::TableOscillator::TableOscillator() : Generator(Type::BIPOLAR) {
+dsp::TableOscillator::TableOscillator(Type type) : Generator(type) {
     pushInput(Type::UNIPOLAR);
     pushInput(Type::UNIPOLAR);
 }

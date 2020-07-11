@@ -8,7 +8,7 @@ namespace dsp {
 class SampleRecorder : public Consumer {
 
 public:
-    SampleRecorder();
+    SampleRecorder(Type type);
     std::shared_ptr<Buffer> getSample() const;
     std::shared_ptr<InputParameter> getResetTrigger() const;
     std::shared_ptr<InputParameter> getGate() const;

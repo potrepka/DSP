@@ -8,7 +8,7 @@ namespace dsp {
 class BufferUnit : public Consumer {
 
 public:
-    BufferUnit(unsigned int bufferSize);
+    BufferUnit(unsigned int bufferSize, Type type);
     std::shared_ptr<Buffer> getBuffer() const;
 
 protected:

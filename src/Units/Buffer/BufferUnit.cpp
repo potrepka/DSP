@@ -1,7 +1,7 @@
 #include "BufferUnit.h"
 
-dsp::BufferUnit::BufferUnit(unsigned int bufferSize) : Consumer(Type::BIPOLAR), writeIndex(0) {
-    buffer = std::make_shared<Buffer>(0, bufferSize, Type::BIPOLAR);
+dsp::BufferUnit::BufferUnit(unsigned int bufferSize, Type type) : Consumer(type), writeIndex(0) {
+    buffer = std::make_shared<Buffer>(0, bufferSize, type);
 }
 
 std::shared_ptr<dsp::Buffer> dsp::BufferUnit::getBuffer() const {

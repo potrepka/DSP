@@ -8,7 +8,7 @@ namespace dsp {
 class TableOscillator : public Generator {
 
 public:
-    TableOscillator();
+    TableOscillator(Type type);
     unsigned int getNumTables() const;
     std::shared_ptr<Buffer> getTable(unsigned int index) const;
     void setTable(unsigned int index, std::shared_ptr<Buffer> table);

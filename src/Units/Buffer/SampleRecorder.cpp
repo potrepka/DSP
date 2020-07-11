@@ -3,9 +3,9 @@
 const unsigned int dsp::SampleRecorder::RESET_TRIGGER = 1;
 const unsigned int dsp::SampleRecorder::GATE = 2;
 
-dsp::SampleRecorder::SampleRecorder() : Consumer(Type::BIPOLAR) {
+dsp::SampleRecorder::SampleRecorder(Type type) : Consumer(type) {
     pushInput(Type::BINARY);
-    sample = std::make_shared<Buffer>(0, 0, Type::BIPOLAR);
+    sample = std::make_shared<Buffer>(0, 0, type);
 }
 
 std::shared_ptr<dsp::Buffer> dsp::SampleRecorder::getSample() const {

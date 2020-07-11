@@ -8,7 +8,7 @@ namespace dsp {
 class SamplePlayer : public Generator {
 
 public:
-    SamplePlayer();
+    SamplePlayer(Type type);
     std::shared_ptr<Buffer> getSample() const;
     void setSample(std::shared_ptr<Buffer> sample);
     std::shared_ptr<InputParameter> getResetTrigger() const;

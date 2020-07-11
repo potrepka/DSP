@@ -5,7 +5,7 @@ const unsigned int dsp::SamplePlayer::GATE = 1;
 const unsigned int dsp::SamplePlayer::START_POSITION = 2;
 const unsigned int dsp::SamplePlayer::SPEED = 3;
 
-dsp::SamplePlayer::SamplePlayer() : Generator(Type::BIPOLAR) {
+dsp::SamplePlayer::SamplePlayer(Type type) : Generator(type) {
     pushInput(Type::BINARY);
     pushInput(Type::BINARY);
     pushInput(Type::SECONDS);

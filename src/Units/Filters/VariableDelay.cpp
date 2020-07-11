@@ -2,9 +2,9 @@
 
 const unsigned int dsp::VariableDelay::DELAY_TIME = 1;
 
-dsp::VariableDelay::VariableDelay() : Processor(Type::BIPOLAR, Type::BIPOLAR), maxDelayTime(0.0), writeIndex(0) {
+dsp::VariableDelay::VariableDelay(Type type) : Processor(type, type), maxDelayTime(0.0), writeIndex(0) {
     pushInput(Type::SECONDS);
-    buffer = std::make_shared<Buffer>(0, 0, Type::BIPOLAR);
+    buffer = std::make_shared<Buffer>(0, 0, type);
 }
 
 unsigned int dsp::VariableDelay::getMaxDelayTime() const {
