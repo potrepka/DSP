@@ -15,7 +15,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::OnOff::getOffTrigger() {
 
 void dsp::OnOff::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    state.resize(numChannels, 0);
+    state.resize(numChannels, getOutputSignal()->getDefaultValue());
 }
 
 void dsp::OnOff::process() {

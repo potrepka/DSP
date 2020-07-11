@@ -12,7 +12,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleAndHold::getTrigger() {
 
 void dsp::SampleAndHold::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    memory.resize(numChannels, 0);
+    memory.resize(numChannels, getOutputSignal()->getDefaultValue());
 }
 
 void dsp::SampleAndHold::process() {
