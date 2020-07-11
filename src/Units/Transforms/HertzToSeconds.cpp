@@ -1,6 +1,8 @@
 #include "HertzToSeconds.h"
 
-dsp::HertzToSeconds::HertzToSeconds() {
-    getInputSignal()->setType(Type::HERTZ);
-    getOutputSignal()->setType(Type::SECONDS);
+dsp::HertzToSeconds::HertzToSeconds() : Processor(Type::HERTZ, Type::SECONDS) {}
+
+void dsp::HertzToSeconds::process() {
+    Unit::process();
+    transform(oneOver);
 }

@@ -1,5 +1,13 @@
 #include "Functions.h"
 
+DSP_FLOAT dsp::negative(const DSP_FLOAT value) {
+    return -value;
+}
+
+DSP_FLOAT dsp::oneOver(const DSP_FLOAT value) {
+    return 1.0 / value;
+}
+
 DSP_FLOAT dsp::clip(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
     if (min >= max) {
         return min;

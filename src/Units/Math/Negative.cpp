@@ -6,5 +6,5 @@ dsp::Negative::Negative(Type type, Space space) : Processor(type, type, space) {
 
 void dsp::Negative::process() {
     Unit::process();
-    transform([](DSP_FLOAT x) { return -x; });
+    transform(negative);
 }
