@@ -13,17 +13,17 @@ const unsigned int dsp::CompressorGate::GAIN_DELTA = 1;
 
 dsp::CompressorGate::CompressorGate() : Processor(Type::BIPOLAR, Type::BIPOLAR) {
     channelMix = std::make_shared<ChannelMix>(Type::BIPOLAR);
-    absoluteValue = std::make_shared<AbsoluteValue>(Type::RATIO);
-    ratioToDecibels = std::make_shared<Base2Log>();
+    absoluteValue = std::make_shared<AbsoluteValue>(Type::BIPOLAR);
+    base2Log = std::make_shared<Base2Log>();
     gainComputer = std::make_shared<GainComputer>();
     gainEnvelope = std::make_shared<GainEnvelope>();
     gainUnit = std::make_shared<GainUnit>();
 
-    absoluteValue->getInputSignal()->setType(Type::BIPOLAR);
+    absoluteValue->getOutputSignal()->setType(Type::RATIO);
 
     pushUnit(channelMix);
     pushUnit(absoluteValue);
-    pushUnit(ratioToDecibels);
+    pushUnit(base2Log);
     pushUnit(gainComputer);
     pushUnit(gainEnvelope);
     pushUnit(gainUnit);
@@ -82,16 +82,16 @@ std::shared_ptr<dsp::Unit::OutputParameter> dsp::CompressorGate::getGainDelta() 
 
 void dsp::CompressorGate::connect() {
     channelMix->getOutputSignal() >> absoluteValue->getInputSignal();
-    absoluteValue->getOutputSignal() >> ratioToDecibels->getInputSignal();
-    ratioToDecibels->getOutputSignal() >> gainComputer->getInputSignal();
+    absoluteValue->getOutputSignal() >> base2Log->getInputSignal();
+    base2Log->getOutputSignal() >> gainComputer->getInputSignal();
     gainComputer->getOutputSignal() >> gainEnvelope->getInputSignal();
     gainEnvelope->getOutputSignal() >> gainUnit->getGain();
 }
 
 void dsp::CompressorGate::disconnect() {
     channelMix->getOutputSignal() != absoluteValue->getInputSignal();
-    absoluteValue->getOutputSignal() != ratioToDecibels->getInputSignal();
-    ratioToDecibels->getOutputSignal() != gainComputer->getInputSignal();
+    absoluteValue->getOutputSignal() != base2Log->getInputSignal();
+    base2Log->getOutputSignal() != gainComputer->getInputSignal();
     gainComputer->getOutputSignal() != gainEnvelope->getInputSignal();
     gainEnvelope->getOutputSignal() != gainUnit->getGain();
 }
