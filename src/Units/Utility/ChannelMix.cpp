@@ -1,6 +1,6 @@
 #include "ChannelMix.h"
 
-const unsigned int dsp::ChannelMix::MIX = 1;
+const unsigned int dsp::ChannelMix::MIX_AMOUNT = 1;
 
 dsp::ChannelMix::ChannelMix(Type type, Space space) : Processor(type, type, space) {
     assert(type != Type::BINARY);
@@ -8,7 +8,7 @@ dsp::ChannelMix::ChannelMix(Type type, Space space) : Processor(type, type, spac
     pushInput(Type::UNIPOLAR, space);
 }
 
-dsp::ChannelMix::Mode dsp::ChannelMix::getMode() {
+dsp::ChannelMix::Mode dsp::ChannelMix::getMode() const {
     return mode;
 }
 
@@ -16,8 +16,8 @@ void dsp::ChannelMix::setMode(Mode mode) {
     this->mode = mode;
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::ChannelMix::getMix() {
-    return getInput(MIX);
+std::shared_ptr<dsp::Unit::InputParameter> dsp::ChannelMix::getMixAmount() const {
+    return getInput(MIX_AMOUNT);
 }
 
 void dsp::ChannelMix::setBufferSizeNoLock(unsigned int bufferSize) {
@@ -41,7 +41,7 @@ void dsp::ChannelMix::process() {
         for (unsigned int i = 0; i < getNumChannels(); i++) {
             std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &mixBuffer = getMix()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &mixBuffer = getMixAmount()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
                 DSP_FLOAT wet;
                 switch (mode) {

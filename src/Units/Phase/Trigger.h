@@ -8,9 +8,9 @@ class Trigger : public Generator {
 
 public:
     Trigger();
-    std::shared_ptr<InputParameter> getResetTrigger();
-    std::shared_ptr<InputParameter> getInterval();
-    std::shared_ptr<InputParameter> getDelay();
+    std::shared_ptr<InputParameter> getResetTrigger() const;
+    std::shared_ptr<InputParameter> getInterval() const;
+    std::shared_ptr<InputParameter> getDelay() const;
 
 protected:
     void setNumChannelsNoLock(unsigned int numChannels) override;

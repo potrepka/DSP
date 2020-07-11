@@ -10,11 +10,11 @@ public:
     enum class Mode { LOW_PASS, HIGH_PASS, BAND_PASS, BAND_STOP, LOW_SHELF, HIGH_SHELF, PEAK, ALL_PASS };
 
     Biquad();
-    Mode getMode();
+    Mode getMode() const;
     void setMode(Mode mode);
-    std::shared_ptr<InputParameter> getFrequency();
-    std::shared_ptr<InputParameter> getQ();
-    std::shared_ptr<InputParameter> getGain();
+    std::shared_ptr<InputParameter> getFrequency() const;
+    std::shared_ptr<InputParameter> getQ() const;
+    std::shared_ptr<InputParameter> getGain() const;
 
 protected:
     void setNumChannelsNoLock(unsigned int numChannels) override;

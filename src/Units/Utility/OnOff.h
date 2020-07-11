@@ -8,8 +8,8 @@ class OnOff : public Generator {
 
 public:
     OnOff();
-    std::shared_ptr<InputParameter> getOnTrigger();
-    std::shared_ptr<InputParameter> getOffTrigger();
+    std::shared_ptr<InputParameter> getOnTrigger() const;
+    std::shared_ptr<InputParameter> getOffTrigger() const;
 
 protected:
     void setNumChannelsNoLock(unsigned int numChannels) override;

@@ -9,9 +9,9 @@ class VariableDelay : public Processor {
 
 public:
     VariableDelay();
-    unsigned int getMaxDelayTime();
+    unsigned int getMaxDelayTime() const;
     void setMaxDelayTime(DSP_FLOAT seconds);
-    std::shared_ptr<InputParameter> getDelayTime();
+    std::shared_ptr<InputParameter> getDelayTime() const;
 
 protected:
     void setSampleRateNoLock(unsigned int sampleRate) override;

@@ -2,7 +2,7 @@
 
 dsp::Convolver::Convolver() : Processor(Type::BIPOLAR, Type::BIPOLAR), headSize(0), tailSize(0) {}
 
-std::shared_ptr<dsp::Buffer> dsp::Convolver::getBuffer(unsigned int channel) {
+std::shared_ptr<dsp::Buffer> dsp::Convolver::getBuffer(unsigned int channel) const {
     return buffers[channel];
 }
 
@@ -13,11 +13,11 @@ void dsp::Convolver::setBuffer(unsigned int channel, std::shared_ptr<dsp::Buffer
     unlock();
 }
 
-unsigned int dsp::Convolver::getHeadSize() {
+unsigned int dsp::Convolver::getHeadSize() const {
     return headSize;
 }
 
-unsigned int dsp::Convolver::getTailSize() {
+unsigned int dsp::Convolver::getTailSize() const {
     return tailSize;
 }
 

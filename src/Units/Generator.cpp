@@ -6,7 +6,7 @@ dsp::Generator::Generator(Type type, Space space) {
     pushOutput(type, space);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::Generator::getOutputSignal() {
+std::shared_ptr<dsp::Unit::OutputParameter> dsp::Generator::getOutputSignal() const {
     return getOutput(OUTPUT_SIGNAL);
 }
 

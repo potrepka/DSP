@@ -8,11 +8,11 @@ dsp::IFFT::IFFT() : Generator(Type::BIPOLAR) {
     pushInput(Type::BIPOLAR, Space::FREQUENCY_IMAGINARY);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::IFFT::getReal() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::IFFT::getReal() const {
     return getInput(REAL);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::IFFT::getImaginary() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::IFFT::getImaginary() const {
     return getInput(IMAGINARY);
 }
 

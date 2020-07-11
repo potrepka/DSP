@@ -6,7 +6,7 @@ dsp::OnePole::OnePole() : Processor(Type::BIPOLAR, Type::BIPOLAR), mode(Mode::LO
     pushInput(Type::HERTZ);
 }
 
-dsp::OnePole::Mode dsp::OnePole::getMode() {
+dsp::OnePole::Mode dsp::OnePole::getMode() const {
     return mode;
 }
 
@@ -14,7 +14,7 @@ void dsp::OnePole::setMode(Mode mode) {
     this->mode = mode;
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::OnePole::getFrequency() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::OnePole::getFrequency() const {
     return getInput(FREQUENCY);
 }
 

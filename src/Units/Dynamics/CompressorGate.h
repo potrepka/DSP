@@ -14,14 +14,14 @@ class CompressorGate : public Processor {
 public:
     CompressorGate();
     ~CompressorGate();
-    std::shared_ptr<InputParameter> getLink();
-    std::shared_ptr<InputParameter> getThreshold();
-    std::shared_ptr<InputParameter> getCompressionRatio();
-    std::shared_ptr<InputParameter> getGateRatio();
-    std::shared_ptr<InputParameter> getKnee();
-    std::shared_ptr<InputParameter> getAttack();
-    std::shared_ptr<InputParameter> getRelease();
-    std::shared_ptr<OutputParameter> getGainDelta();
+    std::shared_ptr<InputParameter> getLink() const;
+    std::shared_ptr<InputParameter> getThreshold() const;
+    std::shared_ptr<InputParameter> getCompressionRatio() const;
+    std::shared_ptr<InputParameter> getGateRatio() const;
+    std::shared_ptr<InputParameter> getKnee() const;
+    std::shared_ptr<InputParameter> getAttack() const;
+    std::shared_ptr<InputParameter> getRelease() const;
+    std::shared_ptr<OutputParameter> getGainDelta() const;
 
 protected:
     void connect() override;

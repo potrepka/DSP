@@ -9,14 +9,14 @@ class TableOscillator : public Generator {
 
 public:
     TableOscillator();
-    unsigned int getNumTables();
-    std::shared_ptr<Buffer> getTable(unsigned int index);
+    unsigned int getNumTables() const;
+    std::shared_ptr<Buffer> getTable(unsigned int index) const;
     void setTable(unsigned int index, std::shared_ptr<Buffer> table);
     void pushTable(std::shared_ptr<Buffer> table);
     void insertTable(unsigned int index, std::shared_ptr<Buffer> table);
     void removeTable(unsigned int index);
-    std::shared_ptr<InputParameter> getPhase();
-    std::shared_ptr<InputParameter> getPosition();
+    std::shared_ptr<InputParameter> getPhase() const;
+    std::shared_ptr<InputParameter> getPosition() const;
 
 protected:
     void process() override;

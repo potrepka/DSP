@@ -8,11 +8,11 @@ dsp::Phasor::Phasor() : Generator(Type::UNIPOLAR) {
     pushInput(Type::HERTZ);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Phasor::getResetTrigger() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Phasor::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Phasor::getFrequency() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Phasor::getFrequency() const {
     return getInput(FREQUENCY);
 }
 

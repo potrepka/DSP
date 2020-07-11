@@ -10,7 +10,7 @@ dsp::Biquad::Biquad() : Processor(dsp::Type::BIPOLAR, dsp::Type::BIPOLAR), mode(
     pushInput(Type::LINEAR);
 }
 
-dsp::Biquad::Mode dsp::Biquad::getMode() {
+dsp::Biquad::Mode dsp::Biquad::getMode() const {
     return mode;
 }
 
@@ -18,15 +18,15 @@ void dsp::Biquad::setMode(Mode mode) {
     this->mode = mode;
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getFrequency() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getFrequency() const {
     return getInput(FREQUENCY);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getQ() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getQ() const {
     return getInput(Q);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getGain() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getGain() const {
     return getInput(GAIN);
 }
 

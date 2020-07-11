@@ -6,7 +6,7 @@ dsp::GainUnit::GainUnit(Space space) : Processor(Type::BIPOLAR, Type::BIPOLAR, s
     pushInput(Type::LINEAR, space);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::GainUnit::getGain() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::GainUnit::getGain() const {
     return getInput(GAIN);
 }
 

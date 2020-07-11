@@ -6,7 +6,7 @@ dsp::Divide::Divide(Type type, Space space) : Processor(type, Type::RATIO, space
     pushInput(type, space);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Divide::getDivisor() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Divide::getDivisor() const {
     return getInput(DIVISOR);
 }
 

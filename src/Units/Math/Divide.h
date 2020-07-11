@@ -8,7 +8,7 @@ class Divide : public Processor {
 
 public:
     Divide(Type type, Space space = Space::TIME);
-    std::shared_ptr<InputParameter> getDivisor();
+    std::shared_ptr<InputParameter> getDivisor() const;
 
 protected:
     void process() override;

@@ -9,7 +9,7 @@ class BufferUnit : public Consumer {
 
 public:
     BufferUnit(unsigned int bufferSize);
-    std::shared_ptr<Buffer> getBuffer();
+    std::shared_ptr<Buffer> getBuffer() const;
 
 protected:
     void setNumChannelsNoLock(unsigned int numChannels) override;

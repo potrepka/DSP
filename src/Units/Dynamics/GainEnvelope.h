@@ -8,8 +8,8 @@ class GainEnvelope : public Processor {
 
 public:
     GainEnvelope();
-    std::shared_ptr<InputParameter> getAttack();
-    std::shared_ptr<InputParameter> getRelease();
+    std::shared_ptr<InputParameter> getAttack() const;
+    std::shared_ptr<InputParameter> getRelease() const;
 
 protected:
     void setNumChannelsNoLock(unsigned int numChannels) override;

@@ -8,11 +8,11 @@ dsp::TableOscillator::TableOscillator() : Generator(Type::BIPOLAR) {
     pushInput(Type::UNIPOLAR);
 }
 
-unsigned int dsp::TableOscillator::getNumTables() {
+unsigned int dsp::TableOscillator::getNumTables() const {
     return static_cast<unsigned int>(tables.size());
 }
 
-std::shared_ptr<dsp::Buffer> dsp::TableOscillator::getTable(unsigned int index) {
+std::shared_ptr<dsp::Buffer> dsp::TableOscillator::getTable(unsigned int index) const {
     return tables[index];
 }
 
@@ -40,11 +40,11 @@ void dsp::TableOscillator::removeTable(unsigned int index) {
     unlock();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::TableOscillator::getPhase() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::TableOscillator::getPhase() const {
     return getInput(PHASE);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::TableOscillator::getPosition() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::TableOscillator::getPosition() const {
     return getInput(POSITION);
 }
 

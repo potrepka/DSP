@@ -12,7 +12,7 @@ dsp::SamplePlayer::SamplePlayer() : Generator(Type::BIPOLAR) {
     pushInput(Type::RATIO);
 }
 
-std::shared_ptr<dsp::Buffer> dsp::SamplePlayer::getSample() {
+std::shared_ptr<dsp::Buffer> dsp::SamplePlayer::getSample() const {
     return sample;
 }
 
@@ -22,19 +22,19 @@ void dsp::SamplePlayer::setSample(std::shared_ptr<Buffer> sample) {
     unlock();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getResetTrigger() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getGate() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getGate() const {
     return getInput(GATE);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getStartPosition() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getStartPosition() const {
     return getInput(START_POSITION);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getSpeed() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getSpeed() const {
     return getInput(SPEED);
 }
 

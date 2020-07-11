@@ -152,55 +152,55 @@ void dsp::Midi::MidiInput::setPort(unsigned int port) {
 #endif
 }
 
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNoteOnTrigger(unsigned char channel, unsigned char note) {
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNoteOnTrigger(unsigned char channel, unsigned char note) const {
     return noteOn[channel][note];
 }
 
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNoteOffTrigger(unsigned char channel, unsigned char note) {
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNoteOffTrigger(unsigned char channel, unsigned char note) const {
     return noteOff[channel][note];
 }
 
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNotePressure(unsigned char channel, unsigned char note) {
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNotePressure(unsigned char channel, unsigned char note) const {
     return notePressure[channel][note];
 }
 
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getControlChange(unsigned char channel, unsigned char control) {
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getControlChange(unsigned char channel, unsigned char control) const {
     return controlChange[channel][control];
 }
 
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getProgramChange(unsigned char channel) {
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getProgramChange(unsigned char channel) const {
     return programChange[channel];
 }
 
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getChannelPressure(unsigned char channel) {
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getChannelPressure(unsigned char channel) const {
     return channelPressure[channel];
 }
 
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getPitchBend(unsigned char channel) {
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getPitchBend(unsigned char channel) const {
     return pitchBend[channel];
 }
 
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getPlayTrigger() {
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getPlayTrigger() const {
     return play;
 }
 
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getStopTrigger() {
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getStopTrigger() const {
     return stop;
 }
 
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getResetTrigger() {
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getResetTrigger() const {
     return reset;
 }
 
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getClockTrigger() {
+std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getClockTrigger() const {
     return clock;
 }
 
-unsigned int dsp::Midi::MidiInput::getNumCallbacks() {
+unsigned int dsp::Midi::MidiInput::getNumCallbacks() const {
     return static_cast<unsigned int>(callbacks.size());
 }
 
-std::function<void(dsp::Midi::TimedMessage)> dsp::Midi::MidiInput::getCallback(unsigned int index) {
+std::function<void(dsp::Midi::TimedMessage)> dsp::Midi::MidiInput::getCallback(unsigned int index) const {
     return *callbacks[index];
 }
 
@@ -362,47 +362,48 @@ void dsp::Midi::MidiOutput::setPort(unsigned int port) {
 #endif
 }
 
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNoteOnTrigger(unsigned char channel, unsigned char note) {
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNoteOnTrigger(unsigned char channel, unsigned char note) const {
     return noteOn[channel][note];
 }
 
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNoteOffTrigger(unsigned char channel, unsigned char note) {
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNoteOffTrigger(unsigned char channel, unsigned char note) const {
     return noteOff[channel][note];
 }
 
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNotePressure(unsigned char channel, unsigned char note) {
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNotePressure(unsigned char channel, unsigned char note) const {
     return notePressure[channel][note];
 }
 
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getControlChange(unsigned char channel, unsigned char control) {
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getControlChange(unsigned char channel,
+                                                                     unsigned char control) const {
     return controlChange[channel][control];
 }
 
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getProgramChange(unsigned char channel) {
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getProgramChange(unsigned char channel) const {
     return programChange[channel];
 }
 
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getChannelPressure(unsigned char channel) {
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getChannelPressure(unsigned char channel) const {
     return channelPressure[channel];
 }
 
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getPitchBend(unsigned char channel) {
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getPitchBend(unsigned char channel) const {
     return pitchBend[channel];
 }
 
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getPlayTrigger() {
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getPlayTrigger() const {
     return play;
 }
 
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getStopTrigger() {
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getStopTrigger() const {
     return stop;
 }
 
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getResetTrigger() {
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getResetTrigger() const {
     return reset;
 }
 
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getClockTrigger() {
+std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getClockTrigger() const {
     return clock;
 }
 

@@ -8,11 +8,11 @@ dsp::GainEnvelope::GainEnvelope() : Processor(Type::LINEAR, Type::LINEAR) {
     pushInput(Type::SECONDS);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::GainEnvelope::getAttack() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::GainEnvelope::getAttack() const {
     return getInput(ATTACK);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::GainEnvelope::getRelease() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::GainEnvelope::getRelease() const {
     return getInput(RELEASE);
 }
 

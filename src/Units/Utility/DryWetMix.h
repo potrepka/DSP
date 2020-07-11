@@ -8,9 +8,9 @@ class DryWetMix : public Processor {
 
 public:
     DryWetMix(Type type, Space space = Space::TIME);
-    std::shared_ptr<InputParameter> getDrySignal();
-    std::shared_ptr<InputParameter> getWetSignal();
-    std::shared_ptr<InputParameter> getMix();
+    std::shared_ptr<InputParameter> getDrySignal() const;
+    std::shared_ptr<InputParameter> getWetSignal() const;
+    std::shared_ptr<InputParameter> getMixAmount() const;
 
 protected:
     void process() override;
@@ -18,7 +18,7 @@ protected:
 private:
     static const unsigned int DRY_SIGNAL;
     static const unsigned int WET_SIGNAL;
-    static const unsigned int MIX;
+    static const unsigned int MIX_AMOUNT;
 };
 
 } // namespace dsp

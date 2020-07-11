@@ -5,7 +5,7 @@ dsp::Connection::Connection(unsigned int bufferSize, Type type, Space space, DSP
     setBufferSize(bufferSize);
 }
 
-unsigned int dsp::Connection::getBufferSize() {
+unsigned int dsp::Connection::getBufferSize() const {
     return static_cast<unsigned int>(buffer.size());
 }
 
@@ -15,7 +15,7 @@ void dsp::Connection::setBufferSize(unsigned int bufferSize) {
     unlock();
 }
 
-dsp::Type dsp::Connection::getType() {
+dsp::Type dsp::Connection::getType() const {
     return type;
 }
 
@@ -23,7 +23,7 @@ void dsp::Connection::setType(Type type) {
     this->type = type;
 }
 
-dsp::Space dsp::Connection::getSpace() {
+dsp::Space dsp::Connection::getSpace() const {
     return space;
 }
 
@@ -31,7 +31,7 @@ void dsp::Connection::setSpace(Space space) {
     this->space = space;
 }
 
-DSP_FLOAT dsp::Connection::getDefaultValue() {
+DSP_FLOAT dsp::Connection::getDefaultValue() const {
     return defaultValue;
 }
 
@@ -56,7 +56,7 @@ dsp::Input::~Input() {
     disconnectAll();
 }
 
-std::vector<std::shared_ptr<dsp::Output>> dsp::Input::getConnections() {
+std::vector<std::shared_ptr<dsp::Output>> dsp::Input::getConnections() const {
     return connections;
 }
 
@@ -132,7 +132,7 @@ dsp::Output::~Output() {
     disconnectAll();
 }
 
-std::vector<std::shared_ptr<dsp::Input>> dsp::Output::getConnections() {
+std::vector<std::shared_ptr<dsp::Input>> dsp::Output::getConnections() const {
     return connections;
 }
 

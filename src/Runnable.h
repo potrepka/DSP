@@ -10,13 +10,13 @@ class Runnable : public Lockable {
 public:
     Runnable();
 
-    DSP_FLOAT getOneOverSampleRate();
-    DSP_FLOAT getOneOverBufferSize();
+    DSP_FLOAT getOneOverSampleRate() const;
+    DSP_FLOAT getOneOverBufferSize() const;
 
-    unsigned int getSampleRate();
+    unsigned int getSampleRate() const;
     void setSampleRate(unsigned int sampleRate);
 
-    unsigned int getBufferSize();
+    unsigned int getBufferSize() const;
     void setBufferSize(unsigned int bufferSize);
 
 protected:

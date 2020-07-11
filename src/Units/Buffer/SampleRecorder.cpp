@@ -8,15 +8,15 @@ dsp::SampleRecorder::SampleRecorder() : Consumer(Type::BIPOLAR) {
     sample = std::make_shared<Buffer>(0, 0, Type::BIPOLAR);
 }
 
-std::shared_ptr<dsp::Buffer> dsp::SampleRecorder::getSample() {
+std::shared_ptr<dsp::Buffer> dsp::SampleRecorder::getSample() const {
     return sample;
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleRecorder::getResetTrigger() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleRecorder::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleRecorder::getGate() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleRecorder::getGate() const {
     return getInput(GATE);
 }
 

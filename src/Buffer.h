@@ -15,21 +15,21 @@ public:
            Space space = Space::TIME,
            DSP_FLOAT defaultValue = 0.0);
 
-    unsigned int getNumChannels();
+    unsigned int getNumChannels() const;
     void setNumChannels(unsigned int numChannels);
     void setNumChannelsNoLock(unsigned int numChannels);
 
-    unsigned int getBufferSize();
+    unsigned int getBufferSize() const;
     void setBufferSize(unsigned int bufferSize);
     void setBufferSizeNoLock(unsigned int bufferSize);
 
-    Type getType();
+    Type getType() const;
     void setType(Type type);
 
-    Space getSpace();
+    Space getSpace() const;
     void setSpace(Space space);
 
-    DSP_FLOAT getDefaultValue();
+    DSP_FLOAT getDefaultValue() const;
     void setDefaultValue(DSP_FLOAT defaultValue);
 
     std::vector<DSP_FLOAT> &getChannel(unsigned int channel);

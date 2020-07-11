@@ -80,20 +80,20 @@ public:
         MidiInput(unsigned int port);
         std::string getDeviceName() const;
         void setPort(unsigned int port);
-        std::shared_ptr<Input> getNoteOnTrigger(unsigned char channel, unsigned char note);
-        std::shared_ptr<Input> getNoteOffTrigger(unsigned char channel, unsigned char note);
-        std::shared_ptr<Input> getNotePressure(unsigned char channel, unsigned char note);
-        std::shared_ptr<Input> getControlChange(unsigned char channel, unsigned char control);
-        std::shared_ptr<Input> getProgramChange(unsigned char channel);
-        std::shared_ptr<Input> getChannelPressure(unsigned char channel);
-        std::shared_ptr<Input> getPitchBend(unsigned char channel);
-        std::shared_ptr<Input> getPlayTrigger();
-        std::shared_ptr<Input> getStopTrigger();
-        std::shared_ptr<Input> getResetTrigger();
-        std::shared_ptr<Input> getClockTrigger();
+        std::shared_ptr<Input> getNoteOnTrigger(unsigned char channel, unsigned char note) const;
+        std::shared_ptr<Input> getNoteOffTrigger(unsigned char channel, unsigned char note) const;
+        std::shared_ptr<Input> getNotePressure(unsigned char channel, unsigned char note) const;
+        std::shared_ptr<Input> getControlChange(unsigned char channel, unsigned char control) const;
+        std::shared_ptr<Input> getProgramChange(unsigned char channel) const;
+        std::shared_ptr<Input> getChannelPressure(unsigned char channel) const;
+        std::shared_ptr<Input> getPitchBend(unsigned char channel) const;
+        std::shared_ptr<Input> getPlayTrigger() const;
+        std::shared_ptr<Input> getStopTrigger() const;
+        std::shared_ptr<Input> getResetTrigger() const;
+        std::shared_ptr<Input> getClockTrigger() const;
 
-        unsigned int getNumCallbacks();
-        std::function<void(TimedMessage)> getCallback(unsigned int index);
+        unsigned int getNumCallbacks() const;
+        std::function<void(TimedMessage)> getCallback(unsigned int index) const;
         void pushCallback(std::function<void(TimedMessage)> callback);
         void removeCallback(unsigned int index);
 
@@ -134,17 +134,17 @@ public:
         MidiOutput(unsigned int port);
         std::string getDeviceName() const;
         void setPort(unsigned int port);
-        std::shared_ptr<Output> getNoteOnTrigger(unsigned char channel, unsigned char note);
-        std::shared_ptr<Output> getNoteOffTrigger(unsigned char channel, unsigned char note);
-        std::shared_ptr<Output> getNotePressure(unsigned char channel, unsigned char note);
-        std::shared_ptr<Output> getControlChange(unsigned char channel, unsigned char control);
-        std::shared_ptr<Output> getProgramChange(unsigned char channel);
-        std::shared_ptr<Output> getChannelPressure(unsigned char channel);
-        std::shared_ptr<Output> getPitchBend(unsigned char channel);
-        std::shared_ptr<Output> getPlayTrigger();
-        std::shared_ptr<Output> getStopTrigger();
-        std::shared_ptr<Output> getResetTrigger();
-        std::shared_ptr<Output> getClockTrigger();
+        std::shared_ptr<Output> getNoteOnTrigger(unsigned char channel, unsigned char note) const;
+        std::shared_ptr<Output> getNoteOffTrigger(unsigned char channel, unsigned char note) const;
+        std::shared_ptr<Output> getNotePressure(unsigned char channel, unsigned char note) const;
+        std::shared_ptr<Output> getControlChange(unsigned char channel, unsigned char control) const;
+        std::shared_ptr<Output> getProgramChange(unsigned char channel) const;
+        std::shared_ptr<Output> getChannelPressure(unsigned char channel) const;
+        std::shared_ptr<Output> getPitchBend(unsigned char channel) const;
+        std::shared_ptr<Output> getPlayTrigger() const;
+        std::shared_ptr<Output> getStopTrigger() const;
+        std::shared_ptr<Output> getResetTrigger() const;
+        std::shared_ptr<Output> getClockTrigger() const;
 
         void run();
 

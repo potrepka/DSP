@@ -5,11 +5,11 @@ dsp::Audio::Audio() {
     pushInput(Type::BIPOLAR);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::Audio::getAudioInput() {
+std::shared_ptr<dsp::Unit::OutputParameter> dsp::Audio::getAudioInput() const {
     return getOutput(0);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Audio::getAudioOutput() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Audio::getAudioOutput() const {
     return getInput(0);
 }
 

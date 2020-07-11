@@ -12,19 +12,19 @@ dsp::AHR::AHR() : Generator(Type::UNIPOLAR), index(0) {
     pushInput(Type::SECONDS);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getResetTrigger() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getAttack() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getAttack() const {
     return getInput(ATTACK);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getHold() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getHold() const {
     return getInput(HOLD);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getRelease() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getRelease() const {
     return getInput(RELEASE);
 }
 

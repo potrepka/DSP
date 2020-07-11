@@ -17,16 +17,16 @@ class Connection : public Lockable {
 public:
     Connection(unsigned int bufferSize, Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
 
-    unsigned int getBufferSize();
+    unsigned int getBufferSize() const;
     void setBufferSize(unsigned int bufferSize);
 
-    Type getType();
+    Type getType() const;
     void setType(Type type);
 
-    Space getSpace();
+    Space getSpace() const;
     void setSpace(Space space);
 
-    DSP_FLOAT getDefaultValue();
+    DSP_FLOAT getDefaultValue() const;
     void setDefaultValue(DSP_FLOAT defaultValue);
 
     std::vector<DSP_FLOAT> &getBuffer();
@@ -45,7 +45,7 @@ class Input : public Connection, public std::enable_shared_from_this<Input> {
 public:
     Input(unsigned int bufferSize, Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
     ~Input();
-    std::vector<std::shared_ptr<Output>> getConnections();
+    std::vector<std::shared_ptr<Output>> getConnections() const;
     void connect(std::shared_ptr<Output> output);
     void disconnect(std::shared_ptr<Output> output);
     void disconnectAll();
@@ -63,7 +63,7 @@ class Output : public Connection, public std::enable_shared_from_this<Output> {
 public:
     Output(unsigned int bufferSize, Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
     ~Output();
-    std::vector<std::shared_ptr<Input>> getConnections();
+    std::vector<std::shared_ptr<Input>> getConnections() const;
     void connect(std::shared_ptr<Input> input);
     void disconnect(std::shared_ptr<Input> input);
     void disconnectAll();

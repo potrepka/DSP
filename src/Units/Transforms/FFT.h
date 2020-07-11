@@ -9,8 +9,8 @@ class FFT : public Consumer {
 
 public:
     FFT();
-    std::shared_ptr<OutputParameter> getReal();
-    std::shared_ptr<OutputParameter> getImaginary();
+    std::shared_ptr<OutputParameter> getReal() const;
+    std::shared_ptr<OutputParameter> getImaginary() const;
 
 protected:
     void setBufferSizeNoLock(unsigned int bufferSize) override;

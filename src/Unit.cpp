@@ -7,7 +7,7 @@ dsp::Unit::ConnectionParameter<T>::ConnectionParameter(
     setNumChannels(numChannels);
 }
 
-template <class T> unsigned int dsp::Unit::ConnectionParameter<T>::getNumChannels() {
+template <class T> unsigned int dsp::Unit::ConnectionParameter<T>::getNumChannels() const {
     return static_cast<unsigned int>(channels.size());
 }
 
@@ -24,7 +24,7 @@ template <class T> void dsp::Unit::ConnectionParameter<T>::setNumChannels(unsign
     unlock();
 }
 
-template <class T> unsigned int dsp::Unit::ConnectionParameter<T>::getBufferSize() {
+template <class T> unsigned int dsp::Unit::ConnectionParameter<T>::getBufferSize() const {
     return bufferSize;
 }
 
@@ -37,7 +37,7 @@ template <class T> void dsp::Unit::ConnectionParameter<T>::setBufferSize(unsigne
     unlock();
 }
 
-template <class T> dsp::Type dsp::Unit::ConnectionParameter<T>::getType() {
+template <class T> dsp::Type dsp::Unit::ConnectionParameter<T>::getType() const {
     return type;
 }
 
@@ -50,7 +50,7 @@ template <class T> void dsp::Unit::ConnectionParameter<T>::setType(Type type) {
     unlock();
 }
 
-template <class T> dsp::Space dsp::Unit::ConnectionParameter<T>::getSpace() {
+template <class T> dsp::Space dsp::Unit::ConnectionParameter<T>::getSpace() const {
     return space;
 }
 
@@ -63,7 +63,7 @@ template <class T> void dsp::Unit::ConnectionParameter<T>::setSpace(Space space)
     unlock();
 }
 
-template <class T> DSP_FLOAT dsp::Unit::ConnectionParameter<T>::getDefaultValue() {
+template <class T> DSP_FLOAT dsp::Unit::ConnectionParameter<T>::getDefaultValue() const {
     return defaultValue;
 }
 
@@ -76,11 +76,11 @@ template <class T> void dsp::Unit::ConnectionParameter<T>::setDefaultValue(DSP_F
     unlock();
 }
 
-template <class T> std::vector<std::shared_ptr<T>> dsp::Unit::ConnectionParameter<T>::getChannels() {
+template <class T> std::vector<std::shared_ptr<T>> dsp::Unit::ConnectionParameter<T>::getChannels() const {
     return channels;
 }
 
-template <class T> std::shared_ptr<T> dsp::Unit::ConnectionParameter<T>::getChannel(unsigned int index) {
+template <class T> std::shared_ptr<T> dsp::Unit::ConnectionParameter<T>::getChannel(unsigned int index) const {
     return channels[index];
 }
 
@@ -98,7 +98,7 @@ dsp::Unit::OutputParameter::OutputParameter(
 
 dsp::Unit::Unit() : numChannels(0) {}
 
-unsigned int dsp::Unit::getNumChannels() {
+unsigned int dsp::Unit::getNumChannels() const {
     return numChannels;
 }
 
@@ -108,19 +108,19 @@ void dsp::Unit::setNumChannels(unsigned int numChannels) {
     unlock();
 }
 
-unsigned int dsp::Unit::getNumInputs() {
+unsigned int dsp::Unit::getNumInputs() const {
     return static_cast<unsigned int>(inputs.size());
 }
 
-unsigned int dsp::Unit::getNumOutputs() {
+unsigned int dsp::Unit::getNumOutputs() const {
     return static_cast<unsigned int>(outputs.size());
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Unit::getInput(unsigned int index) {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Unit::getInput(unsigned int index) const {
     return inputs[index];
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::Unit::getOutput(unsigned int index) {
+std::shared_ptr<dsp::Unit::OutputParameter> dsp::Unit::getOutput(unsigned int index) const {
     return outputs[index];
 }
 
@@ -224,11 +224,11 @@ void dsp::Unit::removeOutput(unsigned int index) {
     unlock();
 }
 
-unsigned int dsp::Unit::getNumUnits() {
+unsigned int dsp::Unit::getNumUnits() const {
     return static_cast<unsigned int>(units.size());
 }
 
-std::shared_ptr<dsp::Unit> dsp::Unit::getUnit(unsigned int index) {
+std::shared_ptr<dsp::Unit> dsp::Unit::getUnit(unsigned int index) const {
     return units[index];
 }
 

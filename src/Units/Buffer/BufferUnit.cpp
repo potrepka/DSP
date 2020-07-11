@@ -4,7 +4,7 @@ dsp::BufferUnit::BufferUnit(unsigned int bufferSize) : Consumer(Type::BIPOLAR), 
     buffer = std::make_shared<Buffer>(0, bufferSize, Type::BIPOLAR);
 }
 
-std::shared_ptr<dsp::Buffer> dsp::BufferUnit::getBuffer() {
+std::shared_ptr<dsp::Buffer> dsp::BufferUnit::getBuffer() const {
     return buffer;
 }
 

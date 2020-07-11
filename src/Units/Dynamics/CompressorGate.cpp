@@ -30,7 +30,7 @@ dsp::CompressorGate::CompressorGate() : Processor(Type::BIPOLAR, Type::BIPOLAR) 
 
     setInputSignal(gainUnit->getInputSignal());
     pushInput(channelMix->getInputSignal());
-    pushInput(channelMix->getMix());
+    pushInput(channelMix->getMixAmount());
     pushInput(gainComputer->getThreshold());
     pushInput(gainComputer->getCompressionRatio());
     pushInput(gainComputer->getGateRatio());
@@ -48,35 +48,35 @@ dsp::CompressorGate::~CompressorGate() {
     disconnect();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getLink() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getLink() const {
     return getInput(LINK);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getThreshold() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getThreshold() const {
     return getInput(THRESHOLD);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getCompressionRatio() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getCompressionRatio() const {
     return getInput(COMPRESSION_RATIO);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getGateRatio() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getGateRatio() const {
     return getInput(GATE_RATIO);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getKnee() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getKnee() const {
     return getInput(KNEE);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getAttack() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getAttack() const {
     return getInput(ATTACK);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getRelease() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getRelease() const {
     return getInput(RELEASE);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::CompressorGate::getGainDelta() {
+std::shared_ptr<dsp::Unit::OutputParameter> dsp::CompressorGate::getGainDelta() const {
     return getOutput(GAIN_DELTA);
 }
 

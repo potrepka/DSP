@@ -6,7 +6,7 @@ dsp::SampleAndHold::SampleAndHold(Type type) : Processor(type, type) {
     pushInput(Type::BINARY);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleAndHold::getTrigger() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleAndHold::getTrigger() const {
     return getInput(TRIGGER);
 }
 

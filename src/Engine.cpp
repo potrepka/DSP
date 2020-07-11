@@ -219,43 +219,43 @@ std::string dsp::Engine::getDeviceName(unsigned int device) {
     return deviceName;
 }
 
-std::string dsp::Engine::getInputDeviceName() {
+std::string dsp::Engine::getInputDeviceName() const {
     return inputDeviceName;
 }
 
-std::string dsp::Engine::getOutputDeviceName() {
+std::string dsp::Engine::getOutputDeviceName() const {
     return outputDeviceName;
 }
 
-unsigned int dsp::Engine::getNumInputChannels() {
+unsigned int dsp::Engine::getNumInputChannels() const {
     return numInputChannels;
 }
 
-unsigned int dsp::Engine::getNumOutputChannels() {
+unsigned int dsp::Engine::getNumOutputChannels() const {
     return numOutputChannels;
 }
 
-unsigned int dsp::Engine::getSampleRate() {
+unsigned int dsp::Engine::getSampleRate() const {
     return sampleRate;
 }
 
-unsigned int dsp::Engine::getBufferSize() {
+unsigned int dsp::Engine::getBufferSize() const {
     return bufferSize;
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::Engine::getAudioInput() {
+std::shared_ptr<dsp::Unit::OutputParameter> dsp::Engine::getAudioInput() const {
     return audio->getAudioInput();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Engine::getAudioOutput() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Engine::getAudioOutput() const {
     return audio->getAudioOutput();
 }
 
-unsigned int dsp::Engine::getNumUnits() {
+unsigned int dsp::Engine::getNumUnits() const {
     return audio->getNumUnits();
 }
 
-std::shared_ptr<dsp::Unit> dsp::Engine::getUnit(unsigned int index) {
+std::shared_ptr<dsp::Unit> dsp::Engine::getUnit(unsigned int index) const {
     return audio->getUnit(index);
 }
 
@@ -279,19 +279,19 @@ void dsp::Engine::sortUnits() {
     audio->sortUnits();
 }
 
-unsigned int dsp::Engine::getNumMidiInputs() {
+unsigned int dsp::Engine::getNumMidiInputs() const {
     return midi->getNumMidiInputs();
 }
 
-unsigned int dsp::Engine::getNumMidiOutputs() {
+unsigned int dsp::Engine::getNumMidiOutputs() const {
     return midi->getNumMidiOutputs();
 }
 
-std::shared_ptr<dsp::Midi::MidiInput> dsp::Engine::getMidiInput(unsigned int index) {
+std::shared_ptr<dsp::Midi::MidiInput> dsp::Engine::getMidiInput(unsigned int index) const {
     return midi->getMidiInput(index);
 }
 
-std::shared_ptr<dsp::Midi::MidiOutput> dsp::Engine::getMidiOutput(unsigned int index) {
+std::shared_ptr<dsp::Midi::MidiOutput> dsp::Engine::getMidiOutput(unsigned int index) const {
     return midi->getMidiOutput(index);
 }
 

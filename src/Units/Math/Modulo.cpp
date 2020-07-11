@@ -7,7 +7,7 @@ dsp::Modulo::Modulo(Type type, Space space) : Processor(type, type, space) {
     assert(type != Type::INTEGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Modulo::getDivisor() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Modulo::getDivisor() const {
     return getInput(DIVISOR);
 }
 

@@ -8,11 +8,11 @@ dsp::FFT::FFT() : Consumer(Type::BIPOLAR) {
     pushOutput(Type::BIPOLAR, Space::FREQUENCY_IMAGINARY);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::FFT::getReal() {
+std::shared_ptr<dsp::Unit::OutputParameter> dsp::FFT::getReal() const {
     return getOutput(REAL);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::FFT::getImaginary() {
+std::shared_ptr<dsp::Unit::OutputParameter> dsp::FFT::getImaginary() const {
     return getOutput(IMAGINARY);
 }
 

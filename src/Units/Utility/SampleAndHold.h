@@ -8,7 +8,7 @@ class SampleAndHold : public Processor {
 
 public:
     SampleAndHold(Type type);
-    std::shared_ptr<InputParameter> getTrigger();
+    std::shared_ptr<InputParameter> getTrigger() const;
 
 protected:
     void setNumChannelsNoLock(unsigned int numChannels) override;

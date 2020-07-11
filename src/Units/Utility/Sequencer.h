@@ -9,10 +9,10 @@ class Sequencer : public Generator {
 
 public:
     Sequencer(Type type);
-    std::shared_ptr<Buffer> getSequence();
+    std::shared_ptr<Buffer> getSequence() const;
     void setSequence(std::shared_ptr<Buffer> sequence);
-    std::shared_ptr<InputParameter> getResetTrigger();
-    std::shared_ptr<InputParameter> getTrigger();
+    std::shared_ptr<InputParameter> getResetTrigger() const;
+    std::shared_ptr<InputParameter> getTrigger() const;
 
 protected:
     void setNumChannelsNoLock(unsigned int numChannels) override;

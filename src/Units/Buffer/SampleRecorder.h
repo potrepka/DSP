@@ -9,9 +9,9 @@ class SampleRecorder : public Consumer {
 
 public:
     SampleRecorder();
-    std::shared_ptr<Buffer> getSample();
-    std::shared_ptr<InputParameter> getResetTrigger();
-    std::shared_ptr<InputParameter> getGate();
+    std::shared_ptr<Buffer> getSample() const;
+    std::shared_ptr<InputParameter> getResetTrigger() const;
+    std::shared_ptr<InputParameter> getGate() const;
 
 protected:
     void setNumChannelsNoLock(unsigned int numChannels) override;

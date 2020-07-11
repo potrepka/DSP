@@ -9,8 +9,8 @@ class IFFT : public Generator {
 
 public:
     IFFT();
-    std::shared_ptr<InputParameter> getReal();
-    std::shared_ptr<InputParameter> getImaginary();
+    std::shared_ptr<InputParameter> getReal() const;
+    std::shared_ptr<InputParameter> getImaginary() const;
 
 protected:
     void setBufferSizeNoLock(unsigned int bufferSize) override;

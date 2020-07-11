@@ -8,10 +8,10 @@ class AHR : public Generator {
 
 public:
     AHR();
-    std::shared_ptr<InputParameter> getResetTrigger();
-    std::shared_ptr<InputParameter> getAttack();
-    std::shared_ptr<InputParameter> getHold();
-    std::shared_ptr<InputParameter> getRelease();
+    std::shared_ptr<InputParameter> getResetTrigger() const;
+    std::shared_ptr<InputParameter> getAttack() const;
+    std::shared_ptr<InputParameter> getHold() const;
+    std::shared_ptr<InputParameter> getRelease() const;
 
 protected:
     void setNumChannelsNoLock(unsigned int numChannels) override;

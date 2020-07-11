@@ -22,23 +22,23 @@ public:
                             Space space = Space::TIME,
                             DSP_FLOAT defaultValue = 0.0);
 
-        unsigned int getNumChannels();
+        unsigned int getNumChannels() const;
         void setNumChannels(unsigned int numChannels);
 
-        unsigned int getBufferSize();
+        unsigned int getBufferSize() const;
         void setBufferSize(unsigned int bufferSize);
 
-        Type getType();
+        Type getType() const;
         void setType(Type type);
 
-        Space getSpace();
+        Space getSpace() const;
         void setSpace(Space space);
 
-        DSP_FLOAT getDefaultValue();
+        DSP_FLOAT getDefaultValue() const;
         void setDefaultValue(DSP_FLOAT defaultValue);
 
-        std::vector<std::shared_ptr<T>> getChannels();
-        std::shared_ptr<T> getChannel(unsigned int index);
+        std::vector<std::shared_ptr<T>> getChannels() const;
+        std::shared_ptr<T> getChannel(unsigned int index) const;
 
     private:
         unsigned int bufferSize;
@@ -70,13 +70,13 @@ public:
 
     Unit();
 
-    unsigned int getNumChannels();
+    unsigned int getNumChannels() const;
     void setNumChannels(unsigned int numChannels);
 
-    unsigned int getNumInputs();
-    unsigned int getNumOutputs();
-    std::shared_ptr<InputParameter> getInput(unsigned int index);
-    std::shared_ptr<OutputParameter> getOutput(unsigned int index);
+    unsigned int getNumInputs() const;
+    unsigned int getNumOutputs() const;
+    std::shared_ptr<InputParameter> getInput(unsigned int index) const;
+    std::shared_ptr<OutputParameter> getOutput(unsigned int index) const;
     void setInput(unsigned int index, std::shared_ptr<InputParameter> input);
     void setOutput(unsigned int index, std::shared_ptr<OutputParameter> output);
     void pushInput(std::shared_ptr<InputParameter> input);
@@ -92,8 +92,8 @@ public:
     void removeOutput(std::shared_ptr<OutputParameter> output);
     void removeOutput(unsigned int index);
 
-    unsigned int getNumUnits();
-    std::shared_ptr<Unit> getUnit(unsigned int index);
+    unsigned int getNumUnits() const;
+    std::shared_ptr<Unit> getUnit(unsigned int index) const;
     void setUnit(unsigned int index, std::shared_ptr<Unit> unit);
     void pushUnit(std::shared_ptr<Unit> unit);
     void insertUnit(unsigned int index, std::shared_ptr<Unit> unit);

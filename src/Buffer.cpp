@@ -6,7 +6,7 @@ dsp::Buffer::Buffer(unsigned int numChannels, unsigned int bufferSize, Type type
     setBufferSize(bufferSize);
 }
 
-unsigned int dsp::Buffer::getNumChannels() {
+unsigned int dsp::Buffer::getNumChannels() const {
     return static_cast<unsigned int>(buffers.size());
 }
 
@@ -27,7 +27,7 @@ void dsp::Buffer::setNumChannelsNoLock(unsigned int numChannels) {
     }
 }
 
-unsigned int dsp::Buffer::getBufferSize() {
+unsigned int dsp::Buffer::getBufferSize() const {
     return bufferSize;
 }
 
@@ -44,7 +44,7 @@ void dsp::Buffer::setBufferSizeNoLock(unsigned int bufferSize) {
     }
 }
 
-dsp::Type dsp::Buffer::getType() {
+dsp::Type dsp::Buffer::getType() const {
     return type;
 }
 
@@ -52,7 +52,7 @@ void dsp::Buffer::setType(Type type) {
     this->type = type;
 }
 
-dsp::Space dsp::Buffer::getSpace() {
+dsp::Space dsp::Buffer::getSpace() const {
     return space;
 }
 
@@ -60,7 +60,7 @@ void dsp::Buffer::setSpace(Space space) {
     this->space = space;
 }
 
-DSP_FLOAT dsp::Buffer::getDefaultValue() {
+DSP_FLOAT dsp::Buffer::getDefaultValue() const {
     return defaultValue;
 }
 

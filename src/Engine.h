@@ -29,29 +29,29 @@ public:
     void start();
 
     std::string getDeviceName(unsigned int device);
-    std::string getInputDeviceName();
-    std::string getOutputDeviceName();
+    std::string getInputDeviceName() const;
+    std::string getOutputDeviceName() const;
 
-    unsigned int getNumInputChannels();
-    unsigned int getNumOutputChannels();
-    unsigned int getSampleRate();
-    unsigned int getBufferSize();
+    unsigned int getNumInputChannels() const;
+    unsigned int getNumOutputChannels() const;
+    unsigned int getSampleRate() const;
+    unsigned int getBufferSize() const;
 
-    std::shared_ptr<Unit::OutputParameter> getAudioInput();
-    std::shared_ptr<Unit::InputParameter> getAudioOutput();
+    std::shared_ptr<Unit::OutputParameter> getAudioInput() const;
+    std::shared_ptr<Unit::InputParameter> getAudioOutput() const;
 
-    unsigned int getNumUnits();
-    std::shared_ptr<Unit> getUnit(unsigned int index);
+    unsigned int getNumUnits() const;
+    std::shared_ptr<Unit> getUnit(unsigned int index) const;
     void pushUnit(std::shared_ptr<Unit> unit);
     void insertUnit(unsigned int index, std::shared_ptr<Unit> unit);
     void removeUnit(std::shared_ptr<Unit> unit);
     void removeUnit(unsigned int index);
     void sortUnits();
 
-    unsigned int getNumMidiInputs();
-    unsigned int getNumMidiOutputs();
-    std::shared_ptr<Midi::MidiInput> getMidiInput(unsigned int index);
-    std::shared_ptr<Midi::MidiOutput> getMidiOutput(unsigned int index);
+    unsigned int getNumMidiInputs() const;
+    unsigned int getNumMidiOutputs() const;
+    std::shared_ptr<Midi::MidiInput> getMidiInput(unsigned int index) const;
+    std::shared_ptr<Midi::MidiOutput> getMidiOutput(unsigned int index) const;
     void pushMidiInput(unsigned int port);
     void pushMidiOutput(unsigned int port);
     void removeMidiInput(unsigned int index);

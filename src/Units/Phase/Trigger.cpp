@@ -10,15 +10,15 @@ dsp::Trigger::Trigger() : Generator(Type::BINARY) {
     pushInput(Type::SECONDS);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getResetTrigger() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getInterval() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getInterval() const {
     return getInput(INTERVAL);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getDelay() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getDelay() const {
     return getInput(DELAY);
 }
 

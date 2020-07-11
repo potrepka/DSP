@@ -2,15 +2,15 @@
 
 dsp::Runnable::Runnable() : oneOverSampleRate(0.0), oneOverBufferSize(0.0), sampleRate(0), bufferSize(0) {}
 
-DSP_FLOAT dsp::Runnable::getOneOverSampleRate() {
+DSP_FLOAT dsp::Runnable::getOneOverSampleRate() const {
     return oneOverSampleRate;
 }
 
-DSP_FLOAT dsp::Runnable::getOneOverBufferSize() {
+DSP_FLOAT dsp::Runnable::getOneOverBufferSize() const {
     return oneOverBufferSize;
 }
 
-unsigned int dsp::Runnable::getSampleRate() {
+unsigned int dsp::Runnable::getSampleRate() const {
     return sampleRate;
 }
 
@@ -20,7 +20,7 @@ void dsp::Runnable::setSampleRate(unsigned int sampleRate) {
     unlock();
 }
 
-unsigned int dsp::Runnable::getBufferSize() {
+unsigned int dsp::Runnable::getBufferSize() const {
     return bufferSize;
 }
 

@@ -8,8 +8,8 @@ class Phasor : public Generator {
 
 public:
     Phasor();
-    std::shared_ptr<InputParameter> getResetTrigger();
-    std::shared_ptr<InputParameter> getFrequency();
+    std::shared_ptr<InputParameter> getResetTrigger() const;
+    std::shared_ptr<InputParameter> getFrequency() const;
 
 protected:
     void setNumChannelsNoLock(unsigned int numChannels) override;

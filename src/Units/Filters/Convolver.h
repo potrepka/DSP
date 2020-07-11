@@ -10,10 +10,10 @@ class Convolver : public Processor {
 
 public:
     Convolver();
-    std::shared_ptr<Buffer> getBuffer(unsigned int channel);
+    std::shared_ptr<Buffer> getBuffer(unsigned int channel) const;
     void setBuffer(unsigned int channel, std::shared_ptr<Buffer> buffer);
-    unsigned int getHeadSize();
-    unsigned int getTailSize();
+    unsigned int getHeadSize() const;
+    unsigned int getTailSize() const;
     void setTailSize(unsigned int size);
     void setHeadSize(unsigned int size);
     void initConvolvers();

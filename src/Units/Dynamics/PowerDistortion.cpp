@@ -6,7 +6,7 @@ dsp::PowerDistortion::PowerDistortion(Space space) : Processor(Type::BIPOLAR, Ty
     pushInput(Type::RATIO, space);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::PowerDistortion::getDrive() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::PowerDistortion::getDrive() const {
     return getInput(DRIVE);
 }
 

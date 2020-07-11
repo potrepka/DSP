@@ -7,7 +7,7 @@ dsp::VariableDelay::VariableDelay() : Processor(Type::BIPOLAR, Type::BIPOLAR), m
     buffer = std::make_shared<Buffer>(0, 0, Type::BIPOLAR);
 }
 
-unsigned int dsp::VariableDelay::getMaxDelayTime() {
+unsigned int dsp::VariableDelay::getMaxDelayTime() const {
     return maxDelayTime;
 }
 
@@ -20,7 +20,7 @@ void dsp::VariableDelay::setMaxDelayTime(DSP_FLOAT seconds) {
     unlock();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::VariableDelay::getDelayTime() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::VariableDelay::getDelayTime() const {
     return getInput(DELAY_TIME);
 }
 

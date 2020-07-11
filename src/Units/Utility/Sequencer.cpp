@@ -8,7 +8,7 @@ dsp::Sequencer::Sequencer(Type type) : Generator(type) {
     pushInput(Type::BINARY);
 }
 
-std::shared_ptr<dsp::Buffer> dsp::Sequencer::getSequence() {
+std::shared_ptr<dsp::Buffer> dsp::Sequencer::getSequence() const {
     return sequence;
 }
 
@@ -18,11 +18,11 @@ void dsp::Sequencer::setSequence(std::shared_ptr<dsp::Buffer> sequence) {
     unlock();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Sequencer::getResetTrigger() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Sequencer::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Sequencer::getTrigger() {
+std::shared_ptr<dsp::Unit::InputParameter> dsp::Sequencer::getTrigger() const {
     return getInput(TRIGGER);
 }
 

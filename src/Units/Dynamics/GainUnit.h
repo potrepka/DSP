@@ -8,7 +8,7 @@ class GainUnit : public Processor {
 
 public:
     GainUnit(Space space = Space::TIME);
-    std::shared_ptr<InputParameter> getGain();
+    std::shared_ptr<InputParameter> getGain() const;
 
 protected:
     void process() override;
