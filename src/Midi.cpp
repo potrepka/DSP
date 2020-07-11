@@ -91,7 +91,6 @@ dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSam
 
     notePressureState.resize(MIDI_CHANNELS);
     controlChangeState.resize(MIDI_CHANNELS);
-    programChangeState.resize(MIDI_CHANNELS);
     channelPressureState.resize(MIDI_CHANNELS);
     pitchBendState.resize(MIDI_CHANNELS);
 
@@ -99,7 +98,6 @@ dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSam
     noteOff.resize(MIDI_CHANNELS);
     notePressure.resize(MIDI_CHANNELS);
     controlChange.resize(MIDI_CHANNELS);
-    programChange.resize(MIDI_CHANNELS);
     channelPressure.resize(MIDI_CHANNELS);
     pitchBend.resize(MIDI_CHANNELS);
 
@@ -111,7 +109,6 @@ dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSam
     for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
         notePressureState[i].resize(MIDI_NOTES);
         controlChangeState[i].resize(MIDI_NOTES);
-        programChangeState[i] = 0.0;
         channelPressureState[i] = 0.0;
         pitchBendState[i] = 0.0;
 
@@ -119,7 +116,6 @@ dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSam
         noteOff[i].resize(MIDI_NOTES);
         notePressure[i].resize(MIDI_NOTES);
         controlChange[i].resize(MIDI_NOTES);
-        programChange[i] = std::make_shared<Input>(getBufferSize(), Type::INTEGER);
         channelPressure[i] = std::make_shared<Input>(getBufferSize(), Type::UNIPOLAR);
         pitchBend[i] = std::make_shared<Input>(getBufferSize(), Type::BIPOLAR);
 
@@ -166,10 +162,6 @@ std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNotePressure(unsigned char 
 
 std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getControlChange(unsigned char channel, unsigned char control) const {
     return controlChange[channel][control];
-}
-
-std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getProgramChange(unsigned char channel) const {
-    return programChange[channel];
 }
 
 std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getChannelPressure(unsigned char channel) const {
@@ -237,7 +229,7 @@ void dsp::Midi::MidiInput::run() {
                 case MIDI_CONTROL_CHANGE:
                     controlChangeState[channel][message.getByte(1)] = message.getByteAsUnipolar(2);
                     break;
-                case MIDI_PROGRAM_CHANGE: programChangeState[channel] = message.getByte(1); break;
+                case MIDI_PROGRAM_CHANGE: break;
                 case MIDI_AFTERTOUCH: channelPressureState[channel] = message.getByteAsUnipolar(1); break;
                 case MIDI_PITCH_BEND: pitchBendState[channel] = message.getShortAsBipolar(1, 2); break;
 
@@ -268,7 +260,6 @@ void dsp::Midi::MidiInput::run() {
                 notePressure[i][n]->getBuffer()[k] = notePressureState[i][n];
                 controlChange[i][n]->getBuffer()[k] = controlChangeState[i][n];
             }
-            programChange[i]->getBuffer()[k] = programChangeState[i];
             channelPressure[i]->getBuffer()[k] = channelPressureState[i];
             pitchBend[i]->getBuffer()[k] = pitchBendState[i];
         }
@@ -301,7 +292,6 @@ dsp::Midi::MidiOutput::MidiOutput(unsigned int port) {
 
     notePressureState.resize(MIDI_CHANNELS);
     controlChangeState.resize(MIDI_CHANNELS);
-    programChangeState.resize(MIDI_CHANNELS);
     channelPressureState.resize(MIDI_CHANNELS);
     pitchBendState.resize(MIDI_CHANNELS);
 
@@ -309,7 +299,6 @@ dsp::Midi::MidiOutput::MidiOutput(unsigned int port) {
     noteOff.resize(MIDI_CHANNELS);
     notePressure.resize(MIDI_CHANNELS);
     controlChange.resize(MIDI_CHANNELS);
-    programChange.resize(MIDI_CHANNELS);
     channelPressure.resize(MIDI_CHANNELS);
     pitchBend.resize(MIDI_CHANNELS);
 
@@ -321,7 +310,6 @@ dsp::Midi::MidiOutput::MidiOutput(unsigned int port) {
     for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
         notePressureState[i].resize(MIDI_NOTES);
         controlChangeState[i].resize(MIDI_NOTES);
-        programChangeState[i] = 0;
         channelPressureState[i] = 0;
         pitchBendState[i] = 0;
 
@@ -329,7 +317,6 @@ dsp::Midi::MidiOutput::MidiOutput(unsigned int port) {
         noteOff[i].resize(MIDI_NOTES);
         notePressure[i].resize(MIDI_NOTES);
         controlChange[i].resize(MIDI_NOTES);
-        programChange[i] = std::make_shared<Output>(getBufferSize(), Type::INTEGER);
         channelPressure[i] = std::make_shared<Output>(getBufferSize(), Type::UNIPOLAR);
         pitchBend[i] = std::make_shared<Output>(getBufferSize(), Type::BIPOLAR);
 
@@ -377,10 +364,6 @@ std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNotePressure(unsigned cha
 std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getControlChange(unsigned char channel,
                                                                      unsigned char control) const {
     return controlChange[channel][control];
-}
-
-std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getProgramChange(unsigned char channel) const {
-    return programChange[channel];
 }
 
 std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getChannelPressure(unsigned char channel) const {
@@ -443,12 +426,6 @@ void dsp::Midi::MidiOutput::run() {
                     message3.setByte(1, n);
                     sendMessageWithDelay(nanoseconds, message3.getBytes());
                 }
-            }
-            message2.setByte(1, programChange[i]->getBuffer()[k]);
-            if (programChangeState[i] != message2.getByte(1)) {
-                programChangeState[i] = message2.getByte(1);
-                message2.setByte(0, MIDI_PROGRAM_CHANGE + i);
-                sendMessageWithDelay(nanoseconds, message2.getBytes());
             }
             message2.setByteUsingUnipolar(1, channelPressure[i]->getBuffer()[k]);
             if (channelPressureState[i] != message2.getByte(1)) {

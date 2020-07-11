@@ -84,7 +84,6 @@ public:
         std::shared_ptr<Input> getNoteOffTrigger(unsigned char channel, unsigned char note) const;
         std::shared_ptr<Input> getNotePressure(unsigned char channel, unsigned char note) const;
         std::shared_ptr<Input> getControlChange(unsigned char channel, unsigned char control) const;
-        std::shared_ptr<Input> getProgramChange(unsigned char channel) const;
         std::shared_ptr<Input> getChannelPressure(unsigned char channel) const;
         std::shared_ptr<Input> getPitchBend(unsigned char channel) const;
         std::shared_ptr<Input> getPlayTrigger() const;
@@ -112,14 +111,12 @@ public:
         std::vector<std::shared_ptr<std::function<void(TimedMessage)>>> callbacks;
         std::vector<std::vector<DSP_FLOAT>> notePressureState;
         std::vector<std::vector<DSP_FLOAT>> controlChangeState;
-        std::vector<DSP_FLOAT> programChangeState;
         std::vector<DSP_FLOAT> channelPressureState;
         std::vector<DSP_FLOAT> pitchBendState;
         std::vector<std::vector<std::shared_ptr<Input>>> noteOn;
         std::vector<std::vector<std::shared_ptr<Input>>> noteOff;
         std::vector<std::vector<std::shared_ptr<Input>>> notePressure;
         std::vector<std::vector<std::shared_ptr<Input>>> controlChange;
-        std::vector<std::shared_ptr<Input>> programChange;
         std::vector<std::shared_ptr<Input>> channelPressure;
         std::vector<std::shared_ptr<Input>> pitchBend;
         std::shared_ptr<Input> play;
@@ -138,7 +135,6 @@ public:
         std::shared_ptr<Output> getNoteOffTrigger(unsigned char channel, unsigned char note) const;
         std::shared_ptr<Output> getNotePressure(unsigned char channel, unsigned char note) const;
         std::shared_ptr<Output> getControlChange(unsigned char channel, unsigned char control) const;
-        std::shared_ptr<Output> getProgramChange(unsigned char channel) const;
         std::shared_ptr<Output> getChannelPressure(unsigned char channel) const;
         std::shared_ptr<Output> getPitchBend(unsigned char channel) const;
         std::shared_ptr<Output> getPlayTrigger() const;
@@ -156,14 +152,12 @@ public:
         std::string deviceName;
         std::vector<std::vector<unsigned char>> notePressureState;
         std::vector<std::vector<unsigned char>> controlChangeState;
-        std::vector<unsigned char> programChangeState;
         std::vector<unsigned char> channelPressureState;
         std::vector<unsigned short> pitchBendState;
         std::vector<std::vector<std::shared_ptr<Output>>> noteOn;
         std::vector<std::vector<std::shared_ptr<Output>>> noteOff;
         std::vector<std::vector<std::shared_ptr<Output>>> notePressure;
         std::vector<std::vector<std::shared_ptr<Output>>> controlChange;
-        std::vector<std::shared_ptr<Output>> programChange;
         std::vector<std::shared_ptr<Output>> channelPressure;
         std::vector<std::shared_ptr<Output>> pitchBend;
         std::shared_ptr<Output> play;
