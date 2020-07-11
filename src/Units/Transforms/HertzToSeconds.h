@@ -7,7 +7,7 @@ namespace dsp {
 class HertzToSeconds : public Processor {
 
 public:
-    HertzToSeconds();
+    HertzToSeconds(Space space = Space::TIME);
 
 protected:
     void process() override;

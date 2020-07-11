@@ -1,6 +1,6 @@
 #include "BufferSize.h"
 
-dsp::BufferSize::BufferSize() : Generator(Type::RATIO) {}
+dsp::BufferSize::BufferSize(Space space) : Generator(Type::RATIO, space) {}
 
 void dsp::BufferSize::setBufferSizeNoLock(unsigned int bufferSize) {
     Unit::setBufferSizeNoLock(bufferSize);

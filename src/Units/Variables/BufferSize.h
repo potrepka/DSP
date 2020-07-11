@@ -7,7 +7,7 @@ namespace dsp {
 class BufferSize : public Generator {
 
 public:
-    BufferSize();
+    BufferSize(Space space = Space::TIME);
 
 protected:
     void setBufferSizeNoLock(unsigned int bufferSize) override;

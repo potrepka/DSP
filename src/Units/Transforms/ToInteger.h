@@ -7,7 +7,7 @@ namespace dsp {
 class ToInteger : public Processor {
 
 public:
-    ToInteger(Type type);
+    ToInteger(Type type, Space space = Space::TIME);
 
 protected:
     void process() override;

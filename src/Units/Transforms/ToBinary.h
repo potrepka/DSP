@@ -7,7 +7,7 @@ namespace dsp {
 class ToBinary : public Processor {
 
 public:
-    ToBinary(Type type);
+    ToBinary(Type type, Space space = Space::TIME);
 
 protected:
     void process() override;

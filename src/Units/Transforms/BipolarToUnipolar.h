@@ -7,7 +7,7 @@ namespace dsp {
 class BipolarToUnipolar : public Processor {
 
 public:
-    BipolarToUnipolar();
+    BipolarToUnipolar(Space space = Space::TIME);
 
 protected:
     void process() override;

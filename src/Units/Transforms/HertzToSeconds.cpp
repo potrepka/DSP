@@ -1,6 +1,6 @@
 #include "HertzToSeconds.h"
 
-dsp::HertzToSeconds::HertzToSeconds() : Processor(Type::HERTZ, Type::SECONDS) {}
+dsp::HertzToSeconds::HertzToSeconds(Space space) : Processor(Type::HERTZ, Type::SECONDS, space) {}
 
 void dsp::HertzToSeconds::process() {
     Unit::process();
