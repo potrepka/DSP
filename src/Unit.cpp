@@ -439,6 +439,14 @@ void dsp::operator>>(DSP_FLOAT value, std::shared_ptr<dsp::Unit::InputParameter>
     input->unlock();
 }
 
+void dsp::operator>>(DSP_FLOAT value, std::shared_ptr<dsp::Unit::OutputParameter> output) {
+    output->lock();
+    for (unsigned int i = 0; i < output->getNumChannels(); i++) {
+        value >> output->getChannel(i);
+    }
+    output->unlock();
+}
+
 void dsp::operator>>(std::vector<DSP_FLOAT> values, std::shared_ptr<Unit::InputParameter> input) {
     input->lock();
     if (values.size() > 0) {
@@ -447,6 +455,16 @@ void dsp::operator>>(std::vector<DSP_FLOAT> values, std::shared_ptr<Unit::InputP
         }
     }
     input->unlock();
+}
+
+void dsp::operator>>(std::vector<DSP_FLOAT> values, std::shared_ptr<Unit::OutputParameter> output) {
+    output->lock();
+    if (values.size() > 0) {
+        for (unsigned int i = 0; i < output->getNumChannels(); i++) {
+            values[i % values.size()] >> output->getChannel(i);
+        }
+    }
+    output->unlock();
 }
 
 void dsp::operator>>(std::shared_ptr<dsp::Unit::OutputParameter> output,

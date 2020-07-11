@@ -189,6 +189,10 @@ void dsp::operator>>(DSP_FLOAT value, std::shared_ptr<Input> input) {
     input->setDefaultValue(value);
 }
 
+void dsp::operator>>(DSP_FLOAT value, std::shared_ptr<Output> output) {
+    output->setDefaultValue(value);
+}
+
 void dsp::operator>>(std::shared_ptr<Output> output, std::shared_ptr<Input> input) {
     input->connect(output);
 }
