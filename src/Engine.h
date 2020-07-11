@@ -27,7 +27,6 @@ public:
 
     void setup(unsigned int inputDevice, unsigned int outputDevice, unsigned int sampleRate, unsigned int bufferSize);
     void start();
-    void stop();
 
     std::string getDeviceName(unsigned int device);
     std::string getInputDeviceName();
