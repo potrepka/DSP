@@ -36,6 +36,10 @@ public:
     void fillBuffer(DSP_FLOAT value);
     void fillBufferNoLock(DSP_FLOAT value);
 
+    void insert(unsigned int start, std::shared_ptr<Buffer> buffer);
+
+    std::shared_ptr<Buffer> clip(unsigned int start, unsigned int length);
+
 private:
     unsigned int bufferSize;
     Type type;

@@ -83,3 +83,33 @@ void dsp::Buffer::fillBufferNoLock(DSP_FLOAT value) {
         std::fill(buffers[i].begin(), buffers[i].end(), value);
     }
 }
+
+void dsp::Buffer::insert(unsigned int start, std::shared_ptr<Buffer> buffer) {
+    lock();
+    if (start > getBufferSize()) {
+        start = getBufferSize();
+    }
+    for (unsigned int i = 0; i < getNumChannels() && i < buffer->getNumChannels(); i++) {
+        buffers[i].insert(buffers[i].begin() + start, buffer->getChannel(i).begin(), buffer->getChannel(i).end());
+    }
+    unlock();
+}
+
+std::shared_ptr<dsp::Buffer> dsp::Buffer::clip(unsigned int start, unsigned int end) {
+    std::shared_ptr<dsp::Buffer> buffer;
+    lock();
+    if (end > getBufferSize()) {
+        end = getBufferSize();
+    }
+    if (start > end) {
+        start = end;
+    }
+    buffer = std::make_shared<Buffer>(getNumChannels(), end - start, type, space, defaultValue);
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
+        for (unsigned int k = start; k < end; k++) {
+            buffer->getChannel(i)[k] = buffers[i][k];
+        }
+    }
+    unlock();
+    return buffer;
+}
