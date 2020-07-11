@@ -40,7 +40,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getSpeed() {
 
 void dsp::SamplePlayer::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    readIndex.resize(numChannels, 0);
+    readIndex.resize(numChannels, 0.0);
 }
 
 void dsp::SamplePlayer::process() {

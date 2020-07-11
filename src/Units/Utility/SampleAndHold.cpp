@@ -12,7 +12,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleAndHold::getTrigger() {
 
 void dsp::SampleAndHold::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    memory.resize(numChannels, getOutputSignal()->getDefaultValue());
+    memory.resize(numChannels, std::numeric_limits<DSP_FLOAT>::quiet_NaN());
 }
 
 void dsp::SampleAndHold::process() {
@@ -25,7 +25,7 @@ void dsp::SampleAndHold::process() {
             if (triggerBuffer[k]) {
                 memory[i] = inputBuffer[k];
             }
-            outputBuffer[k] = memory[i];
+            outputBuffer[k] = std::isnan(memory[i]) ? getOutputSignal()->getDefaultValue() : memory[i];
         }
     }
 }

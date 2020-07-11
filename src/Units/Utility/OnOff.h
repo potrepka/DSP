@@ -18,7 +18,7 @@ protected:
 private:
     static const unsigned int ON_TRIGGER;
     static const unsigned int OFF_TRIGGER;
-    std::vector<DSP_FLOAT> state;
+    std::vector<unsigned int> state;
 };
 
 } // namespace dsp

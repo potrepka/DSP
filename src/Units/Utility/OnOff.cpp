@@ -15,7 +15,7 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::OnOff::getOffTrigger() {
 
 void dsp::OnOff::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    state.resize(numChannels, getOutputSignal()->getDefaultValue());
+    state.resize(numChannels, std::numeric_limits<DSP_FLOAT>::quiet_NaN());
 }
 
 void dsp::OnOff::process() {
@@ -26,12 +26,12 @@ void dsp::OnOff::process() {
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (onTriggerBuffer[k]) {
-                state[i] = 1.0;
+                state[i] = 1;
             }
             if (offTriggerBuffer[k]) {
-                state[i] = 0.0;
+                state[i] = 0;
             }
-            outputBuffer[k] = state[i];
+            outputBuffer[k] = std::isnan(state[i]) ? getOutputSignal()->getDefaultValue() : state[i];
         }
     }
 }
