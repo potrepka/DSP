@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Buffer.h"
 #include "Processor.h"
 #include "TwoStageFFTConvolver.h"
 
@@ -9,12 +10,13 @@ class Convolver : public Processor {
 
 public:
     Convolver();
-    std::vector<DSP_FLOAT> getSample(unsigned int channel);
-    void setSample(unsigned int channel, const std::vector<DSP_FLOAT> &sample);
+    std::shared_ptr<Buffer> getBuffer(unsigned int channel);
+    void setBuffer(unsigned int channel, std::shared_ptr<Buffer> buffer);
     unsigned int getHeadSize();
     unsigned int getTailSize();
     void setTailSize(unsigned int size);
     void setHeadSize(unsigned int size);
+    void initConvolvers();
 
 protected:
     void setBufferSizeNoLock(unsigned int bufferSize) override;
@@ -22,8 +24,8 @@ protected:
     void process() override;
 
 private:
-    std::vector<std::vector<DSP_FLOAT>> samples;
-    std::vector<std::unique_ptr<fftconvolver::TwoStageFFTConvolver>> convolvers;
+    std::vector<std::shared_ptr<Buffer>> buffers;
+    std::vector<std::vector<std::unique_ptr<fftconvolver::TwoStageFFTConvolver>>> convolvers;
     unsigned int headSize;
     unsigned int tailSize;
     std::vector<float> input;

@@ -2,13 +2,13 @@
 
 dsp::Convolver::Convolver() : Processor(Type::BIPOLAR, Type::BIPOLAR), headSize(0), tailSize(0) {}
 
-std::vector<DSP_FLOAT> dsp::Convolver::getSample(unsigned int channel) {
-    return samples[channel];
+std::shared_ptr<dsp::Buffer> dsp::Convolver::getBuffer(unsigned int channel) {
+    return buffers[channel];
 }
 
-void dsp::Convolver::setSample(unsigned int channel, const std::vector<DSP_FLOAT> &sample) {
+void dsp::Convolver::setBuffer(unsigned int channel, std::shared_ptr<dsp::Buffer> buffer) {
+    buffers[channel] = buffer;
     lock();
-    samples[channel] = sample;
     initConvolver(channel);
     unlock();
 }
@@ -22,17 +22,17 @@ unsigned int dsp::Convolver::getTailSize() {
 }
 
 void dsp::Convolver::setHeadSize(unsigned int size) {
-    lock();
     headSize = size;
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
-        initConvolver(i);
-    }
-    unlock();
+    initConvolvers();
 }
 
 void dsp::Convolver::setTailSize(unsigned int size) {
-    lock();
     tailSize = size;
+    initConvolvers();
+}
+
+void dsp::Convolver::initConvolvers() {
+    lock();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
         initConvolver(i);
     }
@@ -47,35 +47,43 @@ void dsp::Convolver::setBufferSizeNoLock(unsigned int bufferSize) {
 
 void dsp::Convolver::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    samples.resize(numChannels);
-    unsigned int currentSize = static_cast<unsigned int>(convolvers.size());
-    if (numChannels < currentSize) {
-        convolvers.resize(numChannels);
-    } else {
-        convolvers.reserve(numChannels);
-        for (unsigned int i = currentSize; i < numChannels; i++) {
-            convolvers.emplace_back(std::make_unique<fftconvolver::TwoStageFFTConvolver>());
-        }
-    }
+    buffers.resize(numChannels);
+    convolvers.resize(numChannels);
 }
 
 void dsp::Convolver::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        if (samples[i].size() > 0) {
-            std::copy(inputBuffer.begin(), inputBuffer.end(), input.begin());
-            convolvers[i]->process(input.data(), output.data(), getBufferSize());
-            std::copy(output.begin(), output.end(), outputBuffer.begin());
-        } else {
-            std::copy(inputBuffer.begin(), inputBuffer.end(), outputBuffer.begin());
+        for (unsigned int j = 0; j < convolvers[i].size(); j++) {
+            std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(j % getNumChannels())->getBuffer();
+            if (convolvers[i][j] != nullptr) {
+                std::copy(inputBuffer.begin(), inputBuffer.end(), input.begin());
+                convolvers[i][j]->process(input.data(), output.data(), getBufferSize());
+                std::transform(output.begin(),
+                               output.end(),
+                               outputBuffer.begin(),
+                               outputBuffer.begin(),
+                               std::plus<DSP_FLOAT>());
+            }
         }
     }
 }
 
 void dsp::Convolver::initConvolver(unsigned int channel) {
-    std::vector<fftconvolver::Sample> sample(samples[channel].size());
-    std::copy(samples[channel].begin(), samples[channel].end(), sample.begin());
-    convolvers[channel]->init(headSize, tailSize, sample.data(), sample.size());
+    convolvers[channel].clear();
+    buffers[channel]->lock();
+    if (buffers[channel] != nullptr) {
+        unsigned int numChannels = buffers[channel]->getNumChannels();
+        unsigned int bufferSize = buffers[channel]->getBufferSize();
+        std::vector<std::vector<fftconvolver::Sample>> sample(numChannels,
+                                                              std::vector<fftconvolver::Sample>(bufferSize));
+        for (unsigned int j = 0; j < numChannels; j++) {
+            std::vector<DSP_FLOAT> &buffer = buffers[channel]->getChannel(j);
+            std::copy(buffer.begin(), buffer.end(), sample[j].begin());
+            convolvers[channel].emplace_back(std::make_unique<fftconvolver::TwoStageFFTConvolver>());
+            convolvers[channel][j]->init(headSize, tailSize, sample[j].data(), sample[j].size());
+        }
+    }
+    buffers[channel]->unlock();
 }
