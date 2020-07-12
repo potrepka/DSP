@@ -42,8 +42,8 @@ void dsp::VariableDelay::process() {
             std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &delayTimeBuffer = getDelayTime()->getChannel(i)->getBuffer();
+            unsigned int index = writeIndex;
             for (unsigned int k = 0; k < getBufferSize(); k++) {
-                const unsigned int index = (writeIndex + k) % buffer->getBufferSize();
                 const DSP_FLOAT delayTime = clip(delayTimeBuffer[i], 0.0, maxDelayTime);
                 DSP_FLOAT readIndex = static_cast<DSP_FLOAT>(index) - delayTime * getSampleRate();
                 if (readIndex < 0.0) {
@@ -51,9 +51,14 @@ void dsp::VariableDelay::process() {
                 }
                 buffer->getChannel(i)[index] = inputBuffer[k];
                 outputBuffer[k] = hermite(buffer->getChannel(i), readIndex);
+                index++;
+                if (index >= buffer->getBufferSize()) {
+                    index = 0;
+                }
             }
         }
-        writeIndex = (writeIndex + getBufferSize()) % buffer->getBufferSize();
+        writeIndex += getBufferSize();
+        writeIndex %= buffer->getBufferSize();
     }
 }
 

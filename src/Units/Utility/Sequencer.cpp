@@ -45,7 +45,7 @@ void dsp::Sequencer::process() {
                     index[i] = 0;
                 }
                 if (triggerBuffer[k]) {
-                    index[i] = index[i] % sequence->getBufferSize();
+                    index[i] %= sequence->getBufferSize();
                     memory[i] = index[i];
                     index[i]++;
                 }
