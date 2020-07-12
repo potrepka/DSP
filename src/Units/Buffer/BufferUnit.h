@@ -10,7 +10,7 @@ class BufferUnit : public Consumer {
 public:
     enum class Mode { SINGLE_BUFFER, DOUBLE_BUFFER };
 
-    BufferUnit(unsigned int externalBufferSize, Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
+    BufferUnit(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
     Mode getMode() const;
     void setMode(Mode mode);
     unsigned int getExternalBufferSize() const;

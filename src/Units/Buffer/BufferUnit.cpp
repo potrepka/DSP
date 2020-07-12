@@ -1,9 +1,9 @@
 #include "BufferUnit.h"
 
-dsp::BufferUnit::BufferUnit(unsigned int externalBufferSize, Type type, Space space, DSP_FLOAT defaultValue)
-        : Consumer(type, space), mode(Mode::SINGLE_BUFFER), writeIndex(0) {
-    buffer = std::make_shared<Buffer>(0, externalBufferSize, type, space, defaultValue);
-    second = std::make_shared<Buffer>(0, externalBufferSize, type, space, defaultValue);
+dsp::BufferUnit::BufferUnit(Type type, Space space, DSP_FLOAT defaultValue)
+        : Consumer(type, space), mode(Mode::SINGLE_BUFFER), externalBufferSize(0), writeIndex(0) {
+    buffer = std::make_shared<Buffer>(0, 0, type, space, defaultValue);
+    second = std::make_shared<Buffer>(0, 0, type, space, defaultValue);
 }
 
 dsp::BufferUnit::Mode dsp::BufferUnit::getMode() const {
@@ -43,9 +43,9 @@ void dsp::BufferUnit::process() {
     buffer->lock();
     if (externalBufferSize > 0) {
         if (getInputSignal()->getSpace() == Space::FREQUENCY) {
-            assert(getBufferSize() == externalBufferSize);
+            assert(externalBufferSize == getBufferSize());
         }
-        if (writeIndex >= externalBufferSize || getBufferSize() == externalBufferSize) {
+        if (writeIndex >= externalBufferSize || externalBufferSize == getBufferSize()) {
             writeIndex = 0;
         }
         for (unsigned int i = 0; i < getNumChannels(); i++) {
@@ -67,7 +67,7 @@ void dsp::BufferUnit::process() {
                 }
             }
         }
-        if (getBufferSize() != externalBufferSize) {
+        if (externalBufferSize != getBufferSize()) {
             writeIndex += getBufferSize();
             writeIndex %= externalBufferSize;
         }
