@@ -13,7 +13,9 @@ dsp::ChannelMix::Mode dsp::ChannelMix::getMode() const {
 }
 
 void dsp::ChannelMix::setMode(Mode mode) {
+    lock();
     this->mode = mode;
+    unlock();
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::ChannelMix::getMixAmount() const {

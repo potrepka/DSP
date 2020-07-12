@@ -11,7 +11,9 @@ dsp::OnePole::Mode dsp::OnePole::getMode() const {
 }
 
 void dsp::OnePole::setMode(Mode mode) {
+    lock();
     this->mode = mode;
+    unlock();
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::OnePole::getFrequency() const {

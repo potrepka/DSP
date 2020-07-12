@@ -19,7 +19,9 @@ dsp::SamplePlayer::Mode dsp::SamplePlayer::getMode() const {
 }
 
 void dsp::SamplePlayer::setMode(Mode mode) {
+    lock();
     this->mode = mode;
+    unlock();
 }
 
 std::shared_ptr<dsp::Buffer> dsp::SamplePlayer::getSample() const {

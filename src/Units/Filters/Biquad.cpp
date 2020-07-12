@@ -15,7 +15,9 @@ dsp::Biquad::Mode dsp::Biquad::getMode() const {
 }
 
 void dsp::Biquad::setMode(Mode mode) {
+    lock();
     this->mode = mode;
+    unlock();
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getFrequency() const {
