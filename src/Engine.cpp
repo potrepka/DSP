@@ -188,9 +188,11 @@ void dsp::Engine::setup(unsigned int inputDevice,
 
     if (numInputChannels > audio->getAudioInput()->getNumChannels()) {
         audio->getAudioInput()->setNumChannels(numInputChannels);
+        audio->getAudioInputClipping()->setNumChannels(numInputChannels);
     }
     if (numOutputChannels > audio->getAudioOutput()->getNumChannels()) {
         audio->getAudioOutput()->setNumChannels(numOutputChannels);
+        audio->getAudioOutputClipping()->setNumChannels(numOutputChannels);
     }
     audio->setSampleRate(sampleRate);
     audio->setBufferSize(bufferSize);
@@ -249,6 +251,14 @@ std::shared_ptr<dsp::Unit::OutputParameter> dsp::Engine::getAudioInput() const {
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Engine::getAudioOutput() const {
     return audio->getAudioOutput();
+}
+
+std::shared_ptr<dsp::Unit::OutputParameter> dsp::Engine::getAudioInputClipping() const {
+    return audio->getAudioInputClipping();
+}
+
+std::shared_ptr<dsp::Unit::OutputParameter> dsp::Engine::getAudioOutputClipping() const {
+    return audio->getAudioOutputClipping();
 }
 
 unsigned int dsp::Engine::getNumUnits() const {
