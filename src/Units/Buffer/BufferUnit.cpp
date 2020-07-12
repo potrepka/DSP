@@ -43,9 +43,9 @@ void dsp::BufferUnit::process() {
     buffer->lock();
     if (externalBufferSize > 0) {
         if (getInputSignal()->getSpace() == Space::FREQUENCY) {
-            assert(getBufferSize() == externalBufferSize);
+            assert(externalBufferSize == getBufferSize());
         }
-        if (writeIndex >= externalBufferSize || getBufferSize() == externalBufferSize) {
+        if (writeIndex >= externalBufferSize || externalBufferSize == getBufferSize()) {
             writeIndex = 0;
         }
         for (unsigned int i = 0; i < getNumChannels(); i++) {
@@ -67,7 +67,7 @@ void dsp::BufferUnit::process() {
                 }
             }
         }
-        if (getBufferSize() != externalBufferSize) {
+        if (externalBufferSize != getBufferSize()) {
             writeIndex += getBufferSize();
             writeIndex %= externalBufferSize;
         }
