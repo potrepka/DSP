@@ -1,13 +1,16 @@
 #pragma once
 
-#include "Identity.h"
+#include "Processor.h"
 
 namespace dsp {
 
-class PassThrough : public Identity {
+class PassThrough : public Processor {
 
 public:
     PassThrough(Type type, Space space = Space::TIME);
+
+private:
+    void process() override;
 };
 
 } // namespace dsp

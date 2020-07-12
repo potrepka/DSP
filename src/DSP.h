@@ -27,7 +27,6 @@
 #include "AbsoluteValue.h"
 #include "Divide.h"
 #include "Floor.h"
-#include "Identity.h"
 #include "Maximum.h"
 #include "Minimum.h"
 #include "Modulo.h"
