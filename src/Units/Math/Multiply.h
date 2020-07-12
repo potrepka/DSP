@@ -11,13 +11,11 @@ public:
     void pushInputBipolar();
     void pushInputUnipolar();
     void pushInputRatio();
+    void pushInputInteger();
+    void pushInputBinary();
 
 protected:
     void process() override;
-
-private:
-    Type type;
-    Space space;
 };
 
 } // namespace dsp
