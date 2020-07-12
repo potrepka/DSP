@@ -40,7 +40,7 @@ void dsp::Buffer::setBufferSize(unsigned int bufferSize) {
 void dsp::Buffer::setBufferSizeNoLock(unsigned int bufferSize) {
     this->bufferSize = bufferSize;
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        buffers[i].resize(bufferSize);
+        buffers[i].resize(bufferSize, defaultValue);
     }
 }
 
