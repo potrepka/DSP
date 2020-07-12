@@ -56,8 +56,7 @@ void dsp::TableOscillator::process() {
                 table->lock();
             }
         }
-        std::vector<DSP_FLOAT> points;
-        points.resize(4);
+        std::vector<DSP_FLOAT> points(4);
         for (unsigned int i = 0; i < getNumChannels(); i++) {
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
