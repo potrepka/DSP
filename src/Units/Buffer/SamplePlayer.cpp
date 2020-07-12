@@ -67,7 +67,10 @@ void dsp::SamplePlayer::process() {
             for (unsigned int i = 0; i < getNumChannels(); i++) {
                 std::vector<DSP_FLOAT> &channel = sample->getChannel(i % sample->getNumChannels());
                 const unsigned int size = static_cast<unsigned int>(channel.size());
-                readIndex[i] = wrap(readIndex[i], 0.0, size);
+                switch (mode) {
+                    case Mode::ONE_SHOT: readIndex[i] = clip(readIndex[i], 0.0, size); break;
+                    case Mode::LOOP: readIndex[i] = wrap(readIndex[i], 0.0, size); break;
+                }
                 if (size > 0) {
                     std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
                     std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
