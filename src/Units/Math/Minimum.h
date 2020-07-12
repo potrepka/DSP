@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Processor.h"
+#include "Generator.h"
 
 namespace dsp {
 
-class Minimum : public Processor {
+class Minimum : public Generator {
 
 public:
     Minimum(Type type, Space space = Space::TIME);
@@ -12,10 +12,6 @@ public:
 
 protected:
     void process() override;
-
-private:
-    Type type;
-    Space space;
 };
 
 } // namespace dsp
