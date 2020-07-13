@@ -13,7 +13,7 @@
 #include "CompressorGate.h"
 #include "GainComputer.h"
 #include "GainEnvelope.h"
-#include "GainUnit.h"
+#include "GainScale.h"
 #include "HardClip.h"
 #include "PowerDistortion.h"
 

@@ -5,7 +5,7 @@
 #include "ChannelMix.h"
 #include "GainComputer.h"
 #include "GainEnvelope.h"
-#include "GainUnit.h"
+#include "GainScale.h"
 
 namespace dsp {
 
@@ -44,7 +44,7 @@ private:
     std::shared_ptr<Base2Log> base2Log;
     std::shared_ptr<GainComputer> gainComputer;
     std::shared_ptr<GainEnvelope> gainEnvelope;
-    std::shared_ptr<GainUnit> gainUnit;
+    std::shared_ptr<GainScale> gainScale;
 };
 
 } // namespace dsp

@@ -17,7 +17,7 @@ dsp::CompressorGate::CompressorGate() : Processor(Type::BIPOLAR, Type::BIPOLAR) 
     base2Log = std::make_shared<Base2Log>();
     gainComputer = std::make_shared<GainComputer>();
     gainEnvelope = std::make_shared<GainEnvelope>();
-    gainUnit = std::make_shared<GainUnit>();
+    gainScale = std::make_shared<GainScale>(Type::BIPOLAR);
 
     absoluteValue->getOutputSignal()->setType(Type::RATIO);
 
@@ -26,9 +26,9 @@ dsp::CompressorGate::CompressorGate() : Processor(Type::BIPOLAR, Type::BIPOLAR) 
     pushUnit(base2Log);
     pushUnit(gainComputer);
     pushUnit(gainEnvelope);
-    pushUnit(gainUnit);
+    pushUnit(gainScale);
 
-    setInputSignal(gainUnit->getInputSignal());
+    setInputSignal(gainScale->getInputSignal());
     pushInput(channelMix->getInputSignal());
     pushInput(channelMix->getMixAmount());
     pushInput(gainComputer->getThreshold());
@@ -38,7 +38,7 @@ dsp::CompressorGate::CompressorGate() : Processor(Type::BIPOLAR, Type::BIPOLAR) 
     pushInput(gainEnvelope->getAttack());
     pushInput(gainEnvelope->getRelease());
 
-    setOutputSignal(gainUnit->getOutputSignal());
+    setOutputSignal(gainScale->getOutputSignal());
     pushOutput(gainEnvelope->getOutputSignal());
 
     connect();
@@ -85,7 +85,7 @@ void dsp::CompressorGate::connect() {
     absoluteValue->getOutputSignal() >> base2Log->getInputSignal();
     base2Log->getOutputSignal() >> gainComputer->getInputSignal();
     gainComputer->getOutputSignal() >> gainEnvelope->getInputSignal();
-    gainEnvelope->getOutputSignal() >> gainUnit->getGain();
+    gainEnvelope->getOutputSignal() >> gainScale->getGain();
 }
 
 void dsp::CompressorGate::disconnect() {
@@ -93,5 +93,5 @@ void dsp::CompressorGate::disconnect() {
     absoluteValue->getOutputSignal() != base2Log->getInputSignal();
     base2Log->getOutputSignal() != gainComputer->getInputSignal();
     gainComputer->getOutputSignal() != gainEnvelope->getInputSignal();
-    gainEnvelope->getOutputSignal() != gainUnit->getGain();
+    gainEnvelope->getOutputSignal() != gainScale->getGain();
 }
