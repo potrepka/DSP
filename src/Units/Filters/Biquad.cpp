@@ -44,10 +44,10 @@ void dsp::Biquad::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &qBuffer = getQ()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &gainBuffer = getGain()->getChannel(i)->getBuffer();
+        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (qBuffer[k] == 0.0) {
                 outputBuffer[k] = 0.0;

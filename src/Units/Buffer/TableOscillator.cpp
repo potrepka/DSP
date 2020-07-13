@@ -58,9 +58,9 @@ void dsp::TableOscillator::process() {
         }
         std::vector<DSP_FLOAT> points(4);
         for (unsigned int i = 0; i < getNumChannels(); i++) {
-            std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &positionBuffer = getPosition()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
                 const DSP_FLOAT positionIndex = clip(positionBuffer[k], 0.0, 1.0) * (tables.size() - 1);
                 const long indexBefore = static_cast<long>(positionIndex) - 1;

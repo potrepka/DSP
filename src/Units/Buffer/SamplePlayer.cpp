@@ -72,11 +72,11 @@ void dsp::SamplePlayer::process() {
                     case Mode::LOOP: readIndex[i] = wrap(readIndex[i], 0.0, size); break;
                 }
                 if (size > 0) {
-                    std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
                     std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
                     std::vector<DSP_FLOAT> &gateBuffer = getGate()->getChannel(i)->getBuffer();
                     std::vector<DSP_FLOAT> &startTimeBuffer = getStartTime()->getChannel(i)->getBuffer();
                     std::vector<DSP_FLOAT> &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
+                    std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
                     std::vector<DSP_FLOAT> &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
                     for (unsigned int k = 0; k < getBufferSize(); k++) {
                         if (resetTriggerBuffer[k]) {

@@ -36,10 +36,10 @@ void dsp::Trigger::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::Trigger::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &intervalBuffer = getInterval()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &delayBuffer = getInterval()->getChannel(i)->getBuffer();
+        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (resetTriggerBuffer[k]) {
