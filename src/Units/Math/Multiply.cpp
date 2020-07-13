@@ -6,23 +6,23 @@ dsp::Multiply::Multiply(Type type, Space space) : Processor(type, type, space) {
 }
 
 void dsp::Multiply::pushInputBipolar() {
-    Unit::pushInput(Type::BIPOLAR, getInputSignal()->getSpace());
+    Unit::pushInput(Type::BIPOLAR, getInputSignal()->getSpace(), 1.0);
 }
 
 void dsp::Multiply::pushInputUnipolar() {
-    Unit::pushInput(Type::UNIPOLAR, getInputSignal()->getSpace());
+    Unit::pushInput(Type::UNIPOLAR, getInputSignal()->getSpace(), 1.0);
 }
 
 void dsp::Multiply::pushInputRatio() {
-    Unit::pushInput(Type::RATIO, getInputSignal()->getSpace());
+    Unit::pushInput(Type::RATIO, getInputSignal()->getSpace(), 1.0);
 }
 
 void dsp::Multiply::pushInputInteger() {
-    Unit::pushInput(Type::INTEGER, getInputSignal()->getSpace());
+    Unit::pushInput(Type::INTEGER, getInputSignal()->getSpace(), 1.0);
 }
 
 void dsp::Multiply::pushInputBinary() {
-    Unit::pushInput(Type::BINARY, getInputSignal()->getSpace());
+    Unit::pushInput(Type::BINARY, getInputSignal()->getSpace(), 1.0);
 }
 
 void dsp::Multiply::process() {

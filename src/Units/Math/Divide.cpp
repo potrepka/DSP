@@ -3,7 +3,7 @@
 const unsigned int dsp::Divide::DIVISOR = 1;
 
 dsp::Divide::Divide(Type type, Space space) : Processor(type, Type::RATIO, space) {
-    pushInput(type, space);
+    pushInput(type, space, 1.0);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Divide::getDivisor() const {

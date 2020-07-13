@@ -10,7 +10,7 @@ dsp::SamplePlayer::SamplePlayer(Type type) : Generator(type), mode(Mode::ONE_SHO
     pushInput(Type::BINARY);
     pushInput(Type::BINARY);
     pushInput(Type::SECONDS);
-    pushInput(Type::RATIO);
+    pushInput(Type::RATIO, Space::TIME, 1.0);
     pushOutput(Type::SECONDS);
 }
 
