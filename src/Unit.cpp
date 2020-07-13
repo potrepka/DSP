@@ -392,14 +392,13 @@ void dsp::Unit::setBufferSizeNoLock(unsigned int bufferSize) {
 
 void dsp::Unit::setNumChannelsNoLock(unsigned int numChannels) {
     this->numChannels = numChannels;
-    if (units.size() == 0) {
-        for (const auto &input : inputs) {
-            input->setNumChannels(numChannels);
-        }
-        for (const auto &output : outputs) {
-            output->setNumChannels(numChannels);
-        }
-    } else if (numChannels > 0) {
+    for (const auto &input : inputs) {
+        input->setNumChannels(numChannels);
+    }
+    for (const auto &output : outputs) {
+        output->setNumChannels(numChannels);
+    }
+    if (numChannels > 0) {
         disconnect();
         for (const auto &unit : units) {
             unit->setNumChannels(numChannels);
