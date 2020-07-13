@@ -1,11 +1,12 @@
 #include "Engine.h"
 
-dsp::Engine::Engine() : numInputChannels(0), numOutputChannels(0), sampleRate(0), bufferSize(0) {
+dsp::Engine::Engine() : numInputChannels(0), numOutputChannels(0) {
     audio = std::make_shared<Audio>();
     midi = std::make_shared<Midi>();
 }
 
 dsp::Engine::~Engine() {
+    lock();
 #if USE_RTAUDIO
     try {
         if (dac.isStreamOpen()) {
@@ -17,6 +18,23 @@ dsp::Engine::~Engine() {
 #endif
     }
 #endif
+    unlock();
+}
+
+void dsp::Engine::lockAudio() {
+    audio->lock();
+}
+
+void dsp::Engine::unlockAudio() {
+    audio->unlock();
+}
+
+void dsp::Engine::lockMidi() {
+    midi->lock();
+}
+
+void dsp::Engine::unlockMidi() {
+    midi->unlock();
 }
 
 std::vector<unsigned int> dsp::Engine::getInputDevices() {
@@ -135,6 +153,8 @@ void dsp::Engine::setup(unsigned int inputDevice,
                         unsigned int outputDevice,
                         unsigned int sampleRate,
                         unsigned int bufferSize) {
+    lock();
+
 #if USE_RTAUDIO
     try {
         if (dac.isStreamOpen()) {
@@ -182,8 +202,8 @@ void dsp::Engine::setup(unsigned int inputDevice,
 
     numInputChannels = inputParameters.nChannels;
     numOutputChannels = outputParameters.nChannels;
-    this->sampleRate = sampleRate;
-    this->bufferSize = bufferSize;
+    setSampleRateNoLock(sampleRate);
+    setBufferSizeNoLock(bufferSize);
 #endif
 
     if (numInputChannels > audio->getAudioInput()->getNumChannels()) {
@@ -196,9 +216,12 @@ void dsp::Engine::setup(unsigned int inputDevice,
     }
     audio->setSampleRate(sampleRate);
     audio->setBufferSize(bufferSize);
+
+    unlock();
 }
 
 void dsp::Engine::start() {
+    lock();
 #if USE_RTAUDIO
     try {
         dac.startStream();
@@ -208,6 +231,7 @@ void dsp::Engine::start() {
 #endif
     }
 #endif
+    unlock();
 }
 
 std::string dsp::Engine::getDeviceName(unsigned int device) {
@@ -237,14 +261,6 @@ unsigned int dsp::Engine::getNumOutputChannels() const {
     return numOutputChannels;
 }
 
-unsigned int dsp::Engine::getSampleRate() const {
-    return sampleRate;
-}
-
-unsigned int dsp::Engine::getBufferSize() const {
-    return bufferSize;
-}
-
 std::shared_ptr<dsp::Unit::OutputParameter> dsp::Engine::getAudioInput() const {
     return audio->getAudioInput();
 }
@@ -269,8 +285,12 @@ std::shared_ptr<dsp::Unit> dsp::Engine::getUnit(unsigned int index) const {
     return audio->getUnit(index);
 }
 
-void dsp::Engine::pushUnit(std::shared_ptr<Unit> unit) {
-    audio->pushUnit(unit);
+void dsp::Engine::pushUnit(std::shared_ptr<Unit> unit, bool sort) {
+    audio->pushUnit(unit, sort);
+}
+
+void dsp::Engine::pushUnits(std::vector<std::shared_ptr<Unit>> units, bool sort) {
+    audio->pushUnits(units, sort);
 }
 
 void dsp::Engine::replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement) {
@@ -325,12 +345,14 @@ int dsp::Engine::tick(void *outputBuffer,
                       RtAudioStreamStatus status,
                       void *pointer) {
     Engine *engine = (Engine *)pointer;
+    engine->lock();
     process((DSP_FLOAT *)inputBuffer,
             (DSP_FLOAT *)outputBuffer,
             nBufferFrames,
             engine->getNumInputChannels(),
             engine->getNumOutputChannels(),
             engine);
+    engine->unlock();
     return 0;
 }
 #endif

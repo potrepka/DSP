@@ -88,7 +88,8 @@ public:
 
     unsigned int getNumUnits() const;
     std::shared_ptr<Unit> getUnit(unsigned int index) const;
-    void pushUnit(std::shared_ptr<Unit> unit);
+    void pushUnit(std::shared_ptr<Unit> unit, bool sort = false);
+    void pushUnits(std::vector<std::shared_ptr<Unit>> units, bool sort = false);
     void replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement);
     void removeUnit(std::shared_ptr<Unit> unit);
     void sortUnits();
@@ -103,6 +104,7 @@ protected:
     void setSampleRateNoLock(unsigned int sampleRate) override;
     void setBufferSizeNoLock(unsigned int bufferSize) override;
     virtual void setNumChannelsNoLock(unsigned int numChannels);
+    void sortUnitsNoLock();
 
     virtual void connect();
     virtual void disconnect();

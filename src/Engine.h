@@ -2,6 +2,7 @@
 
 #include "Audio.h"
 #include "Midi.h"
+#include "Runnable.h"
 
 #define USE_RTAUDIO 1
 
@@ -11,11 +12,17 @@
 
 namespace dsp {
 
-class Engine {
+class Engine : public Runnable {
 
 public:
     Engine();
     ~Engine();
+
+    void lockAudio();
+    void unlockAudio();
+
+    void lockMidi();
+    void unlockMidi();
 
     std::vector<unsigned int> getInputDevices();
     std::vector<unsigned int> getOutputDevices();
@@ -34,8 +41,6 @@ public:
 
     unsigned int getNumInputChannels() const;
     unsigned int getNumOutputChannels() const;
-    unsigned int getSampleRate() const;
-    unsigned int getBufferSize() const;
 
     std::shared_ptr<Unit::OutputParameter> getAudioInput() const;
     std::shared_ptr<Unit::InputParameter> getAudioOutput() const;
@@ -44,7 +49,8 @@ public:
 
     unsigned int getNumUnits() const;
     std::shared_ptr<Unit> getUnit(unsigned int index) const;
-    void pushUnit(std::shared_ptr<Unit> unit);
+    void pushUnit(std::shared_ptr<Unit> unit, bool sort = false);
+    void pushUnits(std::vector<std::shared_ptr<Unit>> units, bool sort = false);
     void replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement);
     void removeUnit(std::shared_ptr<Unit> unit);
     void sortUnits();
@@ -68,8 +74,6 @@ private:
     std::string outputDeviceName;
     unsigned int numInputChannels;
     unsigned int numOutputChannels;
-    unsigned int sampleRate;
-    unsigned int bufferSize;
 #if USE_RTAUDIO
     static int tick(void *outputBuffer,
                     void *inputBuffer,

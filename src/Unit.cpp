@@ -188,7 +188,7 @@ std::shared_ptr<dsp::Unit> dsp::Unit::getUnit(unsigned int index) const {
     return units[index];
 }
 
-void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit) {
+void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit, bool sort) {
     assert(unit != nullptr);
     lock();
     unit->setSampleRate(getSampleRate());
@@ -197,6 +197,28 @@ void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit) {
         unit->setNumChannels(getNumChannels());
     }
     units.push_back(unit);
+    if (sort) {
+        sortUnitsNoLock();
+    }
+    unlock();
+}
+
+void dsp::Unit::pushUnits(std::vector<std::shared_ptr<Unit>> units, bool sort) {
+    for (const auto &unit : units) {
+        assert(unit != nullptr);
+    }
+    lock();
+    for (const auto &unit : units) {
+        unit->setSampleRate(getSampleRate());
+        unit->setBufferSize(getBufferSize());
+        if (getNumChannels() > 0) {
+            unit->setNumChannels(getNumChannels());
+        }
+        units.push_back(unit);
+    }
+    if (sort) {
+        sortUnitsNoLock();
+    }
     unlock();
 }
 
@@ -215,6 +237,60 @@ void dsp::Unit::removeUnit(std::shared_ptr<Unit> unit) {
 
 void dsp::Unit::sortUnits() {
     lock();
+    sortUnitsNoLock();
+    unlock();
+}
+
+void dsp::Unit::run() {
+    lock();
+    if (units.size() == 0) {
+        process();
+    } else {
+        for (const auto &unit : units) {
+            unit->run();
+        }
+    }
+    unlock();
+}
+
+void dsp::Unit::setSampleRateNoLock(unsigned int sampleRate) {
+    Runnable::setSampleRateNoLock(sampleRate);
+    for (const auto &unit : units) {
+        unit->setSampleRate(sampleRate);
+    }
+}
+
+void dsp::Unit::setBufferSizeNoLock(unsigned int bufferSize) {
+    Runnable::setBufferSizeNoLock(bufferSize);
+    for (const auto &input : inputs) {
+        input->setBufferSize(bufferSize);
+    }
+    for (const auto &output : outputs) {
+        output->setBufferSize(bufferSize);
+    }
+    for (const auto &unit : units) {
+        unit->setBufferSize(bufferSize);
+    }
+}
+
+void dsp::Unit::setNumChannelsNoLock(unsigned int numChannels) {
+    this->numChannels = numChannels;
+    for (const auto &input : inputs) {
+        input->setNumChannels(numChannels);
+    }
+    for (const auto &output : outputs) {
+        output->setNumChannels(numChannels);
+    }
+    if (numChannels > 0) {
+        disconnect();
+        for (const auto &unit : units) {
+            unit->setNumChannels(numChannels);
+        }
+        connect();
+    }
+}
+
+void dsp::Unit::sortUnitsNoLock() {
     if (units.size() > 0) {
         std::unordered_set<Unit *> unitSet;
         std::unordered_map<Input *, Unit *> inputToUnit;
@@ -292,56 +368,6 @@ void dsp::Unit::sortUnits() {
         std::sort(units.begin(), units.end(), [&orderMap](const auto &a, const auto &b) {
             return orderMap[a.get()] < orderMap[b.get()];
         });
-    }
-    unlock();
-}
-
-void dsp::Unit::run() {
-    lock();
-    if (units.size() == 0) {
-        process();
-    } else {
-        for (const auto &unit : units) {
-            unit->run();
-        }
-    }
-    unlock();
-}
-
-void dsp::Unit::setSampleRateNoLock(unsigned int sampleRate) {
-    Runnable::setSampleRateNoLock(sampleRate);
-    for (const auto &unit : units) {
-        unit->setSampleRate(sampleRate);
-    }
-}
-
-void dsp::Unit::setBufferSizeNoLock(unsigned int bufferSize) {
-    Runnable::setBufferSizeNoLock(bufferSize);
-    for (const auto &input : inputs) {
-        input->setBufferSize(bufferSize);
-    }
-    for (const auto &output : outputs) {
-        output->setBufferSize(bufferSize);
-    }
-    for (const auto &unit : units) {
-        unit->setBufferSize(bufferSize);
-    }
-}
-
-void dsp::Unit::setNumChannelsNoLock(unsigned int numChannels) {
-    this->numChannels = numChannels;
-    for (const auto &input : inputs) {
-        input->setNumChannels(numChannels);
-    }
-    for (const auto &output : outputs) {
-        output->setNumChannels(numChannels);
-    }
-    if (numChannels > 0) {
-        disconnect();
-        for (const auto &unit : units) {
-            unit->setNumChannels(numChannels);
-        }
-        connect();
     }
 }
 
