@@ -5,6 +5,7 @@ const unsigned int dsp::SampleRecorder::GATE = 2;
 
 dsp::SampleRecorder::SampleRecorder(Type type) : Consumer(type) {
     pushInput(Type::BINARY);
+    pushInput(Type::BINARY);
     sample = std::make_shared<Buffer>(0, 0, type);
 }
 
