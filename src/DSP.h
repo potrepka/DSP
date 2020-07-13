@@ -61,6 +61,7 @@
 #include "ChannelMix.h"
 #include "DryWetMix.h"
 #include "OnOff.h"
+#include "Pan.h"
 #include "PassThrough.h"
 #include "SampleAndHold.h"
 #include "Sequencer.h"
