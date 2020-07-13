@@ -273,16 +273,12 @@ void dsp::Engine::pushUnit(std::shared_ptr<Unit> unit) {
     audio->pushUnit(unit);
 }
 
-void dsp::Engine::insertUnit(unsigned int index, std::shared_ptr<Unit> unit) {
-    audio->insertUnit(index, unit);
+void dsp::Engine::replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement) {
+    audio->replaceUnit(unit, replacement);
 }
 
 void dsp::Engine::removeUnit(std::shared_ptr<Unit> unit) {
     audio->removeUnit(unit);
-}
-
-void dsp::Engine::removeUnit(unsigned int index) {
-    audio->removeUnit(index);
 }
 
 void dsp::Engine::sortUnits() {

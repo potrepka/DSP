@@ -45,9 +45,8 @@ public:
     unsigned int getNumUnits() const;
     std::shared_ptr<Unit> getUnit(unsigned int index) const;
     void pushUnit(std::shared_ptr<Unit> unit);
-    void insertUnit(unsigned int index, std::shared_ptr<Unit> unit);
+    void replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement);
     void removeUnit(std::shared_ptr<Unit> unit);
-    void removeUnit(unsigned int index);
     void sortUnits();
 
     unsigned int getNumMidiInputs() const;

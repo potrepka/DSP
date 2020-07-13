@@ -77,28 +77,20 @@ public:
     unsigned int getNumOutputs() const;
     std::shared_ptr<InputParameter> getInput(unsigned int index) const;
     std::shared_ptr<OutputParameter> getOutput(unsigned int index) const;
-    void setInput(unsigned int index, std::shared_ptr<InputParameter> input);
-    void setOutput(unsigned int index, std::shared_ptr<OutputParameter> output);
     void pushInput(std::shared_ptr<InputParameter> input);
-    void pushInput(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
     void pushOutput(std::shared_ptr<OutputParameter> output);
+    void pushInput(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
     void pushOutput(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
-    void insertInput(unsigned int index, std::shared_ptr<InputParameter> input);
-    void insertInput(unsigned int index, Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
-    void insertOutput(unsigned int index, std::shared_ptr<OutputParameter> output);
-    void insertOutput(unsigned int index, Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
+    void replaceInput(std::shared_ptr<InputParameter> input, std::shared_ptr<InputParameter> replacement);
+    void replaceOutput(std::shared_ptr<OutputParameter> output, std::shared_ptr<OutputParameter> replacement);
     void removeInput(std::shared_ptr<InputParameter> input);
-    void removeInput(unsigned int index);
     void removeOutput(std::shared_ptr<OutputParameter> output);
-    void removeOutput(unsigned int index);
 
     unsigned int getNumUnits() const;
     std::shared_ptr<Unit> getUnit(unsigned int index) const;
-    void setUnit(unsigned int index, std::shared_ptr<Unit> unit);
     void pushUnit(std::shared_ptr<Unit> unit);
-    void insertUnit(unsigned int index, std::shared_ptr<Unit> unit);
+    void replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement);
     void removeUnit(std::shared_ptr<Unit> unit);
-    void removeUnit(unsigned int index);
     void sortUnits();
 
     void run();

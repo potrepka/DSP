@@ -11,5 +11,5 @@ std::shared_ptr<dsp::Unit::InputParameter> dsp::Consumer::getInputSignal() const
 }
 
 void dsp::Consumer::setInputSignal(std::shared_ptr<InputParameter> input) {
-    setInput(INPUT_SIGNAL, input);
+    replaceInput(getInputSignal(), input);
 }

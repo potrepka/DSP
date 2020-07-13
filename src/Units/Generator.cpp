@@ -11,5 +11,5 @@ std::shared_ptr<dsp::Unit::OutputParameter> dsp::Generator::getOutputSignal() co
 }
 
 void dsp::Generator::setOutputSignal(std::shared_ptr<OutputParameter> output) {
-    setOutput(OUTPUT_SIGNAL, output);
+    replaceOutput(getOutputSignal(), output);
 }

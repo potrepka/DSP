@@ -124,32 +124,12 @@ std::shared_ptr<dsp::Unit::OutputParameter> dsp::Unit::getOutput(unsigned int in
     return outputs[index];
 }
 
-void dsp::Unit::setInput(unsigned int index, std::shared_ptr<InputParameter> input) {
-    assert(input != nullptr);
-    lock();
-    inputs[index] = input;
-    unlock();
-}
-
-void dsp::Unit::setOutput(unsigned int index, std::shared_ptr<dsp::Unit::OutputParameter> output) {
-    assert(output != nullptr);
-    lock();
-    outputs[index] = output;
-    unlock();
-}
-
 void dsp::Unit::pushInput(std::shared_ptr<InputParameter> input) {
     assert(input != nullptr);
     lock();
     input->setBufferSize(getBufferSize());
     input->setNumChannels(getNumChannels());
     inputs.push_back(input);
-    unlock();
-}
-
-void dsp::Unit::pushInput(Type type, Space space, DSP_FLOAT value) {
-    lock();
-    inputs.push_back(std::make_shared<InputParameter>(getNumChannels(), getBufferSize(), type, space, value));
     unlock();
 }
 
@@ -162,41 +142,29 @@ void dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
     unlock();
 }
 
+void dsp::Unit::pushInput(Type type, Space space, DSP_FLOAT value) {
+    lock();
+    inputs.push_back(std::make_shared<InputParameter>(getNumChannels(), getBufferSize(), type, space, value));
+    unlock();
+}
+
 void dsp::Unit::pushOutput(Type type, Space space, DSP_FLOAT value) {
     lock();
     outputs.push_back(std::make_shared<OutputParameter>(getNumChannels(), getBufferSize(), type, space, value));
     unlock();
 }
 
-void dsp::Unit::insertInput(unsigned int index, std::shared_ptr<InputParameter> input) {
-    assert(input != nullptr);
+void dsp::Unit::replaceInput(std::shared_ptr<InputParameter> input, std::shared_ptr<InputParameter> replacement) {
+    assert(replacement != nullptr);
     lock();
-    input->setBufferSize(getBufferSize());
-    input->setNumChannels(getNumChannels());
-    inputs.insert(inputs.begin() + index, input);
+    std::replace(inputs.begin(), inputs.end(), input, replacement);
     unlock();
 }
 
-void dsp::Unit::insertInput(unsigned int index, Type type, Space space, DSP_FLOAT value) {
+void dsp::Unit::replaceOutput(std::shared_ptr<OutputParameter> output, std::shared_ptr<OutputParameter> replacement) {
+    assert(replacement != nullptr);
     lock();
-    inputs.insert(inputs.begin() + index,
-                  std::make_shared<InputParameter>(getNumChannels(), getBufferSize(), type, space, value));
-    unlock();
-}
-
-void dsp::Unit::insertOutput(unsigned int index, std::shared_ptr<OutputParameter> output) {
-    assert(output != nullptr);
-    lock();
-    output->setBufferSize(getBufferSize());
-    output->setNumChannels(getNumChannels());
-    outputs.insert(outputs.begin() + index, output);
-    unlock();
-}
-
-void dsp::Unit::insertOutput(unsigned int index, Type type, Space space, DSP_FLOAT value) {
-    lock();
-    outputs.insert(outputs.begin() + index,
-                   std::make_shared<OutputParameter>(getNumChannels(), getBufferSize(), type, space, value));
+    std::replace(outputs.begin(), outputs.end(), output, replacement);
     unlock();
 }
 
@@ -206,21 +174,9 @@ void dsp::Unit::removeInput(std::shared_ptr<InputParameter> input) {
     unlock();
 }
 
-void dsp::Unit::removeInput(unsigned int index) {
-    lock();
-    inputs.erase(inputs.begin() + index);
-    unlock();
-}
-
 void dsp::Unit::removeOutput(std::shared_ptr<OutputParameter> output) {
     lock();
     outputs.erase(std::remove(outputs.begin(), outputs.end(), output), outputs.end());
-    unlock();
-}
-
-void dsp::Unit::removeOutput(unsigned int index) {
-    lock();
-    outputs.erase(outputs.begin() + index);
     unlock();
 }
 
@@ -230,13 +186,6 @@ unsigned int dsp::Unit::getNumUnits() const {
 
 std::shared_ptr<dsp::Unit> dsp::Unit::getUnit(unsigned int index) const {
     return units[index];
-}
-
-void dsp::Unit::setUnit(unsigned int index, std::shared_ptr<Unit> unit) {
-    assert(unit != nullptr);
-    lock();
-    units[index] = unit;
-    unlock();
 }
 
 void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit) {
@@ -251,27 +200,16 @@ void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit) {
     unlock();
 }
 
-void dsp::Unit::insertUnit(unsigned int index, std::shared_ptr<Unit> unit) {
-    assert(unit != nullptr);
+void dsp::Unit::replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement) {
+    assert(replacement != nullptr);
     lock();
-    unit->setSampleRate(getSampleRate());
-    unit->setBufferSize(getBufferSize());
-    if (getNumChannels() > 0) {
-        unit->setNumChannels(getNumChannels());
-    }
-    units.insert(units.begin() + index, unit);
+    std::replace(units.begin(), units.end(), unit, replacement);
     unlock();
 }
 
 void dsp::Unit::removeUnit(std::shared_ptr<Unit> unit) {
     lock();
     units.erase(std::remove(units.begin(), units.end(), unit), units.end());
-    unlock();
-}
-
-void dsp::Unit::removeUnit(unsigned int index) {
-    lock();
-    units.erase(units.begin() + index);
     unlock();
 }
 
