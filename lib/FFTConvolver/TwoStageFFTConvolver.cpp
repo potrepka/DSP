@@ -27,9 +27,19 @@
 namespace fftconvolver {
 
 TwoStageFFTConvolver::TwoStageFFTConvolver()
-        : _headBlockSize(0), _tailBlockSize(0), _headConvolver(), _tailConvolver0(), _tailOutput0(),
-          _tailPrecalculated0(0), _tailConvolver(), _tailOutput(), _tailPrecalculated(0), _tailInput(),
-          _tailInputFill(0), _precalculatedPos(0), _backgroundProcessingInput() {}
+        : _headBlockSize(0)
+        , _tailBlockSize(0)
+        , _headConvolver()
+        , _tailConvolver0()
+        , _tailOutput0()
+        , _tailPrecalculated0(0)
+        , _tailConvolver()
+        , _tailOutput()
+        , _tailPrecalculated(0)
+        , _tailInput()
+        , _tailInputFill(0)
+        , _precalculatedPos(0)
+        , _backgroundProcessingInput() {}
 
 TwoStageFFTConvolver::~TwoStageFFTConvolver() {
     reset();

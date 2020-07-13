@@ -538,7 +538,10 @@ struct CoreHandle {
     int drainCounter;   // Tracks callback counts when draining
     bool internalDrain; // Indicates if stop is initiated from callback or not.
 
-    CoreHandle() : deviceBuffer(0), drainCounter(0), internalDrain(false) {
+    CoreHandle()
+            : deviceBuffer(0)
+            , drainCounter(0)
+            , internalDrain(false) {
         nStreams[0] = 1;
         nStreams[1] = 1;
         id[0] = 0;
@@ -2064,7 +2067,10 @@ struct JackHandle {
     int drainCounter;   // Tracks callback counts when draining
     bool internalDrain; // Indicates if stop is initiated from callback or not.
 
-    JackHandle() : client(0), drainCounter(0), internalDrain(false) {
+    JackHandle()
+            : client(0)
+            , drainCounter(0)
+            , internalDrain(false) {
         ports[0] = 0;
         ports[1] = 0;
         xrun[0] = false;
@@ -2076,7 +2082,8 @@ struct JackHandle {
 static void jackSilentError(const char *){};
 #endif
 
-RtApiJack::RtApiJack() : shouldAutoconnect_(true) {
+RtApiJack::RtApiJack()
+        : shouldAutoconnect_(true) {
     // Nothing to do here.
 #if !defined(__RTAUDIO_DEBUG__)
     // Turn off Jack's internal error reporting.
@@ -2860,7 +2867,10 @@ struct AsioHandle {
     ASIOBufferInfo *bufferInfos;
     HANDLE condition;
 
-    AsioHandle() : drainCounter(0), internalDrain(false), bufferInfos(0) {}
+    AsioHandle()
+            : drainCounter(0)
+            , internalDrain(false)
+            , bufferInfos(0) {}
 };
 
 // Function declarations (definitions at end of section)
@@ -3895,7 +3905,11 @@ typedef HANDLE(__stdcall *TAvSetMmThreadCharacteristicsPtr)(LPCWSTR TaskName, LP
 // provide intermediate storage for read / write synchronization.
 class WasapiBuffer {
 public:
-    WasapiBuffer() : buffer_(NULL), bufferSize_(0), inIndex_(0), outIndex_(0) {}
+    WasapiBuffer()
+            : buffer_(NULL)
+            , bufferSize_(0)
+            , inIndex_(0)
+            , outIndex_(0) {}
 
     ~WasapiBuffer() {
         free(buffer_);
@@ -4051,13 +4065,17 @@ public:
                     unsigned int channelCount,
                     unsigned int inSampleRate,
                     unsigned int outSampleRate)
-            : _bytesPerSample(bitsPerSample / 8), _channelCount(channelCount),
-              _sampleRatio((float)outSampleRate / inSampleRate), _transformUnk(NULL), _transform(NULL),
-              _mediaType(NULL), _inputMediaType(NULL), _outputMediaType(NULL)
+            : _bytesPerSample(bitsPerSample / 8)
+            , _channelCount(channelCount)
+            , _sampleRatio((float)outSampleRate / inSampleRate)
+            , _transformUnk(NULL)
+            , _transform(NULL)
+            , _mediaType(NULL)
+            , _inputMediaType(NULL)
+            , _outputMediaType(NULL)
 
 #ifdef __IWMResamplerProps_FWD_DEFINED__
-              ,
-              _resamplerProps(NULL)
+            , _resamplerProps(NULL)
 #endif
     {
         // 1. Initialization
@@ -4246,13 +4264,19 @@ struct WasapiHandle {
     HANDLE renderEvent;
 
     WasapiHandle()
-            : captureAudioClient(NULL), renderAudioClient(NULL), captureClient(NULL), renderClient(NULL),
-              captureEvent(NULL), renderEvent(NULL) {}
+            : captureAudioClient(NULL)
+            , renderAudioClient(NULL)
+            , captureClient(NULL)
+            , renderClient(NULL)
+            , captureEvent(NULL)
+            , renderEvent(NULL) {}
 };
 
 //=============================================================================
 
-RtApiWasapi::RtApiWasapi() : coInitialized_(false), deviceEnumerator_(NULL) {
+RtApiWasapi::RtApiWasapi()
+        : coInitialized_(false)
+        , deviceEnumerator_(NULL) {
     // WASAPI can run either apartment or multi-threaded
     HRESULT hr = CoInitialize(NULL);
     if (!FAILED(hr))
@@ -5544,7 +5568,9 @@ struct DsHandle {
     DWORD dsPointerLeadTime[2]; // the number of bytes ahead of the safe pointer to lead by.
     HANDLE condition;
 
-    DsHandle() : drainCounter(0), internalDrain(false) {
+    DsHandle()
+            : drainCounter(0)
+            , internalDrain(false) {
         id[0] = 0;
         id[1] = 0;
         buffer[0] = 0;
@@ -5570,7 +5596,8 @@ struct DsDevice {
     bool found;
     std::string name;
 
-    DsDevice() : found(false) {
+    DsDevice()
+            : found(false) {
         validId[0] = false;
         validId[1] = false;
     }
@@ -7190,12 +7217,15 @@ struct AlsaHandle {
 
     AlsaHandle()
 #if _cplusplus >= 201103L
-            : handles{nullptr, nullptr}, synchronized(false), runnable(false) {
+            : handles{nullptr, nullptr}
+            , synchronized(false)
+            , runnable(false) {
         xrun[0] = false;
         xrun[1] = false;
     }
 #else
-            : synchronized(false), runnable(false) {
+            : synchronized(false)
+            , runnable(false) {
         handles[0] = NULL;
         handles[1] = NULL;
         xrun[0] = false;
@@ -7586,7 +7616,8 @@ bool RtApiAlsa::probeDeviceOpen(unsigned int device,
 {
 #if defined(__RTAUDIO_DEBUG__)
     struct SndOutputTdealloc {
-        SndOutputTdealloc() : _out(NULL) {
+        SndOutputTdealloc()
+                : _out(NULL) {
             snd_output_stdio_attach(&_out, stderr, 0);
         }
         ~SndOutputTdealloc() {
@@ -8555,7 +8586,9 @@ static void *alsaCallbackHandler(void *ptr) {
 
 static pa_mainloop_api *rt_pa_mainloop_api = NULL;
 struct PaDeviceInfo {
-    PaDeviceInfo() : sink_index(-1), source_index(-1) {}
+    PaDeviceInfo()
+            : sink_index(-1)
+            , source_index(-1) {}
     int sink_index;
     int source_index;
     std::string sink_name;
@@ -8588,7 +8621,10 @@ struct PulseAudioHandle {
     pthread_t thread;
     pthread_cond_t runnable_cv;
     bool runnable;
-    PulseAudioHandle() : s_play(0), s_rec(0), runnable(false) {}
+    PulseAudioHandle()
+            : s_play(0)
+            , s_rec(0)
+            , runnable(false) {}
 };
 
 static void rt_pa_mainloop_api_quit(int ret) {
@@ -9327,7 +9363,8 @@ struct OssHandle {
     bool triggered;
     pthread_cond_t runnable;
 
-    OssHandle() : triggered(false) {
+    OssHandle()
+            : triggered(false) {
         id[0] = 0;
         id[1] = 0;
         xrun[0] = false;

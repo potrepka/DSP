@@ -262,7 +262,8 @@ protected:
 
 class MidiInDummy : public MidiInApi {
 public:
-    MidiInDummy(const std::string & /*clientName*/, unsigned int queueSizeLimit) : MidiInApi(queueSizeLimit) {
+    MidiInDummy(const std::string & /*clientName*/, unsigned int queueSizeLimit)
+            : MidiInApi(queueSizeLimit) {
         errorString_ = "MidiInDummy: This class provides no functionality.";
         error(RtMidiError::WARNING, errorString_);
     }
@@ -317,7 +318,8 @@ protected:
 //  RtMidi Definitions
 //*********************************************************************//
 
-RtMidi::RtMidi() : rtapi_(0) {}
+RtMidi::RtMidi()
+        : rtapi_(0) {}
 
 RtMidi::~RtMidi() {
     delete rtapi_;
@@ -549,7 +551,11 @@ RtMidiOut::~RtMidiOut() throw() {}
 //*********************************************************************//
 
 MidiApi::MidiApi(void)
-        : apiData_(0), connected_(false), errorCallback_(0), firstErrorOccurred_(false), errorCallbackUserData_(0) {}
+        : apiData_(0)
+        , connected_(false)
+        , errorCallback_(0)
+        , firstErrorOccurred_(false)
+        , errorCallbackUserData_(0) {}
 
 MidiApi::~MidiApi(void) {}
 
@@ -588,7 +594,8 @@ void MidiApi::error(RtMidiError::Type type, std::string errorString) {
 //  Common MidiInApi Definitions
 //*********************************************************************//
 
-MidiInApi::MidiInApi(unsigned int queueSizeLimit) : MidiApi() {
+MidiInApi::MidiInApi(unsigned int queueSizeLimit)
+        : MidiApi() {
     // Allocate the MIDI queue.
     inputData_.queue.ringSize = queueSizeLimit;
     if (inputData_.queue.ringSize > 0)
@@ -715,7 +722,8 @@ bool MidiInApi::MidiQueue::pop(std::vector<unsigned char> *msg, double *timeStam
 //  Common MidiOutApi Definitions
 //*********************************************************************//
 
-MidiOutApi::MidiOutApi(void) : MidiApi() {}
+MidiOutApi::MidiOutApi(void)
+        : MidiApi() {}
 
 MidiOutApi::~MidiOutApi(void) {}
 
@@ -903,7 +911,8 @@ static void midiInputCallback(const MIDIPacketList *list, void *procRef, void * 
     }
 }
 
-MidiInCore::MidiInCore(const std::string &clientName, unsigned int queueSizeLimit) : MidiInApi(queueSizeLimit) {
+MidiInCore::MidiInCore(const std::string &clientName, unsigned int queueSizeLimit)
+        : MidiInApi(queueSizeLimit) {
     MidiInCore::initialize(clientName);
 }
 
@@ -1211,7 +1220,8 @@ std::string MidiInCore::getPortName(unsigned int portNumber) {
 //  Class Definitions: MidiOutCore
 //*********************************************************************//
 
-MidiOutCore::MidiOutCore(const std::string &clientName) : MidiOutApi() {
+MidiOutCore::MidiOutCore(const std::string &clientName)
+        : MidiOutApi() {
     MidiOutCore::initialize(clientName);
 }
 
@@ -1702,7 +1712,8 @@ static void *alsaMidiHandler(void *ptr) {
     return 0;
 }
 
-MidiInAlsa::MidiInAlsa(const std::string &clientName, unsigned int queueSizeLimit) : MidiInApi(queueSizeLimit) {
+MidiInAlsa::MidiInAlsa(const std::string &clientName, unsigned int queueSizeLimit)
+        : MidiInApi(queueSizeLimit) {
     MidiInAlsa::initialize(clientName);
 }
 
@@ -2057,7 +2068,8 @@ void MidiInAlsa::setPortName(const std::string &portName) {
 //  Class Definitions: MidiOutAlsa
 //*********************************************************************//
 
-MidiOutAlsa::MidiOutAlsa(const std::string &clientName) : MidiOutApi() {
+MidiOutAlsa::MidiOutAlsa(const std::string &clientName)
+        : MidiOutApi() {
     MidiOutAlsa::initialize(clientName);
 }
 
@@ -2478,7 +2490,8 @@ midiInputCallback(HMIDIIN /*hmin*/, UINT inputStatus, DWORD_PTR instancePtr, DWO
     apiData->message.bytes.clear();
 }
 
-MidiInWinMM::MidiInWinMM(const std::string &clientName, unsigned int queueSizeLimit) : MidiInApi(queueSizeLimit) {
+MidiInWinMM::MidiInWinMM(const std::string &clientName, unsigned int queueSizeLimit)
+        : MidiInApi(queueSizeLimit) {
     MidiInWinMM::initialize(clientName);
 }
 
@@ -2668,7 +2681,8 @@ std::string MidiInWinMM::getPortName(unsigned int portNumber) {
 //  Class Definitions: MidiOutWinMM
 //*********************************************************************//
 
-MidiOutWinMM::MidiOutWinMM(const std::string &clientName) : MidiOutApi() {
+MidiOutWinMM::MidiOutWinMM(const std::string &clientName)
+        : MidiOutApi() {
     MidiOutWinMM::initialize(clientName);
 }
 
@@ -2992,7 +3006,8 @@ static int jackProcessIn(jack_nframes_t nframes, void *arg) {
     return 0;
 }
 
-MidiInJack::MidiInJack(const std::string &clientName, unsigned int queueSizeLimit) : MidiInApi(queueSizeLimit) {
+MidiInJack::MidiInJack(const std::string &clientName, unsigned int queueSizeLimit)
+        : MidiInApi(queueSizeLimit) {
     MidiInJack::initialize(clientName);
 }
 
@@ -3177,7 +3192,8 @@ static int jackProcessOut(jack_nframes_t nframes, void *arg) {
     return 0;
 }
 
-MidiOutJack::MidiOutJack(const std::string &clientName) : MidiOutApi() {
+MidiOutJack::MidiOutJack(const std::string &clientName)
+        : MidiOutApi() {
     MidiOutJack::initialize(clientName);
 }
 

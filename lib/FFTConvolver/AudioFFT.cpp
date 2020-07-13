@@ -85,7 +85,12 @@ void ScaleBuffer(TypeDest *dest, const TypeSrc *src, const TypeFactor factor, si
  */
 class OouraFFT : public detail::AudioFFTImpl {
 public:
-    OouraFFT() : detail::AudioFFTImpl(), _size(0), _ip(), _w(), _buffer() {}
+    OouraFFT()
+            : detail::AudioFFTImpl()
+            , _size(0)
+            , _ip()
+            , _w()
+            , _buffer() {}
 
     OouraFFT(const OouraFFT &) = delete;
     OouraFFT &operator=(const OouraFFT &) = delete;
@@ -718,7 +723,13 @@ typedef OouraFFT AudioFFTImplementation;
  */
 class AppleAccelerateFFT : public detail::AudioFFTImpl {
 public:
-    AppleAccelerateFFT() : detail::AudioFFTImpl(), _size(0), _powerOf2(0), _fftSetup(0), _re(), _im() {}
+    AppleAccelerateFFT()
+            : detail::AudioFFTImpl()
+            , _size(0)
+            , _powerOf2(0)
+            , _fftSetup(0)
+            , _re()
+            , _im() {}
 
     AppleAccelerateFFT(const AppleAccelerateFFT &) = delete;
     AppleAccelerateFFT &operator=(const AppleAccelerateFFT &) = delete;
@@ -806,8 +817,14 @@ typedef AppleAccelerateFFT AudioFFTImplementation;
 class FFTW3FFT : public detail::AudioFFTImpl {
 public:
     FFTW3FFT()
-            : detail::AudioFFTImpl(), _size(0), _complexSize(0), _planForward(0), _planBackward(0), _data(0), _re(0),
-              _im(0) {}
+            : detail::AudioFFTImpl()
+            , _size(0)
+            , _complexSize(0)
+            , _planForward(0)
+            , _planBackward(0)
+            , _data(0)
+            , _re(0)
+            , _im(0) {}
 
     FFTW3FFT(const FFTW3FFT &) = delete;
     FFTW3FFT &operator=(const FFTW3FFT &) = delete;
@@ -894,7 +911,8 @@ typedef FFTW3FFT AudioFFTImplementation;
 
 // =============================================================
 
-AudioFFT::AudioFFT() : _impl(new AudioFFTImplementation()) {}
+AudioFFT::AudioFFT()
+        : _impl(new AudioFFTImplementation()) {}
 
 AudioFFT::~AudioFFT() {}
 
