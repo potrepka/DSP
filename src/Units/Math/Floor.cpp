@@ -1,11 +1,10 @@
 #include "Floor.h"
 
-const unsigned int dsp::Floor::DIVISOR = 1;
-
-dsp::Floor::Floor(Type type, Space space) : Processor(type, type, space) {
+dsp::Floor::Floor(Type type, Space space)
+        : Processor(type, type, space)
+        , DIVISOR(pushInput(type, space, 1.0)) {
     assert(type != Type::BINARY);
     assert(type != Type::INTEGER);
-    pushInput(type, space);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Floor::getDivisor() const {

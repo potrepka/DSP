@@ -1,11 +1,10 @@
 #include "Modulo.h"
 
-const unsigned int dsp::Modulo::DIVISOR = 1;
-
-dsp::Modulo::Modulo(Type type, Space space) : Processor(type, type, space) {
+dsp::Modulo::Modulo(Type type, Space space)
+        : Processor(type, type, space)
+        , DIVISOR(pushInput(type, space, 1.0)) {
     assert(type != Type::BINARY);
     assert(type != Type::INTEGER);
-    pushInput(type, space);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Modulo::getDivisor() const {

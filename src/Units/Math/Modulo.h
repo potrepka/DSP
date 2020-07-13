@@ -15,7 +15,7 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int DIVISOR;
+    const unsigned int DIVISOR;
 };
 
 } // namespace dsp
