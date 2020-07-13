@@ -61,7 +61,11 @@ void dsp::AHR::process() {
             } else if (index[i] < (attackBuffer[k] + holdBuffer[k]) * getSampleRate()) {
                 outputBuffer[k] = value[i] = 1.0;
             } else {
-                value[i] *= pow(0.001, 1.0 / (releaseBuffer[k] * getSampleRate()));
+                if (releaseBuffer[k] > 0) {
+                    value[i] *= pow(0.001, 1.0 / (releaseBuffer[k] * getSampleRate()));
+                } else {
+                    value[i] = 0.0;
+                }
                 outputBuffer[k] = value[i];
             }
             currentTimeBuffer[k] = index[i] * getOneOverSampleRate();
