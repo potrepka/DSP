@@ -25,12 +25,12 @@
 
 // Math
 #include "AbsoluteValue.h"
-#include "Divide.h"
 #include "Floor.h"
 #include "Maximum.h"
 #include "Minimum.h"
 #include "Modulo.h"
 #include "Multiply.h"
+#include "MultiplyHertzSeconds.h"
 #include "Negative.h"
 #include "OneOver.h"
 
