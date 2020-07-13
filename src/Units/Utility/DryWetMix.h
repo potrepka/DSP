@@ -8,6 +8,7 @@ class DryWetMix : public Processor {
 
 public:
     DryWetMix(Type type, Space space = Space::TIME);
+
     std::shared_ptr<InputParameter> getDrySignal() const;
     std::shared_ptr<InputParameter> getWetSignal() const;
     std::shared_ptr<InputParameter> getMixAmount() const;

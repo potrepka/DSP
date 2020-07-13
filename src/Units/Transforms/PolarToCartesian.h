@@ -8,6 +8,7 @@ class PolarToCartesian : public Unit {
 
 public:
     PolarToCartesian();
+
     std::shared_ptr<InputParameter> getMagnitude() const;
     std::shared_ptr<InputParameter> getPhase() const;
     std::shared_ptr<OutputParameter> getReal() const;

@@ -8,6 +8,7 @@ class Trigger : public Generator {
 
 public:
     Trigger();
+
     std::shared_ptr<InputParameter> getResetTrigger() const;
     std::shared_ptr<InputParameter> getInterval() const;
     std::shared_ptr<InputParameter> getDelay() const;
@@ -22,6 +23,7 @@ private:
     static const unsigned int INTERVAL;
     static const unsigned int DELAY;
     static const unsigned int CURRENT_TIME;
+
     std::vector<DSP_FLOAT> index;
 };
 

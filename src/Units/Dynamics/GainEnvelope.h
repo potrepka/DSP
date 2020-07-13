@@ -8,6 +8,7 @@ class GainEnvelope : public Processor {
 
 public:
     GainEnvelope();
+
     std::shared_ptr<InputParameter> getAttack() const;
     std::shared_ptr<InputParameter> getRelease() const;
 
@@ -18,6 +19,7 @@ protected:
 private:
     static const unsigned int ATTACK;
     static const unsigned int RELEASE;
+
     std::vector<DSP_FLOAT> outputPrevious;
 };
 

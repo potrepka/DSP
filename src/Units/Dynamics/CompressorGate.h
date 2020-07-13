@@ -14,6 +14,7 @@ class CompressorGate : public Processor {
 public:
     CompressorGate();
     ~CompressorGate();
+
     std::shared_ptr<InputParameter> getLink() const;
     std::shared_ptr<InputParameter> getThreshold() const;
     std::shared_ptr<InputParameter> getCompressionRatio() const;

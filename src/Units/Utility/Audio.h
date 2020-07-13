@@ -8,6 +8,7 @@ class Audio : public Unit {
 
 public:
     Audio();
+
     std::shared_ptr<OutputParameter> getAudioInput() const;
     std::shared_ptr<InputParameter> getAudioOutput() const;
     std::shared_ptr<OutputParameter> getAudioInputClipping() const;

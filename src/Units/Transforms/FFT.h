@@ -9,6 +9,7 @@ class FFT : public Consumer {
 
 public:
     FFT();
+
     std::shared_ptr<OutputParameter> getReal() const;
     std::shared_ptr<OutputParameter> getImaginary() const;
 
@@ -19,6 +20,7 @@ protected:
 private:
     static const unsigned int REAL;
     static const unsigned int IMAGINARY;
+
     audiofft::AudioFFT fft;
     std::vector<float> input;
     std::vector<float> real;

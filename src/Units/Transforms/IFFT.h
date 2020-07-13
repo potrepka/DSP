@@ -9,6 +9,7 @@ class IFFT : public Generator {
 
 public:
     IFFT();
+
     std::shared_ptr<InputParameter> getReal() const;
     std::shared_ptr<InputParameter> getImaginary() const;
 
@@ -19,6 +20,7 @@ protected:
 private:
     static const unsigned int REAL;
     static const unsigned int IMAGINARY;
+
     audiofft::AudioFFT fft;
     std::vector<float> real;
     std::vector<float> imaginary;

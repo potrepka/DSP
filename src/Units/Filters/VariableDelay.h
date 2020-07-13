@@ -9,6 +9,7 @@ class VariableDelay : public Processor {
 
 public:
     VariableDelay(Type type);
+
     unsigned int getMaxDelayTime() const;
     void setMaxDelayTime(DSP_FLOAT seconds);
     std::shared_ptr<InputParameter> getDelayTime() const;
@@ -20,9 +21,11 @@ protected:
 
 private:
     static const unsigned int DELAY_TIME;
+
     DSP_FLOAT maxDelayTime;
     unsigned int writeIndex;
     std::shared_ptr<Buffer> buffer;
+
     unsigned int getDelayBufferSize();
 };
 

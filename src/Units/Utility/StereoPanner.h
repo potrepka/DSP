@@ -10,6 +10,7 @@ public:
     enum class Mode { CONSTANT_POWER, LINEAR };
 
     StereoPanner(Type type, Space space = Space::TIME);
+
     Mode getMode() const;
     void setMode(Mode mode);
     std::shared_ptr<InputParameter> getDirection() const;
@@ -23,6 +24,7 @@ private:
     static const unsigned int DIRECTION;
     static const unsigned int LEFT;
     static const unsigned int RIGHT;
+
     Mode mode;
 };
 

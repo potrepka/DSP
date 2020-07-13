@@ -44,11 +44,13 @@ public:
     public:
         static const unsigned char MIDI_CHANNELS;
         static const unsigned char MIDI_NOTES;
+
         struct compare {
             bool operator()(const TimedMessage &left, const TimedMessage &right) const {
                 return left.time < right.time;
             }
         };
+
         TimedMessage(double time, std::vector<unsigned char> bytes);
 
         double getTime() const;

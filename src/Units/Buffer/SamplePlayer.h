@@ -11,6 +11,7 @@ public:
     enum class Mode { ONE_SHOT, LOOP };
 
     SamplePlayer(Type type);
+
     Mode getMode() const;
     void setMode(Mode mode);
     std::shared_ptr<Buffer> getSample() const;
@@ -30,7 +31,9 @@ private:
     static const unsigned int GATE;
     static const unsigned int START_TIME;
     static const unsigned int SPEED;
+
     static const unsigned int CURRENT_TIME;
+
     Mode mode;
     std::shared_ptr<Buffer> sample;
     std::vector<DSP_FLOAT> readIndex;

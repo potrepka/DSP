@@ -8,6 +8,7 @@ class MultiplyHertzSeconds : public Generator {
 
 public:
     MultiplyHertzSeconds(Space space = Space::TIME);
+
     std::shared_ptr<InputParameter> getFrequency() const;
     std::shared_ptr<InputParameter> getTime() const;
 

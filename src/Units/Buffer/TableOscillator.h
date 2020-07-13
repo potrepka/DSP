@@ -9,6 +9,7 @@ class TableOscillator : public Generator {
 
 public:
     TableOscillator(Type type);
+
     unsigned int getNumTables() const;
     std::shared_ptr<Buffer> getTable(unsigned int index) const;
     void setTable(unsigned int index, std::shared_ptr<Buffer> table);
@@ -24,6 +25,7 @@ protected:
 private:
     static const unsigned int PHASE;
     static const unsigned int POSITION;
+
     std::vector<std::shared_ptr<Buffer>> tables;
 };
 

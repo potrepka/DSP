@@ -9,6 +9,7 @@ class SampleRecorder : public Consumer {
 
 public:
     SampleRecorder(Type type);
+
     std::shared_ptr<Buffer> getSample() const;
     std::shared_ptr<InputParameter> getResetTrigger() const;
     std::shared_ptr<InputParameter> getGate() const;
@@ -20,6 +21,7 @@ protected:
 private:
     static const unsigned int RESET_TRIGGER;
     static const unsigned int GATE;
+
     std::shared_ptr<Buffer> sample;
     std::vector<DSP_FLOAT> gatePrevious;
 };

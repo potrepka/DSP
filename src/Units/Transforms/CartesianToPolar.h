@@ -8,6 +8,7 @@ class CartesianToPolar : public Unit {
 
 public:
     CartesianToPolar();
+
     std::shared_ptr<InputParameter> getReal() const;
     std::shared_ptr<InputParameter> getImaginary() const;
     std::shared_ptr<OutputParameter> getMagnitude() const;

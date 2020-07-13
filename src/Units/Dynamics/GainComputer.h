@@ -8,6 +8,7 @@ class GainComputer : public Processor {
 
 public:
     GainComputer(Space space = Space::TIME);
+
     std::shared_ptr<InputParameter> getThreshold() const;
     std::shared_ptr<InputParameter> getCompressionRatio() const;
     std::shared_ptr<InputParameter> getGateRatio() const;

@@ -8,6 +8,7 @@ class Modulo : public Processor {
 
 public:
     Modulo(Type type, Space space = Space::TIME);
+
     std::shared_ptr<InputParameter> getDivisor() const;
 
 protected:

@@ -8,6 +8,7 @@ class Floor : public Processor {
 
 public:
     Floor(Type type, Space space = Space::TIME);
+
     std::shared_ptr<InputParameter> getDivisor() const;
 
 protected:

@@ -10,6 +10,7 @@ public:
     enum class Mode { LOW_PASS, HIGH_PASS };
 
     OnePole();
+
     Mode getMode() const;
     void setMode(Mode mode);
     std::shared_ptr<InputParameter> getFrequency() const;
@@ -20,6 +21,7 @@ protected:
 
 private:
     static const unsigned int FREQUENCY;
+
     Mode mode;
     std::vector<DSP_FLOAT> state;
 };

@@ -45,6 +45,7 @@ class Input : public Connection, public std::enable_shared_from_this<Input> {
 public:
     Input(unsigned int bufferSize, Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
     ~Input();
+
     std::vector<std::shared_ptr<Output>> getConnections() const;
     void connect(std::shared_ptr<Output> output);
     void disconnect(std::shared_ptr<Output> output);
@@ -63,6 +64,7 @@ class Output : public Connection, public std::enable_shared_from_this<Output> {
 public:
     Output(unsigned int bufferSize, Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
     ~Output();
+
     std::vector<std::shared_ptr<Input>> getConnections() const;
     void connect(std::shared_ptr<Input> input);
     void disconnect(std::shared_ptr<Input> input);

@@ -8,6 +8,7 @@ class Multiply : public Processor {
 
 public:
     Multiply(Type type, Space space = Space::TIME);
+
     void pushInputBipolar();
     void pushInputUnipolar();
     void pushInputRatio();
