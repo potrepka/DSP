@@ -1,11 +1,10 @@
 #include "ChannelMix.h"
 
-const unsigned int dsp::ChannelMix::MIX_AMOUNT = 1;
-
-dsp::ChannelMix::ChannelMix(Type type, Space space) : Processor(type, type, space) {
+dsp::ChannelMix::ChannelMix(Type type, Space space)
+        : Processor(type, type, space)
+        , MIX_AMOUNT(pushInput(Type::UNIPOLAR, space)) {
     assert(type != Type::BINARY);
     assert(type != Type::INTEGER);
-    pushInput(Type::UNIPOLAR, space);
 }
 
 dsp::ChannelMix::Mode dsp::ChannelMix::getMode() const {

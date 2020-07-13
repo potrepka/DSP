@@ -1,7 +1,10 @@
 #include "Buffer.h"
 
 dsp::Buffer::Buffer(unsigned int numChannels, unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
-        : bufferSize(bufferSize), type(type), space(space), defaultValue(defaultValue) {
+        : bufferSize(bufferSize)
+        , type(type)
+        , space(space)
+        , defaultValue(defaultValue) {
     setNumChannels(numChannels);
     setBufferSize(bufferSize);
 }

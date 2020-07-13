@@ -1,7 +1,8 @@
 #include "Processor.h"
 
 dsp::Processor::Processor(Type inType, Type outType, Space space)
-        : Consumer(inType, space), Generator(outType, space) {}
+        : Consumer(inType, space)
+        , Generator(outType, space) {}
 
 void dsp::Processor::transform(std::function<DSP_FLOAT(DSP_FLOAT)> transform) {
     for (unsigned int i = 0; i < getNumChannels(); i++) {

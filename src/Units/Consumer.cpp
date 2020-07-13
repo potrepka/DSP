@@ -1,10 +1,7 @@
 #include "Consumer.h"
 
-const unsigned int dsp::Consumer::INPUT_SIGNAL = 0;
-
-dsp::Consumer::Consumer(Type type, Space space) {
-    pushInput(type, space);
-}
+dsp::Consumer::Consumer(Type type, Space space)
+        : INPUT_SIGNAL(pushInput(type, space)) {}
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Consumer::getInputSignal() const {
     return getInput(INPUT_SIGNAL);

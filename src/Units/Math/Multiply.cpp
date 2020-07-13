@@ -1,6 +1,7 @@
 #include "Multiply.h"
 
-dsp::Multiply::Multiply(Type type, Space space) : Processor(type, type, space) {
+dsp::Multiply::Multiply(Type type, Space space)
+        : Processor(type, type, space) {
     assert(type != Type::BINARY);
     assert(type != Type::INTEGER);
 }

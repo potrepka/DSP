@@ -1,18 +1,13 @@
 #include "SamplePlayer.h"
 
-const unsigned int dsp::SamplePlayer::RESET_TRIGGER = 0;
-const unsigned int dsp::SamplePlayer::GATE = 1;
-const unsigned int dsp::SamplePlayer::START_TIME = 2;
-const unsigned int dsp::SamplePlayer::SPEED = 3;
-const unsigned int dsp::SamplePlayer::CURRENT_TIME = 1;
-
-dsp::SamplePlayer::SamplePlayer(Type type) : Generator(type), mode(Mode::ONE_SHOT) {
-    pushInput(Type::BINARY);
-    pushInput(Type::BINARY);
-    pushInput(Type::SECONDS);
-    pushInput(Type::RATIO, Space::TIME, 1.0);
-    pushOutput(Type::SECONDS);
-}
+dsp::SamplePlayer::SamplePlayer(Type type)
+        : Generator(type)
+        , RESET_TRIGGER(pushInput(Type::BINARY))
+        , GATE(pushInput(Type::BINARY))
+        , START_TIME(pushInput(Type::SECONDS))
+        , SPEED(pushInput(Type::RATIO, Space::TIME, 1.0))
+        , CURRENT_TIME(pushOutput(Type::SECONDS))
+        , mode(Mode::ONE_SHOT) {}
 
 dsp::SamplePlayer::Mode dsp::SamplePlayer::getMode() const {
     return mode;

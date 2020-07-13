@@ -16,7 +16,7 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int TRIGGER;
+    const unsigned int TRIGGER;
 
     std::vector<DSP_FLOAT> memory;
 };

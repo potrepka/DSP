@@ -1,14 +1,11 @@
 #include "StereoPanner.h"
 
-const unsigned int dsp::StereoPanner::DIRECTION = 1;
-const unsigned int dsp::StereoPanner::LEFT = 0;
-const unsigned int dsp::StereoPanner::RIGHT = 1;
-
-dsp::StereoPanner::StereoPanner(Type type, Space space) : Consumer(type, space), mode(Mode::CONSTANT_POWER) {
-    pushInput(Type::BIPOLAR, space);
-    pushOutput(type, space);
-    pushOutput(type, space);
-}
+dsp::StereoPanner::StereoPanner(Type type, Space space)
+        : Consumer(type, space)
+        , DIRECTION(pushInput(Type::BIPOLAR, space))
+        , LEFT(pushOutput(type, space))
+        , RIGHT(pushOutput(type, space))
+        , mode(Mode::CONSTANT_POWER) {}
 
 dsp::StereoPanner::Mode dsp::StereoPanner::getMode() const {
     return mode;

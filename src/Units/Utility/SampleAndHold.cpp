@@ -1,10 +1,8 @@
 #include "SampleAndHold.h"
 
-const unsigned int dsp::SampleAndHold::TRIGGER = 0;
-
-dsp::SampleAndHold::SampleAndHold(Type type) : Processor(type, type) {
-    pushInput(Type::BINARY);
-}
+dsp::SampleAndHold::SampleAndHold(Type type)
+        : Processor(type, type)
+        , TRIGGER(pushInput(Type::BINARY)) {}
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleAndHold::getTrigger() const {
     return getInput(TRIGGER);

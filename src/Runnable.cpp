@@ -1,6 +1,10 @@
 #include "Runnable.h"
 
-dsp::Runnable::Runnable() : oneOverSampleRate(0.0), oneOverBufferSize(0.0), sampleRate(0), bufferSize(0) {}
+dsp::Runnable::Runnable()
+        : oneOverSampleRate(0.0)
+        , oneOverBufferSize(0.0)
+        , sampleRate(0)
+        , bufferSize(0) {}
 
 DSP_FLOAT dsp::Runnable::getOneOverSampleRate() const {
     return oneOverSampleRate;

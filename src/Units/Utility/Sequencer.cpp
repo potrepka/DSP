@@ -1,12 +1,9 @@
 #include "Sequencer.h"
 
-const unsigned int dsp::Sequencer::RESET_TRIGGER = 0;
-const unsigned int dsp::Sequencer::TRIGGER = 1;
-
-dsp::Sequencer::Sequencer(Type type) : Generator(type) {
-    pushInput(Type::BINARY);
-    pushInput(Type::BINARY);
-}
+dsp::Sequencer::Sequencer(Type type)
+        : Generator(type)
+        , RESET_TRIGGER(pushInput(Type::BINARY))
+        , TRIGGER(pushInput(Type::BINARY)) {}
 
 std::shared_ptr<dsp::Buffer> dsp::Sequencer::getSequence() const {
     return sequence;

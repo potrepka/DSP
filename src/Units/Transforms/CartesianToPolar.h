@@ -18,10 +18,10 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int REAL;
-    static const unsigned int IMAGINARY;
-    static const unsigned int MAGNITUDE;
-    static const unsigned int PHASE;
+    const unsigned int REAL;
+    const unsigned int IMAGINARY;
+    const unsigned int MAGNITUDE;
+    const unsigned int PHASE;
 };
 
 } // namespace dsp

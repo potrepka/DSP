@@ -1,6 +1,9 @@
 #include "Convolver.h"
 
-dsp::Convolver::Convolver() : Processor(Type::BIPOLAR, Type::BIPOLAR), headSize(0), tailSize(0) {}
+dsp::Convolver::Convolver()
+        : Processor(Type::BIPOLAR, Type::BIPOLAR)
+        , headSize(0)
+        , tailSize(0) {}
 
 std::shared_ptr<dsp::Buffer> dsp::Convolver::getBuffer(unsigned int channel) const {
     return buffers[channel];

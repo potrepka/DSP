@@ -27,12 +27,12 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int RESET_TRIGGER;
-    static const unsigned int GATE;
-    static const unsigned int START_TIME;
-    static const unsigned int SPEED;
+    const unsigned int RESET_TRIGGER;
+    const unsigned int GATE;
+    const unsigned int START_TIME;
+    const unsigned int SPEED;
 
-    static const unsigned int CURRENT_TIME;
+    const unsigned int CURRENT_TIME;
 
     Mode mode;
     std::shared_ptr<Buffer> sample;

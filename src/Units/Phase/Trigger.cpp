@@ -1,16 +1,11 @@
 #include "Trigger.h"
 
-const unsigned int dsp::Trigger::RESET_TRIGGER = 0;
-const unsigned int dsp::Trigger::INTERVAL = 1;
-const unsigned int dsp::Trigger::DELAY = 2;
-const unsigned int dsp::Trigger::CURRENT_TIME = 1;
-
-dsp::Trigger::Trigger() : Generator(Type::BINARY) {
-    pushInput(Type::BINARY);
-    pushInput(Type::SECONDS);
-    pushInput(Type::SECONDS);
-    pushOutput(Type::SECONDS);
-}
+dsp::Trigger::Trigger()
+        : Generator(Type::BINARY)
+        , RESET_TRIGGER(pushInput(Type::BINARY))
+        , INTERVAL(pushInput(Type::SECONDS))
+        , DELAY(pushInput(Type::SECONDS))
+        , CURRENT_TIME(pushOutput(Type::SECONDS)) {}
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getResetTrigger() const {
     return getInput(RESET_TRIGGER);

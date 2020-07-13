@@ -1,16 +1,10 @@
 #include "Audio.h"
 
-const unsigned int dsp::Audio::AUDIO_INPUT = 0;
-const unsigned int dsp::Audio::AUDIO_OUTPUT = 0;
-const unsigned int dsp::Audio::AUDIO_INPUT_CLIPPING = 1;
-const unsigned int dsp::Audio::AUDIO_OUTPUT_CLIPPING = 2;
-
-dsp::Audio::Audio() {
-    pushOutput(Type::BIPOLAR);
-    pushInput(Type::BIPOLAR);
-    pushOutput(Type::BINARY);
-    pushOutput(Type::BINARY);
-}
+dsp::Audio::Audio()
+        : AUDIO_INPUT(pushOutput(Type::BIPOLAR))
+        , AUDIO_OUTPUT(pushInput(Type::BIPOLAR))
+        , AUDIO_INPUT_CLIPPING(pushOutput(Type::BINARY))
+        , AUDIO_OUTPUT_CLIPPING(pushOutput(Type::BINARY)) {}
 
 std::shared_ptr<dsp::Unit::OutputParameter> dsp::Audio::getAudioInput() const {
     return getOutput(AUDIO_INPUT);

@@ -1,9 +1,10 @@
 #include "VariableDelay.h"
 
-const unsigned int dsp::VariableDelay::DELAY_TIME = 1;
-
-dsp::VariableDelay::VariableDelay(Type type) : Processor(type, type), maxDelayTime(0.0), writeIndex(0) {
-    pushInput(Type::SECONDS);
+dsp::VariableDelay::VariableDelay(Type type)
+        : Processor(type, type)
+        , DELAY_TIME(pushInput(Type::SECONDS))
+        , maxDelayTime(0.0)
+        , writeIndex(0) {
     buffer = std::make_shared<Buffer>(0, 0, type);
 }
 

@@ -17,8 +17,8 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int ATTACK;
-    static const unsigned int RELEASE;
+    const unsigned int ATTACK;
+    const unsigned int RELEASE;
 
     std::vector<DSP_FLOAT> outputPrevious;
 };

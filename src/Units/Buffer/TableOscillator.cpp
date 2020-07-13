@@ -1,12 +1,9 @@
 #include "TableOscillator.h"
 
-const unsigned int dsp::TableOscillator::PHASE = 0;
-const unsigned int dsp::TableOscillator::POSITION = 1;
-
-dsp::TableOscillator::TableOscillator(Type type) : Generator(type) {
-    pushInput(Type::UNIPOLAR);
-    pushInput(Type::UNIPOLAR);
-}
+dsp::TableOscillator::TableOscillator(Type type)
+        : Generator(type)
+        , PHASE(pushInput(Type::UNIPOLAR))
+        , POSITION(pushInput(Type::UNIPOLAR)) {}
 
 unsigned int dsp::TableOscillator::getNumTables() const {
     return static_cast<unsigned int>(tables.size());

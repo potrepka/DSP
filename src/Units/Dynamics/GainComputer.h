@@ -18,10 +18,10 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int THRESHOLD;
-    static const unsigned int COMPRESSION_RATIO;
-    static const unsigned int GATE_RATIO;
-    static const unsigned int KNEE;
+    const unsigned int THRESHOLD;
+    const unsigned int COMPRESSION_RATIO;
+    const unsigned int GATE_RATIO;
+    const unsigned int KNEE;
 };
 
 } // namespace dsp

@@ -20,7 +20,7 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int MIX_AMOUNT;
+    const unsigned int MIX_AMOUNT;
 
     Mode mode;
     std::vector<DSP_FLOAT> buffer;

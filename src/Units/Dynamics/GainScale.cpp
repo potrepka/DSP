@@ -1,10 +1,8 @@
 #include "GainScale.h"
 
-const unsigned int dsp::GainScale::GAIN = 1;
-
-dsp::GainScale::GainScale(Type type, Space space) : Processor(type, type, space) {
-    pushInput(Type::LINEAR, space);
-}
+dsp::GainScale::GainScale(Type type, Space space)
+        : Processor(type, type, space)
+        , GAIN(pushInput(Type::LINEAR, space)) {}
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::GainScale::getGain() const {
     return getInput(GAIN);

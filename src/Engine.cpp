@@ -1,6 +1,8 @@
 #include "Engine.h"
 
-dsp::Engine::Engine() : numInputChannels(0), numOutputChannels(0) {
+dsp::Engine::Engine()
+        : numInputChannels(0)
+        , numOutputChannels(0) {
     audio = std::make_shared<Audio>();
     midi = std::make_shared<Midi>();
 }

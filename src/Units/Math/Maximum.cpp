@@ -1,6 +1,7 @@
 #include "Maximum.h"
 
-dsp::Maximum::Maximum(Type type, Space space) : Generator(type, space) {}
+dsp::Maximum::Maximum(Type type, Space space)
+        : Generator(type, space) {}
 
 void dsp::Maximum::pushInput() {
     Unit::pushInput(

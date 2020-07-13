@@ -17,8 +17,8 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int ON_TRIGGER;
-    static const unsigned int OFF_TRIGGER;
+    const unsigned int ON_TRIGGER;
+    const unsigned int OFF_TRIGGER;
 
     std::vector<unsigned int> state;
 };

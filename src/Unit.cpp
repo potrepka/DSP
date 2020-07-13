@@ -3,7 +3,10 @@
 template <class T>
 dsp::Unit::ConnectionParameter<T>::ConnectionParameter(
         unsigned int numChannels, unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
-        : bufferSize(bufferSize), type(type), space(space), defaultValue(defaultValue) {
+        : bufferSize(bufferSize)
+        , type(type)
+        , space(space)
+        , defaultValue(defaultValue) {
     setNumChannels(numChannels);
 }
 
@@ -96,7 +99,8 @@ dsp::Unit::OutputParameter::OutputParameter(
         unsigned int numChannels, unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
         : ConnectionParameter(numChannels, bufferSize, type, space, defaultValue) {}
 
-dsp::Unit::Unit() : numChannels(0) {}
+dsp::Unit::Unit()
+        : numChannels(0) {}
 
 unsigned int dsp::Unit::getNumChannels() const {
     return numChannels;

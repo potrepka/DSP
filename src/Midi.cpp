@@ -77,7 +77,9 @@ void dsp::Midi::MidiInput::callback(double delta, std::vector<unsigned char> *by
     input->pushQueue(delta, *bytesPointer);
 }
 
-dsp::Midi::MidiInput::MidiInput(unsigned int port) : messageTime(0.0), bufferSamples(0) {
+dsp::Midi::MidiInput::MidiInput(unsigned int port)
+        : messageTime(0.0)
+        , bufferSamples(0) {
 #if USE_RTMIDI
     try {
         midiIn.setCallback(MidiInput::callback, this);

@@ -1,16 +1,10 @@
 #include "CartesianToPolar.h"
 
-const unsigned int dsp::CartesianToPolar::REAL = 0;
-const unsigned int dsp::CartesianToPolar::IMAGINARY = 1;
-const unsigned int dsp::CartesianToPolar::MAGNITUDE = 0;
-const unsigned int dsp::CartesianToPolar::PHASE = 1;
-
-dsp::CartesianToPolar::CartesianToPolar() {
-    pushInput(Type::BIPOLAR, Space::FREQUENCY);
-    pushInput(Type::BIPOLAR, Space::FREQUENCY);
-    pushOutput(Type::UNIPOLAR, Space::FREQUENCY);
-    pushOutput(Type::UNIPOLAR, Space::FREQUENCY);
-}
+dsp::CartesianToPolar::CartesianToPolar()
+        : REAL(pushInput(Type::BIPOLAR, Space::FREQUENCY))
+        , IMAGINARY(pushInput(Type::BIPOLAR, Space::FREQUENCY))
+        , MAGNITUDE(pushOutput(Type::UNIPOLAR, Space::FREQUENCY))
+        , PHASE(pushOutput(Type::UNIPOLAR, Space::FREQUENCY)) {}
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::CartesianToPolar::getReal() const {
     return getInput(REAL);

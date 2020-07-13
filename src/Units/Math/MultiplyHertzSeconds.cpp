@@ -1,12 +1,9 @@
 #include "MultiplyHertzSeconds.h"
 
-const unsigned int dsp::MultiplyHertzSeconds::FREQUENCY = 0;
-const unsigned int dsp::MultiplyHertzSeconds::TIME = 1;
-
-dsp::MultiplyHertzSeconds::MultiplyHertzSeconds(Space space) : Generator(Type::RATIO, space) {
-    pushInput(Type::HERTZ, space);
-    pushInput(Type::SECONDS, space);
-}
+dsp::MultiplyHertzSeconds::MultiplyHertzSeconds(Space space)
+        : Generator(Type::RATIO, space)
+        , FREQUENCY(pushInput(Type::HERTZ, space))
+        , TIME(pushInput(Type::SECONDS, space)) {}
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::MultiplyHertzSeconds::getFrequency() const {
     return getInput(FREQUENCY);

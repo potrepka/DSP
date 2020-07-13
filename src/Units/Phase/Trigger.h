@@ -19,10 +19,10 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int RESET_TRIGGER;
-    static const unsigned int INTERVAL;
-    static const unsigned int DELAY;
-    static const unsigned int CURRENT_TIME;
+    const unsigned int RESET_TRIGGER;
+    const unsigned int INTERVAL;
+    const unsigned int DELAY;
+    const unsigned int CURRENT_TIME;
 
     std::vector<DSP_FLOAT> index;
 };

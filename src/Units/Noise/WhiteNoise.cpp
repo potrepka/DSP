@@ -1,6 +1,8 @@
 #include "WhiteNoise.h"
 
-dsp::WhiteNoise::WhiteNoise() : Generator(Type::BIPOLAR), seed(1) {}
+dsp::WhiteNoise::WhiteNoise()
+        : Generator(Type::BIPOLAR)
+        , seed(1) {}
 
 void dsp::WhiteNoise::process() {
     Unit::process();

@@ -16,8 +16,8 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int FREQUENCY;
-    static const unsigned int TIME;
+    const unsigned int FREQUENCY;
+    const unsigned int TIME;
 };
 
 } // namespace dsp

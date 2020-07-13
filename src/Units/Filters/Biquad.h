@@ -22,9 +22,9 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int FREQUENCY;
-    static const unsigned int Q;
-    static const unsigned int GAIN;
+    const unsigned int FREQUENCY;
+    const unsigned int Q;
+    const unsigned int GAIN;
 
     Mode mode;
     std::vector<DSP_FLOAT> x1;

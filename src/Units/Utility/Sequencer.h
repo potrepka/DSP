@@ -20,8 +20,8 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int RESET_TRIGGER;
-    static const unsigned int TRIGGER;
+    const unsigned int RESET_TRIGGER;
+    const unsigned int TRIGGER;
 
     std::shared_ptr<Buffer> sequence;
     std::vector<unsigned int> memory;

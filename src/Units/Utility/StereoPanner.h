@@ -21,9 +21,9 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int DIRECTION;
-    static const unsigned int LEFT;
-    static const unsigned int RIGHT;
+    const unsigned int DIRECTION;
+    const unsigned int LEFT;
+    const unsigned int RIGHT;
 
     Mode mode;
 };

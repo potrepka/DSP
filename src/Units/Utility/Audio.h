@@ -19,10 +19,10 @@ public:
     void writeInterleaved(DSP_FLOAT *outputBuffer, unsigned int numOutputChannels, unsigned int numFrames);
 
 private:
-    static const unsigned int AUDIO_INPUT;
-    static const unsigned int AUDIO_OUTPUT;
-    static const unsigned int AUDIO_INPUT_CLIPPING;
-    static const unsigned int AUDIO_OUTPUT_CLIPPING;
+    const unsigned int AUDIO_INPUT;
+    const unsigned int AUDIO_OUTPUT;
+    const unsigned int AUDIO_INPUT_CLIPPING;
+    const unsigned int AUDIO_OUTPUT_CLIPPING;
 };
 
 } // namespace dsp

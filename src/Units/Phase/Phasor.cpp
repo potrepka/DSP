@@ -1,12 +1,9 @@
 #include "Phasor.h"
 
-const unsigned int dsp::Phasor::RESET_TRIGGER = 0;
-const unsigned int dsp::Phasor::FREQUENCY = 1;
-
-dsp::Phasor::Phasor() : Generator(Type::UNIPOLAR) {
-    pushInput(Type::BINARY);
-    pushInput(Type::HERTZ);
-}
+dsp::Phasor::Phasor()
+        : Generator(Type::UNIPOLAR)
+        , RESET_TRIGGER(pushInput(Type::BINARY))
+        , FREQUENCY(pushInput(Type::HERTZ)) {}
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Phasor::getResetTrigger() const {
     return getInput(RESET_TRIGGER);

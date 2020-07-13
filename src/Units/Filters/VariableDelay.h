@@ -20,7 +20,7 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int DELAY_TIME;
+    const unsigned int DELAY_TIME;
 
     DSP_FLOAT maxDelayTime;
     unsigned int writeIndex;

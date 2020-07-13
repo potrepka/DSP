@@ -20,12 +20,12 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int RESET_TRIGGER;
-    static const unsigned int ATTACK;
-    static const unsigned int HOLD;
-    static const unsigned int RELEASE;
+    const unsigned int RESET_TRIGGER;
+    const unsigned int ATTACK;
+    const unsigned int HOLD;
+    const unsigned int RELEASE;
 
-    static const unsigned int CURRENT_TIME;
+    const unsigned int CURRENT_TIME;
 
     std::vector<unsigned int> index;
     std::vector<DSP_FLOAT> value;

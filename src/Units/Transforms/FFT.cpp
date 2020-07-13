@@ -1,12 +1,9 @@
 #include "FFT.h"
 
-const unsigned int dsp::FFT::REAL = 0;
-const unsigned int dsp::FFT::IMAGINARY = 1;
-
-dsp::FFT::FFT() : Consumer(Type::BIPOLAR) {
-    pushOutput(Type::BIPOLAR, Space::FREQUENCY);
-    pushOutput(Type::BIPOLAR, Space::FREQUENCY);
-}
+dsp::FFT::FFT()
+        : Consumer(Type::BIPOLAR)
+        , REAL(pushOutput(Type::BIPOLAR, Space::FREQUENCY))
+        , IMAGINARY(pushOutput(Type::BIPOLAR, Space::FREQUENCY)) {}
 
 std::shared_ptr<dsp::Unit::OutputParameter> dsp::FFT::getReal() const {
     return getOutput(REAL);

@@ -1,14 +1,12 @@
 #include "DryWetMix.h"
 
-const unsigned int dsp::DryWetMix::DRY_SIGNAL = 0;
-const unsigned int dsp::DryWetMix::WET_SIGNAL = 1;
-const unsigned int dsp::DryWetMix::MIX_AMOUNT = 2;
-
-dsp::DryWetMix::DryWetMix(Type type, Space space) : Processor(type, type, space) {
+dsp::DryWetMix::DryWetMix(Type type, Space space)
+        : Processor(type, type, space)
+        , DRY_SIGNAL(0)
+        , WET_SIGNAL(pushInput(type, space))
+        , MIX_AMOUNT(pushInput(Type::UNIPOLAR, space)) {
     assert(type != Type::BINARY);
     assert(type != Type::INTEGER);
-    pushInput(type, space);
-    pushInput(Type::UNIPOLAR, space);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::DryWetMix::getDrySignal() const {

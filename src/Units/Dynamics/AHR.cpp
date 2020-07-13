@@ -1,18 +1,13 @@
 #include "AHR.h"
 
-const unsigned int dsp::AHR::RESET_TRIGGER = 0;
-const unsigned int dsp::AHR::ATTACK = 1;
-const unsigned int dsp::AHR::HOLD = 2;
-const unsigned int dsp::AHR::RELEASE = 3;
-const unsigned int dsp::AHR::CURRENT_TIME = 1;
-
-dsp::AHR::AHR() : Generator(Type::UNIPOLAR), index(0) {
-    pushInput(Type::BINARY);
-    pushInput(Type::SECONDS);
-    pushInput(Type::SECONDS);
-    pushInput(Type::SECONDS);
-    pushOutput(Type::SECONDS);
-}
+dsp::AHR::AHR()
+        : Generator(Type::UNIPOLAR)
+        , RESET_TRIGGER(pushInput(Type::BINARY))
+        , ATTACK(pushInput(Type::SECONDS))
+        , HOLD(pushInput(Type::SECONDS))
+        , RELEASE((pushInput(Type::SECONDS)))
+        , CURRENT_TIME(pushOutput(Type::SECONDS))
+        , index(0) {}
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getResetTrigger() const {
     return getInput(RESET_TRIGGER);

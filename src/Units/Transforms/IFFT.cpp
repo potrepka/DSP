@@ -1,12 +1,9 @@
 #include "IFFT.h"
 
-const unsigned int dsp::IFFT::REAL = 0;
-const unsigned int dsp::IFFT::IMAGINARY = 1;
-
-dsp::IFFT::IFFT() : Generator(Type::BIPOLAR) {
-    pushInput(Type::BIPOLAR, Space::FREQUENCY);
-    pushInput(Type::BIPOLAR, Space::FREQUENCY);
-}
+dsp::IFFT::IFFT()
+        : Generator(Type::BIPOLAR)
+        , REAL(pushInput(Type::BIPOLAR, Space::FREQUENCY))
+        , IMAGINARY(pushInput(Type::BIPOLAR, Space::FREQUENCY)) {}
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::IFFT::getReal() const {
     return getInput(REAL);

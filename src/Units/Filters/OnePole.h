@@ -20,7 +20,7 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int FREQUENCY;
+    const unsigned int FREQUENCY;
 
     Mode mode;
     std::vector<DSP_FLOAT> state;

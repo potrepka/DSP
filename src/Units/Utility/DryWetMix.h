@@ -17,9 +17,9 @@ protected:
     void process() override;
 
 private:
-    static const unsigned int DRY_SIGNAL;
-    static const unsigned int WET_SIGNAL;
-    static const unsigned int MIX_AMOUNT;
+    const unsigned int DRY_SIGNAL;
+    const unsigned int WET_SIGNAL;
+    const unsigned int MIX_AMOUNT;
 };
 
 } // namespace dsp

@@ -1,12 +1,9 @@
 #include "GainEnvelope.h"
 
-const unsigned int dsp::GainEnvelope::ATTACK = 1;
-const unsigned int dsp::GainEnvelope::RELEASE = 2;
-
-dsp::GainEnvelope::GainEnvelope() : Processor(Type::LINEAR, Type::LINEAR) {
-    pushInput(Type::SECONDS);
-    pushInput(Type::SECONDS);
-}
+dsp::GainEnvelope::GainEnvelope()
+        : Processor(Type::LINEAR, Type::LINEAR)
+        , ATTACK(pushInput(Type::SECONDS))
+        , RELEASE(pushInput(Type::SECONDS)) {}
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::GainEnvelope::getAttack() const {
     return getInput(ATTACK);

@@ -1,7 +1,9 @@
 #include "Connection.h"
 
 dsp::Connection::Connection(unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
-        : type(type), space(space), defaultValue(defaultValue) {
+        : type(type)
+        , space(space)
+        , defaultValue(defaultValue) {
     setBufferSize(bufferSize);
 }
 

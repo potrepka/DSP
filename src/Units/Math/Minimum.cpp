@@ -1,6 +1,7 @@
 #include "Minimum.h"
 
-dsp::Minimum::Minimum(Type type, Space space) : Generator(type, space) {}
+dsp::Minimum::Minimum(Type type, Space space)
+        : Generator(type, space) {}
 
 void dsp::Minimum::pushInput() {
     Unit::pushInput(

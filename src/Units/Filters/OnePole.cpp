@@ -1,10 +1,9 @@
 #include "OnePole.h"
 
-const unsigned int dsp::OnePole::FREQUENCY = 1;
-
-dsp::OnePole::OnePole() : Processor(Type::BIPOLAR, Type::BIPOLAR), mode(Mode::LOW_PASS) {
-    pushInput(Type::HERTZ);
-}
+dsp::OnePole::OnePole()
+        : Processor(Type::BIPOLAR, Type::BIPOLAR)
+        , FREQUENCY(pushInput(Type::HERTZ))
+        , mode(Mode::LOW_PASS) {}
 
 dsp::OnePole::Mode dsp::OnePole::getMode() const {
     return mode;
