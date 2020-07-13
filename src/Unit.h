@@ -116,9 +116,17 @@ private:
 
 void operator>>(DSP_FLOAT value, std::shared_ptr<Unit::InputParameter> input);
 void operator>>(DSP_FLOAT value, std::shared_ptr<Unit::OutputParameter> output);
+
 void operator>>(std::vector<DSP_FLOAT> values, std::shared_ptr<Unit::InputParameter> input);
 void operator>>(std::vector<DSP_FLOAT> values, std::shared_ptr<Unit::OutputParameter> output);
+
 void operator>>(std::shared_ptr<Unit::OutputParameter> output, std::shared_ptr<Unit::InputParameter> input);
 void operator!=(std::shared_ptr<Unit::OutputParameter> output, std::shared_ptr<Unit::InputParameter> input);
+
+void operator>>(std::shared_ptr<Unit::OutputParameter> output, std::shared_ptr<Input> input);
+void operator!=(std::shared_ptr<Unit::OutputParameter> output, std::shared_ptr<Input> input);
+
+void operator>>(std::shared_ptr<Output> output, std::shared_ptr<Unit::InputParameter> input);
+void operator!=(std::shared_ptr<Output> output, std::shared_ptr<Unit::InputParameter> input);
 
 } // namespace dsp

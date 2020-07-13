@@ -453,3 +453,35 @@ void dsp::operator!=(std::shared_ptr<dsp::Unit::OutputParameter> output,
     input->unlock();
     output->unlock();
 }
+
+void dsp::operator>>(std::shared_ptr<Unit::OutputParameter> output, std::shared_ptr<Input> input) {
+    output->lock();
+    for (unsigned int i = 0; i < output->getNumChannels(); i++) {
+        output->getChannel(i) >> input;
+    }
+    output->unlock();
+}
+
+void dsp::operator!=(std::shared_ptr<Unit::OutputParameter> output, std::shared_ptr<Input> input) {
+    output->lock();
+    for (unsigned int i = 0; i < output->getNumChannels(); i++) {
+        output->getChannel(i) != input;
+    }
+    output->unlock();
+}
+
+void dsp::operator>>(std::shared_ptr<Output> output, std::shared_ptr<Unit::InputParameter> input) {
+    input->lock();
+    for (unsigned int i = 0; i < input->getNumChannels(); i++) {
+        output >> input->getChannel(i);
+    }
+    input->unlock();
+}
+
+void dsp::operator!=(std::shared_ptr<Output> output, std::shared_ptr<Unit::InputParameter> input) {
+    input->lock();
+    for (unsigned int i = 0; i < input->getNumChannels(); i++) {
+        output != input->getChannel(i);
+    }
+    input->unlock();
+}

@@ -76,6 +76,7 @@ private:
 
 void operator>>(DSP_FLOAT value, std::shared_ptr<Input> input);
 void operator>>(DSP_FLOAT value, std::shared_ptr<Output> output);
+
 void operator>>(std::shared_ptr<Output> output, std::shared_ptr<Input> input);
 void operator!=(std::shared_ptr<Output> output, std::shared_ptr<Input> input);
 
