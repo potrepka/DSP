@@ -5,6 +5,7 @@ const unsigned int dsp::Floor::DIVISOR = 1;
 dsp::Floor::Floor(Type type, Space space) : Processor(type, type, space) {
     assert(type != Type::BINARY);
     assert(type != Type::INTEGER);
+    pushInput(type, space);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Floor::getDivisor() const {
