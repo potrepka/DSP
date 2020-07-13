@@ -1,25 +1,26 @@
 #include "CompressorGate.h"
 
-const unsigned int dsp::CompressorGate::CONTROL_SIGNAL = 1;
-const unsigned int dsp::CompressorGate::LINK = 2;
-const unsigned int dsp::CompressorGate::THRESHOLD = 3;
-const unsigned int dsp::CompressorGate::COMPRESSION_RATIO = 4;
-const unsigned int dsp::CompressorGate::GATE_RATIO = 5;
-const unsigned int dsp::CompressorGate::KNEE = 6;
-const unsigned int dsp::CompressorGate::ATTACK = 7;
-const unsigned int dsp::CompressorGate::RELEASE = 8;
-
-const unsigned int dsp::CompressorGate::GAIN_DELTA = 1;
-
-dsp::CompressorGate::CompressorGate() : Processor(Type::BIPOLAR, Type::BIPOLAR) {
-    channelMix = std::make_shared<ChannelMix>(Type::BIPOLAR);
-    absoluteValue = std::make_shared<AbsoluteValue>(Type::BIPOLAR);
-    base2Log = std::make_shared<Base2Log>();
-    gainComputer = std::make_shared<GainComputer>();
-    gainEnvelope = std::make_shared<GainEnvelope>();
-    gainScale = std::make_shared<GainScale>(Type::BIPOLAR);
-
+dsp::CompressorGate::CompressorGate()
+        : Processor(Type::BIPOLAR, Type::BIPOLAR)
+        , channelMix(std::make_shared<ChannelMix>(Type::BIPOLAR))
+        , absoluteValue(std::make_shared<AbsoluteValue>(Type::BIPOLAR))
+        , base2Log(std::make_shared<Base2Log>())
+        , gainComputer(std::make_shared<GainComputer>())
+        , gainEnvelope(std::make_shared<GainEnvelope>())
+        , gainScale(std::make_shared<GainScale>(Type::BIPOLAR))
+        , CONTROL_SIGNAL(pushInput(channelMix->getInputSignal()))
+        , LINK(pushInput(channelMix->getMixAmount()))
+        , THRESHOLD(pushInput(gainComputer->getThreshold()))
+        , COMPRESSION_RATIO(pushInput(gainComputer->getCompressionRatio()))
+        , GATE_RATIO(pushInput(gainComputer->getGateRatio()))
+        , KNEE(pushInput(gainComputer->getKnee()))
+        , ATTACK(pushInput(gainEnvelope->getAttack()))
+        , RELEASE(pushInput(gainEnvelope->getRelease()))
+        , GAIN_DELTA(pushOutput(gainEnvelope->getOutputSignal())) {
     absoluteValue->getOutputSignal()->setType(Type::RATIO);
+
+    setInputSignal(gainScale->getInputSignal());
+    setOutputSignal(gainScale->getOutputSignal());
 
     pushUnit(channelMix);
     pushUnit(absoluteValue);
@@ -28,24 +29,15 @@ dsp::CompressorGate::CompressorGate() : Processor(Type::BIPOLAR, Type::BIPOLAR) 
     pushUnit(gainEnvelope);
     pushUnit(gainScale);
 
-    setInputSignal(gainScale->getInputSignal());
-    pushInput(channelMix->getInputSignal());
-    pushInput(channelMix->getMixAmount());
-    pushInput(gainComputer->getThreshold());
-    pushInput(gainComputer->getCompressionRatio());
-    pushInput(gainComputer->getGateRatio());
-    pushInput(gainComputer->getKnee());
-    pushInput(gainEnvelope->getAttack());
-    pushInput(gainEnvelope->getRelease());
-
-    setOutputSignal(gainScale->getOutputSignal());
-    pushOutput(gainEnvelope->getOutputSignal());
-
     connect();
 }
 
 dsp::CompressorGate::~CompressorGate() {
     disconnect();
+}
+
+std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getControlSignal() const {
+    return getInput(CONTROL_SIGNAL);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getLink() const {

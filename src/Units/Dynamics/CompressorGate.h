@@ -15,6 +15,7 @@ public:
     CompressorGate();
     ~CompressorGate();
 
+    std::shared_ptr<InputParameter> getControlSignal() const;
     std::shared_ptr<InputParameter> getLink() const;
     std::shared_ptr<InputParameter> getThreshold() const;
     std::shared_ptr<InputParameter> getCompressionRatio() const;
@@ -29,23 +30,23 @@ protected:
     void disconnect() override;
 
 private:
-    static const unsigned int CONTROL_SIGNAL;
-    static const unsigned int LINK;
-    static const unsigned int THRESHOLD;
-    static const unsigned int COMPRESSION_RATIO;
-    static const unsigned int GATE_RATIO;
-    static const unsigned int KNEE;
-    static const unsigned int ATTACK;
-    static const unsigned int RELEASE;
+    const std::shared_ptr<ChannelMix> channelMix;
+    const std::shared_ptr<AbsoluteValue> absoluteValue;
+    const std::shared_ptr<Base2Log> base2Log;
+    const std::shared_ptr<GainComputer> gainComputer;
+    const std::shared_ptr<GainEnvelope> gainEnvelope;
+    const std::shared_ptr<GainScale> gainScale;
 
-    static const unsigned int GAIN_DELTA;
+    const unsigned int CONTROL_SIGNAL;
+    const unsigned int LINK;
+    const unsigned int THRESHOLD;
+    const unsigned int COMPRESSION_RATIO;
+    const unsigned int GATE_RATIO;
+    const unsigned int KNEE;
+    const unsigned int ATTACK;
+    const unsigned int RELEASE;
 
-    std::shared_ptr<ChannelMix> channelMix;
-    std::shared_ptr<AbsoluteValue> absoluteValue;
-    std::shared_ptr<Base2Log> base2Log;
-    std::shared_ptr<GainComputer> gainComputer;
-    std::shared_ptr<GainEnvelope> gainEnvelope;
-    std::shared_ptr<GainScale> gainScale;
+    const unsigned int GAIN_DELTA;
 };
 
 } // namespace dsp
