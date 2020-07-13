@@ -8,22 +8,6 @@ DSP_FLOAT dsp::oneOver(const DSP_FLOAT value) {
     return 1.0 / value;
 }
 
-DSP_FLOAT dsp::clip(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
-    if (min >= max) {
-        return min;
-    }
-    return signal < min ? min : signal > max ? max : signal;
-}
-
-DSP_FLOAT dsp::wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
-    if (min == max) {
-        return 0.0;
-    }
-    const DSP_FLOAT diff = max - min;
-    const DSP_FLOAT adjusted = signal - min;
-    return signal - floor(adjusted / diff) * diff;
-}
-
 DSP_FLOAT dsp::toBinary(const DSP_FLOAT value) {
     return value == 0.0 ? 0.0 : 1.0;
 }
@@ -54,6 +38,22 @@ DSP_FLOAT dsp::decibelsToRatio(const DSP_FLOAT decibels) {
 
 DSP_FLOAT dsp::ratioToDecibels(const DSP_FLOAT ratio) {
     return linearToDecibels(log2(ratio));
+}
+
+DSP_FLOAT dsp::clip(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
+    if (min >= max) {
+        return min;
+    }
+    return signal < min ? min : signal > max ? max : signal;
+}
+
+DSP_FLOAT dsp::wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
+    if (min == max) {
+        return 0.0;
+    }
+    const DSP_FLOAT diff = max - min;
+    const DSP_FLOAT adjusted = signal - min;
+    return signal - floor(adjusted / diff) * diff;
 }
 
 DSP_FLOAT dsp::linear(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index, DSP_FLOAT defaultValue) {
