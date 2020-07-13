@@ -52,4 +52,4 @@ The following are possible directions for future development:
 - Peak/RMS detection
 - Wavetable factory
 - Saving/Loading state
-- SIMD instructions
+- SIMD operations
