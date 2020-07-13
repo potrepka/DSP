@@ -1,10 +1,8 @@
 #include "PowerDistortion.h"
 
-const unsigned int dsp::PowerDistortion::DRIVE = 1;
-
-dsp::PowerDistortion::PowerDistortion(Space space) : Processor(Type::BIPOLAR, Type::BIPOLAR, space) {
-    pushInput(Type::RATIO, space);
-}
+dsp::PowerDistortion::PowerDistortion(Space space)
+        : Processor(Type::BIPOLAR, Type::BIPOLAR, space)
+        , DRIVE(pushInput(Type::RATIO, space, 1.0)) {}
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::PowerDistortion::getDrive() const {
     return getInput(DRIVE);
