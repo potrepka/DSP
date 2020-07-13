@@ -40,12 +40,20 @@ void dsp::StereoPanner::process() {
         std::vector<DSP_FLOAT> &leftBuffer = getLeft()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &rightBuffer = getRight()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
-            const DSP_FLOAT direction = (i % 2 == 0 ? 1 : -1) * directionBuffer[k];
-
+            DSP_FLOAT left;
+            DSP_FLOAT right;
             switch (mode) {
-//                case Mode::CONSTANT_POWER: outputBuffer[k] = cos(PI_OVER_TWO * bipolarToUnipolar(direction)); break;
-//                case Mode::LINEAR: outputBuffer[k] = bipolarToUnipolar(-direction); break;
+                case Mode::CONSTANT_POWER:
+                    left = cos(PI_OVER_TWO * bipolarToUnipolar(directionBuffer[k]));
+                    right = cos(PI_OVER_TWO * bipolarToUnipolar(-directionBuffer[k]));
+                    break;
+                case Mode::LINEAR:
+                    left = bipolarToUnipolar(-directionBuffer[k]);
+                    right = bipolarToUnipolar(directionBuffer[k]);
+                    break;
             }
+            leftBuffer[k] = left * inputBuffer[k];
+            rightBuffer[k] = right * inputBuffer[k];
         }
     }
 }
