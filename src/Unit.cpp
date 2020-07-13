@@ -181,11 +181,11 @@ void dsp::Unit::removeOutput(std::shared_ptr<OutputParameter> output) {
 }
 
 unsigned int dsp::Unit::getNumUnits() const {
-    return static_cast<unsigned int>(units.size());
+    return static_cast<unsigned int>(children.size());
 }
 
 std::shared_ptr<dsp::Unit> dsp::Unit::getUnit(unsigned int index) const {
-    return units[index];
+    return children[index];
 }
 
 void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit, bool sort) {
@@ -196,7 +196,7 @@ void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit, bool sort) {
     if (getNumChannels() > 0) {
         unit->setNumChannels(getNumChannels());
     }
-    units.push_back(unit);
+    children.push_back(unit);
     if (sort) {
         sortUnitsNoLock();
     }
@@ -214,7 +214,7 @@ void dsp::Unit::pushUnits(std::vector<std::shared_ptr<Unit>> units, bool sort) {
         if (getNumChannels() > 0) {
             unit->setNumChannels(getNumChannels());
         }
-        units.push_back(unit);
+        children.push_back(unit);
     }
     if (sort) {
         sortUnitsNoLock();
@@ -225,13 +225,21 @@ void dsp::Unit::pushUnits(std::vector<std::shared_ptr<Unit>> units, bool sort) {
 void dsp::Unit::replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement) {
     assert(replacement != nullptr);
     lock();
-    std::replace(units.begin(), units.end(), unit, replacement);
+    std::replace(children.begin(), children.end(), unit, replacement);
     unlock();
 }
 
 void dsp::Unit::removeUnit(std::shared_ptr<Unit> unit) {
     lock();
-    units.erase(std::remove(units.begin(), units.end(), unit), units.end());
+    children.erase(std::remove(children.begin(), children.end(), unit), children.end());
+    unlock();
+}
+
+void dsp::Unit::removeUnits(std::vector<std::shared_ptr<Unit>> units) {
+    lock();
+    for (const auto &unit : units) {
+        children.erase(std::remove(children.begin(), children.end(), unit), children.end());
+    }
     unlock();
 }
 
@@ -243,10 +251,10 @@ void dsp::Unit::sortUnits() {
 
 void dsp::Unit::run() {
     lock();
-    if (units.size() == 0) {
+    if (children.size() == 0) {
         process();
     } else {
-        for (const auto &unit : units) {
+        for (const auto &unit : children) {
             unit->run();
         }
     }
@@ -255,7 +263,7 @@ void dsp::Unit::run() {
 
 void dsp::Unit::setSampleRateNoLock(unsigned int sampleRate) {
     Runnable::setSampleRateNoLock(sampleRate);
-    for (const auto &unit : units) {
+    for (const auto &unit : children) {
         unit->setSampleRate(sampleRate);
     }
 }
@@ -268,7 +276,7 @@ void dsp::Unit::setBufferSizeNoLock(unsigned int bufferSize) {
     for (const auto &output : outputs) {
         output->setBufferSize(bufferSize);
     }
-    for (const auto &unit : units) {
+    for (const auto &unit : children) {
         unit->setBufferSize(bufferSize);
     }
 }
@@ -283,7 +291,7 @@ void dsp::Unit::setNumChannelsNoLock(unsigned int numChannels) {
     }
     if (numChannels > 0) {
         disconnect();
-        for (const auto &unit : units) {
+        for (const auto &unit : children) {
             unit->setNumChannels(numChannels);
         }
         connect();
@@ -291,11 +299,11 @@ void dsp::Unit::setNumChannelsNoLock(unsigned int numChannels) {
 }
 
 void dsp::Unit::sortUnitsNoLock() {
-    if (units.size() > 0) {
+    if (children.size() > 0) {
         std::unordered_set<Unit *> unitSet;
         std::unordered_map<Input *, Unit *> inputToUnit;
         std::unordered_map<Output *, Unit *> outputToUnit;
-        for (const auto &unit : units) {
+        for (const auto &unit : children) {
             unit->lock();
             unitSet.insert(unit.get());
             for (const auto &input : unit->inputs) {
@@ -314,7 +322,7 @@ void dsp::Unit::sortUnitsNoLock() {
             }
         }
         std::queue<Unit *> queue;
-        for (const auto &unit : units) {
+        for (const auto &unit : children) {
             if ([&] {
                     for (const auto &input : unit->inputs) {
                         for (const auto &channel : input->getChannels()) {
@@ -350,7 +358,7 @@ void dsp::Unit::sortUnitsNoLock() {
             increment++;
             queue.pop();
         }
-        for (const auto &unit : units) {
+        for (const auto &unit : children) {
             for (const auto &output : unit->outputs) {
                 for (const auto &channel : output->getChannels()) {
                     channel->unlock();
@@ -365,7 +373,7 @@ void dsp::Unit::sortUnitsNoLock() {
             }
             unit->unlock();
         }
-        std::sort(units.begin(), units.end(), [&orderMap](const auto &a, const auto &b) {
+        std::sort(children.begin(), children.end(), [&orderMap](const auto &a, const auto &b) {
             return orderMap[a.get()] < orderMap[b.get()];
         });
     }

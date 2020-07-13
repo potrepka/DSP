@@ -53,6 +53,7 @@ public:
     void pushUnits(std::vector<std::shared_ptr<Unit>> units, bool sort = false);
     void replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement);
     void removeUnit(std::shared_ptr<Unit> unit);
+    void removeUnits(std::vector<std::shared_ptr<Unit>> units);
     void sortUnits();
 
     unsigned int getNumMidiInputs() const;

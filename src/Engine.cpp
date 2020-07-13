@@ -301,6 +301,10 @@ void dsp::Engine::removeUnit(std::shared_ptr<Unit> unit) {
     audio->removeUnit(unit);
 }
 
+void dsp::Engine::removeUnits(std::vector<std::shared_ptr<Unit>> units) {
+    audio->removeUnits(units);
+}
+
 void dsp::Engine::sortUnits() {
     audio->sortUnits();
 }

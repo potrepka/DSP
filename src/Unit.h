@@ -92,6 +92,7 @@ public:
     void pushUnits(std::vector<std::shared_ptr<Unit>> units, bool sort = false);
     void replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement);
     void removeUnit(std::shared_ptr<Unit> unit);
+    void removeUnits(std::vector<std::shared_ptr<Unit>> units);
     void sortUnits();
 
     void run();
@@ -99,7 +100,7 @@ public:
 protected:
     std::vector<std::shared_ptr<InputParameter>> inputs;
     std::vector<std::shared_ptr<OutputParameter>> outputs;
-    std::vector<std::shared_ptr<Unit>> units;
+    std::vector<std::shared_ptr<Unit>> children;
 
     void setSampleRateNoLock(unsigned int sampleRate) override;
     void setBufferSizeNoLock(unsigned int bufferSize) override;
