@@ -124,34 +124,42 @@ std::shared_ptr<dsp::Unit::OutputParameter> dsp::Unit::getOutput(unsigned int in
     return outputs[index];
 }
 
-void dsp::Unit::pushInput(std::shared_ptr<InputParameter> input) {
+unsigned int dsp::Unit::pushInput(std::shared_ptr<InputParameter> input) {
     assert(input != nullptr);
     lock();
     input->setBufferSize(getBufferSize());
     input->setNumChannels(getNumChannels());
+    unsigned int index = getNumInputs();
     inputs.push_back(input);
     unlock();
+    return index;
 }
 
-void dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
+unsigned int dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
     assert(output != nullptr);
     lock();
     output->setBufferSize(getBufferSize());
     output->setNumChannels(getNumChannels());
+    unsigned int index = getNumOutputs();
     outputs.push_back(output);
     unlock();
+    return index;
 }
 
-void dsp::Unit::pushInput(Type type, Space space, DSP_FLOAT value) {
+unsigned int dsp::Unit::pushInput(Type type, Space space, DSP_FLOAT value) {
     lock();
+    unsigned int index = getNumInputs();
     inputs.push_back(std::make_shared<InputParameter>(getNumChannels(), getBufferSize(), type, space, value));
     unlock();
+    return index;
 }
 
-void dsp::Unit::pushOutput(Type type, Space space, DSP_FLOAT value) {
+unsigned int dsp::Unit::pushOutput(Type type, Space space, DSP_FLOAT value) {
     lock();
+    unsigned int index = getNumOutputs();
     outputs.push_back(std::make_shared<OutputParameter>(getNumChannels(), getBufferSize(), type, space, value));
     unlock();
+    return index;
 }
 
 void dsp::Unit::replaceInput(std::shared_ptr<InputParameter> input, std::shared_ptr<InputParameter> replacement) {

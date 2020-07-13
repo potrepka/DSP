@@ -77,10 +77,10 @@ public:
     unsigned int getNumOutputs() const;
     std::shared_ptr<InputParameter> getInput(unsigned int index) const;
     std::shared_ptr<OutputParameter> getOutput(unsigned int index) const;
-    void pushInput(std::shared_ptr<InputParameter> input);
-    void pushOutput(std::shared_ptr<OutputParameter> output);
-    void pushInput(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
-    void pushOutput(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
+    unsigned int pushInput(std::shared_ptr<InputParameter> input);
+    unsigned int pushOutput(std::shared_ptr<OutputParameter> output);
+    unsigned int pushInput(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
+    unsigned int pushOutput(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
     void replaceInput(std::shared_ptr<InputParameter> input, std::shared_ptr<InputParameter> replacement);
     void replaceOutput(std::shared_ptr<OutputParameter> output, std::shared_ptr<OutputParameter> replacement);
     void removeInput(std::shared_ptr<InputParameter> input);
