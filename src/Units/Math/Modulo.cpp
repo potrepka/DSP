@@ -5,6 +5,7 @@ const unsigned int dsp::Modulo::DIVISOR = 1;
 dsp::Modulo::Modulo(Type type, Space space) : Processor(type, type, space) {
     assert(type != Type::BINARY);
     assert(type != Type::INTEGER);
+    pushInput(type, space);
 }
 
 std::shared_ptr<dsp::Unit::InputParameter> dsp::Modulo::getDivisor() const {
