@@ -4,12 +4,13 @@
 
 namespace dsp {
 
-class BufferSize : public Generator {
+class BufferDuration : public Generator {
 
 public:
-    BufferSize(Space space = Space::TIME);
+    BufferDuration(Space space = Space::TIME);
 
 protected:
+    void setSampleRateNoLock(unsigned int sampleRate) override;
     void setBufferSizeNoLock(unsigned int bufferSize) override;
 };
 

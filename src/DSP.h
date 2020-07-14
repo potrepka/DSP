@@ -74,5 +74,7 @@
 #include "StereoPanner.h"
 
 // Variables
-#include "BufferSize.h"
+#include "BufferDuration.h"
+#include "BufferRate.h"
+#include "SampleDuration.h"
 #include "SampleRate.h"
