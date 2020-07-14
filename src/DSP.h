@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 // Buffer
-#include "BufferUnit.h"
+#include "BufferRecorder.h"
 #include "SamplePlayer.h"
 #include "SampleRecorder.h"
 #include "TableOscillator.h"

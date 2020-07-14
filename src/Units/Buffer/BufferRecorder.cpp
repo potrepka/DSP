@@ -1,6 +1,6 @@
-#include "BufferUnit.h"
+#include "BufferRecorder.h"
 
-dsp::BufferUnit::BufferUnit(Type type, Space space, DSP_FLOAT defaultValue)
+dsp::BufferRecorder::BufferRecorder(Type type, Space space, DSP_FLOAT defaultValue)
         : Consumer(type, space)
         , mode(Mode::SINGLE_BUFFER)
         , externalBufferSize(0)
@@ -9,21 +9,21 @@ dsp::BufferUnit::BufferUnit(Type type, Space space, DSP_FLOAT defaultValue)
     second = std::make_shared<Buffer>(0, 0, type, space, defaultValue);
 }
 
-dsp::BufferUnit::Mode dsp::BufferUnit::getMode() const {
+dsp::BufferRecorder::Mode dsp::BufferRecorder::getMode() const {
     return mode;
 }
 
-void dsp::BufferUnit::setMode(Mode mode) {
+void dsp::BufferRecorder::setMode(Mode mode) {
     lock();
     this->mode = mode;
     unlock();
 }
 
-unsigned int dsp::BufferUnit::getExternalBufferSize() const {
+unsigned int dsp::BufferRecorder::getExternalBufferSize() const {
     return externalBufferSize;
 }
 
-void dsp::BufferUnit::setExternalBufferSize(unsigned int externalBufferSize) {
+void dsp::BufferRecorder::setExternalBufferSize(unsigned int externalBufferSize) {
     lock();
     this->externalBufferSize = externalBufferSize;
     buffer->setBufferSize(externalBufferSize);
@@ -31,17 +31,17 @@ void dsp::BufferUnit::setExternalBufferSize(unsigned int externalBufferSize) {
     unlock();
 }
 
-std::shared_ptr<dsp::Buffer> dsp::BufferUnit::getBuffer() const {
+std::shared_ptr<dsp::Buffer> dsp::BufferRecorder::getBuffer() const {
     return buffer;
 }
 
-void dsp::BufferUnit::setNumChannelsNoLock(unsigned int numChannels) {
+void dsp::BufferRecorder::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
     buffer->setNumChannels(numChannels);
     second->setNumChannels(numChannels);
 }
 
-void dsp::BufferUnit::process() {
+void dsp::BufferRecorder::process() {
     Unit::process();
     buffer->lock();
     if (externalBufferSize > 0) {

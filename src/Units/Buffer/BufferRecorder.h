@@ -5,12 +5,12 @@
 
 namespace dsp {
 
-class BufferUnit : public Consumer {
+class BufferRecorder : public Consumer {
 
 public:
     enum class Mode { SINGLE_BUFFER, DOUBLE_BUFFER };
 
-    BufferUnit(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
+    BufferRecorder(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
 
     Mode getMode() const;
     void setMode(Mode mode);
