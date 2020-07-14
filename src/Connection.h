@@ -8,7 +8,6 @@
 
 namespace dsp {
 
-class Unit;
 class Input;
 class Output;
 
