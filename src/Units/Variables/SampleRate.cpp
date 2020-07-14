@@ -5,5 +5,5 @@ dsp::SampleRate::SampleRate(Space space)
 
 void dsp::SampleRate::setSampleRateNoLock(unsigned int sampleRate) {
     Unit::setSampleRateNoLock(sampleRate);
-    getOutputSignal()->setDefaultValue(sampleRate);
+    getOutputSignal()->setDefaultValue(getSampleRate());
 }

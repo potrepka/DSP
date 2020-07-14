@@ -5,5 +5,5 @@ dsp::BufferSize::BufferSize(Space space)
 
 void dsp::BufferSize::setBufferSizeNoLock(unsigned int bufferSize) {
     Unit::setBufferSizeNoLock(bufferSize);
-    getOutputSignal()->setDefaultValue(bufferSize);
+    getOutputSignal()->setDefaultValue(getBufferSize());
 }
