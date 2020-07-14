@@ -14,20 +14,27 @@ public:
 
     Mode getMode() const;
     void setMode(Mode mode);
-    unsigned int getExternalBufferSize() const;
-    void setExternalBufferSize(unsigned int externalBufferSize);
+    DSP_FLOAT getExternalBufferSize() const;
+    void setExternalBufferSize(DSP_FLOAT externalBufferSize);
+    bool isExternalBufferSizeSynced();
+    void syncExternalBufferSize();
+    void unsyncExternalBufferSize();
     std::shared_ptr<Buffer> getBuffer() const;
 
 protected:
+    void setBufferSizeNoLock(unsigned int bufferSize) override;
     void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
     Mode mode;
-    unsigned int externalBufferSize;
+    DSP_FLOAT externalBufferSize;
+    bool externalBufferSizeSynced;
+    DSP_FLOAT writeIndex;
     std::shared_ptr<Buffer> buffer;
     std::shared_ptr<Buffer> second;
-    unsigned int writeIndex;
+
+    void setExternalBufferSizeNoLock(DSP_FLOAT externalBufferSize);
 };
 
 } // namespace dsp
