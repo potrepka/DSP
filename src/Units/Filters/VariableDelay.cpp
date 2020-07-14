@@ -13,7 +13,7 @@ unsigned int dsp::VariableDelay::getMaxDelayTime() const {
 }
 
 void dsp::VariableDelay::setMaxDelayTime(DSP_FLOAT seconds) {
-    assert(seconds > 0);
+    assert(seconds > 0.0);
     lock();
     maxDelayTime = seconds;
     buffer->setBufferSizeNoLock(getDelayBufferSize());
@@ -64,5 +64,5 @@ void dsp::VariableDelay::process() {
 }
 
 unsigned int dsp::VariableDelay::getDelayBufferSize() {
-    return static_cast<unsigned int>(maxDelayTime * getSampleRate()) + 3;
+    return static_cast<unsigned int>(ceil(maxDelayTime * getSampleRate())) + 2;
 }

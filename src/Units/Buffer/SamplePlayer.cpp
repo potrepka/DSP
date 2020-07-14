@@ -84,7 +84,7 @@ void dsp::SamplePlayer::process() {
                             unsigned int k2 = (k1 + 1) % channelSize;
                             unsigned int k3 = (k1 + 2) % channelSize;
                             std::vector<DSP_FLOAT> points{channel[k0], channel[k1], channel[k2], channel[k3]};
-                            outputBuffer[k] = hermite(points, 1 + readIndex[i] - k1);
+                            outputBuffer[k] = hermite(points, 1.0 + readIndex[i] - k1);
                             currentTimeBuffer[k] = readIndex[i] * getOneOverSampleRate();
                             readIndex[i] += speedBuffer[k];
                             switch (mode) {

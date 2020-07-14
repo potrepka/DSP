@@ -3,9 +3,9 @@
 dsp::BufferRecorder::BufferRecorder(Type type, Space space, DSP_FLOAT defaultValue)
         : Consumer(type, space)
         , mode(Mode::SINGLE_BUFFER)
-        , externalBufferSize(0)
+        , externalBufferSize(0.0)
         , externalBufferSizeSynced(true)
-        , writeIndex(0) {
+        , writeIndex(0.0) {
     buffer = std::make_shared<Buffer>(0, 0, type, space, defaultValue);
     second = std::make_shared<Buffer>(0, 0, type, space, defaultValue);
 }
