@@ -17,8 +17,7 @@ public:
     DSP_FLOAT getExternalBufferSize() const;
     void setExternalBufferSize(DSP_FLOAT externalBufferSize);
     bool isExternalBufferSizeSynced();
-    void syncExternalBufferSize();
-    void unsyncExternalBufferSize();
+    void setExternalBufferSizeSynced(bool externalBufferSizeSynced);
     std::shared_ptr<Buffer> getBuffer() const;
 
 protected:

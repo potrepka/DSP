@@ -29,8 +29,8 @@ DSP_FLOAT dsp::BufferRecorder::getExternalBufferSize() const {
 void dsp::BufferRecorder::setExternalBufferSize(DSP_FLOAT externalBufferSize) {
     assert(externalBufferSize >= 0.0);
     lock();
-    setExternalBufferSizeNoLock(externalBufferSize);
     externalBufferSizeSynced = false;
+    setExternalBufferSizeNoLock(externalBufferSize);
     unlock();
 }
 
@@ -38,16 +38,12 @@ bool dsp::BufferRecorder::isExternalBufferSizeSynced() {
     return externalBufferSizeSynced;
 }
 
-void dsp::BufferRecorder::syncExternalBufferSize() {
+void dsp::BufferRecorder::setExternalBufferSizeSynced(bool externalBufferSizeSynced) {
     lock();
-    setExternalBufferSizeNoLock(getBufferSize());
-    externalBufferSizeSynced = true;
-    unlock();
-}
-
-void dsp::BufferRecorder::unsyncExternalBufferSize() {
-    lock();
-    externalBufferSizeSynced = false;
+    if (externalBufferSizeSynced) {
+        setExternalBufferSizeNoLock(getBufferSize());
+    }
+    this->externalBufferSizeSynced = externalBufferSizeSynced;
     unlock();
 }
 
