@@ -25,6 +25,7 @@
 
 // Math
 #include "AbsoluteValue.h"
+#include "AndGate.h"
 #include "Floor.h"
 #include "Maximum.h"
 #include "Minimum.h"
@@ -32,7 +33,10 @@
 #include "Multiply.h"
 #include "MultiplyHertzSeconds.h"
 #include "Negative.h"
+#include "NotGate.h"
 #include "OneOver.h"
+#include "OrGate.h"
+#include "XorGate.h"
 
 // Noise
 #include "PinkNoise.h"
