@@ -22,7 +22,9 @@ dsp::Type dsp::Connection::getType() const {
 }
 
 void dsp::Connection::setType(Type type) {
+    lock();
     this->type = type;
+    unlock();
 }
 
 dsp::Space dsp::Connection::getSpace() const {
@@ -30,7 +32,9 @@ dsp::Space dsp::Connection::getSpace() const {
 }
 
 void dsp::Connection::setSpace(Space space) {
+    lock();
     this->space = space;
+    unlock();
 }
 
 DSP_FLOAT dsp::Connection::getDefaultValue() const {
@@ -38,7 +42,9 @@ DSP_FLOAT dsp::Connection::getDefaultValue() const {
 }
 
 void dsp::Connection::setDefaultValue(DSP_FLOAT defaultValue) {
+    lock();
     this->defaultValue = defaultValue;
+    unlock();
 }
 
 std::vector<DSP_FLOAT> &dsp::Connection::getBuffer() {

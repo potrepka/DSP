@@ -42,7 +42,7 @@ public:
     void stretch(unsigned int bufferSize);
     void insert(unsigned int index, std::shared_ptr<Buffer> buffer);
 
-    Buffer copy();
+    std::shared_ptr<Buffer> clone();
 
 private:
     unsigned int bufferSize;

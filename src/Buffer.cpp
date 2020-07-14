@@ -61,7 +61,9 @@ dsp::Type dsp::Buffer::getType() const {
 }
 
 void dsp::Buffer::setType(Type type) {
+    lock();
     this->type = type;
+    unlock();
 }
 
 dsp::Space dsp::Buffer::getSpace() const {
@@ -69,7 +71,9 @@ dsp::Space dsp::Buffer::getSpace() const {
 }
 
 void dsp::Buffer::setSpace(Space space) {
+    lock();
     this->space = space;
+    unlock();
 }
 
 DSP_FLOAT dsp::Buffer::getDefaultValue() const {
@@ -77,7 +81,9 @@ DSP_FLOAT dsp::Buffer::getDefaultValue() const {
 }
 
 void dsp::Buffer::setDefaultValue(DSP_FLOAT defaultValue) {
+    lock();
     this->defaultValue = defaultValue;
+    unlock();
 }
 
 std::vector<DSP_FLOAT> &dsp::Buffer::getChannel(unsigned int channel) {
@@ -141,9 +147,9 @@ void dsp::Buffer::insert(unsigned int index, std::shared_ptr<Buffer> buffer) {
     unlock();
 }
 
-dsp::Buffer dsp::Buffer::copy() {
+std::shared_ptr<dsp::Buffer> dsp::Buffer::clone() {
     lock();
-    Buffer buffer = *this;
+    std::shared_ptr<Buffer> buffer = std::make_shared<Buffer>(*this);
     unlock();
     return buffer;
 }
