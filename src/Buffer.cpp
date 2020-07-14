@@ -9,6 +9,15 @@ dsp::Buffer::Buffer(unsigned int numChannels, unsigned int bufferSize, Type type
     setBufferSize(bufferSize);
 }
 
+dsp::Buffer::Buffer(const Buffer &buffer) {
+    buffers = buffer.buffers;
+    setNumChannels(buffer.getNumChannels());
+    setBufferSize(buffer.getBufferSize());
+    setType(buffer.getType());
+    setSpace(buffer.getSpace());
+    setDefaultValue(buffer.getDefaultValue());
+}
+
 unsigned int dsp::Buffer::getNumChannels() const {
     return static_cast<unsigned int>(buffers.size());
 }
@@ -87,32 +96,54 @@ void dsp::Buffer::fillBufferNoLock(DSP_FLOAT value) {
     }
 }
 
-void dsp::Buffer::insert(unsigned int start, std::shared_ptr<Buffer> buffer) {
+void dsp::Buffer::clip(unsigned int start, unsigned int end) {
     lock();
-    if (start > getBufferSize()) {
-        start = getBufferSize();
-    }
-    for (unsigned int i = 0; i < getNumChannels() && i < buffer->getNumChannels(); i++) {
-        buffers[i].insert(buffers[i].begin() + start, buffer->getChannel(i).begin(), buffer->getChannel(i).end());
-    }
-    unlock();
-}
-
-std::shared_ptr<dsp::Buffer> dsp::Buffer::clip(unsigned int start, unsigned int end) {
-    std::shared_ptr<dsp::Buffer> buffer;
-    lock();
-    if (end > getBufferSize()) {
-        end = getBufferSize();
+    if (end > bufferSize) {
+        end = bufferSize;
     }
     if (start > end) {
         start = end;
     }
-    buffer = std::make_shared<Buffer>(getNumChannels(), end - start, type, space, defaultValue);
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        for (unsigned int k = start; k < end; k++) {
-            buffer->getChannel(i)[k] = buffers[i][k];
+        buffers[i] = std::vector<DSP_FLOAT>(buffers[i].begin() + start, buffers[i].begin() + end);
+    }
+    bufferSize = end - start;
+    unlock();
+}
+
+void dsp::Buffer::stretch(unsigned int bufferSize) {
+    lock();
+    std::vector<std::vector<DSP_FLOAT>> temp = buffers;
+    DSP_FLOAT reverseScale = static_cast<DSP_FLOAT>(this->bufferSize) / bufferSize;
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
+        buffers[i].resize(bufferSize);
+        for (unsigned int k = 0; k < bufferSize; k++) {
+            buffers[i][k] = hermite(temp[i], k * reverseScale);
         }
     }
+    this->bufferSize = bufferSize;
+    unlock();
+}
+
+void dsp::Buffer::insert(unsigned int index, std::shared_ptr<Buffer> buffer) {
+    buffer->lock();
+    std::vector<std::vector<DSP_FLOAT>> temp = buffer->buffers;
+    unsigned int bufferSize = buffer->bufferSize;
+    buffer->unlock();
+    lock();
+    if (index > getBufferSize()) {
+        index = getBufferSize();
+    }
+    for (unsigned int i = 0; i < getNumChannels() && i < temp.size(); i++) {
+        buffers[i].insert(buffers[i].begin() + index, temp[i].begin(), temp[i].end());
+    }
+    this->bufferSize += bufferSize;
+    unlock();
+}
+
+dsp::Buffer dsp::Buffer::copy() {
+    lock();
+    Buffer buffer = *this;
     unlock();
     return buffer;
 }

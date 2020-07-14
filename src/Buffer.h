@@ -14,6 +14,7 @@ public:
            Type type,
            Space space = Space::TIME,
            DSP_FLOAT defaultValue = 0.0);
+    Buffer(const Buffer &buffer);
 
     unsigned int getNumChannels() const;
     void setNumChannels(unsigned int numChannels);
@@ -37,9 +38,11 @@ public:
     void fillBuffer(DSP_FLOAT value);
     void fillBufferNoLock(DSP_FLOAT value);
 
-    void insert(unsigned int start, std::shared_ptr<Buffer> buffer);
+    void clip(unsigned int start, unsigned int end);
+    void stretch(unsigned int bufferSize);
+    void insert(unsigned int index, std::shared_ptr<Buffer> buffer);
 
-    std::shared_ptr<Buffer> clip(unsigned int start, unsigned int length);
+    Buffer copy();
 
 private:
     unsigned int bufferSize;
