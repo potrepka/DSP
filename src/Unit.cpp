@@ -1,7 +1,8 @@
 #include "Unit.h"
 
 dsp::Unit::Unit()
-        : numChannels(0) {}
+        : numChannels(0)
+        , active(true) {}
 
 unsigned int dsp::Unit::getNumChannels() const {
     return numChannels;
@@ -10,6 +11,16 @@ unsigned int dsp::Unit::getNumChannels() const {
 void dsp::Unit::setNumChannels(unsigned int numChannels) {
     lock();
     setNumChannelsNoLock(numChannels);
+    unlock();
+}
+
+bool dsp::Unit::isActive() const {
+    return active;
+}
+
+void dsp::Unit::setActive(bool active) {
+    lock();
+    this->active = active;
     unlock();
 }
 
@@ -164,11 +175,14 @@ void dsp::Unit::sortUnits() {
 
 void dsp::Unit::run() {
     lock();
-    if (children.size() == 0) {
-        process();
-    } else {
-        for (const auto &unit : children) {
-            unit->run();
+    prepare();
+    if (active) {
+        if (children.size() == 0) {
+            process();
+        } else {
+            for (const auto &unit : children) {
+                unit->run();
+            }
         }
     }
     unlock();
@@ -296,7 +310,9 @@ void dsp::Unit::connect() {}
 
 void dsp::Unit::disconnect() {}
 
-void dsp::Unit::process() {
+void dsp::Unit::process() {}
+
+void dsp::Unit::prepare() {
     for (const auto &input : inputs) {
         input->lock();
         for (const auto &channel : input->getChannels()) {

@@ -18,6 +18,9 @@ public:
     unsigned int getNumChannels() const;
     void setNumChannels(unsigned int numChannels);
 
+    bool isActive() const;
+    void setActive(bool active);
+
     unsigned int getNumInputs() const;
     unsigned int getNumOutputs() const;
     std::shared_ptr<InputParameter> getInput(unsigned int index) const;
@@ -58,6 +61,9 @@ protected:
 
 private:
     unsigned int numChannels;
+    bool active;
+
+    void prepare();
 };
 
 } // namespace dsp
