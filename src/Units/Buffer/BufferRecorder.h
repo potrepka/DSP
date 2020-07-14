@@ -16,7 +16,7 @@ public:
     void setMode(Mode mode);
     DSP_FLOAT getExternalBufferSize() const;
     void setExternalBufferSize(DSP_FLOAT externalBufferSize);
-    bool isExternalBufferSizeSynced();
+    bool isExternalBufferSizeSynced() const;
     void setExternalBufferSizeSynced(bool externalBufferSizeSynced);
     std::shared_ptr<Buffer> getBuffer() const;
 

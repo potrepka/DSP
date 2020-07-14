@@ -34,7 +34,7 @@ void dsp::BufferRecorder::setExternalBufferSize(DSP_FLOAT externalBufferSize) {
     unlock();
 }
 
-bool dsp::BufferRecorder::isExternalBufferSizeSynced() {
+bool dsp::BufferRecorder::isExternalBufferSizeSynced() const {
     return externalBufferSizeSynced;
 }
 
