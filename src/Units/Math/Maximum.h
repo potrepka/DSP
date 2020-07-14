@@ -9,7 +9,7 @@ class Maximum : public Generator {
 public:
     Maximum(Type type, Space space = Space::TIME);
 
-    void pushInput();
+    unsigned int pushInput();
 
 protected:
     void process() override;

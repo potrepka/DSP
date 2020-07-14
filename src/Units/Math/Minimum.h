@@ -9,7 +9,7 @@ class Minimum : public Generator {
 public:
     Minimum(Type type, Space space = Space::TIME);
 
-    void pushInput();
+    unsigned int pushInput();
 
 protected:
     void process() override;

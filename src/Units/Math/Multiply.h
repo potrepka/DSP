@@ -9,11 +9,11 @@ class Multiply : public Processor {
 public:
     Multiply(Type type, Space space = Space::TIME);
 
-    void pushInputBipolar();
-    void pushInputUnipolar();
-    void pushInputRatio();
-    void pushInputInteger();
-    void pushInputBinary();
+    unsigned int pushInputBipolar();
+    unsigned int pushInputUnipolar();
+    unsigned int pushInputRatio();
+    unsigned int pushInputInteger();
+    unsigned int pushInputBinary();
 
 protected:
     void process() override;

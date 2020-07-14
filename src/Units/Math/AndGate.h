@@ -9,7 +9,7 @@ class AndGate : public Generator {
 public:
     AndGate(Space space = Space::TIME);
 
-    void pushInput();
+    unsigned int pushInput();
 
 protected:
     void process() override;

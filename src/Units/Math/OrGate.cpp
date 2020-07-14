@@ -3,8 +3,8 @@
 dsp::OrGate::OrGate(Space space)
         : Generator(Type::BINARY, space) {}
 
-void dsp::OrGate::pushInput() {
-    Unit::pushInput(Type::BINARY, getOutputSignal()->getSpace(), 0.0);
+unsigned int dsp::OrGate::pushInput() {
+    return Unit::pushInput(Type::BINARY, getOutputSignal()->getSpace(), 0.0);
 }
 
 void dsp::OrGate::process() {

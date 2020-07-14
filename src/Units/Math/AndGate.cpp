@@ -3,8 +3,8 @@
 dsp::AndGate::AndGate(Space space)
         : Generator(Type::BINARY, space) {}
 
-void dsp::AndGate::pushInput() {
-    Unit::pushInput(Type::BINARY, getOutputSignal()->getSpace(), 1.0);
+unsigned int dsp::AndGate::pushInput() {
+    return Unit::pushInput(Type::BINARY, getOutputSignal()->getSpace(), 1.0);
 }
 
 void dsp::AndGate::process() {

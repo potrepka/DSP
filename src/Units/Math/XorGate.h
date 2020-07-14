@@ -9,7 +9,7 @@ class XorGate : public Generator {
 public:
     XorGate(Space space = Space::TIME);
 
-    void pushInput();
+    unsigned int pushInput();
 
 protected:
     void process() override;

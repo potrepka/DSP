@@ -9,7 +9,7 @@ class OrGate : public Generator {
 public:
     OrGate(Space space = Space::TIME);
 
-    void pushInput();
+    unsigned int pushInput();
 
 protected:
     void process() override;

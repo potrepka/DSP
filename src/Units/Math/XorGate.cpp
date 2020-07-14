@@ -3,8 +3,8 @@
 dsp::XorGate::XorGate(Space space)
         : Generator(Type::BINARY, space) {}
 
-void dsp::XorGate::pushInput() {
-    Unit::pushInput(Type::BINARY, getOutputSignal()->getSpace(), 0.0);
+unsigned int dsp::XorGate::pushInput() {
+    return Unit::pushInput(Type::BINARY, getOutputSignal()->getSpace(), 0.0);
 }
 
 void dsp::XorGate::process() {
