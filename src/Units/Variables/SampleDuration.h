@@ -1,12 +1,16 @@
 #pragma once
 
+#include "Generator.h"
+
 namespace dsp {
 
-class SampleDuration {
+class SampleDuration : public Generator {
 
 public:
-    SampleDuration();
+    SampleDuration(Space space = Space::TIME);
 
+protected:
+    void setSampleRateNoLock(unsigned int sampleRate) override;
 };
 
 } // namespace dsp
