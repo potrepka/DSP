@@ -101,7 +101,7 @@ public:
     void setDefaultValue(DSP_FLOAT defaultValue);
 
     std::vector<std::shared_ptr<T>> getChannels() const;
-    std::shared_ptr<T> getChannel(unsigned int index) const;
+    std::shared_ptr<T> getChannel(unsigned int channel) const;
 
 private:
     unsigned int bufferSize;

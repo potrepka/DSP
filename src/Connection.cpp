@@ -262,8 +262,8 @@ template <class T> std::vector<std::shared_ptr<T>> dsp::ConnectionParameter<T>::
     return channels;
 }
 
-template <class T> std::shared_ptr<T> dsp::ConnectionParameter<T>::getChannel(unsigned int index) const {
-    return channels[index];
+template <class T> std::shared_ptr<T> dsp::ConnectionParameter<T>::getChannel(unsigned int channel) const {
+    return channels[channel];
 }
 
 template class dsp::ConnectionParameter<dsp::Input>;
