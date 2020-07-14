@@ -6,8 +6,7 @@ dsp::AHR::AHR()
         , ATTACK(pushInput(Type::SECONDS))
         , HOLD(pushInput(Type::SECONDS))
         , RELEASE((pushInput(Type::SECONDS)))
-        , CURRENT_TIME(pushOutput(Type::SECONDS))
-        , index(0) {}
+        , CURRENT_TIME(pushOutput(Type::SECONDS)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::AHR::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
