@@ -26,7 +26,10 @@
 // Math
 #include "AbsoluteValue.h"
 #include "AndGate.h"
+#include "EqualTo.h"
 #include "Floor.h"
+#include "GreaterThan.h"
+#include "LessThan.h"
 #include "Maximum.h"
 #include "Minimum.h"
 #include "Modulo.h"
