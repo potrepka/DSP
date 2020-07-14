@@ -119,10 +119,10 @@ void dsp::Input::copyBuffers() {
         std::fill(buffer.begin(), buffer.end(), defaultValue);
     } else {
         std::fill(buffer.begin(), buffer.end(), 0.0);
-    }
-    for (const auto &output : connections) {
-        std::transform(
-                buffer.begin(), buffer.end(), output->getBuffer().begin(), buffer.begin(), std::plus<DSP_FLOAT>());
+        for (const auto &output : connections) {
+            std::transform(
+                    buffer.begin(), buffer.end(), output->getBuffer().begin(), buffer.begin(), std::plus<DSP_FLOAT>());
+        }
     }
     unlock();
 }
