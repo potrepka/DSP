@@ -37,11 +37,11 @@ void dsp::TableOscillator::removeTable(unsigned int index) {
     unlock();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::TableOscillator::getPhase() const {
+std::shared_ptr<dsp::InputParameter> dsp::TableOscillator::getPhase() const {
     return getInput(PHASE);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::TableOscillator::getPosition() const {
+std::shared_ptr<dsp::InputParameter> dsp::TableOscillator::getPosition() const {
     return getInput(POSITION);
 }
 

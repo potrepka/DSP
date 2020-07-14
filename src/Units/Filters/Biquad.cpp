@@ -17,15 +17,15 @@ void dsp::Biquad::setMode(Mode mode) {
     unlock();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getFrequency() const {
+std::shared_ptr<dsp::InputParameter> dsp::Biquad::getFrequency() const {
     return getInput(FREQUENCY);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getQ() const {
+std::shared_ptr<dsp::InputParameter> dsp::Biquad::getQ() const {
     return getInput(Q);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Biquad::getGain() const {
+std::shared_ptr<dsp::InputParameter> dsp::Biquad::getGain() const {
     return getInput(GAIN);
 }
 

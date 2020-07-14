@@ -263,19 +263,19 @@ unsigned int dsp::Engine::getNumOutputChannels() const {
     return numOutputChannels;
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::Engine::getAudioInput() const {
+std::shared_ptr<dsp::OutputParameter> dsp::Engine::getAudioInput() const {
     return audio->getAudioInput();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Engine::getAudioOutput() const {
+std::shared_ptr<dsp::InputParameter> dsp::Engine::getAudioOutput() const {
     return audio->getAudioOutput();
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::Engine::getAudioInputClipping() const {
+std::shared_ptr<dsp::OutputParameter> dsp::Engine::getAudioInputClipping() const {
     return audio->getAudioInputClipping();
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::Engine::getAudioOutputClipping() const {
+std::shared_ptr<dsp::OutputParameter> dsp::Engine::getAudioOutputClipping() const {
     return audio->getAudioOutputClipping();
 }
 

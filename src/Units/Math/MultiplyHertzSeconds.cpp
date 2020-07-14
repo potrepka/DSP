@@ -5,11 +5,11 @@ dsp::MultiplyHertzSeconds::MultiplyHertzSeconds(Space space)
         , FREQUENCY(pushInput(Type::HERTZ, space))
         , TIME(pushInput(Type::SECONDS, space)) {}
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::MultiplyHertzSeconds::getFrequency() const {
+std::shared_ptr<dsp::InputParameter> dsp::MultiplyHertzSeconds::getFrequency() const {
     return getInput(FREQUENCY);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::MultiplyHertzSeconds::getTime() const {
+std::shared_ptr<dsp::InputParameter> dsp::MultiplyHertzSeconds::getTime() const {
     return getInput(TIME);
 }
 

@@ -21,7 +21,7 @@ void dsp::VariableDelay::setMaxDelayTime(DSP_FLOAT seconds) {
     unlock();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::VariableDelay::getDelayTime() const {
+std::shared_ptr<dsp::InputParameter> dsp::VariableDelay::getDelayTime() const {
     return getInput(DELAY_TIME);
 }
 

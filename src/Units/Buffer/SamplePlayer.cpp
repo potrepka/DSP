@@ -29,23 +29,23 @@ void dsp::SamplePlayer::setSample(std::shared_ptr<Buffer> sample) {
     unlock();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getResetTrigger() const {
+std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getGate() const {
+std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getGate() const {
     return getInput(GATE);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getStartTime() const {
+std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getStartTime() const {
     return getInput(START_TIME);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SamplePlayer::getSpeed() const {
+std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getSpeed() const {
     return getInput(SPEED);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::SamplePlayer::getCurrentTime() const {
+std::shared_ptr<dsp::OutputParameter> dsp::SamplePlayer::getCurrentTime() const {
     return getOutput(CURRENT_TIME);
 }
 

@@ -7,19 +7,19 @@ dsp::GainComputer::GainComputer(Space space)
         , GATE_RATIO(pushInput(Type::RATIO, space, 1.0))
         , KNEE(pushInput(Type::LINEAR, space)) {}
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::GainComputer::getThreshold() const {
+std::shared_ptr<dsp::InputParameter> dsp::GainComputer::getThreshold() const {
     return getInput(THRESHOLD);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::GainComputer::getCompressionRatio() const {
+std::shared_ptr<dsp::InputParameter> dsp::GainComputer::getCompressionRatio() const {
     return getInput(COMPRESSION_RATIO);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::GainComputer::getGateRatio() const {
+std::shared_ptr<dsp::InputParameter> dsp::GainComputer::getGateRatio() const {
     return getInput(GATE_RATIO);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::GainComputer::getKnee() const {
+std::shared_ptr<dsp::InputParameter> dsp::GainComputer::getKnee() const {
     return getInput(KNEE);
 }
 

@@ -17,15 +17,15 @@ void dsp::StereoPanner::setMode(Mode mode) {
     unlock();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::StereoPanner::getDirection() const {
+std::shared_ptr<dsp::InputParameter> dsp::StereoPanner::getDirection() const {
     return getInput(DIRECTION);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::StereoPanner::getLeft() const {
+std::shared_ptr<dsp::OutputParameter> dsp::StereoPanner::getLeft() const {
     return getOutput(LEFT);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::StereoPanner::getRight() const {
+std::shared_ptr<dsp::OutputParameter> dsp::StereoPanner::getRight() const {
     return getOutput(RIGHT);
 }
 

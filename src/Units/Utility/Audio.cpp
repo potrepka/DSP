@@ -6,19 +6,19 @@ dsp::Audio::Audio()
         , AUDIO_INPUT_CLIPPING(pushOutput(Type::BINARY))
         , AUDIO_OUTPUT_CLIPPING(pushOutput(Type::BINARY)) {}
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::Audio::getAudioInput() const {
+std::shared_ptr<dsp::OutputParameter> dsp::Audio::getAudioInput() const {
     return getOutput(AUDIO_INPUT);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Audio::getAudioOutput() const {
+std::shared_ptr<dsp::InputParameter> dsp::Audio::getAudioOutput() const {
     return getInput(AUDIO_OUTPUT);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::Audio::getAudioInputClipping() const {
+std::shared_ptr<dsp::OutputParameter> dsp::Audio::getAudioInputClipping() const {
     return getOutput(AUDIO_INPUT_CLIPPING);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::Audio::getAudioOutputClipping() const {
+std::shared_ptr<dsp::OutputParameter> dsp::Audio::getAudioOutputClipping() const {
     return getOutput(AUDIO_OUTPUT_CLIPPING);
 }
 

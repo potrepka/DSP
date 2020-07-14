@@ -5,11 +5,11 @@ dsp::FFT::FFT()
         , REAL(pushOutput(Type::BIPOLAR, Space::FREQUENCY))
         , IMAGINARY(pushOutput(Type::BIPOLAR, Space::FREQUENCY)) {}
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::FFT::getReal() const {
+std::shared_ptr<dsp::OutputParameter> dsp::FFT::getReal() const {
     return getOutput(REAL);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::FFT::getImaginary() const {
+std::shared_ptr<dsp::OutputParameter> dsp::FFT::getImaginary() const {
     return getOutput(IMAGINARY);
 }
 

@@ -9,23 +9,23 @@ dsp::AHR::AHR()
         , CURRENT_TIME(pushOutput(Type::SECONDS))
         , index(0) {}
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getResetTrigger() const {
+std::shared_ptr<dsp::InputParameter> dsp::AHR::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getAttack() const {
+std::shared_ptr<dsp::InputParameter> dsp::AHR::getAttack() const {
     return getInput(ATTACK);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getHold() const {
+std::shared_ptr<dsp::InputParameter> dsp::AHR::getHold() const {
     return getInput(HOLD);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::AHR::getRelease() const {
+std::shared_ptr<dsp::InputParameter> dsp::AHR::getRelease() const {
     return getInput(RELEASE);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::AHR::getCurrentTime() const {
+std::shared_ptr<dsp::OutputParameter> dsp::AHR::getCurrentTime() const {
     return getOutput(CURRENT_TIME);
 }
 

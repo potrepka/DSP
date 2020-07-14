@@ -3,7 +3,7 @@
 dsp::Consumer::Consumer(Type type, Space space)
         : INPUT_SIGNAL(pushInput(type, space)) {}
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Consumer::getInputSignal() const {
+std::shared_ptr<dsp::InputParameter> dsp::Consumer::getInputSignal() const {
     return getInput(INPUT_SIGNAL);
 }
 

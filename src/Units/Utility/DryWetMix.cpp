@@ -9,15 +9,15 @@ dsp::DryWetMix::DryWetMix(Type type, Space space)
     assert(type != Type::INTEGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::DryWetMix::getDrySignal() const {
+std::shared_ptr<dsp::InputParameter> dsp::DryWetMix::getDrySignal() const {
     return getInput(DRY_SIGNAL);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::DryWetMix::getWetSignal() const {
+std::shared_ptr<dsp::InputParameter> dsp::DryWetMix::getWetSignal() const {
     return getInput(WET_SIGNAL);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::DryWetMix::getMixAmount() const {
+std::shared_ptr<dsp::InputParameter> dsp::DryWetMix::getMixAmount() const {
     return getInput(MIX_AMOUNT);
 }
 

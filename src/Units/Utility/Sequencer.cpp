@@ -15,11 +15,11 @@ void dsp::Sequencer::setSequence(std::shared_ptr<dsp::Buffer> sequence) {
     unlock();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Sequencer::getResetTrigger() const {
+std::shared_ptr<dsp::InputParameter> dsp::Sequencer::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Sequencer::getTrigger() const {
+std::shared_ptr<dsp::InputParameter> dsp::Sequencer::getTrigger() const {
     return getInput(TRIGGER);
 }
 

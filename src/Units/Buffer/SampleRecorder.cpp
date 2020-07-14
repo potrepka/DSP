@@ -11,11 +11,11 @@ std::shared_ptr<dsp::Buffer> dsp::SampleRecorder::getSample() const {
     return sample;
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleRecorder::getResetTrigger() const {
+std::shared_ptr<dsp::InputParameter> dsp::SampleRecorder::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::SampleRecorder::getGate() const {
+std::shared_ptr<dsp::InputParameter> dsp::SampleRecorder::getGate() const {
     return getInput(GATE);
 }
 

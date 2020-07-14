@@ -5,11 +5,11 @@ dsp::Phasor::Phasor()
         , RESET_TRIGGER(pushInput(Type::BINARY))
         , FREQUENCY(pushInput(Type::HERTZ)) {}
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Phasor::getResetTrigger() const {
+std::shared_ptr<dsp::InputParameter> dsp::Phasor::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Phasor::getFrequency() const {
+std::shared_ptr<dsp::InputParameter> dsp::Phasor::getFrequency() const {
     return getInput(FREQUENCY);
 }
 

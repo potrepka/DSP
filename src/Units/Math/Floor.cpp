@@ -7,7 +7,7 @@ dsp::Floor::Floor(Type type, Space space)
     assert(type != Type::INTEGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Floor::getDivisor() const {
+std::shared_ptr<dsp::InputParameter> dsp::Floor::getDivisor() const {
     return getInput(DIVISOR);
 }
 

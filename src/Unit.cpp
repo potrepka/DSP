@@ -1,104 +1,5 @@
 #include "Unit.h"
 
-template <class T>
-dsp::Unit::ConnectionParameter<T>::ConnectionParameter(
-        unsigned int numChannels, unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
-        : bufferSize(bufferSize)
-        , type(type)
-        , space(space)
-        , defaultValue(defaultValue) {
-    setNumChannels(numChannels);
-}
-
-template <class T> unsigned int dsp::Unit::ConnectionParameter<T>::getNumChannels() const {
-    return static_cast<unsigned int>(channels.size());
-}
-
-template <class T> void dsp::Unit::ConnectionParameter<T>::setNumChannels(unsigned int numChannels) {
-    lock();
-    if (numChannels < channels.size()) {
-        channels.erase(channels.begin() + numChannels, channels.end());
-    } else {
-        channels.reserve(numChannels);
-        for (unsigned int i = getNumChannels(); i < numChannels; i++) {
-            channels.push_back(std::make_shared<T>(bufferSize, type, space, defaultValue));
-        }
-    }
-    unlock();
-}
-
-template <class T> unsigned int dsp::Unit::ConnectionParameter<T>::getBufferSize() const {
-    return bufferSize;
-}
-
-template <class T> void dsp::Unit::ConnectionParameter<T>::setBufferSize(unsigned int bufferSize) {
-    lock();
-    this->bufferSize = bufferSize;
-    for (const auto &channel : channels) {
-        channel->setBufferSize(bufferSize);
-    }
-    unlock();
-}
-
-template <class T> dsp::Type dsp::Unit::ConnectionParameter<T>::getType() const {
-    return type;
-}
-
-template <class T> void dsp::Unit::ConnectionParameter<T>::setType(Type type) {
-    lock();
-    this->type = type;
-    for (const auto &channel : channels) {
-        channel->setType(type);
-    }
-    unlock();
-}
-
-template <class T> dsp::Space dsp::Unit::ConnectionParameter<T>::getSpace() const {
-    return space;
-}
-
-template <class T> void dsp::Unit::ConnectionParameter<T>::setSpace(Space space) {
-    lock();
-    this->space = space;
-    for (const auto &channel : channels) {
-        channel->setSpace(space);
-    }
-    unlock();
-}
-
-template <class T> DSP_FLOAT dsp::Unit::ConnectionParameter<T>::getDefaultValue() const {
-    return defaultValue;
-}
-
-template <class T> void dsp::Unit::ConnectionParameter<T>::setDefaultValue(DSP_FLOAT defaultValue) {
-    lock();
-    this->defaultValue = defaultValue;
-    for (const auto &channel : channels) {
-        channel->setDefaultValue(defaultValue);
-    }
-    unlock();
-}
-
-template <class T> std::vector<std::shared_ptr<T>> dsp::Unit::ConnectionParameter<T>::getChannels() const {
-    return channels;
-}
-
-template <class T> std::shared_ptr<T> dsp::Unit::ConnectionParameter<T>::getChannel(unsigned int index) const {
-    return channels[index];
-}
-
-template class dsp::Unit::ConnectionParameter<dsp::Input>;
-
-dsp::Unit::InputParameter::InputParameter(
-        unsigned int numChannels, unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
-        : ConnectionParameter(numChannels, bufferSize, type, space, defaultValue) {}
-
-template class dsp::Unit::ConnectionParameter<dsp::Output>;
-
-dsp::Unit::OutputParameter::OutputParameter(
-        unsigned int numChannels, unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
-        : ConnectionParameter(numChannels, bufferSize, type, space, defaultValue) {}
-
 dsp::Unit::Unit()
         : numChannels(0) {}
 
@@ -120,11 +21,11 @@ unsigned int dsp::Unit::getNumOutputs() const {
     return static_cast<unsigned int>(outputs.size());
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Unit::getInput(unsigned int index) const {
+std::shared_ptr<dsp::InputParameter> dsp::Unit::getInput(unsigned int index) const {
     return inputs[index];
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::Unit::getOutput(unsigned int index) const {
+std::shared_ptr<dsp::OutputParameter> dsp::Unit::getOutput(unsigned int index) const {
     return outputs[index];
 }
 
@@ -410,98 +311,4 @@ void dsp::Unit::process() {
         }
         output->unlock();
     }
-}
-
-void dsp::operator>>(DSP_FLOAT value, std::shared_ptr<dsp::Unit::InputParameter> input) {
-    input->lock();
-    for (unsigned int i = 0; i < input->getNumChannels(); i++) {
-        value >> input->getChannel(i);
-    }
-    input->unlock();
-}
-
-void dsp::operator>>(DSP_FLOAT value, std::shared_ptr<dsp::Unit::OutputParameter> output) {
-    output->lock();
-    for (unsigned int i = 0; i < output->getNumChannels(); i++) {
-        value >> output->getChannel(i);
-    }
-    output->unlock();
-}
-
-void dsp::operator>>(std::vector<DSP_FLOAT> values, std::shared_ptr<Unit::InputParameter> input) {
-    input->lock();
-    if (values.size() > 0) {
-        for (unsigned int i = 0; i < input->getNumChannels(); i++) {
-            values[i % values.size()] >> input->getChannel(i);
-        }
-    }
-    input->unlock();
-}
-
-void dsp::operator>>(std::vector<DSP_FLOAT> values, std::shared_ptr<Unit::OutputParameter> output) {
-    output->lock();
-    if (values.size() > 0) {
-        for (unsigned int i = 0; i < output->getNumChannels(); i++) {
-            values[i % values.size()] >> output->getChannel(i);
-        }
-    }
-    output->unlock();
-}
-
-void dsp::operator>>(std::shared_ptr<dsp::Unit::OutputParameter> output,
-                     std::shared_ptr<dsp::Unit::InputParameter> input) {
-    input->lock();
-    output->lock();
-    if (output->getNumChannels() > 0) {
-        for (unsigned int i = 0; i < input->getNumChannels(); i++) {
-            output->getChannel(i % output->getNumChannels()) >> input->getChannel(i);
-        }
-    }
-    output->unlock();
-    input->unlock();
-}
-
-void dsp::operator!=(std::shared_ptr<dsp::Unit::OutputParameter> output,
-                     std::shared_ptr<dsp::Unit::InputParameter> input) {
-    output->lock();
-    input->lock();
-    if (output->getNumChannels() > 0) {
-        for (unsigned int i = 0; i < input->getNumChannels(); i++) {
-            output->getChannel(i % output->getNumChannels()) != input->getChannel(i);
-        }
-    }
-    input->unlock();
-    output->unlock();
-}
-
-void dsp::operator>>(std::shared_ptr<Unit::OutputParameter> output, std::shared_ptr<Input> input) {
-    output->lock();
-    for (unsigned int i = 0; i < output->getNumChannels(); i++) {
-        output->getChannel(i) >> input;
-    }
-    output->unlock();
-}
-
-void dsp::operator!=(std::shared_ptr<Unit::OutputParameter> output, std::shared_ptr<Input> input) {
-    output->lock();
-    for (unsigned int i = 0; i < output->getNumChannels(); i++) {
-        output->getChannel(i) != input;
-    }
-    output->unlock();
-}
-
-void dsp::operator>>(std::shared_ptr<Output> output, std::shared_ptr<Unit::InputParameter> input) {
-    input->lock();
-    for (unsigned int i = 0; i < input->getNumChannels(); i++) {
-        output >> input->getChannel(i);
-    }
-    input->unlock();
-}
-
-void dsp::operator!=(std::shared_ptr<Output> output, std::shared_ptr<Unit::InputParameter> input) {
-    input->lock();
-    for (unsigned int i = 0; i < input->getNumChannels(); i++) {
-        output != input->getChannel(i);
-    }
-    input->unlock();
 }

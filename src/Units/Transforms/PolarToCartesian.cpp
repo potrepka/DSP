@@ -6,19 +6,19 @@ dsp::PolarToCartesian::PolarToCartesian()
         , REAL(pushOutput(Type::BIPOLAR, Space::FREQUENCY))
         , IMAGINARY(pushOutput(Type::BIPOLAR, Space::FREQUENCY)) {}
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::PolarToCartesian::getMagnitude() const {
+std::shared_ptr<dsp::InputParameter> dsp::PolarToCartesian::getMagnitude() const {
     return getInput(MAGNITUDE);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::PolarToCartesian::getPhase() const {
+std::shared_ptr<dsp::InputParameter> dsp::PolarToCartesian::getPhase() const {
     return getInput(PHASE);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::PolarToCartesian::getReal() const {
+std::shared_ptr<dsp::OutputParameter> dsp::PolarToCartesian::getReal() const {
     return getOutput(REAL);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::PolarToCartesian::getImaginary() const {
+std::shared_ptr<dsp::OutputParameter> dsp::PolarToCartesian::getImaginary() const {
     return getOutput(IMAGINARY);
 }
 

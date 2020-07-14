@@ -94,7 +94,8 @@ public:
 
     //! The constructor.
     RtMidiError(const std::string &message, Type type = RtMidiError::UNSPECIFIED) throw()
-            : message_(message), type_(type) {}
+            : message_(message)
+            , type_(type) {}
 
     //! The destructor.
     virtual ~RtMidiError(void) throw() {}
@@ -545,7 +546,9 @@ public:
         double timeStamp;
 
         // Default constructor.
-        MidiMessage() : bytes(0), timeStamp(0.0) {}
+        MidiMessage()
+                : bytes(0)
+                , timeStamp(0.0) {}
     };
 
     struct MidiQueue {
@@ -555,7 +558,11 @@ public:
         MidiMessage *ring;
 
         // Default constructor.
-        MidiQueue() : front(0), back(0), ringSize(0), ring(0) {}
+        MidiQueue()
+                : front(0)
+                , back(0)
+                , ringSize(0)
+                , ring(0) {}
         bool push(const MidiMessage &);
         bool pop(std::vector<unsigned char> *, double *);
         unsigned int size(unsigned int *back = 0, unsigned int *front = 0);
@@ -577,8 +584,14 @@ public:
 
         // Default constructor.
         RtMidiInData()
-                : ignoreFlags(7), doInput(false), firstMessage(true), apiData(0), usingCallback(false), userCallback(0),
-                  userData(0), continueSysex(false) {}
+                : ignoreFlags(7)
+                , doInput(false)
+                , firstMessage(true)
+                , apiData(0)
+                , usingCallback(false)
+                , userCallback(0)
+                , userData(0)
+                , continueSysex(false) {}
     };
 
 protected:

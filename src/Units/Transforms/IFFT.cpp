@@ -5,11 +5,11 @@ dsp::IFFT::IFFT()
         , REAL(pushInput(Type::BIPOLAR, Space::FREQUENCY))
         , IMAGINARY(pushInput(Type::BIPOLAR, Space::FREQUENCY)) {}
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::IFFT::getReal() const {
+std::shared_ptr<dsp::InputParameter> dsp::IFFT::getReal() const {
     return getInput(REAL);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::IFFT::getImaginary() const {
+std::shared_ptr<dsp::InputParameter> dsp::IFFT::getImaginary() const {
     return getInput(IMAGINARY);
 }
 

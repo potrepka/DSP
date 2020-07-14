@@ -5,11 +5,11 @@ dsp::GainEnvelope::GainEnvelope()
         , ATTACK(pushInput(Type::SECONDS))
         , RELEASE(pushInput(Type::SECONDS)) {}
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::GainEnvelope::getAttack() const {
+std::shared_ptr<dsp::InputParameter> dsp::GainEnvelope::getAttack() const {
     return getInput(ATTACK);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::GainEnvelope::getRelease() const {
+std::shared_ptr<dsp::InputParameter> dsp::GainEnvelope::getRelease() const {
     return getInput(RELEASE);
 }
 

@@ -42,10 +42,10 @@ public:
     unsigned int getNumInputChannels() const;
     unsigned int getNumOutputChannels() const;
 
-    std::shared_ptr<Unit::OutputParameter> getAudioInput() const;
-    std::shared_ptr<Unit::InputParameter> getAudioOutput() const;
-    std::shared_ptr<Unit::OutputParameter> getAudioInputClipping() const;
-    std::shared_ptr<Unit::OutputParameter> getAudioOutputClipping() const;
+    std::shared_ptr<OutputParameter> getAudioInput() const;
+    std::shared_ptr<InputParameter> getAudioOutput() const;
+    std::shared_ptr<OutputParameter> getAudioInputClipping() const;
+    std::shared_ptr<OutputParameter> getAudioOutputClipping() const;
 
     unsigned int getNumUnits() const;
     std::shared_ptr<Unit> getUnit(unsigned int index) const;

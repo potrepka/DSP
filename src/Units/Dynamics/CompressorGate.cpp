@@ -36,39 +36,39 @@ dsp::CompressorGate::~CompressorGate() {
     disconnect();
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getControlSignal() const {
+std::shared_ptr<dsp::InputParameter> dsp::CompressorGate::getControlSignal() const {
     return getInput(CONTROL_SIGNAL);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getLink() const {
+std::shared_ptr<dsp::InputParameter> dsp::CompressorGate::getLink() const {
     return getInput(LINK);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getThreshold() const {
+std::shared_ptr<dsp::InputParameter> dsp::CompressorGate::getThreshold() const {
     return getInput(THRESHOLD);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getCompressionRatio() const {
+std::shared_ptr<dsp::InputParameter> dsp::CompressorGate::getCompressionRatio() const {
     return getInput(COMPRESSION_RATIO);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getGateRatio() const {
+std::shared_ptr<dsp::InputParameter> dsp::CompressorGate::getGateRatio() const {
     return getInput(GATE_RATIO);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getKnee() const {
+std::shared_ptr<dsp::InputParameter> dsp::CompressorGate::getKnee() const {
     return getInput(KNEE);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getAttack() const {
+std::shared_ptr<dsp::InputParameter> dsp::CompressorGate::getAttack() const {
     return getInput(ATTACK);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::CompressorGate::getRelease() const {
+std::shared_ptr<dsp::InputParameter> dsp::CompressorGate::getRelease() const {
     return getInput(RELEASE);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::CompressorGate::getGainDelta() const {
+std::shared_ptr<dsp::OutputParameter> dsp::CompressorGate::getGainDelta() const {
     return getOutput(GAIN_DELTA);
 }
 

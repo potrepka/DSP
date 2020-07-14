@@ -58,7 +58,9 @@ bool SSEEnabled();
  */
 template <typename T> class Buffer {
 public:
-    explicit Buffer(size_t initialSize = 0) : _data(0), _size(0) {
+    explicit Buffer(size_t initialSize = 0)
+            : _data(0)
+            , _size(0) {
         resize(initialSize);
     }
 
@@ -172,7 +174,10 @@ typedef Buffer<Sample> SampleBuffer;
  */
 class SplitComplex {
 public:
-    explicit SplitComplex(size_t initialSize = 0) : _size(0), _re(), _im() {
+    explicit SplitComplex(size_t initialSize = 0)
+            : _size(0)
+            , _re()
+            , _im() {
         resize(initialSize);
     }
 

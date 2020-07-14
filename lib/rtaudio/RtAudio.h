@@ -240,7 +240,8 @@ public:
 
     //! The constructor.
     RtAudioError(const std::string &message, Type type = RtAudioError::UNSPECIFIED)
-            : std::runtime_error(message), type_(type) {}
+            : std::runtime_error(message)
+            , type_(type) {}
 
     //! Prints thrown error message to stderr.
     virtual void printMessage(void) const {
@@ -315,8 +316,14 @@ public:
 
         // Default constructor.
         DeviceInfo()
-                : probed(false), outputChannels(0), inputChannels(0), duplexChannels(0), isDefaultOutput(false),
-                  isDefaultInput(false), preferredSampleRate(0), nativeFormats(0) {}
+                : probed(false)
+                , outputChannels(0)
+                , inputChannels(0)
+                , duplexChannels(0)
+                , isDefaultOutput(false)
+                , isDefaultInput(false)
+                , preferredSampleRate(0)
+                , nativeFormats(0) {}
     };
 
     //! The structure for specifying input or ouput stream parameters.
@@ -326,7 +333,10 @@ public:
         unsigned int firstChannel; /*!< First channel index on device (default = 0). */
 
         // Default constructor.
-        StreamParameters() : deviceId(0), nChannels(0), firstChannel(0) {}
+        StreamParameters()
+                : deviceId(0)
+                , nChannels(0)
+                , firstChannel(0) {}
     };
 
     //! The structure for specifying stream options.
@@ -394,7 +404,10 @@ public:
         int priority; /*!< Scheduling priority of callback thread (only used with flag RTAUDIO_SCHEDULE_REALTIME). */
 
         // Default constructor.
-        StreamOptions() : flags(0), numberOfBuffers(0), priority(0) {}
+        StreamOptions()
+                : flags(0)
+                , numberOfBuffers(0)
+                , priority(0) {}
     };
 
     //! A static function to determine the current RtAudio version.
@@ -667,8 +680,15 @@ struct CallbackInfo {
 
     // Default constructor.
     CallbackInfo()
-            : object(0), thread(0), callback(0), userData(0), errorCallback(0), apiInfo(0), isRunning(false),
-              doRealtime(false), priority(0) {}
+            : object(0)
+            , thread(0)
+            , callback(0)
+            , userData(0)
+            , errorCallback(0)
+            , apiInfo(0)
+            , isRunning(false)
+            , doRealtime(false)
+            , priority(0) {}
 };
 
 // **************************************************************** //
@@ -814,7 +834,9 @@ protected:
         struct timeval lastTickTimestamp;
 #endif
 
-        RtApiStream() : apiHandle(0), deviceBuffer(0) {
+        RtApiStream()
+                : apiHandle(0)
+                , deviceBuffer(0) {
             device[0] = 11111;
             device[1] = 11111;
         }

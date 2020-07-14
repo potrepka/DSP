@@ -7,19 +7,19 @@ dsp::Trigger::Trigger()
         , DELAY(pushInput(Type::SECONDS))
         , CURRENT_TIME(pushOutput(Type::SECONDS)) {}
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getResetTrigger() const {
+std::shared_ptr<dsp::InputParameter> dsp::Trigger::getResetTrigger() const {
     return getInput(RESET_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getInterval() const {
+std::shared_ptr<dsp::InputParameter> dsp::Trigger::getInterval() const {
     return getInput(INTERVAL);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::Trigger::getDelay() const {
+std::shared_ptr<dsp::InputParameter> dsp::Trigger::getDelay() const {
     return getInput(DELAY);
 }
 
-std::shared_ptr<dsp::Unit::OutputParameter> dsp::Trigger::getCurrentTime() const {
+std::shared_ptr<dsp::OutputParameter> dsp::Trigger::getCurrentTime() const {
     return getOutput(CURRENT_TIME);
 }
 

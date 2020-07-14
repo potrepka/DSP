@@ -5,11 +5,11 @@ dsp::OnOff::OnOff()
         , ON_TRIGGER(pushInput(Type::BINARY))
         , OFF_TRIGGER(pushInput(Type::BINARY)) {}
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::OnOff::getOnTrigger() const {
+std::shared_ptr<dsp::InputParameter> dsp::OnOff::getOnTrigger() const {
     return getInput(ON_TRIGGER);
 }
 
-std::shared_ptr<dsp::Unit::InputParameter> dsp::OnOff::getOffTrigger() const {
+std::shared_ptr<dsp::InputParameter> dsp::OnOff::getOffTrigger() const {
     return getInput(OFF_TRIGGER);
 }
 
