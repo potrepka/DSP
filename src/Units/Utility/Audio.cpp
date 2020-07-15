@@ -39,6 +39,7 @@ void dsp::Audio::copyBuffers() {
 }
 
 void dsp::Audio::readInterleaved(DSP_FLOAT *inputBuffer, unsigned int numInputChannels, unsigned int numFrames) {
+    assert(numInputChannels <= getAudioInput()->getNumChannels() && numFrames <= getBufferSize());
     lock();
     for (unsigned int i = 0; i < numInputChannels; i++) {
         std::vector<DSP_FLOAT> &audioInputBuffer = getAudioInput()->getChannel(i)->getBuffer();
@@ -52,6 +53,7 @@ void dsp::Audio::readInterleaved(DSP_FLOAT *inputBuffer, unsigned int numInputCh
 }
 
 void dsp::Audio::writeInterleaved(DSP_FLOAT *outputBuffer, unsigned int numOutputChannels, unsigned int numFrames) {
+    assert(numOutputChannels <= getAudioOutput()->getNumChannels() && numFrames <= getBufferSize());
     lock();
     for (unsigned int i = 0; i < numOutputChannels; i++) {
         std::vector<DSP_FLOAT> &audioOutputBuffer = getAudioOutput()->getChannel(i)->getBuffer();

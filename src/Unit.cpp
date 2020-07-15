@@ -33,10 +33,12 @@ unsigned int dsp::Unit::getNumOutputs() const {
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::Unit::getInput(unsigned int index) const {
+    assert(index < inputs.size());
     return inputs[index];
 }
 
 std::shared_ptr<dsp::OutputParameter> dsp::Unit::getOutput(unsigned int index) const {
+    assert(index < outputs.size());
     return outputs[index];
 }
 
@@ -105,6 +107,7 @@ unsigned int dsp::Unit::getNumUnits() const {
 }
 
 std::shared_ptr<dsp::Unit> dsp::Unit::getUnit(unsigned int index) const {
+    assert(index < children.size());
     return children[index];
 }
 

@@ -6,10 +6,12 @@ dsp::Convolver::Convolver()
         , tailSize(0) {}
 
 std::shared_ptr<dsp::Buffer> dsp::Convolver::getBuffer(unsigned int channel) const {
+    assert(channel < buffers.size());
     return buffers[channel];
 }
 
 void dsp::Convolver::setBuffer(unsigned int channel, std::shared_ptr<dsp::Buffer> buffer) {
+    assert(channel < buffers.size());
     buffers[channel] = buffer;
     lock();
     initConvolver(channel);

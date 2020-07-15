@@ -57,6 +57,7 @@ DSP_FLOAT dsp::wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT
 }
 
 DSP_FLOAT dsp::linear(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index, DSP_FLOAT defaultValue) {
+    assert(index >= 0.0);
     if (table.size() == 0) {
         return defaultValue;
     }
@@ -68,6 +69,7 @@ DSP_FLOAT dsp::linear(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index
 }
 
 DSP_FLOAT dsp::hermite(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index, DSP_FLOAT defaultValue) {
+    assert(index >= 0.0);
     if (table.size() == 0) {
         return defaultValue;
     }

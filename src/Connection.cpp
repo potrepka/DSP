@@ -299,6 +299,7 @@ template <class T> std::vector<std::shared_ptr<T>> dsp::ConnectionParameter<T>::
 }
 
 template <class T> std::shared_ptr<T> dsp::ConnectionParameter<T>::getChannel(unsigned int channel) const {
+    assert(channel < channels.size());
     return channels[channel];
 }
 

@@ -107,6 +107,7 @@ std::vector<std::vector<DSP_FLOAT>> &dsp::Buffer::getChannels() {
 }
 
 std::vector<DSP_FLOAT> &dsp::Buffer::getChannel(unsigned int channel) {
+    assert(channel < buffers.size());
     return buffers[channel];
 }
 

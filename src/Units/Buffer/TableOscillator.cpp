@@ -10,10 +10,12 @@ unsigned int dsp::TableOscillator::getNumTables() const {
 }
 
 std::shared_ptr<dsp::Buffer> dsp::TableOscillator::getTable(unsigned int index) const {
+    assert(index < tables.size());
     return tables[index];
 }
 
 void dsp::TableOscillator::setTable(unsigned int index, std::shared_ptr<Buffer> table) {
+    assert(index < tables.size());
     lock();
     tables[index] = table;
     unlock();
@@ -26,12 +28,14 @@ void dsp::TableOscillator::pushTable(std::shared_ptr<Buffer> table) {
 }
 
 void dsp::TableOscillator::insertTable(unsigned int index, std::shared_ptr<Buffer> table) {
+    assert(index < tables.size());
     lock();
     tables.insert(tables.begin() + index, table);
     unlock();
 }
 
 void dsp::TableOscillator::removeTable(unsigned int index) {
+    assert(index < tables.size());
     lock();
     tables.erase(tables.begin() + index);
     unlock();

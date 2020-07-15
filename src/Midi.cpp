@@ -37,31 +37,38 @@ std::vector<unsigned char> dsp::Midi::TimedMessage::getBytes() const {
 }
 
 unsigned char dsp::Midi::TimedMessage::getByte(unsigned int index) const {
+    assert(index < bytes.size());
     return bytes[index];
 }
 
 DSP_FLOAT dsp::Midi::TimedMessage::getByteAsUnipolar(unsigned int index) const {
+    assert(index < bytes.size());
     return bytes[index] == 0 ? 0.0 : (bytes[index] + 1) * 0.0078125;
 }
 
 void dsp::Midi::TimedMessage::setByte(unsigned int index, unsigned char value) {
+    assert(index < bytes.size());
     bytes[index] = value;
 }
 
 void dsp::Midi::TimedMessage::setByteUsingUnipolar(unsigned int index, DSP_FLOAT value) {
+    assert(index < bytes.size());
     bytes[index] = value == 0.0 ? 0 : static_cast<unsigned char>(value * 128 - 1);
 }
 
 unsigned short dsp::Midi::TimedMessage::getShort(unsigned int lsb, unsigned int msb) const {
+    assert(lsb < bytes.size() && msb < bytes.size());
     return bytes[lsb] + bytes[msb] * 128;
 }
 
 DSP_FLOAT dsp::Midi::TimedMessage::getShortAsBipolar(unsigned int lsb, unsigned int msb) const {
+    assert(lsb < bytes.size() && msb < bytes.size());
     unsigned short x = getShort(lsb, msb) - 8192;
     return (x > 0 ? x + 1 : x) * 0.0001220703125;
 }
 
 void dsp::Midi::TimedMessage::setShort(unsigned int lsb, unsigned int msb, unsigned short value) {
+    assert(lsb < bytes.size() && msb < bytes.size());
     unsigned char least = value % 128;
     unsigned char most = value / 128;
     bytes[lsb] = least;
@@ -69,6 +76,7 @@ void dsp::Midi::TimedMessage::setShort(unsigned int lsb, unsigned int msb, unsig
 }
 
 void dsp::Midi::TimedMessage::setShortUsingBipolar(unsigned int lsb, unsigned int msb, DSP_FLOAT bipolar) {
+    assert(lsb < bytes.size() && msb < bytes.size());
     setShort(lsb, msb, static_cast<unsigned short>(bipolar * 8192 + 8192));
 }
 
@@ -153,26 +161,32 @@ void dsp::Midi::MidiInput::setPort(unsigned int port) {
 }
 
 std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNoteOnTrigger(unsigned char channel, unsigned char note) const {
+    assert(channel < noteOn.size() && note < noteOn[channel].size());
     return noteOn[channel][note];
 }
 
 std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNoteOffTrigger(unsigned char channel, unsigned char note) const {
+    assert(channel < noteOff.size() && note < noteOff[channel].size());
     return noteOff[channel][note];
 }
 
 std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNotePressure(unsigned char channel, unsigned char note) const {
+    assert(channel < notePressure.size() && note < notePressure[channel].size());
     return notePressure[channel][note];
 }
 
 std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getControlChange(unsigned char channel, unsigned char control) const {
+    assert(channel < controlChange.size() && control < controlChange[channel].size());
     return controlChange[channel][control];
 }
 
 std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getChannelPressure(unsigned char channel) const {
+    assert(channel < channelPressure.size());
     return channelPressure[channel];
 }
 
 std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getPitchBend(unsigned char channel) const {
+    assert(channel < pitchBend.size());
     return pitchBend[channel];
 }
 
@@ -198,6 +212,7 @@ unsigned int dsp::Midi::MidiInput::getNumCallbacks() const {
 
 std::shared_ptr<std::function<void(dsp::Midi::TimedMessage)>>
 dsp::Midi::MidiInput::getCallback(unsigned int index) const {
+    assert(index < callbacks.size());
     return callbacks[index];
 }
 
@@ -360,27 +375,33 @@ void dsp::Midi::MidiOutput::setPort(unsigned int port) {
 }
 
 std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNoteOnTrigger(unsigned char channel, unsigned char note) const {
+    assert(channel < noteOn.size() && note < noteOn[channel].size());
     return noteOn[channel][note];
 }
 
 std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNoteOffTrigger(unsigned char channel, unsigned char note) const {
+    assert(channel < noteOff.size() && note < noteOff[channel].size());
     return noteOff[channel][note];
 }
 
 std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNotePressure(unsigned char channel, unsigned char note) const {
+    assert(channel < notePressure.size() && note < notePressure[channel].size());
     return notePressure[channel][note];
 }
 
 std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getControlChange(unsigned char channel,
                                                                      unsigned char control) const {
+    assert(channel < controlChange.size() && control < controlChange[channel].size());
     return controlChange[channel][control];
 }
 
 std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getChannelPressure(unsigned char channel) const {
+    assert(channel < channelPressure.size());
     return channelPressure[channel];
 }
 
 std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getPitchBend(unsigned char channel) const {
+    assert(channel < pitchBend.size());
     return pitchBend[channel];
 }
 
@@ -588,10 +609,12 @@ unsigned int dsp::Midi::getNumMidiOutputs() const {
 }
 
 std::shared_ptr<dsp::Midi::MidiInput> dsp::Midi::getMidiInput(unsigned int index) const {
+    assert(index < midiInputs.size());
     return midiInputs[index];
 }
 
 std::shared_ptr<dsp::Midi::MidiOutput> dsp::Midi::getMidiOutput(unsigned int index) const {
+    assert(index < midiOutputs.size());
     return midiOutputs[index];
 }
 
