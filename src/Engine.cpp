@@ -9,7 +9,18 @@ dsp::Engine::Engine()
 
 dsp::Engine::~Engine() {
     lock();
+
 #if USE_RTAUDIO
+    try {
+        if (dac.isStreamOpen()) {
+            dac.abortStream();
+        }
+    } catch (RtAudioError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
+
     try {
         if (dac.isStreamOpen()) {
             dac.closeStream();
@@ -20,6 +31,7 @@ dsp::Engine::~Engine() {
 #endif
     }
 #endif
+
     unlock();
 }
 
@@ -158,6 +170,16 @@ void dsp::Engine::setup(unsigned int inputDevice,
     lock();
 
 #if USE_RTAUDIO
+    try {
+        if (dac.isStreamOpen()) {
+            dac.abortStream();
+        }
+    } catch (RtAudioError &error) {
+#if DEBUG
+        error.printMessage();
+#endif
+    }
+
     try {
         if (dac.isStreamOpen()) {
             dac.closeStream();
