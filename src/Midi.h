@@ -79,7 +79,9 @@ public:
 
     public:
         static void callback(double delta, std::vector<unsigned char> *message, void *data);
+
         MidiInput(unsigned int port);
+
         std::string getDeviceName() const;
         void setPort(unsigned int port);
         std::shared_ptr<Input> getNoteOnTrigger(unsigned char channel, unsigned char note) const;
@@ -94,9 +96,9 @@ public:
         std::shared_ptr<Input> getClockTrigger() const;
 
         unsigned int getNumCallbacks() const;
-        std::function<void(TimedMessage)> getCallback(unsigned int index) const;
+        std::shared_ptr<std::function<void(TimedMessage)>> getCallback(unsigned int index) const;
         void pushCallback(std::function<void(TimedMessage)> callback);
-        void removeCallback(unsigned int index);
+        void removeCallback(std::shared_ptr<std::function<void(TimedMessage)>> callback);
 
         void run();
 
@@ -131,6 +133,7 @@ public:
 
     public:
         MidiOutput(unsigned int port);
+
         std::string getDeviceName() const;
         void setPort(unsigned int port);
         std::shared_ptr<Output> getNoteOnTrigger(unsigned char channel, unsigned char note) const;
@@ -175,14 +178,14 @@ public:
     static std::string getMidiInputName(unsigned int port);
     static std::string getMidiOutputName(unsigned int port);
 
-    unsigned int getNumMidiInputs();
-    unsigned int getNumMidiOutputs();
-    std::shared_ptr<MidiInput> getMidiInput(unsigned int index);
-    std::shared_ptr<MidiOutput> getMidiOutput(unsigned int index);
-    void pushMidiInput(unsigned int port);
-    void pushMidiOutput(unsigned int port);
-    void removeMidiInput(unsigned int index);
-    void removeMidiOutput(unsigned int index);
+    unsigned int getNumMidiInputs() const;
+    unsigned int getNumMidiOutputs() const;
+    std::shared_ptr<MidiInput> getMidiInput(unsigned int index) const;
+    std::shared_ptr<MidiOutput> getMidiOutput(unsigned int index) const;
+    std::shared_ptr<MidiInput> pushMidiInput(unsigned int port);
+    std::shared_ptr<MidiOutput> pushMidiOutput(unsigned int port);
+    void removeMidiInput(std::shared_ptr<MidiInput> input);
+    void removeMidiOutput(std::shared_ptr<MidiOutput> output);
 
     void processInputs();
     void processOutputs();

@@ -60,10 +60,10 @@ public:
     unsigned int getNumMidiOutputs() const;
     std::shared_ptr<Midi::MidiInput> getMidiInput(unsigned int index) const;
     std::shared_ptr<Midi::MidiOutput> getMidiOutput(unsigned int index) const;
-    void pushMidiInput(unsigned int port);
-    void pushMidiOutput(unsigned int port);
-    void removeMidiInput(unsigned int index);
-    void removeMidiOutput(unsigned int index);
+    std::shared_ptr<Midi::MidiInput> pushMidiInput(unsigned int port);
+    std::shared_ptr<Midi::MidiOutput> pushMidiOutput(unsigned int port);
+    void removeMidiInput(std::shared_ptr<Midi::MidiInput> input);
+    void removeMidiOutput(std::shared_ptr<Midi::MidiOutput> output);
 
 private:
     std::shared_ptr<Audio> audio;

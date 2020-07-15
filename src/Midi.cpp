@@ -138,6 +138,7 @@ std::string dsp::Midi::MidiInput::getDeviceName() const {
 }
 
 void dsp::Midi::MidiInput::setPort(unsigned int port) {
+    lock();
 #if USE_RTMIDI
     try {
         midiIn.openPort(port);
@@ -148,6 +149,7 @@ void dsp::Midi::MidiInput::setPort(unsigned int port) {
     }
     deviceName = getMidiInputName(port);
 #endif
+    unlock();
 }
 
 std::shared_ptr<dsp::Input> dsp::Midi::MidiInput::getNoteOnTrigger(unsigned char channel, unsigned char note) const {
@@ -194,16 +196,21 @@ unsigned int dsp::Midi::MidiInput::getNumCallbacks() const {
     return static_cast<unsigned int>(callbacks.size());
 }
 
-std::function<void(dsp::Midi::TimedMessage)> dsp::Midi::MidiInput::getCallback(unsigned int index) const {
-    return *callbacks[index];
+std::shared_ptr<std::function<void(dsp::Midi::TimedMessage)>>
+dsp::Midi::MidiInput::getCallback(unsigned int index) const {
+    return callbacks[index];
 }
 
 void dsp::Midi::MidiInput::pushCallback(std::function<void(TimedMessage)> callback) {
+    lock();
     callbacks.push_back(std::make_shared<std::function<void(TimedMessage)>>(callback));
+    unlock();
 }
 
-void dsp::Midi::MidiInput::removeCallback(unsigned int index) {
-    callbacks.erase(callbacks.begin() + index);
+void dsp::Midi::MidiInput::removeCallback(std::shared_ptr<std::function<void(Midi::TimedMessage)>> callback) {
+    lock();
+    callbacks.erase(std::remove(callbacks.begin(), callbacks.end(), callback), callbacks.end());
+    unlock();
 }
 
 void dsp::Midi::MidiInput::run() {
@@ -275,10 +282,9 @@ void dsp::Midi::MidiInput::run() {
 }
 
 void dsp::Midi::MidiInput::pushQueue(double delta, std::vector<unsigned char> bytes) {
-    messageTime += delta;
-    TimedMessage message(messageTime, bytes);
-    runCallbacks(message);
+    TimedMessage message(messageTime += delta, bytes);
     lock();
+    runCallbacks(message);
     queue.push(message);
     unlock();
 }
@@ -339,6 +345,7 @@ std::string dsp::Midi::MidiOutput::getDeviceName() const {
 }
 
 void dsp::Midi::MidiOutput::setPort(unsigned int port) {
+    lock();
 #if USE_RTMIDI
     try {
         midiOut.openPort(port);
@@ -349,6 +356,7 @@ void dsp::Midi::MidiOutput::setPort(unsigned int port) {
     }
     deviceName = getMidiOutputName(port);
 #endif
+    unlock();
 }
 
 std::shared_ptr<dsp::Output> dsp::Midi::MidiOutput::getNoteOnTrigger(unsigned char channel, unsigned char note) const {
@@ -571,43 +579,47 @@ std::string dsp::Midi::getMidiOutputName(unsigned int port) {
 #endif
 }
 
-unsigned int dsp::Midi::getNumMidiInputs() {
+unsigned int dsp::Midi::getNumMidiInputs() const {
     return static_cast<unsigned int>(midiInputs.size());
 }
 
-unsigned int dsp::Midi::getNumMidiOutputs() {
+unsigned int dsp::Midi::getNumMidiOutputs() const {
     return static_cast<unsigned int>(midiOutputs.size());
 }
 
-std::shared_ptr<dsp::Midi::MidiInput> dsp::Midi::getMidiInput(unsigned int index) {
+std::shared_ptr<dsp::Midi::MidiInput> dsp::Midi::getMidiInput(unsigned int index) const {
     return midiInputs[index];
 }
 
-std::shared_ptr<dsp::Midi::MidiOutput> dsp::Midi::getMidiOutput(unsigned int index) {
+std::shared_ptr<dsp::Midi::MidiOutput> dsp::Midi::getMidiOutput(unsigned int index) const {
     return midiOutputs[index];
 }
 
-void dsp::Midi::pushMidiInput(unsigned int port) {
+std::shared_ptr<dsp::Midi::MidiInput> dsp::Midi::pushMidiInput(unsigned int port) {
+    auto input = std::make_shared<MidiInput>(port);
     lock();
-    midiInputs.push_back(std::make_shared<MidiInput>(port));
+    midiInputs.push_back(input);
+    unlock();
+    return input;
+}
+
+std::shared_ptr<dsp::Midi::MidiOutput> dsp::Midi::pushMidiOutput(unsigned int port) {
+    auto output = std::make_shared<MidiOutput>(port);
+    lock();
+    midiOutputs.push_back(output);
+    unlock();
+    return output;
+}
+
+void dsp::Midi::removeMidiInput(std::shared_ptr<MidiInput> input) {
+    lock();
+    midiInputs.erase(std::remove(midiInputs.begin(), midiInputs.end(), input), midiInputs.end());
     unlock();
 }
 
-void dsp::Midi::pushMidiOutput(unsigned int port) {
+void dsp::Midi::removeMidiOutput(std::shared_ptr<MidiOutput> output) {
     lock();
-    midiOutputs.push_back(std::make_shared<MidiOutput>(port));
-    unlock();
-}
-
-void dsp::Midi::removeMidiInput(unsigned int index) {
-    lock();
-    midiInputs.erase(midiInputs.begin() + index);
-    unlock();
-}
-
-void dsp::Midi::removeMidiOutput(unsigned int index) {
-    lock();
-    midiOutputs.erase(midiOutputs.begin() + index);
+    midiOutputs.erase(std::remove(midiOutputs.begin(), midiOutputs.end(), output), midiOutputs.end());
     unlock();
 }
 

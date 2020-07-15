@@ -327,20 +327,20 @@ std::shared_ptr<dsp::Midi::MidiOutput> dsp::Engine::getMidiOutput(unsigned int i
     return midi->getMidiOutput(index);
 }
 
-void dsp::Engine::pushMidiInput(unsigned int port) {
-    midi->pushMidiInput(port);
+std::shared_ptr<dsp::Midi::MidiInput> dsp::Engine::pushMidiInput(unsigned int port) {
+    return midi->pushMidiInput(port);
 }
 
-void dsp::Engine::pushMidiOutput(unsigned int port) {
-    midi->pushMidiOutput(port);
+std::shared_ptr<dsp::Midi::MidiOutput> dsp::Engine::pushMidiOutput(unsigned int port) {
+    return midi->pushMidiOutput(port);
 }
 
-void dsp::Engine::removeMidiInput(unsigned int index) {
-    midi->removeMidiInput(index);
+void dsp::Engine::removeMidiInput(std::shared_ptr<Midi::MidiInput> input) {
+    midi->removeMidiInput(input);
 }
 
-void dsp::Engine::removeMidiOutput(unsigned int index) {
-    midi->removeMidiOutput(index);
+void dsp::Engine::removeMidiOutput(std::shared_ptr<Midi::MidiOutput> output) {
+    midi->removeMidiOutput(output);
 }
 
 #if USE_RTAUDIO
