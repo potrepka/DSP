@@ -92,14 +92,10 @@ std::vector<DSP_FLOAT> &dsp::Buffer::getChannel(unsigned int channel) {
 
 void dsp::Buffer::fillBuffer(DSP_FLOAT value) {
     lock();
-    fillBufferNoLock(value);
-    unlock();
-}
-
-void dsp::Buffer::fillBufferNoLock(DSP_FLOAT value) {
     for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::fill(buffers[i].begin(), buffers[i].end(), value);
     }
+    unlock();
 }
 
 void dsp::Buffer::clip(unsigned int start, unsigned int end) {

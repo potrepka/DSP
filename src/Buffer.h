@@ -36,7 +36,6 @@ public:
     std::vector<DSP_FLOAT> &getChannel(unsigned int channel);
 
     void fillBuffer(DSP_FLOAT value);
-    void fillBufferNoLock(DSP_FLOAT value);
 
     void clip(unsigned int start, unsigned int end);
     void stretch(unsigned int bufferSize);
