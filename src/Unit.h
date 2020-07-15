@@ -25,6 +25,8 @@ public:
     unsigned int getNumOutputs() const;
     std::shared_ptr<InputParameter> getInput(unsigned int index) const;
     std::shared_ptr<OutputParameter> getOutput(unsigned int index) const;
+    std::vector<std::shared_ptr<InputParameter>> getInputs(unsigned int begin, unsigned int end) const;
+    std::vector<std::shared_ptr<OutputParameter>> getOutputs(unsigned int begin, unsigned int end) const;
     void pushInput(std::shared_ptr<InputParameter> input);
     void pushOutput(std::shared_ptr<OutputParameter> output);
     std::shared_ptr<InputParameter> pushInput(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
@@ -36,6 +38,7 @@ public:
 
     unsigned int getNumUnits() const;
     std::shared_ptr<Unit> getUnit(unsigned int index) const;
+    std::vector<std::shared_ptr<Unit>> getUnits(unsigned int begin, unsigned int end) const;
     void pushUnit(std::shared_ptr<Unit> unit, bool sort = false);
     void pushUnits(std::vector<std::shared_ptr<Unit>> units, bool sort = false);
     void replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement);

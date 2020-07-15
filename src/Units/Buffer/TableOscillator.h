@@ -15,6 +15,7 @@ public:
     std::vector<std::shared_ptr<Buffer>> getTables(unsigned int begin, unsigned int end) const;
     void pushTable(std::shared_ptr<Buffer> table);
     void pushTables(std::vector<std::shared_ptr<Buffer>> tables);
+    void replaceTable(std::shared_ptr<Buffer> table, std::shared_ptr<Buffer> replacement);
     void removeTable(std::shared_ptr<Buffer> table);
     void removeTables(std::vector<std::shared_ptr<Buffer>> tables);
     std::shared_ptr<InputParameter> getPhase() const;

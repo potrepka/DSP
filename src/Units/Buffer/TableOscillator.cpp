@@ -33,6 +33,12 @@ void dsp::TableOscillator::pushTables(std::vector<std::shared_ptr<Buffer>> table
     unlock();
 }
 
+void dsp::TableOscillator::replaceTable(std::shared_ptr<Buffer> table, std::shared_ptr<Buffer> replacement) {
+    lock();
+    std::replace(buffers.begin(), buffers.end(), table, replacement);
+    unlock();
+}
+
 void dsp::TableOscillator::removeTable(std::shared_ptr<Buffer> table) {
     lock();
     buffers.erase(std::remove(buffers.begin(), buffers.end(), table), buffers.end());

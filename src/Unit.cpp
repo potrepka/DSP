@@ -42,6 +42,16 @@ std::shared_ptr<dsp::OutputParameter> dsp::Unit::getOutput(unsigned int index) c
     return outputs[index];
 }
 
+std::vector<std::shared_ptr<dsp::InputParameter>> dsp::Unit::getInputs(unsigned int begin, unsigned int end) const {
+    assert(end <= inputs.size() && begin <= end);
+    return std::vector<std::shared_ptr<dsp::InputParameter>>(inputs.begin() + begin, inputs.begin() + end);
+}
+
+std::vector<std::shared_ptr<dsp::OutputParameter>> dsp::Unit::getOutputs(unsigned int begin, unsigned int end) const {
+    assert(end <= outputs.size() && begin <= end);
+    return std::vector<std::shared_ptr<dsp::OutputParameter>>(outputs.begin() + begin, outputs.begin() + end);
+}
+
 void dsp::Unit::pushInput(std::shared_ptr<InputParameter> input) {
     assert(input != nullptr);
     lock();
@@ -109,6 +119,11 @@ unsigned int dsp::Unit::getNumUnits() const {
 std::shared_ptr<dsp::Unit> dsp::Unit::getUnit(unsigned int index) const {
     assert(index < children.size());
     return children[index];
+}
+
+std::vector<std::shared_ptr<dsp::Unit>> dsp::Unit::getUnits(unsigned int begin, unsigned int end) const {
+    assert(end <= children.size() && begin <= end);
+    return std::vector<std::shared_ptr<dsp::Unit>>(children.begin() + begin, children.begin() + end);
 }
 
 void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit, bool sort) {
