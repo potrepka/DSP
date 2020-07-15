@@ -59,16 +59,16 @@ void dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::Unit::pushInput(Type type, Space space, DSP_FLOAT value) {
-    lock();
     auto input = std::make_shared<InputParameter>(getNumChannels(), getBufferSize(), type, space, value);
+    lock();
     inputs.push_back(input);
     unlock();
     return input;
 }
 
 std::shared_ptr<dsp::OutputParameter> dsp::Unit::pushOutput(Type type, Space space, DSP_FLOAT value) {
-    lock();
     auto output = std::make_shared<OutputParameter>(getNumChannels(), getBufferSize(), type, space, value);
+    lock();
     outputs.push_back(output);
     unlock();
     return output;
