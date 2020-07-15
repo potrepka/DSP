@@ -10,6 +10,8 @@ namespace dsp {
 
 class Input;
 class Output;
+class InputParameter;
+class OutputParameter;
 
 class Connection : public Lockable {
 
@@ -126,6 +128,10 @@ public:
                    Space space = Space::TIME,
                    DSP_FLOAT value = 0.0);
 
+    std::vector<std::shared_ptr<Output>> getConnections();
+    void connect(std::shared_ptr<OutputParameter> output);
+    void disconnect(std::shared_ptr<OutputParameter> output);
+    void disconnectAll();
     void copyBuffers();
 };
 
@@ -137,6 +143,11 @@ public:
                     Type type,
                     Space space = Space::TIME,
                     DSP_FLOAT value = 0.0);
+
+    std::vector<std::shared_ptr<Input>> getConnections();
+    void connect(std::shared_ptr<InputParameter> input);
+    void disconnect(std::shared_ptr<InputParameter> input);
+    void disconnectAll();
 };
 
 void operator>>(DSP_FLOAT value, std::shared_ptr<Input> input);
