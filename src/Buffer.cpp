@@ -86,10 +86,6 @@ void dsp::Buffer::setDefaultValue(DSP_FLOAT defaultValue) {
     unlock();
 }
 
-std::vector<DSP_FLOAT> &dsp::Buffer::getChannel(unsigned int channel) {
-    return buffers[channel];
-}
-
 void dsp::Buffer::fillBuffer(DSP_FLOAT value) {
     lock();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
@@ -104,6 +100,14 @@ void dsp::Buffer::clearBuffer() {
         std::fill(buffers[i].begin(), buffers[i].end(), defaultValue);
     }
     unlock();
+}
+
+std::vector<std::vector<DSP_FLOAT>> &dsp::Buffer::getChannels() {
+    return buffers;
+}
+
+std::vector<DSP_FLOAT> &dsp::Buffer::getChannel(unsigned int channel) {
+    return buffers[channel];
 }
 
 void dsp::Buffer::clip(unsigned int start, unsigned int end) {

@@ -33,10 +33,11 @@ public:
     DSP_FLOAT getDefaultValue() const;
     void setDefaultValue(DSP_FLOAT defaultValue);
 
-    std::vector<DSP_FLOAT> &getChannel(unsigned int channel);
-
     void fillBuffer(DSP_FLOAT value);
     void clearBuffer();
+
+    std::vector<std::vector<DSP_FLOAT>> &getChannels();
+    std::vector<DSP_FLOAT> &getChannel(unsigned int channel);
 
     void clip(unsigned int start, unsigned int end);
     void stretch(unsigned int bufferSize);

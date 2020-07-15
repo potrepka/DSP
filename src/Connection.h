@@ -28,10 +28,10 @@ public:
     DSP_FLOAT getDefaultValue() const;
     void setDefaultValue(DSP_FLOAT defaultValue);
 
-    std::vector<DSP_FLOAT> &getBuffer();
-
     void fillBuffer(DSP_FLOAT value);
     void clearBuffer();
+
+    std::vector<DSP_FLOAT> &getBuffer();
 
 protected:
     std::vector<DSP_FLOAT> buffer;
@@ -103,11 +103,11 @@ public:
     DSP_FLOAT getDefaultValue() const;
     void setDefaultValue(DSP_FLOAT defaultValue);
 
-    std::vector<std::shared_ptr<T>> getChannels() const;
-    std::shared_ptr<T> getChannel(unsigned int channel) const;
-
     void fillBuffer(DSP_FLOAT value);
     void clearBuffer();
+
+    std::vector<std::shared_ptr<T>> getChannels() const;
+    std::shared_ptr<T> getChannel(unsigned int channel) const;
 
 protected:
     unsigned int bufferSize;

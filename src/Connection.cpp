@@ -47,10 +47,6 @@ void dsp::Connection::setDefaultValue(DSP_FLOAT defaultValue) {
     unlock();
 }
 
-std::vector<DSP_FLOAT> &dsp::Connection::getBuffer() {
-    return buffer;
-}
-
 void dsp::Connection::fillBuffer(DSP_FLOAT value) {
     lock();
     std::fill(buffer.begin(), buffer.end(), value);
@@ -61,6 +57,10 @@ void dsp::Connection::clearBuffer() {
     lock();
     std::fill(buffer.begin(), buffer.end(), defaultValue);
     unlock();
+}
+
+std::vector<DSP_FLOAT> &dsp::Connection::getBuffer() {
+    return buffer;
 }
 
 dsp::Input::Input(unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
@@ -278,14 +278,6 @@ template <class T> void dsp::ConnectionParameter<T>::setDefaultValue(DSP_FLOAT d
     unlock();
 }
 
-template <class T> std::vector<std::shared_ptr<T>> dsp::ConnectionParameter<T>::getChannels() const {
-    return channels;
-}
-
-template <class T> std::shared_ptr<T> dsp::ConnectionParameter<T>::getChannel(unsigned int channel) const {
-    return channels[channel];
-}
-
 template <class T> void dsp::ConnectionParameter<T>::fillBuffer(DSP_FLOAT value) {
     lock();
     for (const auto &channel : channels) {
@@ -300,6 +292,14 @@ template <class T> void dsp::ConnectionParameter<T>::clearBuffer() {
         channel->clearBuffer();
     }
     unlock();
+}
+
+template <class T> std::vector<std::shared_ptr<T>> dsp::ConnectionParameter<T>::getChannels() const {
+    return channels;
+}
+
+template <class T> std::shared_ptr<T> dsp::ConnectionParameter<T>::getChannel(unsigned int channel) const {
+    return channels[channel];
 }
 
 template class dsp::ConnectionParameter<dsp::Input>;
