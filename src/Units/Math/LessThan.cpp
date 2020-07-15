@@ -2,10 +2,10 @@
 
 dsp::LessThan::LessThan(Type type, Space space)
         : Processor(type, Type::BINARY, space)
-        , COMPARISON_SIGNAL(pushInput(type, space)) {}
+        , comparisonSignal(pushInput(type, space)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::LessThan::getComparisonSignal() const {
-    return getInput(COMPARISON_SIGNAL);
+    return comparisonSignal;
 }
 
 void dsp::LessThan::process() {

@@ -2,10 +2,10 @@
 
 dsp::SampleAndHold::SampleAndHold(Type type)
         : Processor(type, type)
-        , TRIGGER(pushInput(Type::BINARY)) {}
+        , trigger(pushInput(Type::BINARY)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::SampleAndHold::getTrigger() const {
-    return getInput(TRIGGER);
+    return trigger;
 }
 
 void dsp::SampleAndHold::setNumChannelsNoLock(unsigned int numChannels) {

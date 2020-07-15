@@ -3,7 +3,7 @@
 dsp::XorGate::XorGate(Space space)
         : Generator(Type::BINARY, space) {}
 
-unsigned int dsp::XorGate::pushInput() {
+std::shared_ptr<dsp::InputParameter> dsp::XorGate::pushInput() {
     return Unit::pushInput(Type::BINARY, getOutputSignal()->getSpace(), 0.0);
 }
 

@@ -16,8 +16,8 @@ protected:
     void process() override;
 
 private:
-    const unsigned int FREQUENCY;
-    const unsigned int TIME;
+    const std::shared_ptr<InputParameter> frequency;
+    const std::shared_ptr<InputParameter> time;
 };
 
 } // namespace dsp

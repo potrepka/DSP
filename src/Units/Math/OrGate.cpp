@@ -3,7 +3,7 @@
 dsp::OrGate::OrGate(Space space)
         : Generator(Type::BINARY, space) {}
 
-unsigned int dsp::OrGate::pushInput() {
+std::shared_ptr<dsp::InputParameter> dsp::OrGate::pushInput() {
     return Unit::pushInput(Type::BINARY, getOutputSignal()->getSpace(), 0.0);
 }
 

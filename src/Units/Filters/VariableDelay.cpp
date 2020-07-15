@@ -2,7 +2,7 @@
 
 dsp::VariableDelay::VariableDelay(Type type)
         : Processor(type, type)
-        , DELAY_TIME(pushInput(Type::SECONDS))
+        , delayTime(pushInput(Type::SECONDS))
         , maxDelayTime(0.0)
         , writeIndex(0) {
     buffer = std::make_shared<Buffer>(0, 0, type);
@@ -22,7 +22,7 @@ void dsp::VariableDelay::setMaxDelayTime(DSP_FLOAT seconds) {
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::VariableDelay::getDelayTime() const {
-    return getInput(DELAY_TIME);
+    return delayTime;
 }
 
 void dsp::VariableDelay::setSampleRateNoLock(unsigned int sampleRate) {

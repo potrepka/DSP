@@ -20,7 +20,7 @@ protected:
     void process() override;
 
 private:
-    const unsigned int DELAY_TIME;
+    const std::shared_ptr<InputParameter> delayTime;
 
     DSP_FLOAT maxDelayTime;
     unsigned int writeIndex;

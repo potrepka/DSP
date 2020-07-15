@@ -13,7 +13,7 @@ public:
     void setInputSignal(std::shared_ptr<InputParameter> input);
 
 private:
-    const unsigned int INPUT_SIGNAL;
+    std::shared_ptr<InputParameter> inputSignal;
 };
 
 } // namespace dsp

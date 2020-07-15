@@ -20,12 +20,12 @@ protected:
     void process() override;
 
 private:
-    const unsigned int RESET_TRIGGER;
-    const unsigned int ATTACK;
-    const unsigned int HOLD;
-    const unsigned int RELEASE;
+    const std::shared_ptr<InputParameter> resetTrigger;
+    const std::shared_ptr<InputParameter> attack;
+    const std::shared_ptr<InputParameter> hold;
+    const std::shared_ptr<InputParameter> release;
 
-    const unsigned int CURRENT_TIME;
+    const std::shared_ptr<OutputParameter> currentTime;
 
     std::vector<unsigned int> index;
     std::vector<DSP_FLOAT> value;

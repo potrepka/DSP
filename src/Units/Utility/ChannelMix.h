@@ -20,7 +20,7 @@ protected:
     void process() override;
 
 private:
-    const unsigned int MIX_AMOUNT;
+    const std::shared_ptr<InputParameter> mixAmount;
 
     Mode mode;
     std::vector<DSP_FLOAT> buffer;

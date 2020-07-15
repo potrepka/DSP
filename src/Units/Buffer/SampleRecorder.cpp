@@ -2,8 +2,8 @@
 
 dsp::SampleRecorder::SampleRecorder(Type type)
         : Consumer(type)
-        , RESET_TRIGGER(pushInput(Type::BINARY))
-        , GATE(pushInput(Type::BINARY)) {
+        , resetTrigger(pushInput(Type::BINARY))
+        , gate(pushInput(Type::BINARY)) {
     sample = std::make_shared<Buffer>(0, 0, type);
 }
 
@@ -12,11 +12,11 @@ std::shared_ptr<dsp::Buffer> dsp::SampleRecorder::getSample() const {
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::SampleRecorder::getResetTrigger() const {
-    return getInput(RESET_TRIGGER);
+    return resetTrigger;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::SampleRecorder::getGate() const {
-    return getInput(GATE);
+    return gate;
 }
 
 void dsp::SampleRecorder::setNumChannelsNoLock(unsigned int numChannels) {

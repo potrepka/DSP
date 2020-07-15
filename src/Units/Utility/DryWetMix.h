@@ -17,9 +17,9 @@ protected:
     void process() override;
 
 private:
-    const unsigned int DRY_SIGNAL;
-    const unsigned int WET_SIGNAL;
-    const unsigned int MIX_AMOUNT;
+    const std::shared_ptr<InputParameter> drySignal;
+    const std::shared_ptr<InputParameter> wetSignal;
+    const std::shared_ptr<InputParameter> mixAmount;
 };
 
 } // namespace dsp

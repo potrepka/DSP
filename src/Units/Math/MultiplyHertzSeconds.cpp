@@ -2,15 +2,15 @@
 
 dsp::MultiplyHertzSeconds::MultiplyHertzSeconds(Space space)
         : Generator(Type::RATIO, space)
-        , FREQUENCY(pushInput(Type::HERTZ, space))
-        , TIME(pushInput(Type::SECONDS, space)) {}
+        , frequency(pushInput(Type::HERTZ, space))
+        , time(pushInput(Type::SECONDS, space)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::MultiplyHertzSeconds::getFrequency() const {
-    return getInput(FREQUENCY);
+    return frequency;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::MultiplyHertzSeconds::getTime() const {
-    return getInput(TIME);
+    return time;
 }
 
 void dsp::MultiplyHertzSeconds::process() {

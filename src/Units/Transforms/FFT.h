@@ -18,13 +18,13 @@ protected:
     void process() override;
 
 private:
-    const unsigned int REAL;
-    const unsigned int IMAGINARY;
+    const std::shared_ptr<OutputParameter> real;
+    const std::shared_ptr<OutputParameter> imaginary;
 
     audiofft::AudioFFT fft;
-    std::vector<float> input;
-    std::vector<float> real;
-    std::vector<float> imaginary;
+    std::vector<float> inputFloats;
+    std::vector<float> realFloats;
+    std::vector<float> imaginaryFloats;
 };
 
 } // namespace dsp

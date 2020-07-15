@@ -2,7 +2,7 @@
 
 dsp::OnePole::OnePole()
         : Processor(Type::BIPOLAR, Type::BIPOLAR)
-        , FREQUENCY(pushInput(Type::HERTZ))
+        , frequency(pushInput(Type::HERTZ))
         , mode(Mode::LOW_PASS) {}
 
 dsp::OnePole::Mode dsp::OnePole::getMode() const {
@@ -16,7 +16,7 @@ void dsp::OnePole::setMode(Mode mode) {
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::OnePole::getFrequency() const {
-    return getInput(FREQUENCY);
+    return frequency;
 }
 
 void dsp::OnePole::setNumChannelsNoLock(unsigned int numChannels) {

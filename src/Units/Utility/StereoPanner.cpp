@@ -2,9 +2,9 @@
 
 dsp::StereoPanner::StereoPanner(Type type, Space space)
         : Consumer(type, space)
-        , DIRECTION(pushInput(Type::BIPOLAR, space))
-        , LEFT(pushOutput(type, space))
-        , RIGHT(pushOutput(type, space))
+        , direction(pushInput(Type::BIPOLAR, space))
+        , left(pushOutput(type, space))
+        , right(pushOutput(type, space))
         , mode(Mode::CONSTANT_POWER) {}
 
 dsp::StereoPanner::Mode dsp::StereoPanner::getMode() const {
@@ -18,15 +18,15 @@ void dsp::StereoPanner::setMode(Mode mode) {
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::StereoPanner::getDirection() const {
-    return getInput(DIRECTION);
+    return direction;
 }
 
 std::shared_ptr<dsp::OutputParameter> dsp::StereoPanner::getLeft() const {
-    return getOutput(LEFT);
+    return left;
 }
 
 std::shared_ptr<dsp::OutputParameter> dsp::StereoPanner::getRight() const {
-    return getOutput(RIGHT);
+    return right;
 }
 
 void dsp::StereoPanner::process() {

@@ -3,7 +3,7 @@
 dsp::AndGate::AndGate(Space space)
         : Generator(Type::BINARY, space) {}
 
-unsigned int dsp::AndGate::pushInput() {
+std::shared_ptr<dsp::InputParameter> dsp::AndGate::pushInput() {
     return Unit::pushInput(Type::BINARY, getOutputSignal()->getSpace(), 1.0);
 }
 

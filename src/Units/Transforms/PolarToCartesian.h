@@ -18,10 +18,11 @@ protected:
     void process() override;
 
 private:
-    const unsigned int MAGNITUDE;
-    const unsigned int PHASE;
-    const unsigned int REAL;
-    const unsigned int IMAGINARY;
+    const std::shared_ptr<InputParameter> magnitude;
+    const std::shared_ptr<InputParameter> phase;
+
+    const std::shared_ptr<OutputParameter> real;
+    const std::shared_ptr<OutputParameter> imaginary;
 };
 
 } // namespace dsp

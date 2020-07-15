@@ -40,42 +40,38 @@ std::shared_ptr<dsp::OutputParameter> dsp::Unit::getOutput(unsigned int index) c
     return outputs[index];
 }
 
-unsigned int dsp::Unit::pushInput(std::shared_ptr<InputParameter> input) {
+void dsp::Unit::pushInput(std::shared_ptr<InputParameter> input) {
     assert(input != nullptr);
     lock();
     input->setBufferSize(getBufferSize());
     input->setNumChannels(getNumChannels());
-    unsigned int index = getNumInputs();
     inputs.push_back(input);
     unlock();
-    return index;
 }
 
-unsigned int dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
+void dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
     assert(output != nullptr);
     lock();
     output->setBufferSize(getBufferSize());
     output->setNumChannels(getNumChannels());
-    unsigned int index = getNumOutputs();
     outputs.push_back(output);
     unlock();
-    return index;
 }
 
-unsigned int dsp::Unit::pushInput(Type type, Space space, DSP_FLOAT value) {
+std::shared_ptr<dsp::InputParameter> dsp::Unit::pushInput(Type type, Space space, DSP_FLOAT value) {
     lock();
-    unsigned int index = getNumInputs();
-    inputs.push_back(std::make_shared<InputParameter>(getNumChannels(), getBufferSize(), type, space, value));
+    auto input = std::make_shared<InputParameter>(getNumChannels(), getBufferSize(), type, space, value);
+    inputs.push_back(input);
     unlock();
-    return index;
+    return input;
 }
 
-unsigned int dsp::Unit::pushOutput(Type type, Space space, DSP_FLOAT value) {
+std::shared_ptr<dsp::OutputParameter> dsp::Unit::pushOutput(Type type, Space space, DSP_FLOAT value) {
     lock();
-    unsigned int index = getNumOutputs();
-    outputs.push_back(std::make_shared<OutputParameter>(getNumChannels(), getBufferSize(), type, space, value));
+    auto output = std::make_shared<OutputParameter>(getNumChannels(), getBufferSize(), type, space, value);
+    outputs.push_back(output);
     unlock();
-    return index;
+    return output;
 }
 
 void dsp::Unit::replaceInput(std::shared_ptr<InputParameter> input, std::shared_ptr<InputParameter> replacement) {

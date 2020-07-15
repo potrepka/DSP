@@ -1,25 +1,25 @@
 #include "PolarToCartesian.h"
 
 dsp::PolarToCartesian::PolarToCartesian()
-        : MAGNITUDE(pushInput(Type::UNIPOLAR, Space::FREQUENCY))
-        , PHASE(pushInput(Type::UNIPOLAR, Space::FREQUENCY))
-        , REAL(pushOutput(Type::BIPOLAR, Space::FREQUENCY))
-        , IMAGINARY(pushOutput(Type::BIPOLAR, Space::FREQUENCY)) {}
+        : magnitude(pushInput(Type::UNIPOLAR, Space::FREQUENCY))
+        , phase(pushInput(Type::UNIPOLAR, Space::FREQUENCY))
+        , real(pushOutput(Type::BIPOLAR, Space::FREQUENCY))
+        , imaginary(pushOutput(Type::BIPOLAR, Space::FREQUENCY)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::PolarToCartesian::getMagnitude() const {
-    return getInput(MAGNITUDE);
+    return magnitude;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::PolarToCartesian::getPhase() const {
-    return getInput(PHASE);
+    return phase;
 }
 
 std::shared_ptr<dsp::OutputParameter> dsp::PolarToCartesian::getReal() const {
-    return getOutput(REAL);
+    return real;
 }
 
 std::shared_ptr<dsp::OutputParameter> dsp::PolarToCartesian::getImaginary() const {
-    return getOutput(IMAGINARY);
+    return imaginary;
 }
 
 void dsp::PolarToCartesian::process() {

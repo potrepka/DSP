@@ -17,8 +17,8 @@ protected:
     void process() override;
 
 private:
-    const unsigned int ON_TRIGGER;
-    const unsigned int OFF_TRIGGER;
+    const std::shared_ptr<InputParameter> onTrigger;
+    const std::shared_ptr<InputParameter> offTrigger;
 
     std::vector<unsigned int> state;
 };

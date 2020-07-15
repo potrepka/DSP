@@ -9,7 +9,7 @@ class Minimum : public Generator {
 public:
     Minimum(Type type, Space space = Space::TIME);
 
-    unsigned int pushInput();
+    std::shared_ptr<InputParameter> pushInput();
 
 protected:
     void process() override;

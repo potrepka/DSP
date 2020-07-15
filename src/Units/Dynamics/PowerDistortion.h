@@ -15,7 +15,7 @@ protected:
     void process() override;
 
 private:
-    const unsigned int DRIVE;
+    const std::shared_ptr<InputParameter> drive;
 };
 
 } // namespace dsp

@@ -2,9 +2,9 @@
 
 dsp::Biquad::Biquad()
         : Processor(dsp::Type::BIPOLAR, dsp::Type::BIPOLAR)
-        , FREQUENCY(pushInput(Type::HERTZ))
-        , Q(pushInput(Type::RATIO, Space::TIME, ONE_OVER_SQRT2))
-        , GAIN(pushInput(Type::LINEAR))
+        , frequency(pushInput(Type::HERTZ))
+        , q(pushInput(Type::RATIO, Space::TIME, ONE_OVER_SQRT2))
+        , gain(pushInput(Type::LINEAR))
         , mode(Mode::LOW_PASS) {}
 
 dsp::Biquad::Mode dsp::Biquad::getMode() const {
@@ -18,15 +18,15 @@ void dsp::Biquad::setMode(Mode mode) {
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::Biquad::getFrequency() const {
-    return getInput(FREQUENCY);
+    return frequency;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::Biquad::getQ() const {
-    return getInput(Q);
+    return q;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::Biquad::getGain() const {
-    return getInput(GAIN);
+    return gain;
 }
 
 void dsp::Biquad::setNumChannelsNoLock(unsigned int numChannels) {

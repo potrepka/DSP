@@ -17,8 +17,8 @@ protected:
     void process() override;
 
 private:
-    const unsigned int RESET_TRIGGER;
-    const unsigned int FREQUENCY;
+    const std::shared_ptr<InputParameter> resetTrigger;
+    const std::shared_ptr<InputParameter> frequency;
 
     std::vector<DSP_FLOAT> phase;
 };

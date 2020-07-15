@@ -15,7 +15,7 @@ protected:
     void process() override;
 
 private:
-    const unsigned int DIVISOR;
+    const std::shared_ptr<InputParameter> divisor;
 };
 
 } // namespace dsp

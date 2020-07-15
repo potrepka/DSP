@@ -2,8 +2,8 @@
 
 dsp::TableOscillator::TableOscillator(Type type)
         : Generator(type)
-        , PHASE(pushInput(Type::UNIPOLAR))
-        , POSITION(pushInput(Type::UNIPOLAR)) {}
+        , phase(pushInput(Type::UNIPOLAR))
+        , position(pushInput(Type::UNIPOLAR)) {}
 
 unsigned int dsp::TableOscillator::getNumTables() const {
     return static_cast<unsigned int>(tables.size());
@@ -38,11 +38,11 @@ void dsp::TableOscillator::removeTable(unsigned int index) {
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::TableOscillator::getPhase() const {
-    return getInput(PHASE);
+    return phase;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::TableOscillator::getPosition() const {
-    return getInput(POSITION);
+    return position;
 }
 
 void dsp::TableOscillator::process() {

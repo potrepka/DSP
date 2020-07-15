@@ -23,8 +23,8 @@ protected:
     void process() override;
 
 private:
-    const unsigned int PHASE;
-    const unsigned int POSITION;
+    const std::shared_ptr<InputParameter> phase;
+    const std::shared_ptr<InputParameter> position;
 
     std::vector<std::shared_ptr<Buffer>> tables;
 };

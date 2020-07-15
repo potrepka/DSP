@@ -2,7 +2,7 @@
 
 dsp::ChannelMix::ChannelMix(Type type, Space space)
         : Processor(type, type, space)
-        , MIX_AMOUNT(pushInput(Type::UNIPOLAR, space)) {
+        , mixAmount(pushInput(Type::UNIPOLAR, space)) {
     assert(type != Type::BINARY);
     assert(type != Type::INTEGER);
 }
@@ -18,7 +18,7 @@ void dsp::ChannelMix::setMode(Mode mode) {
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::ChannelMix::getMixAmount() const {
-    return getInput(MIX_AMOUNT);
+    return mixAmount;
 }
 
 void dsp::ChannelMix::setBufferSizeNoLock(unsigned int bufferSize) {

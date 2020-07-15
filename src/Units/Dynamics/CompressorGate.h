@@ -37,16 +37,16 @@ private:
     const std::shared_ptr<GainEnvelope> gainEnvelope;
     const std::shared_ptr<GainScale> gainScale;
 
-    const unsigned int CONTROL_SIGNAL;
-    const unsigned int LINK;
-    const unsigned int THRESHOLD;
-    const unsigned int COMPRESSION_RATIO;
-    const unsigned int GATE_RATIO;
-    const unsigned int KNEE;
-    const unsigned int ATTACK;
-    const unsigned int RELEASE;
+    const std::shared_ptr<InputParameter> controlSignal;
+    const std::shared_ptr<InputParameter> link;
+    const std::shared_ptr<InputParameter> threshold;
+    const std::shared_ptr<InputParameter> compressionRatio;
+    const std::shared_ptr<InputParameter> gateRatio;
+    const std::shared_ptr<InputParameter> knee;
+    const std::shared_ptr<InputParameter> attack;
+    const std::shared_ptr<InputParameter> release;
 
-    const unsigned int GAIN_DELTA;
+    const std::shared_ptr<OutputParameter> gainDelta;
 };
 
 } // namespace dsp

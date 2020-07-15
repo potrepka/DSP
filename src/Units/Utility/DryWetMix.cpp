@@ -2,23 +2,23 @@
 
 dsp::DryWetMix::DryWetMix(Type type, Space space)
         : Processor(type, type, space)
-        , DRY_SIGNAL(0)
-        , WET_SIGNAL(pushInput(type, space))
-        , MIX_AMOUNT(pushInput(Type::UNIPOLAR, space)) {
+        , drySignal(getInputSignal())
+        , wetSignal(pushInput(type, space))
+        , mixAmount(pushInput(Type::UNIPOLAR, space)) {
     assert(type != Type::BINARY);
     assert(type != Type::INTEGER);
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::DryWetMix::getDrySignal() const {
-    return getInput(DRY_SIGNAL);
+    return drySignal;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::DryWetMix::getWetSignal() const {
-    return getInput(WET_SIGNAL);
+    return wetSignal;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::DryWetMix::getMixAmount() const {
-    return getInput(MIX_AMOUNT);
+    return mixAmount;
 }
 
 void dsp::DryWetMix::process() {

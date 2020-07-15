@@ -2,25 +2,25 @@
 
 dsp::GainComputer::GainComputer(Space space)
         : Processor(Type::LINEAR, Type::LINEAR, space)
-        , THRESHOLD(pushInput(Type::LINEAR, space))
-        , COMPRESSION_RATIO(pushInput(Type::RATIO, space, 1.0))
-        , GATE_RATIO(pushInput(Type::RATIO, space, 1.0))
-        , KNEE(pushInput(Type::LINEAR, space)) {}
+        , threshold(pushInput(Type::LINEAR, space))
+        , compressionRatio(pushInput(Type::RATIO, space, 1.0))
+        , gateRatio(pushInput(Type::RATIO, space, 1.0))
+        , knee(pushInput(Type::LINEAR, space)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::GainComputer::getThreshold() const {
-    return getInput(THRESHOLD);
+    return threshold;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::GainComputer::getCompressionRatio() const {
-    return getInput(COMPRESSION_RATIO);
+    return compressionRatio;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::GainComputer::getGateRatio() const {
-    return getInput(GATE_RATIO);
+    return gateRatio;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::GainComputer::getKnee() const {
-    return getInput(KNEE);
+    return knee;
 }
 
 void dsp::GainComputer::process() {

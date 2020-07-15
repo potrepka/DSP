@@ -19,8 +19,8 @@ protected:
     void process() override;
 
 private:
-    const unsigned int RESET_TRIGGER;
-    const unsigned int GATE;
+    const std::shared_ptr<InputParameter> resetTrigger;
+    const std::shared_ptr<InputParameter> gate;
 
     std::shared_ptr<Buffer> sample;
     std::vector<DSP_FLOAT> gatePrevious;

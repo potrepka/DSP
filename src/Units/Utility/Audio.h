@@ -19,10 +19,10 @@ public:
     void writeInterleaved(DSP_FLOAT *outputBuffer, unsigned int numOutputChannels, unsigned int numFrames);
 
 private:
-    const unsigned int AUDIO_INPUT;
-    const unsigned int AUDIO_OUTPUT;
-    const unsigned int AUDIO_INPUT_CLIPPING;
-    const unsigned int AUDIO_OUTPUT_CLIPPING;
+    const std::shared_ptr<OutputParameter> audioInput;
+    const std::shared_ptr<InputParameter> audioOutput;
+    const std::shared_ptr<OutputParameter> audioInputClipping;
+    const std::shared_ptr<OutputParameter> audioOutputClipping;
 };
 
 } // namespace dsp

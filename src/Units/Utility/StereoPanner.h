@@ -21,9 +21,9 @@ protected:
     void process() override;
 
 private:
-    const unsigned int DIRECTION;
-    const unsigned int LEFT;
-    const unsigned int RIGHT;
+    const std::shared_ptr<InputParameter> direction;
+    const std::shared_ptr<OutputParameter> left;
+    const std::shared_ptr<OutputParameter> right;
 
     Mode mode;
 };

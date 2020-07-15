@@ -2,10 +2,10 @@
 
 dsp::PowerDistortion::PowerDistortion(Space space)
         : Processor(Type::BIPOLAR, Type::BIPOLAR, space)
-        , DRIVE(pushInput(Type::RATIO, space, 1.0)) {}
+        , drive(pushInput(Type::RATIO, space, 1.0)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::PowerDistortion::getDrive() const {
-    return getInput(DRIVE);
+    return drive;
 }
 
 void dsp::PowerDistortion::process() {

@@ -22,9 +22,9 @@ protected:
     void process() override;
 
 private:
-    const unsigned int FREQUENCY;
-    const unsigned int Q;
-    const unsigned int GAIN;
+    const std::shared_ptr<InputParameter> frequency;
+    const std::shared_ptr<InputParameter> q;
+    const std::shared_ptr<InputParameter> gain;
 
     Mode mode;
     std::vector<DSP_FLOAT> x1;

@@ -6,23 +6,23 @@ dsp::Multiply::Multiply(Type type, Space space)
     assert(type != Type::INTEGER);
 }
 
-unsigned int dsp::Multiply::pushInputBipolar() {
+std::shared_ptr<dsp::InputParameter> dsp::Multiply::pushInputBipolar() {
     return Unit::pushInput(Type::BIPOLAR, getInputSignal()->getSpace(), 1.0);
 }
 
-unsigned int dsp::Multiply::pushInputUnipolar() {
+std::shared_ptr<dsp::InputParameter> dsp::Multiply::pushInputUnipolar() {
     return Unit::pushInput(Type::UNIPOLAR, getInputSignal()->getSpace(), 1.0);
 }
 
-unsigned int dsp::Multiply::pushInputRatio() {
+std::shared_ptr<dsp::InputParameter> dsp::Multiply::pushInputRatio() {
     return Unit::pushInput(Type::RATIO, getInputSignal()->getSpace(), 1.0);
 }
 
-unsigned int dsp::Multiply::pushInputInteger() {
+std::shared_ptr<dsp::InputParameter> dsp::Multiply::pushInputInteger() {
     return Unit::pushInput(Type::INTEGER, getInputSignal()->getSpace(), 1.0);
 }
 
-unsigned int dsp::Multiply::pushInputBinary() {
+std::shared_ptr<dsp::InputParameter> dsp::Multiply::pushInputBinary() {
     return Unit::pushInput(Type::BINARY, getInputSignal()->getSpace(), 1.0);
 }
 

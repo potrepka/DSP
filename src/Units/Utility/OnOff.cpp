@@ -2,15 +2,15 @@
 
 dsp::OnOff::OnOff()
         : Generator(Type::BINARY)
-        , ON_TRIGGER(pushInput(Type::BINARY))
-        , OFF_TRIGGER(pushInput(Type::BINARY)) {}
+        , onTrigger(pushInput(Type::BINARY))
+        , offTrigger(pushInput(Type::BINARY)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::OnOff::getOnTrigger() const {
-    return getInput(ON_TRIGGER);
+    return onTrigger;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::OnOff::getOffTrigger() const {
-    return getInput(OFF_TRIGGER);
+    return offTrigger;
 }
 
 void dsp::OnOff::setNumChannelsNoLock(unsigned int numChannels) {

@@ -2,8 +2,8 @@
 
 dsp::Sequencer::Sequencer(Type type)
         : Generator(type)
-        , RESET_TRIGGER(pushInput(Type::BINARY))
-        , TRIGGER(pushInput(Type::BINARY)) {}
+        , resetTrigger(pushInput(Type::BINARY))
+        , trigger(pushInput(Type::BINARY)) {}
 
 std::shared_ptr<dsp::Buffer> dsp::Sequencer::getSequence() const {
     return sequence;
@@ -16,11 +16,11 @@ void dsp::Sequencer::setSequence(std::shared_ptr<dsp::Buffer> sequence) {
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::Sequencer::getResetTrigger() const {
-    return getInput(RESET_TRIGGER);
+    return resetTrigger;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::Sequencer::getTrigger() const {
-    return getInput(TRIGGER);
+    return trigger;
 }
 
 void dsp::Sequencer::setNumChannelsNoLock(unsigned int numChannels) {

@@ -17,8 +17,8 @@ protected:
     void process() override;
 
 private:
-    const unsigned int ATTACK;
-    const unsigned int RELEASE;
+    const std::shared_ptr<InputParameter> attack;
+    const std::shared_ptr<InputParameter> release;
 
     std::vector<DSP_FLOAT> outputPrevious;
 };

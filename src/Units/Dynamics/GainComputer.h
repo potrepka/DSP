@@ -18,10 +18,10 @@ protected:
     void process() override;
 
 private:
-    const unsigned int THRESHOLD;
-    const unsigned int COMPRESSION_RATIO;
-    const unsigned int GATE_RATIO;
-    const unsigned int KNEE;
+    const std::shared_ptr<InputParameter> threshold;
+    const std::shared_ptr<InputParameter> compressionRatio;
+    const std::shared_ptr<InputParameter> gateRatio;
+    const std::shared_ptr<InputParameter> knee;
 };
 
 } // namespace dsp

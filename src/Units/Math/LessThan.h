@@ -15,7 +15,7 @@ protected:
     void process() override;
 
 private:
-    const unsigned int COMPARISON_SIGNAL;
+    const std::shared_ptr<InputParameter> comparisonSignal;
 };
 
 } // namespace dsp

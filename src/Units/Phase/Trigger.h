@@ -10,8 +10,8 @@ public:
     Trigger();
 
     std::shared_ptr<InputParameter> getResetTrigger() const;
-    std::shared_ptr<InputParameter> getInterval() const;
-    std::shared_ptr<InputParameter> getDelay() const;
+    std::shared_ptr<InputParameter> getIntervalDuration() const;
+    std::shared_ptr<InputParameter> getDelayTime() const;
     std::shared_ptr<OutputParameter> getCurrentTime() const;
 
 protected:
@@ -19,10 +19,11 @@ protected:
     void process() override;
 
 private:
-    const unsigned int RESET_TRIGGER;
-    const unsigned int INTERVAL;
-    const unsigned int DELAY;
-    const unsigned int CURRENT_TIME;
+    const std::shared_ptr<InputParameter> resetTrigger;
+    const std::shared_ptr<InputParameter> intervalDuration;
+    const std::shared_ptr<InputParameter> delayTime;
+
+    const std::shared_ptr<OutputParameter> currentTime;
 
     std::vector<DSP_FLOAT> index;
 };

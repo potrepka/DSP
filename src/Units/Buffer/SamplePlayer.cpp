@@ -2,11 +2,11 @@
 
 dsp::SamplePlayer::SamplePlayer(Type type)
         : Generator(type)
-        , RESET_TRIGGER(pushInput(Type::BINARY))
-        , GATE(pushInput(Type::BINARY))
-        , START_TIME(pushInput(Type::SECONDS))
-        , SPEED(pushInput(Type::RATIO, Space::TIME, 1.0))
-        , CURRENT_TIME(pushOutput(Type::SECONDS))
+        , resetTrigger(pushInput(Type::BINARY))
+        , gate(pushInput(Type::BINARY))
+        , startTime(pushInput(Type::SECONDS))
+        , speed(pushInput(Type::RATIO, Space::TIME, 1.0))
+        , currentTime(pushOutput(Type::SECONDS))
         , mode(Mode::ONE_SHOT) {}
 
 dsp::SamplePlayer::Mode dsp::SamplePlayer::getMode() const {
@@ -30,23 +30,23 @@ void dsp::SamplePlayer::setSample(std::shared_ptr<Buffer> sample) {
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getResetTrigger() const {
-    return getInput(RESET_TRIGGER);
+    return resetTrigger;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getGate() const {
-    return getInput(GATE);
+    return gate;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getStartTime() const {
-    return getInput(START_TIME);
+    return startTime;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getSpeed() const {
-    return getInput(SPEED);
+    return speed;
 }
 
 std::shared_ptr<dsp::OutputParameter> dsp::SamplePlayer::getCurrentTime() const {
-    return getOutput(CURRENT_TIME);
+    return currentTime;
 }
 
 void dsp::SamplePlayer::setNumChannelsNoLock(unsigned int numChannels) {

@@ -9,7 +9,7 @@ class AndGate : public Generator {
 public:
     AndGate(Space space = Space::TIME);
 
-    unsigned int pushInput();
+    std::shared_ptr<InputParameter> pushInput();
 
 protected:
     void process() override;

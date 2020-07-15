@@ -2,15 +2,15 @@
 
 dsp::GainEnvelope::GainEnvelope()
         : Processor(Type::LINEAR, Type::LINEAR)
-        , ATTACK(pushInput(Type::SECONDS))
-        , RELEASE(pushInput(Type::SECONDS)) {}
+        , attack(pushInput(Type::SECONDS))
+        , release(pushInput(Type::SECONDS)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::GainEnvelope::getAttack() const {
-    return getInput(ATTACK);
+    return attack;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::GainEnvelope::getRelease() const {
-    return getInput(RELEASE);
+    return release;
 }
 
 void dsp::GainEnvelope::setNumChannelsNoLock(unsigned int numChannels) {

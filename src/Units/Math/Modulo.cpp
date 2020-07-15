@@ -2,13 +2,13 @@
 
 dsp::Modulo::Modulo(Type type, Space space)
         : Processor(type, type, space)
-        , DIVISOR(pushInput(type, space, 1.0)) {
+        , divisor(pushInput(type, space, 1.0)) {
     assert(type != Type::BINARY);
     assert(type != Type::INTEGER);
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::Modulo::getDivisor() const {
-    return getInput(DIVISOR);
+    return divisor;
 }
 
 void dsp::Modulo::process() {

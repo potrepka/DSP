@@ -3,7 +3,7 @@
 dsp::Minimum::Minimum(Type type, Space space)
         : Generator(type, space) {}
 
-unsigned int dsp::Minimum::pushInput() {
+std::shared_ptr<dsp::InputParameter> dsp::Minimum::pushInput() {
     return Unit::pushInput(
             getOutputSignal()->getType(), getOutputSignal()->getSpace(), std::numeric_limits<DSP_FLOAT>::infinity());
 }

@@ -2,23 +2,23 @@
 
 dsp::FFT::FFT()
         : Consumer(Type::BIPOLAR)
-        , REAL(pushOutput(Type::BIPOLAR, Space::FREQUENCY))
-        , IMAGINARY(pushOutput(Type::BIPOLAR, Space::FREQUENCY)) {}
+        , real(pushOutput(Type::BIPOLAR, Space::FREQUENCY))
+        , imaginary(pushOutput(Type::BIPOLAR, Space::FREQUENCY)) {}
 
 std::shared_ptr<dsp::OutputParameter> dsp::FFT::getReal() const {
-    return getOutput(REAL);
+    return real;
 }
 
 std::shared_ptr<dsp::OutputParameter> dsp::FFT::getImaginary() const {
-    return getOutput(IMAGINARY);
+    return imaginary;
 }
 
 void dsp::FFT::setBufferSizeNoLock(unsigned int bufferSize) {
     Unit::setBufferSizeNoLock(bufferSize);
     fft.init(bufferSize);
-    input.resize(bufferSize);
-    real.resize(audiofft::AudioFFT::ComplexSize(bufferSize));
-    imaginary.resize(audiofft::AudioFFT::ComplexSize(bufferSize));
+    inputFloats.resize(bufferSize);
+    realFloats.resize(audiofft::AudioFFT::ComplexSize(bufferSize));
+    imaginaryFloats.resize(audiofft::AudioFFT::ComplexSize(bufferSize));
 }
 
 void dsp::FFT::process() {
@@ -28,11 +28,11 @@ void dsp::FFT::process() {
         std::vector<DSP_FLOAT> &realBuffer = getReal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();
 
-        std::transform(inputBuffer.begin(), inputBuffer.end(), input.begin(), [this](DSP_FLOAT x) {
+        std::transform(inputBuffer.begin(), inputBuffer.end(), inputFloats.begin(), [this](DSP_FLOAT x) {
             return x * getOneOverBufferSize();
         });
-        fft.fft(input.data(), real.data(), imaginary.data());
-        std::copy(real.begin(), real.end(), realBuffer.begin());
-        std::copy(imaginary.begin(), imaginary.end(), imaginaryBuffer.begin());
+        fft.fft(inputFloats.data(), realFloats.data(), imaginaryFloats.data());
+        std::copy(realFloats.begin(), realFloats.end(), realBuffer.begin());
+        std::copy(imaginaryFloats.begin(), imaginaryFloats.end(), imaginaryBuffer.begin());
     }
 }

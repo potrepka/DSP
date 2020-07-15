@@ -2,10 +2,10 @@
 
 dsp::EqualTo::EqualTo(Type type, Space space)
         : Processor(type, Type::BINARY, space)
-        , COMPARISON_SIGNAL(pushInput(type, space)) {}
+        , comparisonSignal(pushInput(type, space)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::EqualTo::getComparisonSignal() const {
-    return getInput(COMPARISON_SIGNAL);
+    return comparisonSignal;
 }
 
 void dsp::EqualTo::process() {

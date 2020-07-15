@@ -2,30 +2,30 @@
 
 dsp::AHR::AHR()
         : Generator(Type::UNIPOLAR)
-        , RESET_TRIGGER(pushInput(Type::BINARY))
-        , ATTACK(pushInput(Type::SECONDS))
-        , HOLD(pushInput(Type::SECONDS))
-        , RELEASE((pushInput(Type::SECONDS)))
-        , CURRENT_TIME(pushOutput(Type::SECONDS)) {}
+        , resetTrigger(pushInput(Type::BINARY))
+        , attack(pushInput(Type::SECONDS))
+        , hold(pushInput(Type::SECONDS))
+        , release((pushInput(Type::SECONDS)))
+        , currentTime(pushOutput(Type::SECONDS)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::AHR::getResetTrigger() const {
-    return getInput(RESET_TRIGGER);
+    return resetTrigger;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::AHR::getAttack() const {
-    return getInput(ATTACK);
+    return attack;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::AHR::getHold() const {
-    return getInput(HOLD);
+    return hold;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::AHR::getRelease() const {
-    return getInput(RELEASE);
+    return release;
 }
 
 std::shared_ptr<dsp::OutputParameter> dsp::AHR::getCurrentTime() const {
-    return getOutput(CURRENT_TIME);
+    return currentTime;
 }
 
 void dsp::AHR::setNumChannelsNoLock(unsigned int numChannels) {

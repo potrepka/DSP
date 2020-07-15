@@ -2,15 +2,15 @@
 
 dsp::Phasor::Phasor()
         : Generator(Type::UNIPOLAR)
-        , RESET_TRIGGER(pushInput(Type::BINARY))
-        , FREQUENCY(pushInput(Type::HERTZ)) {}
+        , resetTrigger(pushInput(Type::BINARY))
+        , frequency(pushInput(Type::HERTZ)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::Phasor::getResetTrigger() const {
-    return getInput(RESET_TRIGGER);
+    return resetTrigger;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::Phasor::getFrequency() const {
-    return getInput(FREQUENCY);
+    return frequency;
 }
 
 void dsp::Phasor::setNumChannelsNoLock(unsigned int numChannels) {
