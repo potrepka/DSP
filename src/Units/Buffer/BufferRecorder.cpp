@@ -18,7 +18,7 @@ void dsp::BufferRecorder::setMode(Mode mode) {
     lock();
     this->mode = mode;
     writeIndex = 0.0;
-    buffer->fillBuffer(buffer->getDefaultValue());
+    buffer->clearBuffer();
     unlock();
 }
 

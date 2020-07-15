@@ -31,6 +31,7 @@ public:
     std::vector<DSP_FLOAT> &getBuffer();
 
     void fillBuffer(DSP_FLOAT value);
+    void clearBuffer();
 
 protected:
     std::vector<DSP_FLOAT> buffer;
@@ -54,6 +55,7 @@ public:
 
 private:
     std::vector<std::shared_ptr<Output>> connections;
+
     void addConnection(std::shared_ptr<Output> output);
     void removeConnection(std::shared_ptr<Output> output);
 };
@@ -72,6 +74,7 @@ public:
 
 private:
     std::vector<std::shared_ptr<Input>> connections;
+
     void addConnection(std::shared_ptr<Input> input);
     void removeConnection(std::shared_ptr<Input> input);
 };
@@ -103,7 +106,10 @@ public:
     std::vector<std::shared_ptr<T>> getChannels() const;
     std::shared_ptr<T> getChannel(unsigned int channel) const;
 
-private:
+    void fillBuffer(DSP_FLOAT value);
+    void clearBuffer();
+
+protected:
     unsigned int bufferSize;
     Type type;
     Space space;
@@ -119,6 +125,8 @@ public:
                    Type type,
                    Space space = Space::TIME,
                    DSP_FLOAT value = 0.0);
+
+    void copyBuffers();
 };
 
 class OutputParameter : public ConnectionParameter<Output> {

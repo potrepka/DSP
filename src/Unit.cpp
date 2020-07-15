@@ -323,7 +323,7 @@ void dsp::Unit::prepare() {
     for (const auto &output : outputs) {
         output->lock();
         for (const auto &channel : output->getChannels()) {
-            channel->fillBuffer(channel->getDefaultValue());
+            channel->clearBuffer();
         }
         output->unlock();
     }

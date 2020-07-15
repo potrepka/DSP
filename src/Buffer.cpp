@@ -98,6 +98,14 @@ void dsp::Buffer::fillBuffer(DSP_FLOAT value) {
     unlock();
 }
 
+void dsp::Buffer::clearBuffer() {
+    lock();
+    for (unsigned int i = 0; i < getNumChannels(); i++) {
+        std::fill(buffers[i].begin(), buffers[i].end(), defaultValue);
+    }
+    unlock();
+}
+
 void dsp::Buffer::clip(unsigned int start, unsigned int end) {
     lock();
     if (end > bufferSize) {

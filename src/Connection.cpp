@@ -57,6 +57,12 @@ void dsp::Connection::fillBuffer(DSP_FLOAT value) {
     unlock();
 }
 
+void dsp::Connection::clearBuffer() {
+    lock();
+    std::fill(buffer.begin(), buffer.end(), defaultValue);
+    unlock();
+}
+
 dsp::Input::Input(unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
         : Connection(bufferSize, type, space, defaultValue) {}
 
@@ -109,16 +115,6 @@ void dsp::Input::disconnectAll() {
     unlock();
 }
 
-void dsp::Input::addConnection(std::shared_ptr<Output> output) {
-    if (std::find(connections.begin(), connections.end(), output) == connections.end()) {
-        connections.push_back(output);
-    }
-}
-
-void dsp::Input::removeConnection(std::shared_ptr<Output> output) {
-    connections.erase(std::remove(connections.begin(), connections.end(), output), connections.end());
-}
-
 void dsp::Input::copyBuffers() {
     lock();
     if (connections.size() == 0) {
@@ -131,6 +127,16 @@ void dsp::Input::copyBuffers() {
         }
     }
     unlock();
+}
+
+void dsp::Input::addConnection(std::shared_ptr<Output> output) {
+    if (std::find(connections.begin(), connections.end(), output) == connections.end()) {
+        connections.push_back(output);
+    }
+}
+
+void dsp::Input::removeConnection(std::shared_ptr<Output> output) {
+    connections.erase(std::remove(connections.begin(), connections.end(), output), connections.end());
 }
 
 dsp::Output::Output(unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
@@ -183,6 +189,14 @@ void dsp::Output::disconnectAll() {
         input->unlock();
     }
     unlock();
+}
+
+void dsp::Output::addConnection(std::shared_ptr<Input> input) {
+    connections.push_back(input);
+}
+
+void dsp::Output::removeConnection(std::shared_ptr<Input> input) {
+    connections.erase(std::remove(connections.begin(), connections.end(), input), connections.end());
 }
 
 template <class T>
@@ -272,25 +286,41 @@ template <class T> std::shared_ptr<T> dsp::ConnectionParameter<T>::getChannel(un
     return channels[channel];
 }
 
+template <class T> void dsp::ConnectionParameter<T>::fillBuffer(DSP_FLOAT value) {
+    lock();
+    for (const auto &channel : channels) {
+        channel->fillBuffer(value);
+    }
+    unlock();
+}
+
+template <class T> void dsp::ConnectionParameter<T>::clearBuffer() {
+    lock();
+    for (const auto &channel : channels) {
+        channel->clearBuffer();
+    }
+    unlock();
+}
+
 template class dsp::ConnectionParameter<dsp::Input>;
 
 dsp::InputParameter::InputParameter(
         unsigned int numChannels, unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
         : ConnectionParameter(numChannels, bufferSize, type, space, defaultValue) {}
 
+void dsp::InputParameter::copyBuffers() {
+    lock();
+    for (const auto &channel : channels) {
+        channel->copyBuffers();
+    }
+    unlock();
+}
+
 template class dsp::ConnectionParameter<dsp::Output>;
 
 dsp::OutputParameter::OutputParameter(
         unsigned int numChannels, unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
         : ConnectionParameter(numChannels, bufferSize, type, space, defaultValue) {}
-
-void dsp::Output::addConnection(std::shared_ptr<Input> input) {
-    connections.push_back(input);
-}
-
-void dsp::Output::removeConnection(std::shared_ptr<Input> input) {
-    connections.erase(std::remove(connections.begin(), connections.end(), input), connections.end());
-}
 
 void dsp::operator>>(DSP_FLOAT value, std::shared_ptr<Input> input) {
     input->setDefaultValue(value);
