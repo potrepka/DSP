@@ -111,18 +111,18 @@ std::vector<DSP_FLOAT> &dsp::Buffer::getChannel(unsigned int channel) {
     return buffers[channel];
 }
 
-void dsp::Buffer::clip(unsigned int start, unsigned int end) {
+void dsp::Buffer::clip(unsigned int begin, unsigned int end) {
     lock();
     if (end > bufferSize) {
         end = bufferSize;
     }
-    if (start > end) {
-        start = end;
+    if (begin > end) {
+        begin = end;
     }
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        buffers[i] = std::vector<DSP_FLOAT>(buffers[i].begin() + start, buffers[i].begin() + end);
+        buffers[i] = std::vector<DSP_FLOAT>(buffers[i].begin() + begin, buffers[i].begin() + end);
     }
-    bufferSize = end - start;
+    bufferSize = end - begin;
     unlock();
 }
 

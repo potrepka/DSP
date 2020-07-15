@@ -39,7 +39,7 @@ public:
     std::vector<std::vector<DSP_FLOAT>> &getChannels();
     std::vector<DSP_FLOAT> &getChannel(unsigned int channel);
 
-    void clip(unsigned int start, unsigned int end);
+    void clip(unsigned int begin, unsigned int end);
     void stretch(unsigned int bufferSize);
     void insert(unsigned int index, std::shared_ptr<Buffer> buffer);
 
