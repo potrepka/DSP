@@ -22,6 +22,7 @@ protected:
 
 private:
     const std::shared_ptr<InputParameter> direction;
+
     const std::shared_ptr<OutputParameter> left;
     const std::shared_ptr<OutputParameter> right;
 
