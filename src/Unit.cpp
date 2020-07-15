@@ -313,17 +313,9 @@ void dsp::Unit::process() {}
 
 void dsp::Unit::prepare() {
     for (const auto &input : inputs) {
-        input->lock();
-        for (const auto &channel : input->getChannels()) {
-            channel->copyBuffers();
-        }
-        input->unlock();
+        input->copyBuffers();
     }
     for (const auto &output : outputs) {
-        output->lock();
-        for (const auto &channel : output->getChannels()) {
-            channel->clearBuffer();
-        }
-        output->unlock();
+        output->clearBuffer();
     }
 }
