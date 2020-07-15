@@ -1,17 +1,17 @@
 #include "Audio.h"
 
 dsp::Audio::Audio()
-        : audioInput(pushOutput(Type::BIPOLAR))
-        , audioOutput(pushInput(Type::BIPOLAR))
+        : audioOutput(pushInput(Type::BIPOLAR))
+        , audioInput(pushOutput(Type::BIPOLAR))
         , audioInputClipping(pushOutput(Type::BINARY))
         , audioOutputClipping(pushOutput(Type::BINARY)) {}
 
-std::shared_ptr<dsp::OutputParameter> dsp::Audio::getAudioInput() const {
-    return audioInput;
-}
-
 std::shared_ptr<dsp::InputParameter> dsp::Audio::getAudioOutput() const {
     return audioOutput;
+}
+
+std::shared_ptr<dsp::OutputParameter> dsp::Audio::getAudioInput() const {
+    return audioInput;
 }
 
 std::shared_ptr<dsp::OutputParameter> dsp::Audio::getAudioInputClipping() const {
