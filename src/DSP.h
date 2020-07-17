@@ -63,6 +63,7 @@
 #include "UnipolarToBipolar.h"
 
 // Trigger
+#include "Counter.h"
 #include "OnOff.h"
 #include "SampleAndHold.h"
 #include "Sequencer.h"

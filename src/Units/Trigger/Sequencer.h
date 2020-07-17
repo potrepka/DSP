@@ -5,27 +5,29 @@
 
 namespace dsp {
 
-class Sequencer : public Generator {
+class Sequencer : public Generator, public BufferCollection {
 
 public:
-    Sequencer(Type type);
+    Sequencer(Type type, Space space = Space::TIME);
 
-    std::shared_ptr<Buffer> getSequence() const;
-    void setSequence(std::shared_ptr<Buffer> sequence);
-    std::shared_ptr<InputParameter> getResetTrigger() const;
-    std::shared_ptr<InputParameter> getTrigger() const;
+    unsigned int getNumSequences() const;
+    std::shared_ptr<Buffer> getSequence(unsigned int index) const;
+    std::vector<std::shared_ptr<Buffer>> getSequences(unsigned int begin, unsigned int end) const;
+    void pushSequence(std::shared_ptr<Buffer> sequence);
+    void pushSequences(std::vector<std::shared_ptr<Buffer>> sequences);
+    void replaceSequence(std::shared_ptr<Buffer> sequence, std::shared_ptr<Buffer> replacement);
+    void removeSequence(std::shared_ptr<Buffer> sequence);
+    void removeSequences(std::vector<std::shared_ptr<Buffer>> sequences);
+
+    std::shared_ptr<InputParameter> getIndex() const;
+    std::shared_ptr<InputParameter> getSequence() const;
 
 protected:
-    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
-    const std::shared_ptr<InputParameter> resetTrigger;
-    const std::shared_ptr<InputParameter> trigger;
-
-    std::shared_ptr<Buffer> sequence;
-    std::vector<unsigned int> memory;
-    std::vector<unsigned int> index;
+    const std::shared_ptr<InputParameter> index;
+    const std::shared_ptr<InputParameter> sequence;
 };
 
 } // namespace dsp

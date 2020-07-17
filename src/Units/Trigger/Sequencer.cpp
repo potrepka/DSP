@@ -1,52 +1,78 @@
 #include "Sequencer.h"
 
-dsp::Sequencer::Sequencer(Type type)
-        : Generator(type)
-        , resetTrigger(pushInput(Type::BINARY))
-        , trigger(pushInput(Type::BINARY)) {}
+dsp::Sequencer::Sequencer(Type type, Space space)
+        : Generator(type, space)
+        , index(pushInput(Type::INTEGER))
+        , sequence(pushInput(Type::INTEGER)) {}
 
-std::shared_ptr<dsp::Buffer> dsp::Sequencer::getSequence() const {
+unsigned int dsp::Sequencer::getNumSequences() const {
+    return getNumBuffers();
+}
+
+std::shared_ptr<dsp::Buffer> dsp::Sequencer::getSequence(unsigned int index) const {
+    return getBuffer(index);
+}
+
+std::vector<std::shared_ptr<dsp::Buffer>> dsp::Sequencer::getSequences(unsigned int begin, unsigned int end) const {
+    return getBuffers(begin, end);
+}
+
+void dsp::Sequencer::pushSequence(std::shared_ptr<Buffer> sequence) {
+    pushBuffer(sequence);
+}
+
+void dsp::Sequencer::pushSequences(std::vector<std::shared_ptr<Buffer>> sequences) {
+    pushBuffers(sequences);
+}
+
+void dsp::Sequencer::replaceSequence(std::shared_ptr<Buffer> sequence, std::shared_ptr<Buffer> replacement) {
+    replaceBuffer(sequence, replacement);
+}
+
+void dsp::Sequencer::removeSequence(std::shared_ptr<Buffer> sequence) {
+    removeBuffer(sequence);
+}
+
+void dsp::Sequencer::removeSequences(std::vector<std::shared_ptr<Buffer>> sequences) {
+    removeBuffers(sequences);
+}
+
+std::shared_ptr<dsp::InputParameter> dsp::Sequencer::getIndex() const {
+    return index;
+}
+
+std::shared_ptr<dsp::InputParameter> dsp::Sequencer::getSequence() const {
     return sequence;
-}
-
-void dsp::Sequencer::setSequence(std::shared_ptr<dsp::Buffer> sequence) {
-    lock();
-    this->sequence = sequence;
-    unlock();
-}
-
-std::shared_ptr<dsp::InputParameter> dsp::Sequencer::getResetTrigger() const {
-    return resetTrigger;
-}
-
-std::shared_ptr<dsp::InputParameter> dsp::Sequencer::getTrigger() const {
-    return trigger;
-}
-
-void dsp::Sequencer::setNumChannelsNoLock(unsigned int numChannels) {
-    Unit::setNumChannelsNoLock(numChannels);
-    memory.resize(numChannels, 0);
-    index.resize(numChannels, 0);
 }
 
 void dsp::Sequencer::process() {
     Unit::process();
-    if (sequence != nullptr && sequence->getNumChannels() > 0 && sequence->getBufferSize() > 0) {
+    if (collection.size() > 0) {
+        for (const auto &buffer : collection) {
+            if (buffer != nullptr) {
+                buffer->lock();
+            }
+        }
         for (unsigned int i = 0; i < getNumChannels(); i++) {
-            std::vector<DSP_FLOAT> &sequenceChannel = sequence->getChannel(i % sequence->getNumChannels());
-            std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &triggerBuffer = getTrigger()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &indexBuffer = getIndex()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &sequenceBuffer = getSequence()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
-                if (resetTriggerBuffer[k]) {
-                    index[i] = 0;
+                DSP_FLOAT p = sequenceBuffer[k];
+                if (p >= 0 && p < collection.size() && collection[p] != nullptr) {
+                    if (collection[p]->getNumChannels() > 0 && collection[p]->getBufferSize() > 0) {
+                        std::vector<DSP_FLOAT> &channel =
+                                collection[p]->getChannel(i % collection[p]->getNumChannels());
+                        outputBuffer[k] = channel[wrap(indexBuffer[k], 0.0, collection[p]->getBufferSize())];
+                    } else {
+                        outputBuffer[k] = collection[p]->getDefaultValue();
+                    }
                 }
-                if (triggerBuffer[k]) {
-                    index[i] %= sequence->getBufferSize();
-                    memory[i] = index[i];
-                    index[i]++;
-                }
-                outputBuffer[k] = sequenceChannel[memory[i]];
+            }
+        }
+        for (const auto &buffer : collection) {
+            if (buffer != nullptr) {
+                buffer->unlock();
             }
         }
     }
