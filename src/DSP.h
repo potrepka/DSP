@@ -72,6 +72,8 @@
 #include "SampleAndHold.h"
 #include "Sequencer.h"
 #include "StereoPanner.h"
+#include "SwitchIn.h"
+#include "SwitchOut.h"
 
 // Variables
 #include "BufferDuration.h"
