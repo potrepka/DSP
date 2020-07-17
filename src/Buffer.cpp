@@ -162,3 +162,51 @@ std::shared_ptr<dsp::Buffer> dsp::Buffer::clone() {
     unlock();
     return buffer;
 }
+
+unsigned int dsp::BufferCollection::getNumBuffers() const {
+    return static_cast<unsigned int>(collection.size());
+}
+
+std::shared_ptr<dsp::Buffer> dsp::BufferCollection::getBuffer(unsigned int index) const {
+    assert(index < collection.size());
+    return collection[index];
+}
+
+std::vector<std::shared_ptr<dsp::Buffer>> dsp::BufferCollection::getBuffers(unsigned int begin, unsigned int end) const {
+    assert(begin <= end && end <= collection.size());
+    return std::vector<std::shared_ptr<dsp::Buffer>>(collection.begin() + begin, collection.begin() + end);
+}
+
+void dsp::BufferCollection::pushBuffer(std::shared_ptr<Buffer> buffer) {
+    lock();
+    collection.push_back(buffer);
+    unlock();
+}
+
+void dsp::BufferCollection::pushBuffers(std::vector<std::shared_ptr<Buffer>> buffers) {
+    lock();
+    for (const auto &buffer : buffers) {
+        collection.push_back(buffer);
+    }
+    unlock();
+}
+
+void dsp::BufferCollection::replaceBuffer(std::shared_ptr<Buffer> buffer, std::shared_ptr<Buffer> replacement) {
+    lock();
+    std::replace(collection.begin(), collection.end(), buffer, replacement);
+    unlock();
+}
+
+void dsp::BufferCollection::removeBuffer(std::shared_ptr<Buffer> buffer) {
+    lock();
+    collection.erase(std::remove(collection.begin(), collection.end(), buffer), collection.end());
+    unlock();
+}
+
+void dsp::BufferCollection::removeBuffers(std::vector<std::shared_ptr<Buffer>> buffers) {
+    lock();
+    for (const auto &buffer : buffers) {
+        collection.erase(std::remove(collection.begin(), collection.end(), buffer), collection.end());
+    }
+    unlock();
+}

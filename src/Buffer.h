@@ -53,4 +53,20 @@ private:
     std::vector<std::vector<DSP_FLOAT>> buffers;
 };
 
+class BufferCollection : public Lockable {
+
+public:
+    unsigned int getNumBuffers() const;
+    std::shared_ptr<Buffer> getBuffer(unsigned int index) const;
+    std::vector<std::shared_ptr<Buffer>> getBuffers(unsigned int begin, unsigned int end) const;
+    void pushBuffer(std::shared_ptr<Buffer> buffer);
+    void pushBuffers(std::vector<std::shared_ptr<Buffer>> buffers);
+    void replaceBuffer(std::shared_ptr<Buffer> buffer, std::shared_ptr<Buffer> replacement);
+    void removeBuffer(std::shared_ptr<Buffer> buffer);
+    void removeBuffers(std::vector<std::shared_ptr<Buffer>> buffers);
+
+protected:
+    std::vector<std::shared_ptr<Buffer>> collection;
+};
+
 } // namespace dsp
