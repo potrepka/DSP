@@ -172,7 +172,8 @@ std::shared_ptr<dsp::Buffer> dsp::BufferCollection::getBuffer(unsigned int index
     return collection[index];
 }
 
-std::vector<std::shared_ptr<dsp::Buffer>> dsp::BufferCollection::getBuffers(unsigned int begin, unsigned int end) const {
+std::vector<std::shared_ptr<dsp::Buffer>> dsp::BufferCollection::getBuffers(unsigned int begin,
+                                                                            unsigned int end) const {
     assert(begin <= end && end <= collection.size());
     return std::vector<std::shared_ptr<dsp::Buffer>>(collection.begin() + begin, collection.begin() + end);
 }
