@@ -84,3 +84,39 @@ DSP_FLOAT dsp::hermite(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT inde
     DSP_FLOAT c = 0.5 * (x2 - x0);
     return ((a * mu + b) * mu + c) * mu + x1;
 }
+
+void dsp::ScaledFFT::setup(std::size_t size) {
+    this->size = size;
+    oneOverSize = 1.0 / size;
+
+    audioFFT.init(getSize());
+    time.resize(getSize());
+    real.resize(getComplexSize());
+    imaginary.resize(getComplexSize());
+}
+
+std::size_t dsp::ScaledFFT::getSize() {
+    return size;
+}
+
+std::size_t dsp::ScaledFFT::getComplexSize() {
+    return audiofft::AudioFFT::ComplexSize(size);
+}
+
+void dsp::ScaledFFT::fft(std::vector<DSP_FLOAT> &timeBuffer,
+                         std::vector<DSP_FLOAT> &realBuffer,
+                         std::vector<DSP_FLOAT> &imaginaryBuffer) {
+    std::transform(timeBuffer.begin(), timeBuffer.end(), time.begin(), [this](DSP_FLOAT x) { return x * oneOverSize; });
+    audioFFT.fft(time.data(), real.data(), imaginary.data());
+    std::copy(real.begin(), real.end(), realBuffer.begin());
+    std::copy(imaginary.begin(), imaginary.end(), imaginaryBuffer.begin());
+}
+
+void dsp::ScaledFFT::ifft(std::vector<DSP_FLOAT> &timeBuffer,
+                          std::vector<DSP_FLOAT> &realBuffer,
+                          std::vector<DSP_FLOAT> &imaginaryBuffer) {
+    std::copy(realBuffer.begin(), realBuffer.end(), real.begin());
+    std::copy(imaginaryBuffer.begin(), imaginaryBuffer.end(), imaginary.begin());
+    audioFFT.ifft(time.data(), real.data(), imaginary.data());
+    std::transform(time.begin(), time.end(), timeBuffer.begin(), [this](DSP_FLOAT x) { return x * size; });
+}

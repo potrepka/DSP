@@ -5,10 +5,10 @@
 
 namespace dsp {
 
-class FFT : public Consumer {
+class TimeToFrequency : public Consumer {
 
 public:
-    FFT();
+    TimeToFrequency();
 
     std::shared_ptr<OutputParameter> getReal() const;
     std::shared_ptr<OutputParameter> getImaginary() const;
@@ -21,10 +21,7 @@ private:
     const std::shared_ptr<OutputParameter> real;
     const std::shared_ptr<OutputParameter> imaginary;
 
-    audiofft::AudioFFT fft;
-    std::vector<float> inputFloats;
-    std::vector<float> realFloats;
-    std::vector<float> imaginaryFloats;
+    ScaledFFT fft;
 };
 
 } // namespace dsp
