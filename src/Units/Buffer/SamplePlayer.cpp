@@ -4,7 +4,7 @@ dsp::SamplePlayer::SamplePlayer(Type type)
         : Generator(type)
         , resetTrigger(pushInput(Type::BINARY))
         , gate(pushInput(Type::BINARY))
-        , startTime(pushInput(Type::SECONDS))
+        , offsetTime(pushInput(Type::SECONDS))
         , speed(pushInput(Type::RATIO, Space::TIME, 1.0))
         , currentTime(pushOutput(Type::SECONDS))
         , mode(Mode::ONE_SHOT) {}
@@ -37,8 +37,8 @@ std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getGate() const {
     return gate;
 }
 
-std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getStartTime() const {
-    return startTime;
+std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getOffsetTime() const {
+    return offsetTime;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getSpeed() const {
@@ -70,16 +70,18 @@ void dsp::SamplePlayer::process() {
                     std::vector<DSP_FLOAT> &channel = sample->getChannel(i % numChannels);
                     std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
                     std::vector<DSP_FLOAT> &gateBuffer = getGate()->getChannel(i)->getBuffer();
-                    std::vector<DSP_FLOAT> &startTimeBuffer = getStartTime()->getChannel(i)->getBuffer();
+                    std::vector<DSP_FLOAT> &offsetTimeBuffer = getOffsetTime()->getChannel(i)->getBuffer();
                     std::vector<DSP_FLOAT> &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
                     std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
                     std::vector<DSP_FLOAT> &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
                     for (unsigned int k = 0; k < getBufferSize(); k++) {
                         if (resetTriggerBuffer[k]) {
-                            readIndex[i] = wrap(startTimeBuffer[k] * getSampleRate(), 0.0, channelSize);
+                            readIndex[i] = 0.0;
                         }
                         if (gateBuffer[k]) {
-                            unsigned int k1 = static_cast<unsigned int>(readIndex[i]);
+                            DSP_FLOAT index =
+                                    wrap(readIndex[i] + offsetTimeBuffer[k] * getSampleRate(), 0.0, channelSize);
+                            unsigned int k1 = static_cast<unsigned int>(index);
                             unsigned int k0 = (k1 + channelSize - 1) % channelSize;
                             unsigned int k2 = (k1 + 1) % channelSize;
                             unsigned int k3 = (k1 + 2) % channelSize;

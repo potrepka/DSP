@@ -18,7 +18,7 @@ public:
     void setSample(std::shared_ptr<Buffer> sample);
     std::shared_ptr<InputParameter> getResetTrigger() const;
     std::shared_ptr<InputParameter> getGate() const;
-    std::shared_ptr<InputParameter> getStartTime() const;
+    std::shared_ptr<InputParameter> getOffsetTime() const;
     std::shared_ptr<InputParameter> getSpeed() const;
     std::shared_ptr<OutputParameter> getCurrentTime() const;
 
@@ -29,7 +29,7 @@ protected:
 private:
     const std::shared_ptr<InputParameter> resetTrigger;
     const std::shared_ptr<InputParameter> gate;
-    const std::shared_ptr<InputParameter> startTime;
+    const std::shared_ptr<InputParameter> offsetTime;
     const std::shared_ptr<InputParameter> speed;
 
     const std::shared_ptr<OutputParameter> currentTime;
