@@ -39,6 +39,11 @@ public:
     std::vector<std::vector<DSP_FLOAT>> &getChannels();
     std::vector<DSP_FLOAT> &getChannel(unsigned int channel);
 
+    DSP_FLOAT getMinimum(unsigned int channel) const;
+    DSP_FLOAT getMaximum(unsigned int channel) const;
+    DSP_FLOAT getMean(unsigned int channel) const;
+    DSP_FLOAT getRMS(unsigned int channel) const;
+
     void clip(unsigned int begin, unsigned int end);
     void stretch(unsigned int bufferSize);
     void insert(unsigned int index, std::shared_ptr<Buffer> buffer);

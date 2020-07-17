@@ -111,6 +111,48 @@ std::vector<DSP_FLOAT> &dsp::Buffer::getChannel(unsigned int channel) {
     return buffers[channel];
 }
 
+DSP_FLOAT dsp::Buffer::getMinimum(unsigned int channel) const {
+    DSP_FLOAT minimum = std::numeric_limits<DSP_FLOAT>::infinity();
+    for (const DSP_FLOAT &x : buffers[channel]) {
+        if (minimum > x) {
+            minimum = x;
+        }
+    }
+    return minimum;
+}
+
+DSP_FLOAT dsp::Buffer::getMaximum(unsigned int channel) const {
+    DSP_FLOAT maximum = -std::numeric_limits<DSP_FLOAT>::infinity();
+    for (const DSP_FLOAT &x : buffers[channel]) {
+        if (maximum < x) {
+            maximum = x;
+        }
+    }
+    return maximum;
+}
+
+DSP_FLOAT dsp::Buffer::getMean(unsigned int channel) const {
+    if (bufferSize == 0) {
+        return defaultValue;
+    }
+    DSP_FLOAT sum = 0.0;
+    for (const DSP_FLOAT &x : buffers[channel]) {
+        sum += x;
+    }
+    return sum / bufferSize;
+}
+
+DSP_FLOAT dsp::Buffer::getRMS(unsigned int channel) const {
+    if (bufferSize == 0) {
+        return defaultValue;
+    }
+    DSP_FLOAT sum = 0.0;
+    for (const DSP_FLOAT &x : buffers[channel]) {
+        sum += x * x;
+    }
+    return sqrt(sum / bufferSize);
+}
+
 void dsp::Buffer::clip(unsigned int begin, unsigned int end) {
     lock();
     if (end > bufferSize) {
