@@ -47,7 +47,6 @@
 
 // Phase
 #include "Phasor.h"
-#include "Trigger.h"
 
 // Transforms
 #include "Base2Exp.h"
@@ -63,14 +62,17 @@
 #include "ToInteger.h"
 #include "UnipolarToBipolar.h"
 
+// Trigger
+#include "OnOff.h"
+#include "SampleAndHold.h"
+#include "Sequencer.h"
+#include "Trigger.h"
+
 // Utility
 #include "Audio.h"
 #include "ChannelMix.h"
 #include "DryWetMix.h"
-#include "OnOff.h"
 #include "PassThrough.h"
-#include "SampleAndHold.h"
-#include "Sequencer.h"
 #include "StereoPanner.h"
 #include "SwitchIn.h"
 #include "SwitchOut.h"
