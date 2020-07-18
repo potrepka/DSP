@@ -37,21 +37,18 @@ void dsp::Trigger::process() {
         std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         std::vector<DSP_FLOAT> &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
-            if (resetTriggerBuffer[k]) {
-                index[i] = 0.0;
-            }
-            outputBuffer[k] = index[i] < 1.0 ? 1.0 : 0.0;
-            currentTimeBuffer[k] = index[i] * getOneOverSampleRate();
-            DSP_FLOAT interval = abs(intervalBuffer[k] * getSampleRate());
-            if (interval == 0.0) {
+            if (resetTriggerBuffer[k] || intervalBuffer[k] == 0.0) {
                 index[i] = 0.0;
             } else {
-                index[i] += 1.0;
+                DSP_FLOAT interval = abs(intervalBuffer[k] * getSampleRate());
                 DSP_FLOAT delayed = index[i] - delayBuffer[k] * getSampleRate();
                 if (delayed >= interval) {
                     index[i] -= floor(delayed / interval) * interval;
                 }
             }
+            outputBuffer[k] = index[i] < 1.0 ? 1.0 : 0.0;
+            currentTimeBuffer[k] = index[i] * getOneOverSampleRate();
+            index[i] += 1.0;
         }
     }
 }
