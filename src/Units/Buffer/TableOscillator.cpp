@@ -73,13 +73,16 @@ void dsp::TableOscillator::process() {
                 const long indexBefore = static_cast<long>(positionIndex) - 1;
                 long p = indexBefore;
                 for (unsigned char j = 0; j < 4; j++) {
-                    if (p >= 0 && p < collection.size() && collection[p] != nullptr &&
-                        collection[p]->getNumChannels() > 0) {
-                        points[j] = linear(collection[p]->getChannel(i % collection[p]->getNumChannels()),
-                                           wrap(phaseBuffer[k], 0.0, 1.0) * collection[p]->getBufferSize(),
-                                           collection[p]->getDefaultValue());
+                    if (p >= 0 && p < collection.size() && collection[p] != nullptr) {
+                        if (collection[p]->getNumChannels() > 0 && collection[p]->getBufferSize() > 0) {
+                            points[j] = linear(collection[p]->getChannel(i % collection[p]->getNumChannels()),
+                                               wrap(phaseBuffer[k], 0.0, 1.0) * collection[p]->getBufferSize(),
+                                               collection[p]->getDefaultValue());
+                        } else {
+                            points[j] = collection[p]->getDefaultValue();
+                        }
                     } else {
-                        points[j] = 0.0;
+                        points[j] = getOutputSignal()->getDefaultValue();
                     }
                     p++;
                 }
