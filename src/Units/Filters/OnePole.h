@@ -9,7 +9,7 @@ class OnePole : public Processor {
 public:
     enum class Mode { LOW_PASS, HIGH_PASS };
 
-    OnePole();
+    OnePole(Type type);
 
     Mode getMode() const;
     void setMode(Mode mode);

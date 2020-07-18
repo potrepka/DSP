@@ -3,7 +3,7 @@
 dsp::Biquad::Biquad()
         : Processor(dsp::Type::BIPOLAR, dsp::Type::BIPOLAR)
         , frequency(pushInput(Type::HERTZ))
-        , q(pushInput(Type::RATIO, Space::TIME, ONE_OVER_SQRT2))
+        , q(pushInput(Type::RATIO, Space::TIME, 1.0))
         , gain(pushInput(Type::LINEAR))
         , mode(Mode::LOW_PASS) {}
 
@@ -64,7 +64,7 @@ void dsp::Biquad::calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FL
     const double omega = TAU * frequency * getOneOverSampleRate();
     const double sinW = sin(omega);
     const double cosW = cos(omega);
-    const double alpha = sinW / (2.0 * q);
+    const double alpha = sinW / (SQRT2 * q);
 
     switch (mode) {
         case Mode::LOW_PASS:

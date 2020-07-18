@@ -1,7 +1,7 @@
 #include "OnePole.h"
 
-dsp::OnePole::OnePole()
-        : Processor(Type::BIPOLAR, Type::BIPOLAR)
+dsp::OnePole::OnePole(Type type)
+        : Processor(type, type)
         , frequency(pushInput(Type::HERTZ))
         , mode(Mode::LOW_PASS) {}
 
