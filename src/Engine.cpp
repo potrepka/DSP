@@ -207,6 +207,11 @@ void dsp::Engine::setup(unsigned int inputDevice,
 
     RtAudioFormat format = (sizeof(DSP_FLOAT) == 8) ? RTAUDIO_FLOAT64 : RTAUDIO_FLOAT32;
 
+    RtAudio::StreamOptions options;
+    options.flags = RTAUDIO_SCHEDULE_REALTIME;
+    options.numberOfBuffers = 1;
+    options.priority = 10;
+
     try {
         dac.openStream(outputParameters.nChannels > 0 ? &outputParameters : NULL,
                        inputParameters.nChannels > 0 ? &inputParameters : NULL,
@@ -214,7 +219,8 @@ void dsp::Engine::setup(unsigned int inputDevice,
                        sampleRate,
                        &bufferSize,
                        &dsp::Engine::tick,
-                       this);
+                       this,
+                       &options);
     } catch (RtAudioError &error) {
 #if DEBUG
         error.printMessage();
