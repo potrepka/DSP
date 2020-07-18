@@ -5,7 +5,7 @@
 
 namespace dsp {
 
-class TableOscillator : public Generator {
+class TableOscillator : public Generator, public BufferCollection {
 
 public:
     TableOscillator(Type type);
@@ -27,8 +27,6 @@ protected:
 private:
     const std::shared_ptr<InputParameter> phase;
     const std::shared_ptr<InputParameter> position;
-
-    std::vector<std::shared_ptr<Buffer>> buffers;
 };
 
 } // namespace dsp

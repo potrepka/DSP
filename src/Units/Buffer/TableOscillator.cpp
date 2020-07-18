@@ -6,51 +6,35 @@ dsp::TableOscillator::TableOscillator(Type type)
         , position(pushInput(Type::UNIPOLAR)) {}
 
 unsigned int dsp::TableOscillator::getNumTables() const {
-    return static_cast<unsigned int>(buffers.size());
+    return getNumBuffers();
 }
 
 std::shared_ptr<dsp::Buffer> dsp::TableOscillator::getTable(unsigned int index) const {
-    assert(index < buffers.size());
-    return buffers[index];
+    return getBuffer(index);
 }
 
 std::vector<std::shared_ptr<dsp::Buffer>> dsp::TableOscillator::getTables(unsigned int begin, unsigned int end) const {
-    assert(begin <= end && end <= buffers.size());
-    return std::vector<std::shared_ptr<dsp::Buffer>>(buffers.begin() + begin, buffers.begin() + end);
+    return getBuffers(begin, end);
 }
 
 void dsp::TableOscillator::pushTable(std::shared_ptr<Buffer> table) {
-    lock();
-    buffers.push_back(table);
-    unlock();
+    pushBuffer(table);
 }
 
 void dsp::TableOscillator::pushTables(std::vector<std::shared_ptr<Buffer>> tables) {
-    lock();
-    for (const auto &table : tables) {
-        buffers.push_back(table);
-    }
-    unlock();
+    pushBuffers(tables);
 }
 
 void dsp::TableOscillator::replaceTable(std::shared_ptr<Buffer> table, std::shared_ptr<Buffer> replacement) {
-    lock();
-    std::replace(buffers.begin(), buffers.end(), table, replacement);
-    unlock();
+    replaceBuffer(table, replacement);
 }
 
 void dsp::TableOscillator::removeTable(std::shared_ptr<Buffer> table) {
-    lock();
-    buffers.erase(std::remove(buffers.begin(), buffers.end(), table), buffers.end());
-    unlock();
+    removeBuffer(table);
 }
 
 void dsp::TableOscillator::removeTables(std::vector<std::shared_ptr<Buffer>> tables) {
-    lock();
-    for (const auto &table : tables) {
-        buffers.erase(std::remove(buffers.begin(), buffers.end(), table), buffers.end());
-    }
-    unlock();
+    removeBuffers(tables);
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::TableOscillator::getPhase() const {
@@ -63,8 +47,8 @@ std::shared_ptr<dsp::InputParameter> dsp::TableOscillator::getPosition() const {
 
 void dsp::TableOscillator::process() {
     Unit::process();
-    if (buffers.size() > 0) {
-        for (const auto &buffer : buffers) {
+    if (collection.size() > 0) {
+        for (const auto &buffer : collection) {
             if (buffer != nullptr) {
                 buffer->lock();
             }
@@ -75,14 +59,15 @@ void dsp::TableOscillator::process() {
             std::vector<DSP_FLOAT> &positionBuffer = getPosition()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
-                const DSP_FLOAT positionIndex = clip(positionBuffer[k], 0.0, 1.0) * (buffers.size() - 1);
+                const DSP_FLOAT positionIndex = clip(positionBuffer[k], 0.0, 1.0) * (collection.size() - 1);
                 const long indexBefore = static_cast<long>(positionIndex) - 1;
                 long p = indexBefore;
                 for (unsigned char j = 0; j < 4; j++) {
-                    if (p >= 0 && p < buffers.size() && buffers[p] != nullptr && buffers[p]->getNumChannels() > 0) {
-                        points[j] = linear(buffers[p]->getChannel(i % buffers[p]->getNumChannels()),
-                                           wrap(phaseBuffer[k], 0.0, 1.0) * buffers[p]->getBufferSize(),
-                                           buffers[p]->getDefaultValue());
+                    if (p >= 0 && p < collection.size() && collection[p] != nullptr &&
+                        collection[p]->getNumChannels() > 0) {
+                        points[j] = linear(collection[p]->getChannel(i % collection[p]->getNumChannels()),
+                                           wrap(phaseBuffer[k], 0.0, 1.0) * collection[p]->getBufferSize(),
+                                           collection[p]->getDefaultValue());
                     } else {
                         points[j] = 0.0;
                     }
@@ -91,7 +76,7 @@ void dsp::TableOscillator::process() {
                 outputBuffer[k] = hermite(points, positionIndex - indexBefore);
             }
         }
-        for (const auto &buffer : buffers) {
+        for (const auto &buffer : collection) {
             if (buffer != nullptr) {
                 buffer->unlock();
             }
