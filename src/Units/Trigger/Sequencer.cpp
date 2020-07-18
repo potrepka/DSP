@@ -3,7 +3,7 @@
 dsp::Sequencer::Sequencer(Type type, Space space)
         : Generator(type, space)
         , index(pushInput(Type::INTEGER))
-        , sequence(pushInput(Type::INTEGER)) {}
+        , sequenceIndex(pushInput(Type::INTEGER)) {}
 
 unsigned int dsp::Sequencer::getNumSequences() const {
     return getNumBuffers();
@@ -41,8 +41,8 @@ std::shared_ptr<dsp::InputParameter> dsp::Sequencer::getIndex() const {
     return index;
 }
 
-std::shared_ptr<dsp::InputParameter> dsp::Sequencer::getSequence() const {
-    return sequence;
+std::shared_ptr<dsp::InputParameter> dsp::Sequencer::getSequenceIndex() const {
+    return sequenceIndex;
 }
 
 void dsp::Sequencer::process() {
@@ -55,10 +55,10 @@ void dsp::Sequencer::process() {
         }
         for (unsigned int i = 0; i < getNumChannels(); i++) {
             std::vector<DSP_FLOAT> &indexBuffer = getIndex()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &sequenceBuffer = getSequence()->getChannel(i)->getBuffer();
+            std::vector<DSP_FLOAT> &sequenceIndexBuffer = getSequenceIndex()->getChannel(i)->getBuffer();
             std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
-                DSP_FLOAT p = sequenceBuffer[k];
+                DSP_FLOAT p = sequenceIndexBuffer[k];
                 if (p >= 0 && p < collection.size() && collection[p] != nullptr) {
                     if (collection[p]->getNumChannels() > 0 && collection[p]->getBufferSize() > 0) {
                         std::vector<DSP_FLOAT> &channel =

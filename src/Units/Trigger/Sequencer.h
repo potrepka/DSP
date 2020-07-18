@@ -20,14 +20,14 @@ public:
     void removeSequences(std::vector<std::shared_ptr<Buffer>> sequences);
 
     std::shared_ptr<InputParameter> getIndex() const;
-    std::shared_ptr<InputParameter> getSequence() const;
+    std::shared_ptr<InputParameter> getSequenceIndex() const;
 
 protected:
     void process() override;
 
 private:
     const std::shared_ptr<InputParameter> index;
-    const std::shared_ptr<InputParameter> sequence;
+    const std::shared_ptr<InputParameter> sequenceIndex;
 };
 
 } // namespace dsp
