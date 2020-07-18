@@ -221,35 +221,25 @@ std::vector<std::shared_ptr<dsp::Buffer>> dsp::BufferCollection::getBuffers(unsi
 }
 
 void dsp::BufferCollection::pushBuffer(std::shared_ptr<Buffer> buffer) {
-    lock();
     collection.push_back(buffer);
-    unlock();
 }
 
 void dsp::BufferCollection::pushBuffers(std::vector<std::shared_ptr<Buffer>> buffers) {
-    lock();
     for (const auto &buffer : buffers) {
         collection.push_back(buffer);
     }
-    unlock();
 }
 
 void dsp::BufferCollection::replaceBuffer(std::shared_ptr<Buffer> buffer, std::shared_ptr<Buffer> replacement) {
-    lock();
     std::replace(collection.begin(), collection.end(), buffer, replacement);
-    unlock();
 }
 
 void dsp::BufferCollection::removeBuffer(std::shared_ptr<Buffer> buffer) {
-    lock();
     collection.erase(std::remove(collection.begin(), collection.end(), buffer), collection.end());
-    unlock();
 }
 
 void dsp::BufferCollection::removeBuffers(std::vector<std::shared_ptr<Buffer>> buffers) {
-    lock();
     for (const auto &buffer : buffers) {
         collection.erase(std::remove(collection.begin(), collection.end(), buffer), collection.end());
     }
-    unlock();
 }

@@ -58,7 +58,7 @@ private:
     std::vector<std::vector<DSP_FLOAT>> buffers;
 };
 
-class BufferCollection : public Lockable {
+class BufferCollection {
 
 public:
     unsigned int getNumBuffers() const;

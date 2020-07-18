@@ -18,23 +18,33 @@ std::vector<std::shared_ptr<dsp::Buffer>> dsp::Sequencer::getSequences(unsigned 
 }
 
 void dsp::Sequencer::pushSequence(std::shared_ptr<Buffer> sequence) {
+    lock();
     pushBuffer(sequence);
+    unlock();
 }
 
 void dsp::Sequencer::pushSequences(std::vector<std::shared_ptr<Buffer>> sequences) {
+    lock();
     pushBuffers(sequences);
+    unlock();
 }
 
 void dsp::Sequencer::replaceSequence(std::shared_ptr<Buffer> sequence, std::shared_ptr<Buffer> replacement) {
+    lock();
     replaceBuffer(sequence, replacement);
+    unlock();
 }
 
 void dsp::Sequencer::removeSequence(std::shared_ptr<Buffer> sequence) {
+    lock();
     removeBuffer(sequence);
+    unlock();
 }
 
 void dsp::Sequencer::removeSequences(std::vector<std::shared_ptr<Buffer>> sequences) {
+    lock();
     removeBuffers(sequences);
+    unlock();
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::Sequencer::getIndex() const {

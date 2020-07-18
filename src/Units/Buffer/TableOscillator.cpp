@@ -18,23 +18,33 @@ std::vector<std::shared_ptr<dsp::Buffer>> dsp::TableOscillator::getTables(unsign
 }
 
 void dsp::TableOscillator::pushTable(std::shared_ptr<Buffer> table) {
+    lock();
     pushBuffer(table);
+    unlock();
 }
 
 void dsp::TableOscillator::pushTables(std::vector<std::shared_ptr<Buffer>> tables) {
+    lock();
     pushBuffers(tables);
+    unlock();
 }
 
 void dsp::TableOscillator::replaceTable(std::shared_ptr<Buffer> table, std::shared_ptr<Buffer> replacement) {
+    lock();
     replaceBuffer(table, replacement);
+    unlock();
 }
 
 void dsp::TableOscillator::removeTable(std::shared_ptr<Buffer> table) {
+    lock();
     removeBuffer(table);
+    unlock();
 }
 
 void dsp::TableOscillator::removeTables(std::vector<std::shared_ptr<Buffer>> tables) {
+    lock();
     removeBuffers(tables);
+    unlock();
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::TableOscillator::getPhase() const {
