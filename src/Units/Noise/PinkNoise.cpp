@@ -6,13 +6,13 @@ dsp::PinkNoise::PinkNoise()
 
 void dsp::PinkNoise::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    values.resize(numChannels, std::vector<Sample>(7, 0.0));
+    values.resize(numChannels, Array(7, 0.0));
 }
 
 void dsp::PinkNoise::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         Sample &b0 = values[i][0];
         Sample &b1 = values[i][1];
         Sample &b2 = values[i][2];

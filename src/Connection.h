@@ -33,10 +33,10 @@ public:
     void fillBuffer(Sample value);
     void clearBuffer();
 
-    std::vector<Sample> &getBuffer();
+    Array &getBuffer();
 
 protected:
-    std::vector<Sample> buffer;
+    Array buffer;
     Type type;
     Space space;
     Sample defaultValue;
@@ -159,8 +159,8 @@ void operator!=(std::shared_ptr<Output> output, std::shared_ptr<Input> input);
 void operator>>(Sample value, std::shared_ptr<InputParameter> input);
 void operator>>(Sample value, std::shared_ptr<OutputParameter> output);
 
-void operator>>(std::vector<Sample> values, std::shared_ptr<InputParameter> input);
-void operator>>(std::vector<Sample> values, std::shared_ptr<OutputParameter> output);
+void operator>>(Array values, std::shared_ptr<InputParameter> input);
+void operator>>(Array values, std::shared_ptr<OutputParameter> output);
 
 void operator>>(std::shared_ptr<OutputParameter> output, std::shared_ptr<InputParameter> input);
 void operator!=(std::shared_ptr<OutputParameter> output, std::shared_ptr<InputParameter> input);

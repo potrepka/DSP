@@ -31,11 +31,11 @@ void dsp::Trigger::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::Trigger::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<Sample> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-        std::vector<Sample> &intervalBuffer = getIntervalDuration()->getChannel(i)->getBuffer();
-        std::vector<Sample> &delayBuffer = getDelayTime()->getChannel(i)->getBuffer();
-        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        std::vector<Sample> &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
+        Array &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
+        Array &intervalBuffer = getIntervalDuration()->getChannel(i)->getBuffer();
+        Array &delayBuffer = getDelayTime()->getChannel(i)->getBuffer();
+        Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        Array &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (resetTriggerBuffer[k] || intervalBuffer[k] == 0.0) {
                 index[i] = 0.0;

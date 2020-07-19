@@ -64,14 +64,14 @@ void dsp::Sequencer::process() {
             }
         }
         for (unsigned int i = 0; i < getNumChannels(); i++) {
-            std::vector<Sample> &indexBuffer = getIndex()->getChannel(i)->getBuffer();
-            std::vector<Sample> &sequenceIndexBuffer = getSequenceIndex()->getChannel(i)->getBuffer();
-            std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+            Array &indexBuffer = getIndex()->getChannel(i)->getBuffer();
+            Array &sequenceIndexBuffer = getSequenceIndex()->getChannel(i)->getBuffer();
+            Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
                 Sample p = sequenceIndexBuffer[k];
                 if (p >= 0 && p < collection.size() && collection[p] != nullptr) {
                     if (collection[p]->getNumChannels() > 0 && collection[p]->getBufferSize() > 0) {
-                        std::vector<Sample> &channel = collection[p]->getChannel(i % collection[p]->getNumChannels());
+                        Array &channel = collection[p]->getChannel(i % collection[p]->getNumChannels());
                         outputBuffer[k] = channel[wrap(indexBuffer[k], 0.0, collection[p]->getBufferSize())];
                     } else {
                         outputBuffer[k] = collection[p]->getDefaultValue();

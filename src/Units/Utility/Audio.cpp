@@ -42,8 +42,8 @@ void dsp::Audio::readInterleaved(Sample *inputBuffer, unsigned int numInputChann
     assert(numInputChannels <= getAudioInput()->getNumChannels() && numFrames <= getBufferSize());
     lock();
     for (unsigned int i = 0; i < numInputChannels; i++) {
-        std::vector<Sample> &audioInputBuffer = getAudioInput()->getChannel(i)->getBuffer();
-        std::vector<Sample> &audioInputClippingBuffer = getAudioInputClipping()->getChannel(i)->getBuffer();
+        Array &audioInputBuffer = getAudioInput()->getChannel(i)->getBuffer();
+        Array &audioInputClippingBuffer = getAudioInputClipping()->getChannel(i)->getBuffer();
         for (unsigned int k = 0, sample = i; k < numFrames; k++, sample += numInputChannels) {
             audioInputClippingBuffer[k] = abs(inputBuffer[sample]) > 1.0 ? 1.0 : 0.0;
             audioInputBuffer[k] = inputBuffer[sample];
@@ -56,8 +56,8 @@ void dsp::Audio::writeInterleaved(Sample *outputBuffer, unsigned int numOutputCh
     assert(numOutputChannels <= getAudioOutput()->getNumChannels() && numFrames <= getBufferSize());
     lock();
     for (unsigned int i = 0; i < numOutputChannels; i++) {
-        std::vector<Sample> &audioOutputBuffer = getAudioOutput()->getChannel(i)->getBuffer();
-        std::vector<Sample> &audioOutputClippingBuffer = getAudioOutputClipping()->getChannel(i)->getBuffer();
+        Array &audioOutputBuffer = getAudioOutput()->getChannel(i)->getBuffer();
+        Array &audioOutputClippingBuffer = getAudioOutputClipping()->getChannel(i)->getBuffer();
         for (unsigned int k = 0, sample = i; k < numFrames; k++, sample += numOutputChannels) {
             audioOutputClippingBuffer[k] = abs(audioOutputBuffer[k]) > 1.0 ? 1.0 : 0.0;
             outputBuffer[sample] = clip(audioOutputBuffer[k], -1.0, 1.0);

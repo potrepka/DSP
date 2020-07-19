@@ -1,12 +1,14 @@
 #pragma once
 
+#ifndef DSP_USE_RTAUDIO
+#define DSP_USE_RTAUDIO 1
+#endif
+
 #include "Audio.h"
 #include "Midi.h"
 #include "Runnable.h"
 
-#define USE_RTAUDIO 1
-
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
 #include "RtAudio.h"
 #endif
 
@@ -68,14 +70,14 @@ public:
 private:
     std::shared_ptr<Audio> audio;
     std::shared_ptr<Midi> midi;
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     RtAudio dac;
 #endif
     std::string inputDeviceName;
     std::string outputDeviceName;
     unsigned int numInputChannels;
     unsigned int numOutputChannels;
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     static int tick(void *outputBuffer,
                     void *inputBuffer,
                     unsigned int nBufferFrames,

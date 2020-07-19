@@ -29,9 +29,9 @@ void dsp::SampleRecorder::process() {
     Unit::process();
     sample->lock();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<Sample> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-        std::vector<Sample> &gateBuffer = getGate()->getChannel(i)->getBuffer();
+        Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        Array &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
+        Array &gateBuffer = getGate()->getChannel(i)->getBuffer();
         int bufferStart = 0;
         unsigned int size = sample->getBufferSize();
         unsigned int index = size;

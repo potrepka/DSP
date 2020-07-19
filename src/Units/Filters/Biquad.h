@@ -27,10 +27,10 @@ private:
     const std::shared_ptr<InputParameter> gain;
 
     Mode mode;
-    std::vector<Sample> x1;
-    std::vector<Sample> x2;
-    std::vector<Sample> y1;
-    std::vector<Sample> y2;
+    Array x1;
+    Array x2;
+    Array y1;
+    Array y2;
     Sample a0;
     Sample a1;
     Sample a2;

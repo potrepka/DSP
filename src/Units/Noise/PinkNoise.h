@@ -15,7 +15,7 @@ protected:
 
 private:
     int seed;
-    std::vector<std::vector<Sample>> values;
+    std::vector<Array> values;
 };
 
 } // namespace dsp

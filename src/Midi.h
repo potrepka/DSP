@@ -1,13 +1,15 @@
 #pragma once
 
+#ifndef DSP_USE_RTMIDI
+#define DSP_USE_RTMIDI 1
+#endif
+
 #include "Connection.h"
 #include "Runnable.h"
 #include <queue>
 #include <thread>
 
-#define USE_RTMIDI 1
-
-#if USE_RTMIDI
+#if DSP_USE_RTMIDI
 #include "RtMidi.h"
 #endif
 
@@ -105,7 +107,7 @@ public:
     private:
         void pushQueue(double delta, std::vector<unsigned char> bytes);
         void runCallbacks(TimedMessage message);
-#if USE_RTMIDI
+#if DSP_USE_RTMIDI
         RtMidiIn midiIn;
 #endif
         std::string deviceName;
@@ -113,10 +115,10 @@ public:
         unsigned long bufferSamples;
         std::priority_queue<TimedMessage, std::vector<TimedMessage>, TimedMessage::compare> queue;
         std::vector<std::shared_ptr<std::function<void(TimedMessage)>>> callbacks;
-        std::vector<std::vector<Sample>> notePressureState;
-        std::vector<std::vector<Sample>> controlChangeState;
-        std::vector<Sample> channelPressureState;
-        std::vector<Sample> pitchBendState;
+        std::vector<Array> notePressureState;
+        std::vector<Array> controlChangeState;
+        Array channelPressureState;
+        Array pitchBendState;
         std::vector<std::vector<std::shared_ptr<Input>>> noteOn;
         std::vector<std::vector<std::shared_ptr<Input>>> noteOff;
         std::vector<std::vector<std::shared_ptr<Input>>> notePressure;
@@ -151,7 +153,7 @@ public:
 
     private:
         void sendMessageWithDelay(int64_t nanoseconds, std::vector<unsigned char> bytes);
-#if USE_RTMIDI
+#if DSP_USE_RTMIDI
         RtMidiOut midiOut;
 #endif
         std::string deviceName;
@@ -191,7 +193,7 @@ public:
     void processOutputs();
 
 private:
-#if USE_RTMIDI
+#if DSP_USE_RTMIDI
     static RtMidiIn midiIn;
     static RtMidiOut midiOut;
 #endif

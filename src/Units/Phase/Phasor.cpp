@@ -21,9 +21,9 @@ void dsp::Phasor::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::Phasor::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<Sample> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-        std::vector<Sample> &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
-        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        Array &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
+        Array &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
+        Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (resetTriggerBuffer[k]) {
                 phase[i] = 0.0;

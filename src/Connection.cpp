@@ -59,7 +59,7 @@ void dsp::Connection::clearBuffer() {
     unlock();
 }
 
-std::vector<dsp::Sample> &dsp::Connection::getBuffer() {
+dsp::Array &dsp::Connection::getBuffer() {
     return buffer;
 }
 
@@ -439,7 +439,7 @@ void dsp::operator>>(Sample value, std::shared_ptr<dsp::OutputParameter> output)
     output->setDefaultValue(value);
 }
 
-void dsp::operator>>(std::vector<Sample> values, std::shared_ptr<InputParameter> input) {
+void dsp::operator>>(Array values, std::shared_ptr<InputParameter> input) {
     input->lock();
     if (values.size() > 0) {
         for (unsigned int i = 0; i < input->getNumChannels(); i++) {
@@ -449,7 +449,7 @@ void dsp::operator>>(std::vector<Sample> values, std::shared_ptr<InputParameter>
     input->unlock();
 }
 
-void dsp::operator>>(std::vector<Sample> values, std::shared_ptr<OutputParameter> output) {
+void dsp::operator>>(Array values, std::shared_ptr<OutputParameter> output) {
     output->lock();
     if (values.size() > 0) {
         for (unsigned int i = 0; i < output->getNumChannels(); i++) {

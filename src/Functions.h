@@ -25,8 +25,8 @@ Sample ratioToDecibels(const Sample ratio);
 Sample clip(const Sample signal, const Sample min, const Sample max);
 Sample wrap(const Sample signal, const Sample min, const Sample max);
 
-Sample linear(const std::vector<Sample> &table, const Sample index, Sample defaultValue = 0.0);
-Sample hermite(const std::vector<Sample> &table, const Sample index, Sample defaultValue = 0.0);
+Sample linear(const Array &table, const Sample index, Sample defaultValue = 0.0);
+Sample hermite(const Array &table, const Sample index, Sample defaultValue = 0.0);
 
 class ScaledFFT {
 
@@ -34,8 +34,8 @@ public:
     void setup(std::size_t size);
     std::size_t getSize();
     std::size_t getComplexSize();
-    void fft(std::vector<Sample> &timeBuffer, std::vector<Sample> &realBuffer, std::vector<Sample> &imaginaryBuffer);
-    void ifft(std::vector<Sample> &timeBuffer, std::vector<Sample> &realBuffer, std::vector<Sample> &imaginaryBuffer);
+    void fft(Array &timeBuffer, Array &realBuffer, Array &imaginaryBuffer);
+    void ifft(Array &timeBuffer, Array &realBuffer, Array &imaginaryBuffer);
 
 private:
     std::size_t size;

@@ -20,7 +20,7 @@ private:
     const std::shared_ptr<InputParameter> resetTrigger;
     const std::shared_ptr<InputParameter> frequency;
 
-    std::vector<Sample> phase;
+    Array phase;
 };
 
 } // namespace dsp

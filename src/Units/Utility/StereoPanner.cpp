@@ -32,10 +32,10 @@ std::shared_ptr<dsp::OutputParameter> dsp::StereoPanner::getRight() const {
 void dsp::StereoPanner::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<Sample> &directionBuffer = getDirection()->getChannel(i)->getBuffer();
-        std::vector<Sample> &leftBuffer = getLeft()->getChannel(i)->getBuffer();
-        std::vector<Sample> &rightBuffer = getRight()->getChannel(i)->getBuffer();
+        Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        Array &directionBuffer = getDirection()->getChannel(i)->getBuffer();
+        Array &leftBuffer = getLeft()->getChannel(i)->getBuffer();
+        Array &rightBuffer = getRight()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             Sample left;
             Sample right;

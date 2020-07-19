@@ -24,8 +24,8 @@ private:
     const std::shared_ptr<InputParameter> offset;
     const std::shared_ptr<InputParameter> speed;
 
-    std::vector<Sample> memory;
-    std::vector<Sample> index;
+    Array memory;
+    Array index;
 };
 
 } // namespace dsp

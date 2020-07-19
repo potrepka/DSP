@@ -10,7 +10,7 @@ dsp::Engine::Engine()
 dsp::Engine::~Engine() {
     lock();
 
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     try {
         if (dac.isStreamOpen()) {
             dac.abortStream();
@@ -53,7 +53,7 @@ void dsp::Engine::unlockMidi() {
 
 std::vector<unsigned int> dsp::Engine::getInputDevices() {
     std::vector<unsigned int> inputDevices;
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     unsigned int deviceCount = getDeviceCount();
 
     for (unsigned int i = 0; i < deviceCount; i++) {
@@ -74,7 +74,7 @@ std::vector<unsigned int> dsp::Engine::getInputDevices() {
 
 std::vector<unsigned int> dsp::Engine::getOutputDevices() {
     std::vector<unsigned int> outputDevices;
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     unsigned int deviceCount = getDeviceCount();
 
     for (unsigned int i = 0; i < deviceCount; i++) {
@@ -95,7 +95,7 @@ std::vector<unsigned int> dsp::Engine::getOutputDevices() {
 
 std::vector<unsigned int> dsp::Engine::getSampleRates(unsigned int inputDevice, unsigned int outputDevice) {
     std::vector<unsigned int> sampleRates;
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     std::vector<unsigned int> inputSampleRates = getInputSampleRates(inputDevice);
     std::vector<unsigned int> outputSampleRates = getOutputSampleRates(outputDevice);
     if (inputSampleRates.size() == 0) {
@@ -114,7 +114,7 @@ std::vector<unsigned int> dsp::Engine::getSampleRates(unsigned int inputDevice, 
 }
 
 unsigned int dsp::Engine::getDefaultInputDevice() {
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     unsigned int deviceCount = getDeviceCount();
     for (unsigned int i = 0; i < deviceCount; i++) {
         try {
@@ -133,7 +133,7 @@ unsigned int dsp::Engine::getDefaultInputDevice() {
 }
 
 unsigned int dsp::Engine::getDefaultOutputDevice() {
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     unsigned int deviceCount = getDeviceCount();
     for (unsigned int i = 0; i < deviceCount; i++) {
         try {
@@ -152,7 +152,7 @@ unsigned int dsp::Engine::getDefaultOutputDevice() {
 }
 
 unsigned int dsp::Engine::getDefaultSampleRate(unsigned int inputDevice, unsigned int outputDevice) {
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     std::vector<unsigned int> inputSampleRates = getInputSampleRates(inputDevice);
     std::vector<unsigned int> outputSampleRates = getOutputSampleRates(outputDevice);
     if (inputSampleRates.size() == 0 && outputSampleRates.size() == 0) {
@@ -184,7 +184,7 @@ void dsp::Engine::setup(unsigned int inputDevice,
                         unsigned int bufferSize) {
     lock();
 
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     try {
         if (dac.isStreamOpen()) {
             dac.abortStream();
@@ -267,7 +267,7 @@ void dsp::Engine::setup(unsigned int inputDevice,
 
 void dsp::Engine::start() {
     lock();
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     try {
         dac.startStream();
     } catch (RtAudioError &error) {
@@ -281,7 +281,7 @@ void dsp::Engine::start() {
 
 std::string dsp::Engine::getDeviceName(unsigned int device) {
     std::string deviceName;
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     try {
         deviceName = dac.getDeviceInfo(device).name;
         deviceName = deviceName.substr(deviceName.find(":") + 2);
@@ -386,7 +386,7 @@ void dsp::Engine::removeMidiOutput(std::shared_ptr<Midi::MidiOutput> output) {
     midi->removeMidiOutput(output);
 }
 
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
 int dsp::Engine::tick(void *outputBuffer,
                       void *inputBuffer,
                       unsigned int nBufferFrames,
@@ -422,7 +422,7 @@ void dsp::Engine::process(Sample *inputBuffer,
 }
 
 unsigned int dsp::Engine::getDeviceCount() {
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     unsigned int deviceCount;
     try {
         deviceCount = dac.getDeviceCount();
@@ -440,7 +440,7 @@ unsigned int dsp::Engine::getDeviceCount() {
 
 std::vector<unsigned int> dsp::Engine::getInputSampleRates(unsigned int inputDevice) {
     std::vector<unsigned int> inputSampleRates;
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     try {
         inputSampleRates = dac.getDeviceInfo(inputDevice).sampleRates;
     } catch (RtAudioError &error) {}
@@ -449,7 +449,7 @@ std::vector<unsigned int> dsp::Engine::getInputSampleRates(unsigned int inputDev
 }
 std::vector<unsigned int> dsp::Engine::getOutputSampleRates(unsigned int outputDevice) {
     std::vector<unsigned int> outputSampleRates;
-#if USE_RTAUDIO
+#if DSP_USE_RTAUDIO
     try {
         outputSampleRates = dac.getDeviceInfo(outputDevice).sampleRates;
     } catch (RtAudioError &error) {}

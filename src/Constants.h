@@ -1,8 +1,24 @@
 #pragma once
 
+#ifndef DSP_USE_SIMD
+#define DSP_USE_SIMD 1
+#endif
+
+#if DSP_USE_SIMD
+#include <Vc/Vc>
+#else
+#include <vector>
+#endif
+
 namespace dsp {
 
 typedef float Sample;
+#if DSP_USE_SIMD
+typedef Vc::Vector<Sample> Vector;
+typedef std::vector<Sample, Vc::Allocator<Sample>> Array;
+#else
+typedef std::vector<Sample> Array;
+#endif
 
 const Sample PI = 3.141592653589793;
 const Sample TAU = 6.283185307179586;

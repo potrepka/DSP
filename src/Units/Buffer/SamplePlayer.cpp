@@ -89,13 +89,13 @@ void dsp::SamplePlayer::process() {
             }
         }
         for (unsigned int i = 0; i < getNumChannels(); i++) {
-            std::vector<Sample> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-            std::vector<Sample> &gateBuffer = getGate()->getChannel(i)->getBuffer();
-            std::vector<Sample> &offsetTimeBuffer = getOffsetTime()->getChannel(i)->getBuffer();
-            std::vector<Sample> &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
-            std::vector<Sample> &sampleIndexBuffer = getSampleIndex()->getChannel(i)->getBuffer();
-            std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-            std::vector<Sample> &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
+            Array &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
+            Array &gateBuffer = getGate()->getChannel(i)->getBuffer();
+            Array &offsetTimeBuffer = getOffsetTime()->getChannel(i)->getBuffer();
+            Array &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
+            Array &sampleIndexBuffer = getSampleIndex()->getChannel(i)->getBuffer();
+            Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+            Array &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
                 if (resetTriggerBuffer[k]) {
                     readIndex[i] = 0.0;
@@ -105,7 +105,7 @@ void dsp::SamplePlayer::process() {
                     unsigned int numChannels = collection[p]->getNumChannels();
                     unsigned int channelSize = collection[p]->getBufferSize();
                     if (numChannels > 0 && channelSize > 0) {
-                        std::vector<Sample> &channel = collection[p]->getChannel(i % numChannels);
+                        Array &channel = collection[p]->getChannel(i % numChannels);
                         if (gateBuffer[k]) {
                             Sample offset = offsetTimeBuffer[k] * getSampleRate();
                             Sample index;
@@ -117,7 +117,7 @@ void dsp::SamplePlayer::process() {
                             unsigned int k0 = (k1 + channelSize - 1) % channelSize;
                             unsigned int k2 = (k1 + 1) % channelSize;
                             unsigned int k3 = (k1 + 2) % channelSize;
-                            std::vector<Sample> points{channel[k0], channel[k1], channel[k2], channel[k3]};
+                            Array points{channel[k0], channel[k1], channel[k2], channel[k3]};
                             outputBuffer[k] = hermite(points, 1.0 + readIndex[i] - k1);
                             currentTimeBuffer[k] = readIndex[i] * getOneOverSampleRate();
                             readIndex[i] += speedBuffer[k];

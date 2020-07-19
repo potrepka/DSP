@@ -36,8 +36,8 @@ public:
     void fillBuffer(Sample value);
     void clearBuffer();
 
-    std::vector<std::vector<Sample>> &getChannels();
-    std::vector<Sample> &getChannel(unsigned int channel);
+    std::vector<Array> &getChannels();
+    Array &getChannel(unsigned int channel);
 
     Sample getMinimum(unsigned int channel) const;
     Sample getMaximum(unsigned int channel) const;
@@ -55,7 +55,7 @@ private:
     Type type;
     Space space;
     Sample defaultValue;
-    std::vector<std::vector<Sample>> buffers;
+    std::vector<Array> buffers;
 };
 
 class BufferCollection {

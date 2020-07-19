@@ -25,7 +25,7 @@ private:
 
     const std::shared_ptr<OutputParameter> currentTime;
 
-    std::vector<Sample> index;
+    Array index;
 };
 
 } // namespace dsp

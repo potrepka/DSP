@@ -26,12 +26,12 @@ std::shared_ptr<dsp::InputParameter> dsp::GainComputer::getKnee() const {
 void dsp::GainComputer::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<Sample> &thresholdBuffer = getThreshold()->getChannel(i)->getBuffer();
-        std::vector<Sample> &compressionRatioBuffer = getCompressionRatio()->getChannel(i)->getBuffer();
-        std::vector<Sample> &gateRatioBuffer = getGateRatio()->getChannel(i)->getBuffer();
-        std::vector<Sample> &kneeBuffer = getKnee()->getChannel(i)->getBuffer();
-        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        Array &thresholdBuffer = getThreshold()->getChannel(i)->getBuffer();
+        Array &compressionRatioBuffer = getCompressionRatio()->getChannel(i)->getBuffer();
+        Array &gateRatioBuffer = getGateRatio()->getChannel(i)->getBuffer();
+        Array &kneeBuffer = getKnee()->getChannel(i)->getBuffer();
+        Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             Sample &input = inputBuffer[k];
             Sample &output = outputBuffer[k];

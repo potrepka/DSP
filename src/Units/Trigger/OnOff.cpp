@@ -21,9 +21,9 @@ void dsp::OnOff::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::OnOff::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<Sample> &onTriggerBuffer = getOnTrigger()->getChannel(i)->getBuffer();
-        std::vector<Sample> &offTriggerBuffer = getOffTrigger()->getChannel(i)->getBuffer();
-        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        Array &onTriggerBuffer = getOnTrigger()->getChannel(i)->getBuffer();
+        Array &offTriggerBuffer = getOffTrigger()->getChannel(i)->getBuffer();
+        Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (onTriggerBuffer[k]) {
                 state[i] = 1;

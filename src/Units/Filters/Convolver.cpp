@@ -59,9 +59,9 @@ void dsp::Convolver::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::Convolver::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         for (unsigned int j = 0; j < convolvers[i].size(); j++) {
-            std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(j % getNumChannels())->getBuffer();
+            Array &outputBuffer = getOutputSignal()->getChannel(j % getNumChannels())->getBuffer();
             if (convolvers[i][j] != nullptr) {
                 std::copy(inputBuffer.begin(), inputBuffer.end(), input.begin());
                 convolvers[i][j]->process(input.data(), output.data(), getBufferSize());
@@ -81,7 +81,7 @@ void dsp::Convolver::initConvolver(unsigned int channel) {
         std::vector<std::vector<fftconvolver::Sample>> sample(numChannels,
                                                               std::vector<fftconvolver::Sample>(bufferSize));
         for (unsigned int j = 0; j < numChannels; j++) {
-            std::vector<Sample> &buffer = buffers[channel]->getChannel(j);
+            Array &buffer = buffers[channel]->getChannel(j);
             std::copy(buffer.begin(), buffer.end(), sample[j].begin());
             convolvers[channel].emplace_back(std::make_unique<fftconvolver::TwoStageFFTConvolver>());
             convolvers[channel][j]->init(headSize, tailSize, sample[j].data(), sample[j].size());

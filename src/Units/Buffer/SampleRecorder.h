@@ -23,7 +23,7 @@ private:
     const std::shared_ptr<InputParameter> gate;
 
     std::shared_ptr<Buffer> sample;
-    std::vector<Sample> gatePrevious;
+    Array gatePrevious;
 };
 
 } // namespace dsp

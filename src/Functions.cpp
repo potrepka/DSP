@@ -56,7 +56,7 @@ dsp::Sample dsp::wrap(const Sample signal, const Sample min, const Sample max) {
     return signal - floor(adjusted / diff) * diff;
 }
 
-dsp::Sample dsp::linear(const std::vector<Sample> &table, const Sample index, Sample defaultValue) {
+dsp::Sample dsp::linear(const Array &table, const Sample index, Sample defaultValue) {
     assert(index >= 0.0);
     if (table.size() == 0) {
         return defaultValue;
@@ -68,7 +68,7 @@ dsp::Sample dsp::linear(const std::vector<Sample> &table, const Sample index, Sa
     return x1 + mu * (x2 - x1);
 }
 
-dsp::Sample dsp::hermite(const std::vector<Sample> &table, const Sample index, Sample defaultValue) {
+dsp::Sample dsp::hermite(const Array &table, const Sample index, Sample defaultValue) {
     assert(index >= 0.0);
     if (table.size() == 0) {
         return defaultValue;
@@ -103,18 +103,14 @@ std::size_t dsp::ScaledFFT::getComplexSize() {
     return audiofft::AudioFFT::ComplexSize(size);
 }
 
-void dsp::ScaledFFT::fft(std::vector<Sample> &timeBuffer,
-                         std::vector<Sample> &realBuffer,
-                         std::vector<Sample> &imaginaryBuffer) {
+void dsp::ScaledFFT::fft(Array &timeBuffer, Array &realBuffer, Array &imaginaryBuffer) {
     std::transform(timeBuffer.begin(), timeBuffer.end(), time.begin(), [this](Sample x) { return x * oneOverSize; });
     audioFFT.fft(time.data(), real.data(), imaginary.data());
     std::copy(real.begin(), real.end(), realBuffer.begin());
     std::copy(imaginary.begin(), imaginary.end(), imaginaryBuffer.begin());
 }
 
-void dsp::ScaledFFT::ifft(std::vector<Sample> &timeBuffer,
-                          std::vector<Sample> &realBuffer,
-                          std::vector<Sample> &imaginaryBuffer) {
+void dsp::ScaledFFT::ifft(Array &timeBuffer, Array &realBuffer, Array &imaginaryBuffer) {
     std::copy(realBuffer.begin(), realBuffer.end(), real.begin());
     std::copy(imaginaryBuffer.begin(), imaginaryBuffer.end(), imaginary.begin());
     audioFFT.ifft(time.data(), real.data(), imaginary.data());

@@ -72,7 +72,7 @@ void dsp::BufferRecorder::process() {
             writeIndex = 0.0;
         }
         for (unsigned int i = 0; i < getNumChannels(); i++) {
-            std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+            Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
             Sample index = writeIndex;
             for (unsigned int k = 0; k < getBufferSize(); k++) {
                 switch (mode) {

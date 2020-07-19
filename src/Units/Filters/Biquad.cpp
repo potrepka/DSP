@@ -40,11 +40,11 @@ void dsp::Biquad::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::Biquad::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<Sample> &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
-        std::vector<Sample> &qBuffer = getQ()->getChannel(i)->getBuffer();
-        std::vector<Sample> &gainBuffer = getGain()->getChannel(i)->getBuffer();
-        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        Array &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
+        Array &qBuffer = getQ()->getChannel(i)->getBuffer();
+        Array &gainBuffer = getGain()->getChannel(i)->getBuffer();
+        Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (qBuffer[k] == 0.0) {
                 outputBuffer[k] = 0.0;

@@ -20,7 +20,7 @@ private:
     const std::shared_ptr<InputParameter> attack;
     const std::shared_ptr<InputParameter> release;
 
-    std::vector<Sample> outputPrevious;
+    Array outputPrevious;
 };
 
 } // namespace dsp

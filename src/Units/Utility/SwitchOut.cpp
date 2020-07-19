@@ -19,8 +19,8 @@ std::shared_ptr<dsp::OutputParameter> dsp::SwitchOut::pushOutput() {
 void dsp::SwitchOut::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<Sample> &outputIndexBuffer = getOutputIndex()->getChannel(i)->getBuffer();
+        Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        Array &outputIndexBuffer = getOutputIndex()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (outputIndexBuffer[k] < getNumOutputs()) {
                 getOutput(outputIndexBuffer[k])->getChannel(i)->getBuffer()[k] = inputBuffer[k];

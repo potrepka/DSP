@@ -40,9 +40,9 @@ void dsp::VariableDelay::process() {
     Unit::process();
     if (buffer->getBufferSize() > 0) {
         for (unsigned int i = 0; i < getNumChannels(); i++) {
-            std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-            std::vector<Sample> &delayTimeBuffer = getDelayTime()->getChannel(i)->getBuffer();
-            std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+            Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+            Array &delayTimeBuffer = getDelayTime()->getChannel(i)->getBuffer();
+            Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             unsigned int index = writeIndex;
             for (unsigned int k = 0; k < getBufferSize(); k++) {
                 const Sample delayTime = clip(delayTimeBuffer[i], 0.0, maxDelayTime);
