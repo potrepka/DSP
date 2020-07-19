@@ -1,6 +1,6 @@
 # DSP
 
-DSP is an open-source C++ library for real-time digital signal processing.
+DSP is an open-source C++ library for audio digital signal processing.
 
 This project is still in development. Feedback and contributions are welcome!
 
@@ -46,10 +46,8 @@ The following are possible directions for future development:
 - Delay effects
 - Elliptic filter
 - Crossover filter
-- Cascaded filters
 - Frequency response calculation
 - Pitch detection/shifting
-- Peak/RMS detection
 - Wavetable factory
 - Saving/Loading state
 - SIMD operations
