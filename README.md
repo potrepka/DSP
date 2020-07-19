@@ -51,3 +51,4 @@ The following are possible directions for future development:
 - Wavetable factory
 - Saving/Loading state
 - SIMD operations
+- Parallel computing
