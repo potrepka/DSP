@@ -108,22 +108,30 @@ void dsp::Input::disconnectAll() {
     for (const auto &output : connections) {
         output->removeConnection(shared_from_this());
     }
-    connections.clear();
     for (const auto &output : connections) {
         output->unlock();
     }
+    connections.clear();
     unlock();
 }
 
 void dsp::Input::copyBuffers() {
     lock();
     if (connections.size() == 0) {
-        std::fill(buffer.begin(), buffer.end(), defaultValue);
+        for (Iterator it = buffer.begin(); it != buffer.end(); ++it) {
+            *it = Vector(defaultValue);
+        }
     } else {
-        std::fill(buffer.begin(), buffer.end(), 0.0);
-        for (const auto &output : connections) {
-            std::transform(
-                    buffer.begin(), buffer.end(), output->getBuffer().begin(), buffer.begin(), std::plus<Sample>());
+        for (std::size_t i = 0; i < connections.size(); ++i) {
+            iterators[i] = connections[i]->getBuffer().begin();
+        }
+        for (Iterator it = buffer.begin(); it != buffer.end(); ++it) {
+            Vector sum = Vector(0.0);
+            for (Iterator &iterator : iterators) {
+                sum += *iterator;
+                ++iterator;
+            }
+            *it = sum;
         }
     }
     unlock();
@@ -132,11 +140,13 @@ void dsp::Input::copyBuffers() {
 void dsp::Input::addConnection(std::shared_ptr<Output> output) {
     if (std::find(connections.begin(), connections.end(), output) == connections.end()) {
         connections.push_back(output);
+        iterators.resize(connections.size());
     }
 }
 
 void dsp::Input::removeConnection(std::shared_ptr<Output> output) {
     connections.erase(std::remove(connections.begin(), connections.end(), output), connections.end());
+    iterators.resize(connections.size());
 }
 
 dsp::Output::Output(unsigned int bufferSize, Type type, Space space, Sample defaultValue)
@@ -184,15 +194,17 @@ void dsp::Output::disconnectAll() {
     for (const auto &input : connections) {
         input->removeConnection(shared_from_this());
     }
-    connections.clear();
     for (const auto &input : connections) {
         input->unlock();
     }
+    connections.clear();
     unlock();
 }
 
 void dsp::Output::addConnection(std::shared_ptr<Input> input) {
-    connections.push_back(input);
+    if (std::find(connections.begin(), connections.end(), input) == connections.end()) {
+        connections.push_back(input);
+    }
 }
 
 void dsp::Output::removeConnection(std::shared_ptr<Input> input) {

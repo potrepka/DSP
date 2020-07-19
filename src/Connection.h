@@ -57,6 +57,7 @@ public:
 
 private:
     std::vector<std::shared_ptr<Output>> connections;
+    std::vector<Iterator> iterators;
 
     void addConnection(std::shared_ptr<Output> output);
     void removeConnection(std::shared_ptr<Output> output);
