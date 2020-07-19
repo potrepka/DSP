@@ -98,6 +98,12 @@ std::vector<unsigned int> dsp::Engine::getSampleRates(unsigned int inputDevice, 
 #if USE_RTAUDIO
     std::vector<unsigned int> inputSampleRates = getInputSampleRates(inputDevice);
     std::vector<unsigned int> outputSampleRates = getOutputSampleRates(outputDevice);
+    if (inputSampleRates.size() == 0) {
+        return outputSampleRates;
+    }
+    if (outputSampleRates.size() == 0) {
+        return inputSampleRates;
+    }
     std::set_intersection(inputSampleRates.begin(),
                           inputSampleRates.end(),
                           outputSampleRates.begin(),
@@ -149,8 +155,17 @@ unsigned int dsp::Engine::getDefaultSampleRate(unsigned int inputDevice, unsigne
 #if USE_RTAUDIO
     std::vector<unsigned int> inputSampleRates = getInputSampleRates(inputDevice);
     std::vector<unsigned int> outputSampleRates = getOutputSampleRates(outputDevice);
+    if (inputSampleRates.size() == 0 && outputSampleRates.size() == 0) {
+        return 0;
+    }
+    if (inputSampleRates.size() == 0) {
+        return outputSampleRates[0];
+    }
+    if (outputSampleRates.size() == 0) {
+        return inputSampleRates[0];
+    }
     int i = 0, j = 0;
-    while (i < inputSampleRates.size() && outputSampleRates.size() < j) {
+    while (i < inputSampleRates.size() && j < outputSampleRates.size()) {
         if (inputSampleRates[i] < outputSampleRates[j]) {
             i++;
         } else if (inputSampleRates[i] > outputSampleRates[j]) {

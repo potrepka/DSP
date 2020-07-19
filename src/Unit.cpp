@@ -20,8 +20,16 @@ bool dsp::Unit::isActive() const {
 
 void dsp::Unit::setActive(bool active) {
     lock();
-    this->active = active;
+    setActiveNoLock(active);
     unlock();
+}
+
+std::vector<std::shared_ptr<dsp::InputParameter>> dsp::Unit::getInputs() const {
+    return inputs;
+}
+
+std::vector<std::shared_ptr<dsp::OutputParameter>> dsp::Unit::getOutputs() const {
+    return outputs;
 }
 
 unsigned int dsp::Unit::getNumInputs() const {
@@ -53,63 +61,59 @@ std::vector<std::shared_ptr<dsp::OutputParameter>> dsp::Unit::getOutputs(unsigne
 }
 
 void dsp::Unit::pushInput(std::shared_ptr<InputParameter> input) {
-    assert(input != nullptr);
     lock();
-    input->setBufferSize(getBufferSize());
-    input->setNumChannels(getNumChannels());
-    inputs.push_back(input);
+    pushInputNoLock(input);
     unlock();
 }
 
 void dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
-    assert(output != nullptr);
     lock();
-    output->setBufferSize(getBufferSize());
-    output->setNumChannels(getNumChannels());
-    outputs.push_back(output);
+    pushOutputNoLock(output);
     unlock();
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::Unit::pushInput(Type type, Space space, DSP_FLOAT value) {
-    auto input = std::make_shared<InputParameter>(getNumChannels(), getBufferSize(), type, space, value);
+    std::shared_ptr<dsp::InputParameter> input;
     lock();
-    inputs.push_back(input);
+    input = pushInputNoLock(type, space, value);
     unlock();
     return input;
 }
 
 std::shared_ptr<dsp::OutputParameter> dsp::Unit::pushOutput(Type type, Space space, DSP_FLOAT value) {
-    auto output = std::make_shared<OutputParameter>(getNumChannels(), getBufferSize(), type, space, value);
+    std::shared_ptr<dsp::OutputParameter> output;
     lock();
-    outputs.push_back(output);
+    output = pushOutputNoLock(type, space, value);
     unlock();
     return output;
 }
 
 void dsp::Unit::replaceInput(std::shared_ptr<InputParameter> input, std::shared_ptr<InputParameter> replacement) {
-    assert(replacement != nullptr);
     lock();
-    std::replace(inputs.begin(), inputs.end(), input, replacement);
+    replaceInputNoLock(input, replacement);
     unlock();
 }
 
 void dsp::Unit::replaceOutput(std::shared_ptr<OutputParameter> output, std::shared_ptr<OutputParameter> replacement) {
-    assert(replacement != nullptr);
     lock();
-    std::replace(outputs.begin(), outputs.end(), output, replacement);
+    replaceOutputNoLock(output, replacement);
     unlock();
 }
 
 void dsp::Unit::removeInput(std::shared_ptr<InputParameter> input) {
     lock();
-    inputs.erase(std::remove(inputs.begin(), inputs.end(), input), inputs.end());
+    removeInputNoLock(input);
     unlock();
 }
 
 void dsp::Unit::removeOutput(std::shared_ptr<OutputParameter> output) {
     lock();
-    outputs.erase(std::remove(outputs.begin(), outputs.end(), output), outputs.end());
+    removeOutputNoLock(output);
     unlock();
+}
+
+std::vector<std::shared_ptr<dsp::Unit>> dsp::Unit::getUnits() const {
+    return children;
 }
 
 unsigned int dsp::Unit::getNumUnits() const {
@@ -127,57 +131,32 @@ std::vector<std::shared_ptr<dsp::Unit>> dsp::Unit::getUnits(unsigned int begin, 
 }
 
 void dsp::Unit::pushUnit(std::shared_ptr<Unit> unit, bool sort) {
-    assert(unit != nullptr);
     lock();
-    unit->setSampleRate(getSampleRate());
-    unit->setBufferSize(getBufferSize());
-    if (getNumChannels() > 0) {
-        unit->setNumChannels(getNumChannels());
-    }
-    children.push_back(unit);
-    if (sort) {
-        sortUnitsNoLock();
-    }
+    pushUnitNoLock(unit, sort);
     unlock();
 }
 
 void dsp::Unit::pushUnits(std::vector<std::shared_ptr<Unit>> units, bool sort) {
-    for (const auto &unit : units) {
-        assert(unit != nullptr);
-    }
     lock();
-    for (const auto &unit : units) {
-        unit->setSampleRate(getSampleRate());
-        unit->setBufferSize(getBufferSize());
-        if (getNumChannels() > 0) {
-            unit->setNumChannels(getNumChannels());
-        }
-        children.push_back(unit);
-    }
-    if (sort) {
-        sortUnitsNoLock();
-    }
+    pushUnitsNoLock(units, sort);
     unlock();
 }
 
 void dsp::Unit::replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement) {
-    assert(replacement != nullptr);
     lock();
-    std::replace(children.begin(), children.end(), unit, replacement);
+    replaceUnitNoLock(unit, replacement);
     unlock();
 }
 
 void dsp::Unit::removeUnit(std::shared_ptr<Unit> unit) {
     lock();
-    children.erase(std::remove(children.begin(), children.end(), unit), children.end());
+    removeUnitNoLock(unit);
     unlock();
 }
 
 void dsp::Unit::removeUnits(std::vector<std::shared_ptr<Unit>> units) {
     lock();
-    for (const auto &unit : units) {
-        children.erase(std::remove(children.begin(), children.end(), unit), children.end());
-    }
+    removeUnitsNoLock(units);
     unlock();
 }
 
@@ -236,6 +215,97 @@ void dsp::Unit::setNumChannelsNoLock(unsigned int numChannels) {
             unit->setNumChannels(numChannels);
         }
         connect();
+    }
+}
+
+void dsp::Unit::setActiveNoLock(bool active) {
+    this->active = active;
+}
+
+void dsp::Unit::pushInputNoLock(std::shared_ptr<InputParameter> input) {
+    assert(input != nullptr);
+    input->setBufferSize(getBufferSize());
+    input->setNumChannels(getNumChannels());
+    inputs.push_back(input);
+}
+
+void dsp::Unit::pushOutputNoLock(std::shared_ptr<OutputParameter> output) {
+    assert(output != nullptr);
+    output->setBufferSize(getBufferSize());
+    output->setNumChannels(getNumChannels());
+    outputs.push_back(output);
+}
+
+std::shared_ptr<dsp::InputParameter> dsp::Unit::pushInputNoLock(Type type, Space space, DSP_FLOAT value) {
+    auto input = std::make_shared<InputParameter>(getNumChannels(), getBufferSize(), type, space, value);
+    inputs.push_back(input);
+    return input;
+}
+
+std::shared_ptr<dsp::OutputParameter> dsp::Unit::pushOutputNoLock(Type type, Space space, DSP_FLOAT value) {
+    auto output = std::make_shared<OutputParameter>(getNumChannels(), getBufferSize(), type, space, value);
+    outputs.push_back(output);
+    return output;
+}
+
+void dsp::Unit::replaceInputNoLock(std::shared_ptr<InputParameter> input, std::shared_ptr<InputParameter> replacement) {
+    std::replace(inputs.begin(), inputs.end(), input, replacement);
+}
+
+void dsp::Unit::replaceOutputNoLock(std::shared_ptr<OutputParameter> output, std::shared_ptr<OutputParameter> replacement) {
+    std::replace(outputs.begin(), outputs.end(), output, replacement);
+}
+
+void dsp::Unit::removeInputNoLock(std::shared_ptr<InputParameter> input) {
+    inputs.erase(std::remove(inputs.begin(), inputs.end(), input), inputs.end());
+}
+
+void dsp::Unit::removeOutputNoLock(std::shared_ptr<OutputParameter> output) {
+    outputs.erase(std::remove(outputs.begin(), outputs.end(), output), outputs.end());
+}
+
+void dsp::Unit::pushUnitNoLock(std::shared_ptr<Unit> unit, bool sort) {
+    assert(unit != nullptr);
+    unit->setSampleRate(getSampleRate());
+    unit->setBufferSize(getBufferSize());
+    if (getNumChannels() > 0) {
+        unit->setNumChannels(getNumChannels());
+    }
+    children.push_back(unit);
+    if (sort) {
+        sortUnitsNoLock();
+    }
+}
+
+void dsp::Unit::pushUnitsNoLock(std::vector<std::shared_ptr<Unit>> units, bool sort) {
+    for (const auto &unit : units) {
+        assert(unit != nullptr);
+    }
+    for (const auto &unit : units) {
+        unit->setSampleRate(getSampleRate());
+        unit->setBufferSize(getBufferSize());
+        if (getNumChannels() > 0) {
+            unit->setNumChannels(getNumChannels());
+        }
+        children.push_back(unit);
+    }
+    if (sort) {
+        sortUnitsNoLock();
+    }
+}
+
+void dsp::Unit::replaceUnitNoLock(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement) {
+    assert(replacement != nullptr);
+    std::replace(children.begin(), children.end(), unit, replacement);
+}
+
+void dsp::Unit::removeUnitNoLock(std::shared_ptr<Unit> unit) {
+    children.erase(std::remove(children.begin(), children.end(), unit), children.end());
+}
+
+void dsp::Unit::removeUnitsNoLock(std::vector<std::shared_ptr<Unit>> units) {
+    for (const auto &unit : units) {
+        children.erase(std::remove(children.begin(), children.end(), unit), children.end());
     }
 }
 

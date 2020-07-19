@@ -51,18 +51,16 @@ unsigned int dsp::Butterworth::getOrder() const {
     return order;
 }
 
-#include <iostream>
-
 void dsp::Butterworth::setOrder(unsigned int order) {
     lock();
     disconnect();
     unsigned int halfOrder = order >> 1;
-    children.pop_back();
+    removeUnitNoLock(output);
     for (const auto &multiply : multiplies) {
-        children.erase(std::remove(children.begin(), children.end(), multiply), children.end());
+        removeUnitNoLock(multiply);
     }
     for (const auto &biquad : biquads) {
-        children.erase(std::remove(children.begin(), children.end(), biquad), children.end());
+        removeUnitNoLock(biquad);
     }
     multiplies.clear();
     biquads.clear();
@@ -75,24 +73,16 @@ void dsp::Butterworth::setOrder(unsigned int order) {
     }
     for (unsigned int i = 0; i < halfOrder; i++) {
         std::shared_ptr<Multiply> multiply = std::make_shared<Multiply>(Type::RATIO);
-        DSP_FLOAT qValue = 1.0 / (2.0 * cos(firstAngle + i * increment));
-        qValue >> multiply->pushInputRatio();
-        std::cout << qValue << std::endl;
+        1.0 / (2.0 * cos(firstAngle + i * increment)) >> multiply->pushInputRatio();
         multiplies.push_back(multiply);
-        multiply->setSampleRate(getSampleRate());
-        multiply->setBufferSize(getBufferSize());
-        multiply->setNumChannels(getNumChannels());
-        children.push_back(multiply);
+        pushUnitNoLock(multiply);
+
         std::shared_ptr<Biquad> biquad = std::make_shared<Biquad>();
         setMode(biquad);
         biquads.push_back(biquad);
-        biquad->setSampleRate(getSampleRate());
-        biquad->setBufferSize(getBufferSize());
-        biquad->setNumChannels(getNumChannels());
-        children.push_back(biquad);
+        pushUnitNoLock(biquad);
     }
-    std::cout << "\n";
-    children.push_back(output);
+    pushUnitNoLock(output);
     this->order = order;
     connect();
     unlock();

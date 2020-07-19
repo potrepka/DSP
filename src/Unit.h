@@ -21,6 +21,8 @@ public:
     bool isActive() const;
     void setActive(bool active);
 
+    std::vector<std::shared_ptr<InputParameter>> getInputs() const;
+    std::vector<std::shared_ptr<OutputParameter>> getOutputs() const;
     unsigned int getNumInputs() const;
     unsigned int getNumOutputs() const;
     std::shared_ptr<InputParameter> getInput(unsigned int index) const;
@@ -36,6 +38,7 @@ public:
     void removeInput(std::shared_ptr<InputParameter> input);
     void removeOutput(std::shared_ptr<OutputParameter> output);
 
+    std::vector<std::shared_ptr<Unit>> getUnits() const;
     unsigned int getNumUnits() const;
     std::shared_ptr<Unit> getUnit(unsigned int index) const;
     std::vector<std::shared_ptr<Unit>> getUnits(unsigned int begin, unsigned int end) const;
@@ -56,6 +59,23 @@ protected:
     void setSampleRateNoLock(unsigned int sampleRate) override;
     void setBufferSizeNoLock(unsigned int bufferSize) override;
     virtual void setNumChannelsNoLock(unsigned int numChannels);
+
+    void setActiveNoLock(bool active);
+
+    void pushInputNoLock(std::shared_ptr<InputParameter> input);
+    void pushOutputNoLock(std::shared_ptr<OutputParameter> output);
+    std::shared_ptr<InputParameter> pushInputNoLock(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
+    std::shared_ptr<OutputParameter> pushOutputNoLock(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
+    void replaceInputNoLock(std::shared_ptr<InputParameter> input, std::shared_ptr<InputParameter> replacement);
+    void replaceOutputNoLock(std::shared_ptr<OutputParameter> output, std::shared_ptr<OutputParameter> replacement);
+    void removeInputNoLock(std::shared_ptr<InputParameter> input);
+    void removeOutputNoLock(std::shared_ptr<OutputParameter> output);
+
+    void pushUnitNoLock(std::shared_ptr<Unit> unit, bool sort = false);
+    void pushUnitsNoLock(std::vector<std::shared_ptr<Unit>> units, bool sort = false);
+    void replaceUnitNoLock(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement);
+    void removeUnitNoLock(std::shared_ptr<Unit> unit);
+    void removeUnitsNoLock(std::vector<std::shared_ptr<Unit>> units);
     void sortUnitsNoLock();
 
     virtual void connect();
