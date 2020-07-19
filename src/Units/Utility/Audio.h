@@ -15,8 +15,8 @@ public:
     std::shared_ptr<OutputParameter> getAudioOutputClipping() const;
     void zeroBuffers();
     void copyBuffers();
-    void readInterleaved(DSP_FLOAT *inputBuffer, unsigned int numInputChannels, unsigned int numFrames);
-    void writeInterleaved(DSP_FLOAT *outputBuffer, unsigned int numOutputChannels, unsigned int numFrames);
+    void readInterleaved(Sample *inputBuffer, unsigned int numInputChannels, unsigned int numFrames);
+    void writeInterleaved(Sample *outputBuffer, unsigned int numOutputChannels, unsigned int numFrames);
 
 private:
     const std::shared_ptr<InputParameter> audioOutput;

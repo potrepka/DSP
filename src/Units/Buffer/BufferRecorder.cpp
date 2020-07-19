@@ -1,6 +1,6 @@
 #include "BufferRecorder.h"
 
-dsp::BufferRecorder::BufferRecorder(Type type, Space space, DSP_FLOAT defaultValue)
+dsp::BufferRecorder::BufferRecorder(Type type, Space space, Sample defaultValue)
         : Consumer(type, space)
         , mode(Mode::SINGLE_BUFFER)
         , externalBufferSize(0.0)
@@ -22,11 +22,11 @@ void dsp::BufferRecorder::setMode(Mode mode) {
     unlock();
 }
 
-DSP_FLOAT dsp::BufferRecorder::getExternalBufferSize() const {
+dsp::Sample dsp::BufferRecorder::getExternalBufferSize() const {
     return externalBufferSize;
 }
 
-void dsp::BufferRecorder::setExternalBufferSize(DSP_FLOAT externalBufferSize) {
+void dsp::BufferRecorder::setExternalBufferSize(Sample externalBufferSize) {
     assert(externalBufferSize >= 0.0);
     lock();
     externalBufferSizeSynced = false;
@@ -72,8 +72,8 @@ void dsp::BufferRecorder::process() {
             writeIndex = 0.0;
         }
         for (unsigned int i = 0; i < getNumChannels(); i++) {
-            std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-            DSP_FLOAT index = writeIndex;
+            std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+            Sample index = writeIndex;
             for (unsigned int k = 0; k < getBufferSize(); k++) {
                 switch (mode) {
                     case Mode::SINGLE_BUFFER: buffer->getChannel(i)[index] = inputBuffer[k]; break;
@@ -103,7 +103,7 @@ void dsp::BufferRecorder::process() {
     buffer->unlock();
 }
 
-void dsp::BufferRecorder::setExternalBufferSizeNoLock(DSP_FLOAT externalBufferSize) {
+void dsp::BufferRecorder::setExternalBufferSizeNoLock(Sample externalBufferSize) {
     this->externalBufferSize = externalBufferSize;
     unsigned int bufferSize = static_cast<unsigned int>(ceil(externalBufferSize));
     buffer->setBufferSize(bufferSize);

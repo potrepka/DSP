@@ -32,13 +32,13 @@ std::shared_ptr<dsp::OutputParameter> dsp::StereoPanner::getRight() const {
 void dsp::StereoPanner::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &directionBuffer = getDirection()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &leftBuffer = getLeft()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &rightBuffer = getRight()->getChannel(i)->getBuffer();
+        std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &directionBuffer = getDirection()->getChannel(i)->getBuffer();
+        std::vector<Sample> &leftBuffer = getLeft()->getChannel(i)->getBuffer();
+        std::vector<Sample> &rightBuffer = getRight()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
-            DSP_FLOAT left;
-            DSP_FLOAT right;
+            Sample left;
+            Sample right;
             switch (mode) {
                 case Mode::CONSTANT_POWER:
                     left = cos(PI_OVER_TWO * bipolarToUnipolar(directionBuffer[k]));

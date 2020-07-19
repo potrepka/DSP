@@ -12,7 +12,7 @@ unsigned int dsp::VariableDelay::getMaxDelayTime() const {
     return maxDelayTime;
 }
 
-void dsp::VariableDelay::setMaxDelayTime(DSP_FLOAT seconds) {
+void dsp::VariableDelay::setMaxDelayTime(Sample seconds) {
     assert(seconds > 0.0);
     lock();
     maxDelayTime = seconds;
@@ -40,13 +40,13 @@ void dsp::VariableDelay::process() {
     Unit::process();
     if (buffer->getBufferSize() > 0) {
         for (unsigned int i = 0; i < getNumChannels(); i++) {
-            std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &delayTimeBuffer = getDelayTime()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+            std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+            std::vector<Sample> &delayTimeBuffer = getDelayTime()->getChannel(i)->getBuffer();
+            std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             unsigned int index = writeIndex;
             for (unsigned int k = 0; k < getBufferSize(); k++) {
-                const DSP_FLOAT delayTime = clip(delayTimeBuffer[i], 0.0, maxDelayTime);
-                DSP_FLOAT readIndex = static_cast<DSP_FLOAT>(index) - delayTime * getSampleRate();
+                const Sample delayTime = clip(delayTimeBuffer[i], 0.0, maxDelayTime);
+                Sample readIndex = static_cast<Sample>(index) - delayTime * getSampleRate();
                 if (readIndex < 0.0) {
                     readIndex += buffer->getBufferSize();
                 }

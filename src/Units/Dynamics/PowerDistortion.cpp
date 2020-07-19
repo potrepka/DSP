@@ -10,7 +10,7 @@ std::shared_ptr<dsp::InputParameter> dsp::PowerDistortion::getDrive() const {
 
 void dsp::PowerDistortion::process() {
     Unit::process();
-    transform(getDrive(), [](DSP_FLOAT x, DSP_FLOAT y) {
+    transform(getDrive(), [](Sample x, Sample y) {
         if (y == 0.0) {
             return 0.0;
         } else {

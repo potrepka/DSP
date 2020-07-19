@@ -20,6 +20,6 @@ void dsp::MultiplyHertzSeconds::process() {
                        getFrequency()->getChannel(i)->getBuffer().end(),
                        getTime()->getChannel(i)->getBuffer().begin(),
                        getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                       std::multiplies<DSP_FLOAT>());
+                       std::multiplies<Sample>());
     }
 }

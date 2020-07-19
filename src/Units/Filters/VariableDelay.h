@@ -11,7 +11,7 @@ public:
     VariableDelay(Type type);
 
     unsigned int getMaxDelayTime() const;
-    void setMaxDelayTime(DSP_FLOAT seconds);
+    void setMaxDelayTime(Sample seconds);
     std::shared_ptr<InputParameter> getDelayTime() const;
 
 protected:
@@ -22,7 +22,7 @@ protected:
 private:
     const std::shared_ptr<InputParameter> delayTime;
 
-    DSP_FLOAT maxDelayTime;
+    Sample maxDelayTime;
     unsigned int writeIndex;
     std::shared_ptr<Buffer> buffer;
 

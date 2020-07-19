@@ -10,12 +10,12 @@ class BufferRecorder : public Consumer {
 public:
     enum class Mode { SINGLE_BUFFER, DOUBLE_BUFFER };
 
-    BufferRecorder(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
+    BufferRecorder(Type type, Space space = Space::TIME, Sample defaultValue = 0.0);
 
     Mode getMode() const;
     void setMode(Mode mode);
-    DSP_FLOAT getExternalBufferSize() const;
-    void setExternalBufferSize(DSP_FLOAT externalBufferSize);
+    Sample getExternalBufferSize() const;
+    void setExternalBufferSize(Sample externalBufferSize);
     bool isExternalBufferSizeSynced() const;
     void setExternalBufferSizeSynced(bool externalBufferSizeSynced);
     std::shared_ptr<Buffer> getBuffer() const;
@@ -27,13 +27,13 @@ protected:
 
 private:
     Mode mode;
-    DSP_FLOAT externalBufferSize;
+    Sample externalBufferSize;
     bool externalBufferSizeSynced;
-    DSP_FLOAT writeIndex;
+    Sample writeIndex;
     std::shared_ptr<Buffer> buffer;
     std::shared_ptr<Buffer> second;
 
-    void setExternalBufferSizeNoLock(DSP_FLOAT externalBufferSize);
+    void setExternalBufferSizeNoLock(Sample externalBufferSize);
 };
 
 } // namespace dsp

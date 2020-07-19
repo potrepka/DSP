@@ -23,7 +23,7 @@ private:
     const std::shared_ptr<InputParameter> frequency;
 
     Mode mode;
-    std::vector<DSP_FLOAT> state;
+    std::vector<Sample> state;
 };
 
 } // namespace dsp

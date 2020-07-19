@@ -89,26 +89,26 @@ void dsp::SamplePlayer::process() {
             }
         }
         for (unsigned int i = 0; i < getNumChannels(); i++) {
-            std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &gateBuffer = getGate()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &offsetTimeBuffer = getOffsetTime()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &sampleIndexBuffer = getSampleIndex()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
+            std::vector<Sample> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
+            std::vector<Sample> &gateBuffer = getGate()->getChannel(i)->getBuffer();
+            std::vector<Sample> &offsetTimeBuffer = getOffsetTime()->getChannel(i)->getBuffer();
+            std::vector<Sample> &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
+            std::vector<Sample> &sampleIndexBuffer = getSampleIndex()->getChannel(i)->getBuffer();
+            std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+            std::vector<Sample> &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
                 if (resetTriggerBuffer[k]) {
                     readIndex[i] = 0.0;
                 }
-                DSP_FLOAT p = sampleIndexBuffer[k];
+                Sample p = sampleIndexBuffer[k];
                 if (p >= 0 && p < collection.size() && collection[p] != nullptr) {
                     unsigned int numChannels = collection[p]->getNumChannels();
                     unsigned int channelSize = collection[p]->getBufferSize();
                     if (numChannels > 0 && channelSize > 0) {
-                        std::vector<DSP_FLOAT> &channel = collection[p]->getChannel(i % numChannels);
+                        std::vector<Sample> &channel = collection[p]->getChannel(i % numChannels);
                         if (gateBuffer[k]) {
-                            DSP_FLOAT offset = offsetTimeBuffer[k] * getSampleRate();
-                            DSP_FLOAT index;
+                            Sample offset = offsetTimeBuffer[k] * getSampleRate();
+                            Sample index;
                             switch (mode) {
                                 case Mode::ONE_SHOT: index = clip(readIndex[i] + offset, 0.0, channelSize); break;
                                 case Mode::LOOP: index = wrap(readIndex[i] + offset, 0.0, channelSize); break;
@@ -117,7 +117,7 @@ void dsp::SamplePlayer::process() {
                             unsigned int k0 = (k1 + channelSize - 1) % channelSize;
                             unsigned int k2 = (k1 + 1) % channelSize;
                             unsigned int k3 = (k1 + 2) % channelSize;
-                            std::vector<DSP_FLOAT> points{channel[k0], channel[k1], channel[k2], channel[k3]};
+                            std::vector<Sample> points{channel[k0], channel[k1], channel[k2], channel[k3]};
                             outputBuffer[k] = hermite(points, 1.0 + readIndex[i] - k1);
                             currentTimeBuffer[k] = readIndex[i] * getOneOverSampleRate();
                             readIndex[i] += speedBuffer[k];

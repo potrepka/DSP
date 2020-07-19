@@ -59,17 +59,14 @@ void dsp::Convolver::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::Convolver::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         for (unsigned int j = 0; j < convolvers[i].size(); j++) {
-            std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(j % getNumChannels())->getBuffer();
+            std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(j % getNumChannels())->getBuffer();
             if (convolvers[i][j] != nullptr) {
                 std::copy(inputBuffer.begin(), inputBuffer.end(), input.begin());
                 convolvers[i][j]->process(input.data(), output.data(), getBufferSize());
-                std::transform(output.begin(),
-                               output.end(),
-                               outputBuffer.begin(),
-                               outputBuffer.begin(),
-                               std::plus<DSP_FLOAT>());
+                std::transform(
+                        output.begin(), output.end(), outputBuffer.begin(), outputBuffer.begin(), std::plus<Sample>());
             }
         }
     }
@@ -84,7 +81,7 @@ void dsp::Convolver::initConvolver(unsigned int channel) {
         std::vector<std::vector<fftconvolver::Sample>> sample(numChannels,
                                                               std::vector<fftconvolver::Sample>(bufferSize));
         for (unsigned int j = 0; j < numChannels; j++) {
-            std::vector<DSP_FLOAT> &buffer = buffers[channel]->getChannel(j);
+            std::vector<Sample> &buffer = buffers[channel]->getChannel(j);
             std::copy(buffer.begin(), buffer.end(), sample[j].begin());
             convolvers[channel].emplace_back(std::make_unique<fftconvolver::TwoStageFFTConvolver>());
             convolvers[channel][j]->init(headSize, tailSize, sample[j].data(), sample[j].size());

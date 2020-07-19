@@ -23,7 +23,7 @@ private:
     const std::shared_ptr<InputParameter> mixAmount;
 
     Mode mode;
-    std::vector<DSP_FLOAT> buffer;
+    std::vector<Sample> buffer;
 };
 
 } // namespace dsp

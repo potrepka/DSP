@@ -37,18 +37,18 @@ void dsp::AHR::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::AHR::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &attackBuffer = getAttack()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &holdBuffer = getHold()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &releaseBuffer = getRelease()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
+        std::vector<Sample> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
+        std::vector<Sample> &attackBuffer = getAttack()->getChannel(i)->getBuffer();
+        std::vector<Sample> &holdBuffer = getHold()->getChannel(i)->getBuffer();
+        std::vector<Sample> &releaseBuffer = getRelease()->getChannel(i)->getBuffer();
+        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (resetTriggerBuffer[k]) {
                 index[i] = 0;
                 value[i] = 1.0;
             }
-            DSP_FLOAT attackPosition = attackBuffer[k] * getSampleRate();
+            Sample attackPosition = attackBuffer[k] * getSampleRate();
             if (index[i] < attackPosition) {
                 value[i] = 1.0;
                 outputBuffer[k] = index[i] / attackPosition;

@@ -31,8 +31,8 @@ public:
     std::vector<std::shared_ptr<OutputParameter>> getOutputs(unsigned int begin, unsigned int end) const;
     void pushInput(std::shared_ptr<InputParameter> input);
     void pushOutput(std::shared_ptr<OutputParameter> output);
-    std::shared_ptr<InputParameter> pushInput(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
-    std::shared_ptr<OutputParameter> pushOutput(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
+    std::shared_ptr<InputParameter> pushInput(Type type, Space space = Space::TIME, Sample defaultValue = 0.0);
+    std::shared_ptr<OutputParameter> pushOutput(Type type, Space space = Space::TIME, Sample defaultValue = 0.0);
     void replaceInput(std::shared_ptr<InputParameter> input, std::shared_ptr<InputParameter> replacement);
     void replaceOutput(std::shared_ptr<OutputParameter> output, std::shared_ptr<OutputParameter> replacement);
     void removeInput(std::shared_ptr<InputParameter> input);
@@ -64,8 +64,8 @@ protected:
 
     void pushInputNoLock(std::shared_ptr<InputParameter> input);
     void pushOutputNoLock(std::shared_ptr<OutputParameter> output);
-    std::shared_ptr<InputParameter> pushInputNoLock(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
-    std::shared_ptr<OutputParameter> pushOutputNoLock(Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
+    std::shared_ptr<InputParameter> pushInputNoLock(Type type, Space space = Space::TIME, Sample defaultValue = 0.0);
+    std::shared_ptr<OutputParameter> pushOutputNoLock(Type type, Space space = Space::TIME, Sample defaultValue = 0.0);
     void replaceInputNoLock(std::shared_ptr<InputParameter> input, std::shared_ptr<InputParameter> replacement);
     void replaceOutputNoLock(std::shared_ptr<OutputParameter> output, std::shared_ptr<OutputParameter> replacement);
     void removeInputNoLock(std::shared_ptr<InputParameter> input);

@@ -32,11 +32,11 @@ void dsp::Counter::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::Counter::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &triggerBuffer = getTrigger()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &offsetBuffer = getOffset()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
+        std::vector<Sample> &triggerBuffer = getTrigger()->getChannel(i)->getBuffer();
+        std::vector<Sample> &offsetBuffer = getOffset()->getChannel(i)->getBuffer();
+        std::vector<Sample> &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
+        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (resetTriggerBuffer[k]) {
                 index[i] = 0;

@@ -13,7 +13,7 @@ public:
            unsigned int bufferSize,
            Type type,
            Space space = Space::TIME,
-           DSP_FLOAT defaultValue = 0.0);
+           Sample defaultValue = 0.0);
     Buffer(const Buffer &buffer);
 
     unsigned int getNumChannels() const;
@@ -30,19 +30,19 @@ public:
     Space getSpace() const;
     void setSpace(Space space);
 
-    DSP_FLOAT getDefaultValue() const;
-    void setDefaultValue(DSP_FLOAT defaultValue);
+    Sample getDefaultValue() const;
+    void setDefaultValue(Sample defaultValue);
 
-    void fillBuffer(DSP_FLOAT value);
+    void fillBuffer(Sample value);
     void clearBuffer();
 
-    std::vector<std::vector<DSP_FLOAT>> &getChannels();
-    std::vector<DSP_FLOAT> &getChannel(unsigned int channel);
+    std::vector<std::vector<Sample>> &getChannels();
+    std::vector<Sample> &getChannel(unsigned int channel);
 
-    DSP_FLOAT getMinimum(unsigned int channel) const;
-    DSP_FLOAT getMaximum(unsigned int channel) const;
-    DSP_FLOAT getMean(unsigned int channel) const;
-    DSP_FLOAT getRMS(unsigned int channel) const;
+    Sample getMinimum(unsigned int channel) const;
+    Sample getMaximum(unsigned int channel) const;
+    Sample getMean(unsigned int channel) const;
+    Sample getRMS(unsigned int channel) const;
 
     void clip(unsigned int begin, unsigned int end);
     void stretch(unsigned int bufferSize);
@@ -54,8 +54,8 @@ private:
     unsigned int bufferSize;
     Type type;
     Space space;
-    DSP_FLOAT defaultValue;
-    std::vector<std::vector<DSP_FLOAT>> buffers;
+    Sample defaultValue;
+    std::vector<std::vector<Sample>> buffers;
 };
 
 class BufferCollection {

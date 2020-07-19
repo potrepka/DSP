@@ -6,23 +6,23 @@ dsp::PinkNoise::PinkNoise()
 
 void dsp::PinkNoise::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    values.resize(numChannels, std::vector<DSP_FLOAT>(7, 0.0));
+    values.resize(numChannels, std::vector<Sample>(7, 0.0));
 }
 
 void dsp::PinkNoise::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        DSP_FLOAT &b0 = values[i][0];
-        DSP_FLOAT &b1 = values[i][1];
-        DSP_FLOAT &b2 = values[i][2];
-        DSP_FLOAT &b3 = values[i][3];
-        DSP_FLOAT &b4 = values[i][4];
-        DSP_FLOAT &b5 = values[i][5];
-        DSP_FLOAT &b6 = values[i][6];
+        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        Sample &b0 = values[i][0];
+        Sample &b1 = values[i][1];
+        Sample &b2 = values[i][2];
+        Sample &b3 = values[i][3];
+        Sample &b4 = values[i][4];
+        Sample &b5 = values[i][5];
+        Sample &b6 = values[i][6];
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             seed *= 16807;
-            DSP_FLOAT white = static_cast<DSP_FLOAT>(seed) * 4.65661287e-10;
+            Sample white = static_cast<Sample>(seed) * 4.65661287e-10;
             b0 = 0.99886 * b0 + white * 0.0555179;
             b1 = 0.99332 * b1 + white * 0.0750759;
             b2 = 0.96900 * b2 + white * 0.1538520;

@@ -7,26 +7,26 @@
 
 namespace dsp {
 
-DSP_FLOAT negative(const DSP_FLOAT value);
-DSP_FLOAT oneOver(const DSP_FLOAT value);
+Sample negative(const Sample value);
+Sample oneOver(const Sample value);
 
-DSP_FLOAT toBinary(const DSP_FLOAT value);
-DSP_FLOAT toInteger(const DSP_FLOAT value);
+Sample toBinary(const Sample value);
+Sample toInteger(const Sample value);
 
-DSP_FLOAT bipolarToUnipolar(const DSP_FLOAT bipolar);
-DSP_FLOAT unipolarToBipolar(const DSP_FLOAT unipolar);
+Sample bipolarToUnipolar(const Sample bipolar);
+Sample unipolarToBipolar(const Sample unipolar);
 
-DSP_FLOAT decibelsToLinear(const DSP_FLOAT decibels);
-DSP_FLOAT linearToDecibels(const DSP_FLOAT linear);
+Sample decibelsToLinear(const Sample decibels);
+Sample linearToDecibels(const Sample linear);
 
-DSP_FLOAT decibelsToRatio(const DSP_FLOAT decibels);
-DSP_FLOAT ratioToDecibels(const DSP_FLOAT ratio);
+Sample decibelsToRatio(const Sample decibels);
+Sample ratioToDecibels(const Sample ratio);
 
-DSP_FLOAT clip(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max);
-DSP_FLOAT wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max);
+Sample clip(const Sample signal, const Sample min, const Sample max);
+Sample wrap(const Sample signal, const Sample min, const Sample max);
 
-DSP_FLOAT linear(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index, DSP_FLOAT defaultValue = 0.0);
-DSP_FLOAT hermite(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index, DSP_FLOAT defaultValue = 0.0);
+Sample linear(const std::vector<Sample> &table, const Sample index, Sample defaultValue = 0.0);
+Sample hermite(const std::vector<Sample> &table, const Sample index, Sample defaultValue = 0.0);
 
 class ScaledFFT {
 
@@ -34,20 +34,16 @@ public:
     void setup(std::size_t size);
     std::size_t getSize();
     std::size_t getComplexSize();
-    void fft(std::vector<DSP_FLOAT> &timeBuffer,
-             std::vector<DSP_FLOAT> &realBuffer,
-             std::vector<DSP_FLOAT> &imaginaryBuffer);
-    void ifft(std::vector<DSP_FLOAT> &timeBuffer,
-              std::vector<DSP_FLOAT> &realBuffer,
-              std::vector<DSP_FLOAT> &imaginaryBuffer);
+    void fft(std::vector<Sample> &timeBuffer, std::vector<Sample> &realBuffer, std::vector<Sample> &imaginaryBuffer);
+    void ifft(std::vector<Sample> &timeBuffer, std::vector<Sample> &realBuffer, std::vector<Sample> &imaginaryBuffer);
 
 private:
     std::size_t size;
-    DSP_FLOAT oneOverSize;
+    Sample oneOverSize;
     audiofft::AudioFFT audioFFT;
-    std::vector<float> time;
-    std::vector<float> real;
-    std::vector<float> imaginary;
+    std::vector<audiofft::Sample> time;
+    std::vector<audiofft::Sample> real;
+    std::vector<audiofft::Sample> imaginary;
 };
 
 } // namespace dsp

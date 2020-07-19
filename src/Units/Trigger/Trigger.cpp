@@ -31,17 +31,17 @@ void dsp::Trigger::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::Trigger::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &intervalBuffer = getIntervalDuration()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &delayBuffer = getDelayTime()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
+        std::vector<Sample> &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
+        std::vector<Sample> &intervalBuffer = getIntervalDuration()->getChannel(i)->getBuffer();
+        std::vector<Sample> &delayBuffer = getDelayTime()->getChannel(i)->getBuffer();
+        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (resetTriggerBuffer[k] || intervalBuffer[k] == 0.0) {
                 index[i] = 0.0;
             } else {
-                DSP_FLOAT interval = abs(intervalBuffer[k] * getSampleRate());
-                DSP_FLOAT delayed = index[i] - delayBuffer[k] * getSampleRate();
+                Sample interval = abs(intervalBuffer[k] * getSampleRate());
+                Sample delayed = index[i] - delayBuffer[k] * getSampleRate();
                 if (delayed >= interval) {
                     index[i] -= floor(delayed / interval) * interval;
                 }

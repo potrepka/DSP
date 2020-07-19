@@ -72,7 +72,7 @@ void dsp::Unit::pushOutput(std::shared_ptr<OutputParameter> output) {
     unlock();
 }
 
-std::shared_ptr<dsp::InputParameter> dsp::Unit::pushInput(Type type, Space space, DSP_FLOAT value) {
+std::shared_ptr<dsp::InputParameter> dsp::Unit::pushInput(Type type, Space space, Sample value) {
     std::shared_ptr<dsp::InputParameter> input;
     lock();
     input = pushInputNoLock(type, space, value);
@@ -80,7 +80,7 @@ std::shared_ptr<dsp::InputParameter> dsp::Unit::pushInput(Type type, Space space
     return input;
 }
 
-std::shared_ptr<dsp::OutputParameter> dsp::Unit::pushOutput(Type type, Space space, DSP_FLOAT value) {
+std::shared_ptr<dsp::OutputParameter> dsp::Unit::pushOutput(Type type, Space space, Sample value) {
     std::shared_ptr<dsp::OutputParameter> output;
     lock();
     output = pushOutputNoLock(type, space, value);
@@ -236,13 +236,13 @@ void dsp::Unit::pushOutputNoLock(std::shared_ptr<OutputParameter> output) {
     outputs.push_back(output);
 }
 
-std::shared_ptr<dsp::InputParameter> dsp::Unit::pushInputNoLock(Type type, Space space, DSP_FLOAT value) {
+std::shared_ptr<dsp::InputParameter> dsp::Unit::pushInputNoLock(Type type, Space space, Sample value) {
     auto input = std::make_shared<InputParameter>(getNumChannels(), getBufferSize(), type, space, value);
     inputs.push_back(input);
     return input;
 }
 
-std::shared_ptr<dsp::OutputParameter> dsp::Unit::pushOutputNoLock(Type type, Space space, DSP_FLOAT value) {
+std::shared_ptr<dsp::OutputParameter> dsp::Unit::pushOutputNoLock(Type type, Space space, Sample value) {
     auto output = std::make_shared<OutputParameter>(getNumChannels(), getBufferSize(), type, space, value);
     outputs.push_back(output);
     return output;
@@ -252,7 +252,8 @@ void dsp::Unit::replaceInputNoLock(std::shared_ptr<InputParameter> input, std::s
     std::replace(inputs.begin(), inputs.end(), input, replacement);
 }
 
-void dsp::Unit::replaceOutputNoLock(std::shared_ptr<OutputParameter> output, std::shared_ptr<OutputParameter> replacement) {
+void dsp::Unit::replaceOutputNoLock(std::shared_ptr<OutputParameter> output,
+                                    std::shared_ptr<OutputParameter> replacement) {
     std::replace(outputs.begin(), outputs.end(), output, replacement);
 }
 

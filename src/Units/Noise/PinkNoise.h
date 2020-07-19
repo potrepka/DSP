@@ -15,7 +15,7 @@ protected:
 
 private:
     int seed;
-    std::vector<std::vector<DSP_FLOAT>> values;
+    std::vector<std::vector<Sample>> values;
 };
 
 } // namespace dsp

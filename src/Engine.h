@@ -83,8 +83,8 @@ private:
                     RtAudioStreamStatus status,
                     void *pointer);
 #endif
-    static void process(DSP_FLOAT *inputBuffer,
-                        DSP_FLOAT *outputBuffer,
+    static void process(Sample *inputBuffer,
+                        Sample *outputBuffer,
                         unsigned int numFrames,
                         unsigned int numInputChannels,
                         unsigned int numOutputChannels,

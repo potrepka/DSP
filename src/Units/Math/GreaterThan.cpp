@@ -10,5 +10,5 @@ std::shared_ptr<dsp::InputParameter> dsp::GreaterThan::getComparisonSignal() con
 
 void dsp::GreaterThan::process() {
     Unit::process();
-    transform(getComparisonSignal(), [](DSP_FLOAT x, DSP_FLOAT y) { return x > y; });
+    transform(getComparisonSignal(), [](Sample x, Sample y) { return x > y; });
 }

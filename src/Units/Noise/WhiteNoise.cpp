@@ -7,10 +7,10 @@ dsp::WhiteNoise::WhiteNoise()
 void dsp::WhiteNoise::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             seed *= 16807;
-            outputBuffer[k] = static_cast<DSP_FLOAT>(seed) * 4.65661287e-10;
+            outputBuffer[k] = static_cast<Sample>(seed) * 4.65661287e-10;
         }
     }
 }

@@ -10,5 +10,5 @@ std::shared_ptr<dsp::InputParameter> dsp::GainScale::getGain() const {
 
 void dsp::GainScale::process() {
     Unit::process();
-    transform(getGain(), [](DSP_FLOAT x, DSP_FLOAT y) { return x * exp2(y); });
+    transform(getGain(), [](Sample x, Sample y) { return x * exp2(y); });
 }

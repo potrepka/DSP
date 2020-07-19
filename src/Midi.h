@@ -61,14 +61,14 @@ public:
         std::vector<unsigned char> getBytes() const;
 
         unsigned char getByte(unsigned int index) const;
-        DSP_FLOAT getByteAsUnipolar(unsigned int index) const;
+        Sample getByteAsUnipolar(unsigned int index) const;
         void setByte(unsigned int index, unsigned char value);
-        void setByteUsingUnipolar(unsigned int index, DSP_FLOAT unipolar);
+        void setByteUsingUnipolar(unsigned int index, Sample unipolar);
 
         unsigned short getShort(unsigned int lsb, unsigned int msb) const;
-        DSP_FLOAT getShortAsBipolar(unsigned int lsb, unsigned int msb) const;
+        Sample getShortAsBipolar(unsigned int lsb, unsigned int msb) const;
         void setShort(unsigned int lsb, unsigned int msb, unsigned short value);
-        void setShortUsingBipolar(unsigned int lsb, unsigned int msb, DSP_FLOAT bipolar);
+        void setShortUsingBipolar(unsigned int lsb, unsigned int msb, Sample bipolar);
 
     private:
         double time;
@@ -113,10 +113,10 @@ public:
         unsigned long bufferSamples;
         std::priority_queue<TimedMessage, std::vector<TimedMessage>, TimedMessage::compare> queue;
         std::vector<std::shared_ptr<std::function<void(TimedMessage)>>> callbacks;
-        std::vector<std::vector<DSP_FLOAT>> notePressureState;
-        std::vector<std::vector<DSP_FLOAT>> controlChangeState;
-        std::vector<DSP_FLOAT> channelPressureState;
-        std::vector<DSP_FLOAT> pitchBendState;
+        std::vector<std::vector<Sample>> notePressureState;
+        std::vector<std::vector<Sample>> controlChangeState;
+        std::vector<Sample> channelPressureState;
+        std::vector<Sample> pitchBendState;
         std::vector<std::vector<std::shared_ptr<Input>>> noteOn;
         std::vector<std::vector<std::shared_ptr<Input>>> noteOff;
         std::vector<std::vector<std::shared_ptr<Input>>> notePressure;

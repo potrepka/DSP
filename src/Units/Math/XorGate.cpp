@@ -17,7 +17,7 @@ void dsp::XorGate::process() {
                                getOutputSignal()->getChannel(i)->getBuffer().end(),
                                input->getChannel(i)->getBuffer().begin(),
                                getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                               [](DSP_FLOAT x, DSP_FLOAT y) { return (x || y) && !(x && y); });
+                               [](Sample x, Sample y) { return (x || y) && !(x && y); });
             }
         }
     }

@@ -6,11 +6,11 @@ dsp::Runnable::Runnable()
         , sampleRate(0)
         , bufferSize(0) {}
 
-DSP_FLOAT dsp::Runnable::getOneOverSampleRate() const {
+dsp::Sample dsp::Runnable::getOneOverSampleRate() const {
     return oneOverSampleRate;
 }
 
-DSP_FLOAT dsp::Runnable::getOneOverBufferSize() const {
+dsp::Sample dsp::Runnable::getOneOverBufferSize() const {
     return oneOverBufferSize;
 }
 

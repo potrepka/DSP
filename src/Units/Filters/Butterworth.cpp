@@ -66,8 +66,8 @@ void dsp::Butterworth::setOrder(unsigned int order) {
     biquads.clear();
     multiplies.reserve(halfOrder);
     biquads.reserve(halfOrder);
-    DSP_FLOAT increment = PI / order;
-    DSP_FLOAT firstAngle = increment;
+    Sample increment = PI / order;
+    Sample firstAngle = increment;
     if (order % 2 == 0) {
         firstAngle *= 0.5;
     }

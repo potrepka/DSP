@@ -5,5 +5,5 @@ dsp::AbsoluteValue::AbsoluteValue(Type type, Space space)
 
 void dsp::AbsoluteValue::process() {
     Unit::process();
-    transform([](DSP_FLOAT x) { return abs(x); });
+    transform([](Sample x) { return abs(x); });
 }

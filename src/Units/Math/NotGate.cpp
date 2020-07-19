@@ -5,5 +5,5 @@ dsp::NotGate::NotGate(Space space)
 
 void dsp::NotGate::process() {
     Unit::process();
-    transform([](DSP_FLOAT x) { return !x; });
+    transform([](Sample x) { return !x; });
 }

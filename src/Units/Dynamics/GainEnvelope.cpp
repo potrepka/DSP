@@ -21,12 +21,12 @@ void dsp::GainEnvelope::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::GainEnvelope::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &attackBuffer = getAttack()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &releaseBuffer = getRelease()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &attackBuffer = getAttack()->getChannel(i)->getBuffer();
+        std::vector<Sample> &releaseBuffer = getRelease()->getChannel(i)->getBuffer();
+        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
-            DSP_FLOAT samples;
+            Sample samples;
             if (abs(inputBuffer[k]) > abs(outputPrevious[i])) {
                 samples = attackBuffer[k] * getSampleRate();
             } else {

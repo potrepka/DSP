@@ -5,5 +5,5 @@ dsp::HardClip::HardClip(Space space)
 
 void dsp::HardClip::process() {
     Unit::process();
-    transform([](DSP_FLOAT x) { return clip(x, -1.0, 1.0); });
+    transform([](Sample x) { return clip(x, -1.0, 1.0); });
 }

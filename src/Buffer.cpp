@@ -1,6 +1,6 @@
 #include "Buffer.h"
 
-dsp::Buffer::Buffer(unsigned int numChannels, unsigned int bufferSize, Type type, Space space, DSP_FLOAT defaultValue)
+dsp::Buffer::Buffer(unsigned int numChannels, unsigned int bufferSize, Type type, Space space, Sample defaultValue)
         : bufferSize(bufferSize)
         , type(type)
         , space(space)
@@ -34,7 +34,7 @@ void dsp::Buffer::setNumChannelsNoLock(unsigned int numChannels) {
     } else {
         buffers.reserve(numChannels);
         for (unsigned int i = getNumChannels(); i < numChannels; i++) {
-            buffers.push_back(std::vector<DSP_FLOAT>(bufferSize, defaultValue));
+            buffers.push_back(std::vector<Sample>(bufferSize, defaultValue));
         }
     }
 }
@@ -76,17 +76,17 @@ void dsp::Buffer::setSpace(Space space) {
     unlock();
 }
 
-DSP_FLOAT dsp::Buffer::getDefaultValue() const {
+dsp::Sample dsp::Buffer::getDefaultValue() const {
     return defaultValue;
 }
 
-void dsp::Buffer::setDefaultValue(DSP_FLOAT defaultValue) {
+void dsp::Buffer::setDefaultValue(Sample defaultValue) {
     lock();
     this->defaultValue = defaultValue;
     unlock();
 }
 
-void dsp::Buffer::fillBuffer(DSP_FLOAT value) {
+void dsp::Buffer::fillBuffer(Sample value) {
     lock();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
         std::fill(buffers[i].begin(), buffers[i].end(), value);
@@ -102,18 +102,18 @@ void dsp::Buffer::clearBuffer() {
     unlock();
 }
 
-std::vector<std::vector<DSP_FLOAT>> &dsp::Buffer::getChannels() {
+std::vector<std::vector<dsp::Sample>> &dsp::Buffer::getChannels() {
     return buffers;
 }
 
-std::vector<DSP_FLOAT> &dsp::Buffer::getChannel(unsigned int channel) {
+std::vector<dsp::Sample> &dsp::Buffer::getChannel(unsigned int channel) {
     assert(channel < buffers.size());
     return buffers[channel];
 }
 
-DSP_FLOAT dsp::Buffer::getMinimum(unsigned int channel) const {
-    DSP_FLOAT minimum = std::numeric_limits<DSP_FLOAT>::infinity();
-    for (const DSP_FLOAT &x : buffers[channel]) {
+dsp::Sample dsp::Buffer::getMinimum(unsigned int channel) const {
+    Sample minimum = std::numeric_limits<Sample>::infinity();
+    for (const Sample &x : buffers[channel]) {
         if (minimum > x) {
             minimum = x;
         }
@@ -121,9 +121,9 @@ DSP_FLOAT dsp::Buffer::getMinimum(unsigned int channel) const {
     return minimum;
 }
 
-DSP_FLOAT dsp::Buffer::getMaximum(unsigned int channel) const {
-    DSP_FLOAT maximum = -std::numeric_limits<DSP_FLOAT>::infinity();
-    for (const DSP_FLOAT &x : buffers[channel]) {
+dsp::Sample dsp::Buffer::getMaximum(unsigned int channel) const {
+    Sample maximum = -std::numeric_limits<Sample>::infinity();
+    for (const Sample &x : buffers[channel]) {
         if (maximum < x) {
             maximum = x;
         }
@@ -131,23 +131,23 @@ DSP_FLOAT dsp::Buffer::getMaximum(unsigned int channel) const {
     return maximum;
 }
 
-DSP_FLOAT dsp::Buffer::getMean(unsigned int channel) const {
+dsp::Sample dsp::Buffer::getMean(unsigned int channel) const {
     if (bufferSize == 0) {
         return defaultValue;
     }
-    DSP_FLOAT sum = 0.0;
-    for (const DSP_FLOAT &x : buffers[channel]) {
+    Sample sum = 0.0;
+    for (const Sample &x : buffers[channel]) {
         sum += x;
     }
     return sum / bufferSize;
 }
 
-DSP_FLOAT dsp::Buffer::getRMS(unsigned int channel) const {
+dsp::Sample dsp::Buffer::getRMS(unsigned int channel) const {
     if (bufferSize == 0) {
         return defaultValue;
     }
-    DSP_FLOAT sum = 0.0;
-    for (const DSP_FLOAT &x : buffers[channel]) {
+    Sample sum = 0.0;
+    for (const Sample &x : buffers[channel]) {
         sum += x * x;
     }
     return sqrt(sum / bufferSize);
@@ -162,7 +162,7 @@ void dsp::Buffer::clip(unsigned int begin, unsigned int end) {
         begin = end;
     }
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        buffers[i] = std::vector<DSP_FLOAT>(buffers[i].begin() + begin, buffers[i].begin() + end);
+        buffers[i] = std::vector<Sample>(buffers[i].begin() + begin, buffers[i].begin() + end);
     }
     bufferSize = end - begin;
     unlock();
@@ -170,8 +170,8 @@ void dsp::Buffer::clip(unsigned int begin, unsigned int end) {
 
 void dsp::Buffer::stretch(unsigned int bufferSize) {
     lock();
-    std::vector<std::vector<DSP_FLOAT>> temp = buffers;
-    DSP_FLOAT reverseScale = static_cast<DSP_FLOAT>(this->bufferSize) / bufferSize;
+    std::vector<std::vector<Sample>> temp = buffers;
+    Sample reverseScale = static_cast<Sample>(this->bufferSize) / bufferSize;
     for (unsigned int i = 0; i < getNumChannels(); i++) {
         buffers[i].resize(bufferSize);
         for (unsigned int k = 0; k < bufferSize; k++) {
@@ -184,7 +184,7 @@ void dsp::Buffer::stretch(unsigned int bufferSize) {
 
 void dsp::Buffer::insert(unsigned int index, std::shared_ptr<Buffer> buffer) {
     buffer->lock();
-    std::vector<std::vector<DSP_FLOAT>> temp = buffer->buffers;
+    std::vector<std::vector<Sample>> temp = buffer->buffers;
     unsigned int bufferSize = buffer->bufferSize;
     buffer->unlock();
     lock();

@@ -5,5 +5,5 @@ dsp::Base2Log::Base2Log(Space space)
 
 void dsp::Base2Log::process() {
     Unit::process();
-    transform([](DSP_FLOAT x) { return log2(x); });
+    transform([](Sample x) { return log2(x); });
 }

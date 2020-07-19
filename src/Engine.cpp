@@ -220,7 +220,7 @@ void dsp::Engine::setup(unsigned int inputDevice,
     } catch (RtAudioError &error) { outputParameters.nChannels = 0; }
     outputParameters.firstChannel = 0;
 
-    RtAudioFormat format = (sizeof(DSP_FLOAT) == 8) ? RTAUDIO_FLOAT64 : RTAUDIO_FLOAT32;
+    RtAudioFormat format = (sizeof(Sample) == 8) ? RTAUDIO_FLOAT64 : RTAUDIO_FLOAT32;
 
     RtAudio::StreamOptions options;
     options.flags = RTAUDIO_SCHEDULE_REALTIME;
@@ -395,8 +395,8 @@ int dsp::Engine::tick(void *outputBuffer,
                       void *pointer) {
     Engine *engine = (Engine *)pointer;
     engine->lock();
-    process((DSP_FLOAT *)inputBuffer,
-            (DSP_FLOAT *)outputBuffer,
+    process((Sample *)inputBuffer,
+            (Sample *)outputBuffer,
             nBufferFrames,
             engine->getNumInputChannels(),
             engine->getNumOutputChannels(),
@@ -406,8 +406,8 @@ int dsp::Engine::tick(void *outputBuffer,
 }
 #endif
 
-void dsp::Engine::process(DSP_FLOAT *inputBuffer,
-                          DSP_FLOAT *outputBuffer,
+void dsp::Engine::process(Sample *inputBuffer,
+                          Sample *outputBuffer,
                           unsigned int numFrames,
                           unsigned int numInputChannels,
                           unsigned int numOutputChannels,

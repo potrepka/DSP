@@ -64,15 +64,14 @@ void dsp::Sequencer::process() {
             }
         }
         for (unsigned int i = 0; i < getNumChannels(); i++) {
-            std::vector<DSP_FLOAT> &indexBuffer = getIndex()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &sequenceIndexBuffer = getSequenceIndex()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+            std::vector<Sample> &indexBuffer = getIndex()->getChannel(i)->getBuffer();
+            std::vector<Sample> &sequenceIndexBuffer = getSequenceIndex()->getChannel(i)->getBuffer();
+            std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
-                DSP_FLOAT p = sequenceIndexBuffer[k];
+                Sample p = sequenceIndexBuffer[k];
                 if (p >= 0 && p < collection.size() && collection[p] != nullptr) {
                     if (collection[p]->getNumChannels() > 0 && collection[p]->getBufferSize() > 0) {
-                        std::vector<DSP_FLOAT> &channel =
-                                collection[p]->getChannel(i % collection[p]->getNumChannels());
+                        std::vector<Sample> &channel = collection[p]->getChannel(i % collection[p]->getNumChannels());
                         outputBuffer[k] = channel[wrap(indexBuffer[k], 0.0, collection[p]->getBufferSize())];
                     } else {
                         outputBuffer[k] = collection[p]->getDefaultValue();

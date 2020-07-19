@@ -16,7 +16,7 @@ class OutputParameter;
 class Connection : public Lockable {
 
 public:
-    Connection(unsigned int bufferSize, Type type, Space space = Space::TIME, DSP_FLOAT defaultValue = 0.0);
+    Connection(unsigned int bufferSize, Type type, Space space = Space::TIME, Sample defaultValue = 0.0);
 
     unsigned int getBufferSize() const;
     void setBufferSize(unsigned int bufferSize);
@@ -27,26 +27,26 @@ public:
     Space getSpace() const;
     void setSpace(Space space);
 
-    DSP_FLOAT getDefaultValue() const;
-    void setDefaultValue(DSP_FLOAT defaultValue);
+    Sample getDefaultValue() const;
+    void setDefaultValue(Sample defaultValue);
 
-    void fillBuffer(DSP_FLOAT value);
+    void fillBuffer(Sample value);
     void clearBuffer();
 
-    std::vector<DSP_FLOAT> &getBuffer();
+    std::vector<Sample> &getBuffer();
 
 protected:
-    std::vector<DSP_FLOAT> buffer;
+    std::vector<Sample> buffer;
     Type type;
     Space space;
-    DSP_FLOAT defaultValue;
+    Sample defaultValue;
 };
 
 class Input : public Connection, public std::enable_shared_from_this<Input> {
     friend class Output;
 
 public:
-    Input(unsigned int bufferSize, Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
+    Input(unsigned int bufferSize, Type type, Space space = Space::TIME, Sample value = 0.0);
     ~Input();
 
     std::vector<std::shared_ptr<Output>> getConnections() const;
@@ -66,7 +66,7 @@ class Output : public Connection, public std::enable_shared_from_this<Output> {
     friend class Input;
 
 public:
-    Output(unsigned int bufferSize, Type type, Space space = Space::TIME, DSP_FLOAT value = 0.0);
+    Output(unsigned int bufferSize, Type type, Space space = Space::TIME, Sample value = 0.0);
     ~Output();
 
     std::vector<std::shared_ptr<Input>> getConnections() const;
@@ -88,7 +88,7 @@ public:
                         unsigned int bufferSize,
                         Type type,
                         Space space = Space::TIME,
-                        DSP_FLOAT defaultValue = 0.0);
+                        Sample defaultValue = 0.0);
 
     unsigned int getNumChannels() const;
     void setNumChannels(unsigned int numChannels);
@@ -102,10 +102,10 @@ public:
     Space getSpace() const;
     void setSpace(Space space);
 
-    DSP_FLOAT getDefaultValue() const;
-    void setDefaultValue(DSP_FLOAT defaultValue);
+    Sample getDefaultValue() const;
+    void setDefaultValue(Sample defaultValue);
 
-    void fillBuffer(DSP_FLOAT value);
+    void fillBuffer(Sample value);
     void clearBuffer();
 
     std::vector<std::shared_ptr<T>> getChannels() const;
@@ -115,7 +115,7 @@ protected:
     unsigned int bufferSize;
     Type type;
     Space space;
-    DSP_FLOAT defaultValue;
+    Sample defaultValue;
     std::vector<std::shared_ptr<T>> channels;
 };
 
@@ -126,7 +126,7 @@ public:
                    unsigned int bufferSize,
                    Type type,
                    Space space = Space::TIME,
-                   DSP_FLOAT value = 0.0);
+                   Sample value = 0.0);
 
     std::vector<std::shared_ptr<Output>> getConnections();
     void connect(std::shared_ptr<OutputParameter> output);
@@ -142,7 +142,7 @@ public:
                     unsigned int bufferSize,
                     Type type,
                     Space space = Space::TIME,
-                    DSP_FLOAT value = 0.0);
+                    Sample value = 0.0);
 
     std::vector<std::shared_ptr<Input>> getConnections();
     void connect(std::shared_ptr<InputParameter> input);
@@ -150,17 +150,17 @@ public:
     void disconnectAll();
 };
 
-void operator>>(DSP_FLOAT value, std::shared_ptr<Input> input);
-void operator>>(DSP_FLOAT value, std::shared_ptr<Output> output);
+void operator>>(Sample value, std::shared_ptr<Input> input);
+void operator>>(Sample value, std::shared_ptr<Output> output);
 
 void operator>>(std::shared_ptr<Output> output, std::shared_ptr<Input> input);
 void operator!=(std::shared_ptr<Output> output, std::shared_ptr<Input> input);
 
-void operator>>(DSP_FLOAT value, std::shared_ptr<InputParameter> input);
-void operator>>(DSP_FLOAT value, std::shared_ptr<OutputParameter> output);
+void operator>>(Sample value, std::shared_ptr<InputParameter> input);
+void operator>>(Sample value, std::shared_ptr<OutputParameter> output);
 
-void operator>>(std::vector<DSP_FLOAT> values, std::shared_ptr<InputParameter> input);
-void operator>>(std::vector<DSP_FLOAT> values, std::shared_ptr<OutputParameter> output);
+void operator>>(std::vector<Sample> values, std::shared_ptr<InputParameter> input);
+void operator>>(std::vector<Sample> values, std::shared_ptr<OutputParameter> output);
 
 void operator>>(std::shared_ptr<OutputParameter> output, std::shared_ptr<InputParameter> input);
 void operator!=(std::shared_ptr<OutputParameter> output, std::shared_ptr<InputParameter> input);

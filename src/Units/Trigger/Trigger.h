@@ -25,7 +25,7 @@ private:
 
     const std::shared_ptr<OutputParameter> currentTime;
 
-    std::vector<DSP_FLOAT> index;
+    std::vector<Sample> index;
 };
 
 } // namespace dsp

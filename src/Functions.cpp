@@ -1,87 +1,87 @@
 #include "Functions.h"
 
-DSP_FLOAT dsp::negative(const DSP_FLOAT value) {
+dsp::Sample dsp::negative(const Sample value) {
     return -value;
 }
 
-DSP_FLOAT dsp::oneOver(const DSP_FLOAT value) {
+dsp::Sample dsp::oneOver(const Sample value) {
     return 1.0 / value;
 }
 
-DSP_FLOAT dsp::toBinary(const DSP_FLOAT value) {
+dsp::Sample dsp::toBinary(const Sample value) {
     return value == 0.0 ? 0.0 : 1.0;
 }
 
-DSP_FLOAT dsp::toInteger(const DSP_FLOAT value) {
+dsp::Sample dsp::toInteger(const Sample value) {
     return floor(value);
 }
 
-DSP_FLOAT dsp::bipolarToUnipolar(const DSP_FLOAT bipolar) {
+dsp::Sample dsp::bipolarToUnipolar(const Sample bipolar) {
     return 0.5 * bipolar + 0.5;
 }
 
-DSP_FLOAT dsp::unipolarToBipolar(const DSP_FLOAT unipolar) {
+dsp::Sample dsp::unipolarToBipolar(const Sample unipolar) {
     return 2.0 * unipolar - 1.0;
 }
 
-DSP_FLOAT dsp::decibelsToLinear(const DSP_FLOAT decibels) {
+dsp::Sample dsp::decibelsToLinear(const Sample decibels) {
     return ONE_OVER_SIX_DB * decibels;
 }
 
-DSP_FLOAT dsp::linearToDecibels(const DSP_FLOAT linear) {
+dsp::Sample dsp::linearToDecibels(const Sample linear) {
     return SIX_DB * linear;
 }
 
-DSP_FLOAT dsp::decibelsToRatio(const DSP_FLOAT decibels) {
+dsp::Sample dsp::decibelsToRatio(const Sample decibels) {
     return exp2(decibelsToLinear(decibels));
 }
 
-DSP_FLOAT dsp::ratioToDecibels(const DSP_FLOAT ratio) {
+dsp::Sample dsp::ratioToDecibels(const Sample ratio) {
     return linearToDecibels(log2(ratio));
 }
 
-DSP_FLOAT dsp::clip(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
+dsp::Sample dsp::clip(const Sample signal, const Sample min, const Sample max) {
     if (min >= max) {
         return min;
     }
     return signal < min ? min : signal > max ? max : signal;
 }
 
-DSP_FLOAT dsp::wrap(const DSP_FLOAT signal, const DSP_FLOAT min, const DSP_FLOAT max) {
+dsp::Sample dsp::wrap(const Sample signal, const Sample min, const Sample max) {
     if (min == max) {
         return 0.0;
     }
-    const DSP_FLOAT diff = max - min;
-    const DSP_FLOAT adjusted = signal - min;
+    const Sample diff = max - min;
+    const Sample adjusted = signal - min;
     return signal - floor(adjusted / diff) * diff;
 }
 
-DSP_FLOAT dsp::linear(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index, DSP_FLOAT defaultValue) {
+dsp::Sample dsp::linear(const std::vector<Sample> &table, const Sample index, Sample defaultValue) {
     assert(index >= 0.0);
     if (table.size() == 0) {
         return defaultValue;
     }
     int indexFloor = static_cast<int>(index);
-    DSP_FLOAT mu = index - indexFloor;
-    DSP_FLOAT x1 = table[indexFloor % table.size()];
-    DSP_FLOAT x2 = table[(indexFloor + 1) % table.size()];
+    Sample mu = index - indexFloor;
+    Sample x1 = table[indexFloor % table.size()];
+    Sample x2 = table[(indexFloor + 1) % table.size()];
     return x1 + mu * (x2 - x1);
 }
 
-DSP_FLOAT dsp::hermite(const std::vector<DSP_FLOAT> &table, const DSP_FLOAT index, DSP_FLOAT defaultValue) {
+dsp::Sample dsp::hermite(const std::vector<Sample> &table, const Sample index, Sample defaultValue) {
     assert(index >= 0.0);
     if (table.size() == 0) {
         return defaultValue;
     }
     int indexFloor = static_cast<int>(index);
-    DSP_FLOAT mu = index - indexFloor;
-    DSP_FLOAT x0 = table[(indexFloor + table.size() - 1) % table.size()];
-    DSP_FLOAT x1 = table[indexFloor % table.size()];
-    DSP_FLOAT x2 = table[(indexFloor + 1) % table.size()];
-    DSP_FLOAT x3 = table[(indexFloor + 2) % table.size()];
-    DSP_FLOAT a = 0.5 * (3.0 * (x1 - x2) - x0 + x3);
-    DSP_FLOAT b = x2 + x2 + x0 - 0.5 * (5.0 * x1 + x3);
-    DSP_FLOAT c = 0.5 * (x2 - x0);
+    Sample mu = index - indexFloor;
+    Sample x0 = table[(indexFloor + table.size() - 1) % table.size()];
+    Sample x1 = table[indexFloor % table.size()];
+    Sample x2 = table[(indexFloor + 1) % table.size()];
+    Sample x3 = table[(indexFloor + 2) % table.size()];
+    Sample a = 0.5 * (3.0 * (x1 - x2) - x0 + x3);
+    Sample b = x2 + x2 + x0 - 0.5 * (5.0 * x1 + x3);
+    Sample c = 0.5 * (x2 - x0);
     return ((a * mu + b) * mu + c) * mu + x1;
 }
 
@@ -103,20 +103,20 @@ std::size_t dsp::ScaledFFT::getComplexSize() {
     return audiofft::AudioFFT::ComplexSize(size);
 }
 
-void dsp::ScaledFFT::fft(std::vector<DSP_FLOAT> &timeBuffer,
-                         std::vector<DSP_FLOAT> &realBuffer,
-                         std::vector<DSP_FLOAT> &imaginaryBuffer) {
-    std::transform(timeBuffer.begin(), timeBuffer.end(), time.begin(), [this](DSP_FLOAT x) { return x * oneOverSize; });
+void dsp::ScaledFFT::fft(std::vector<Sample> &timeBuffer,
+                         std::vector<Sample> &realBuffer,
+                         std::vector<Sample> &imaginaryBuffer) {
+    std::transform(timeBuffer.begin(), timeBuffer.end(), time.begin(), [this](Sample x) { return x * oneOverSize; });
     audioFFT.fft(time.data(), real.data(), imaginary.data());
     std::copy(real.begin(), real.end(), realBuffer.begin());
     std::copy(imaginary.begin(), imaginary.end(), imaginaryBuffer.begin());
 }
 
-void dsp::ScaledFFT::ifft(std::vector<DSP_FLOAT> &timeBuffer,
-                          std::vector<DSP_FLOAT> &realBuffer,
-                          std::vector<DSP_FLOAT> &imaginaryBuffer) {
+void dsp::ScaledFFT::ifft(std::vector<Sample> &timeBuffer,
+                          std::vector<Sample> &realBuffer,
+                          std::vector<Sample> &imaginaryBuffer) {
     std::copy(realBuffer.begin(), realBuffer.end(), real.begin());
     std::copy(imaginaryBuffer.begin(), imaginaryBuffer.end(), imaginary.begin());
     audioFFT.ifft(time.data(), real.data(), imaginary.data());
-    std::transform(time.begin(), time.end(), timeBuffer.begin(), [this](DSP_FLOAT x) { return x * size; });
+    std::transform(time.begin(), time.end(), timeBuffer.begin(), [this](Sample x) { return x * size; });
 }

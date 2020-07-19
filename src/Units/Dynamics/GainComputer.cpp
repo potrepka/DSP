@@ -26,31 +26,31 @@ std::shared_ptr<dsp::InputParameter> dsp::GainComputer::getKnee() const {
 void dsp::GainComputer::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &thresholdBuffer = getThreshold()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &compressionRatioBuffer = getCompressionRatio()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &gateRatioBuffer = getGateRatio()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &kneeBuffer = getKnee()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &thresholdBuffer = getThreshold()->getChannel(i)->getBuffer();
+        std::vector<Sample> &compressionRatioBuffer = getCompressionRatio()->getChannel(i)->getBuffer();
+        std::vector<Sample> &gateRatioBuffer = getGateRatio()->getChannel(i)->getBuffer();
+        std::vector<Sample> &kneeBuffer = getKnee()->getChannel(i)->getBuffer();
+        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
-            DSP_FLOAT &input = inputBuffer[k];
-            DSP_FLOAT &output = outputBuffer[k];
-            DSP_FLOAT &threshold = thresholdBuffer[k];
-            DSP_FLOAT &compressionRatio = compressionRatioBuffer[k];
-            DSP_FLOAT &gateRatio = gateRatioBuffer[k];
-            DSP_FLOAT &knee = kneeBuffer[k];
+            Sample &input = inputBuffer[k];
+            Sample &output = outputBuffer[k];
+            Sample &threshold = thresholdBuffer[k];
+            Sample &compressionRatio = compressionRatioBuffer[k];
+            Sample &gateRatio = gateRatioBuffer[k];
+            Sample &knee = kneeBuffer[k];
 
-            DSP_FLOAT halfKnee = 0.5 * knee;
-            DSP_FLOAT kneeLow = threshold - halfKnee;
-            DSP_FLOAT kneeHigh = threshold + halfKnee;
+            Sample halfKnee = 0.5 * knee;
+            Sample kneeLow = threshold - halfKnee;
+            Sample kneeHigh = threshold + halfKnee;
 
             if (input > kneeLow && input < kneeHigh) {
-                DSP_FLOAT t;
+                Sample t;
                 if (gateRatio == 1.0) {
                     t = input / knee + 0.5;
                 } else {
-                    DSP_FLOAT overGate = halfKnee / gateRatio;
-                    DSP_FLOAT diffGate = halfKnee - overGate;
+                    Sample overGate = halfKnee / gateRatio;
+                    Sample diffGate = halfKnee - overGate;
                     t = (sqrt(halfKnee * overGate + input * diffGate) - overGate) / diffGate;
                 }
                 if (compressionRatio == 1.0) {
@@ -59,13 +59,13 @@ void dsp::GainComputer::process() {
                     output = 2.0 * halfKnee * t - halfKnee - input + (halfKnee / compressionRatio - halfKnee) * t * t;
                 }
             } else if (input > threshold) {
-                if (input == std::numeric_limits<DSP_FLOAT>::infinity()) {
+                if (input == std::numeric_limits<Sample>::infinity()) {
                     output = 0.0;
                 } else {
                     output = (threshold - input) * (1.0 - 1.0 / compressionRatio);
                 }
             } else {
-                if (input == -std::numeric_limits<DSP_FLOAT>::infinity()) {
+                if (input == -std::numeric_limits<Sample>::infinity()) {
                     output = 0.0;
                 } else {
                     output = (threshold - input) * (1.0 - gateRatio);

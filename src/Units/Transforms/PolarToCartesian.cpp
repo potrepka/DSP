@@ -25,12 +25,12 @@ std::shared_ptr<dsp::OutputParameter> dsp::PolarToCartesian::getImaginary() cons
 void dsp::PolarToCartesian::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &magnitudeBuffer = getMagnitude()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &realBuffer = getReal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();
+        std::vector<Sample> &magnitudeBuffer = getMagnitude()->getChannel(i)->getBuffer();
+        std::vector<Sample> &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
+        std::vector<Sample> &realBuffer = getReal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
-            DSP_FLOAT theta = TAU * phaseBuffer[k];
+            Sample theta = TAU * phaseBuffer[k];
             realBuffer[k] = magnitudeBuffer[k] * cos(theta);
             imaginaryBuffer[k] = magnitudeBuffer[k] * sin(theta);
         }

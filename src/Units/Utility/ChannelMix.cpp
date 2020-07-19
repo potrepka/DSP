@@ -35,16 +35,15 @@ void dsp::ChannelMix::process() {
                            buffer.end(),
                            getInputSignal()->getChannel(i)->getBuffer().begin(),
                            buffer.begin(),
-                           std::plus<DSP_FLOAT>());
+                           std::plus<Sample>());
         }
-        std::transform(
-                buffer.begin(), buffer.end(), buffer.begin(), [this](DSP_FLOAT x) { return x / getNumChannels(); });
+        std::transform(buffer.begin(), buffer.end(), buffer.begin(), [this](Sample x) { return x / getNumChannels(); });
         for (unsigned int i = 0; i < getNumChannels(); i++) {
-            std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &mixBuffer = getMixAmount()->getChannel(i)->getBuffer();
-            std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+            std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+            std::vector<Sample> &mixBuffer = getMixAmount()->getChannel(i)->getBuffer();
+            std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); k++) {
-                DSP_FLOAT wet;
+                Sample wet;
                 switch (mode) {
                     case Mode::MID: wet = buffer[k] - inputBuffer[k]; break;
                     case Mode::SIDE: wet = -buffer[k]; break;

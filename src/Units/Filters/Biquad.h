@@ -27,18 +27,18 @@ private:
     const std::shared_ptr<InputParameter> gain;
 
     Mode mode;
-    std::vector<DSP_FLOAT> x1;
-    std::vector<DSP_FLOAT> x2;
-    std::vector<DSP_FLOAT> y1;
-    std::vector<DSP_FLOAT> y2;
-    DSP_FLOAT a0;
-    DSP_FLOAT a1;
-    DSP_FLOAT a2;
-    DSP_FLOAT b0;
-    DSP_FLOAT b1;
-    DSP_FLOAT b2;
+    std::vector<Sample> x1;
+    std::vector<Sample> x2;
+    std::vector<Sample> y1;
+    std::vector<Sample> y2;
+    Sample a0;
+    Sample a1;
+    Sample a2;
+    Sample b0;
+    Sample b1;
+    Sample b2;
 
-    void calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FLOAT &q, const DSP_FLOAT &gain);
+    void calculateCoefficients(const Sample &frequency, const Sample &q, const Sample &gain);
 };
 
 } // namespace dsp

@@ -40,11 +40,11 @@ void dsp::Biquad::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::Biquad::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &qBuffer = getQ()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &gainBuffer = getGain()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
+        std::vector<Sample> &qBuffer = getQ()->getChannel(i)->getBuffer();
+        std::vector<Sample> &gainBuffer = getGain()->getChannel(i)->getBuffer();
+        std::vector<Sample> &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); k++) {
             if (qBuffer[k] == 0.0) {
                 outputBuffer[k] = 0.0;
@@ -60,7 +60,7 @@ void dsp::Biquad::process() {
     }
 }
 
-void dsp::Biquad::calculateCoefficients(const DSP_FLOAT &frequency, const DSP_FLOAT &q, const DSP_FLOAT &gain) {
+void dsp::Biquad::calculateCoefficients(const Sample &frequency, const Sample &q, const Sample &gain) {
     const double omega = TAU * frequency * getOneOverSampleRate();
     const double sinW = sin(omega);
     const double cosW = cos(omega);

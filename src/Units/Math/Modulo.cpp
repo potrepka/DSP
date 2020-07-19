@@ -13,5 +13,5 @@ std::shared_ptr<dsp::InputParameter> dsp::Modulo::getDivisor() const {
 
 void dsp::Modulo::process() {
     Unit::process();
-    transform(getDivisor(), [](DSP_FLOAT x, DSP_FLOAT y) { return y == 0.0 ? 0.0 : x - floor(x / y) * y; });
+    transform(getDivisor(), [](Sample x, Sample y) { return y == 0.0 ? 0.0 : x - floor(x / y) * y; });
 }

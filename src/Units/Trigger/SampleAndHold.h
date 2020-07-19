@@ -18,7 +18,7 @@ protected:
 private:
     const std::shared_ptr<InputParameter> trigger;
 
-    std::vector<DSP_FLOAT> memory;
+    std::vector<Sample> memory;
 };
 
 } // namespace dsp

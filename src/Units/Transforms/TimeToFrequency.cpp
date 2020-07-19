@@ -21,9 +21,9 @@ void dsp::TimeToFrequency::setBufferSizeNoLock(unsigned int bufferSize) {
 void dsp::TimeToFrequency::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::vector<DSP_FLOAT> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &realBuffer = getReal()->getChannel(i)->getBuffer();
-        std::vector<DSP_FLOAT> &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();
+        std::vector<Sample> &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &realBuffer = getReal()->getChannel(i)->getBuffer();
+        std::vector<Sample> &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();
 
         fft.fft(inputBuffer, realBuffer, imaginaryBuffer);
     }

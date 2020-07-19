@@ -41,7 +41,7 @@ unsigned char dsp::Midi::TimedMessage::getByte(unsigned int index) const {
     return bytes[index];
 }
 
-DSP_FLOAT dsp::Midi::TimedMessage::getByteAsUnipolar(unsigned int index) const {
+dsp::Sample dsp::Midi::TimedMessage::getByteAsUnipolar(unsigned int index) const {
     assert(index < bytes.size());
     return bytes[index] == 0 ? 0.0 : (bytes[index] + 1) * 0.0078125;
 }
@@ -51,7 +51,7 @@ void dsp::Midi::TimedMessage::setByte(unsigned int index, unsigned char value) {
     bytes[index] = value;
 }
 
-void dsp::Midi::TimedMessage::setByteUsingUnipolar(unsigned int index, DSP_FLOAT value) {
+void dsp::Midi::TimedMessage::setByteUsingUnipolar(unsigned int index, Sample value) {
     assert(index < bytes.size());
     bytes[index] = value == 0.0 ? 0 : static_cast<unsigned char>(value * 128 - 1);
 }
@@ -61,7 +61,7 @@ unsigned short dsp::Midi::TimedMessage::getShort(unsigned int lsb, unsigned int 
     return bytes[lsb] + bytes[msb] * 128;
 }
 
-DSP_FLOAT dsp::Midi::TimedMessage::getShortAsBipolar(unsigned int lsb, unsigned int msb) const {
+dsp::Sample dsp::Midi::TimedMessage::getShortAsBipolar(unsigned int lsb, unsigned int msb) const {
     assert(lsb < bytes.size() && msb < bytes.size());
     unsigned short x = getShort(lsb, msb) - 8192;
     return (x > 0 ? x + 1 : x) * 0.0001220703125;
@@ -75,7 +75,7 @@ void dsp::Midi::TimedMessage::setShort(unsigned int lsb, unsigned int msb, unsig
     bytes[msb] = most;
 }
 
-void dsp::Midi::TimedMessage::setShortUsingBipolar(unsigned int lsb, unsigned int msb, DSP_FLOAT bipolar) {
+void dsp::Midi::TimedMessage::setShortUsingBipolar(unsigned int lsb, unsigned int msb, Sample bipolar) {
     assert(lsb < bytes.size() && msb < bytes.size());
     setShort(lsb, msb, static_cast<unsigned short>(bipolar * 8192 + 8192));
 }

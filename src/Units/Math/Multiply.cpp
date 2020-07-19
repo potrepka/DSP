@@ -36,7 +36,7 @@ void dsp::Multiply::process() {
                                getOutputSignal()->getChannel(i)->getBuffer().end(),
                                input->getChannel(i)->getBuffer().begin(),
                                getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                               std::multiplies<DSP_FLOAT>());
+                               std::multiplies<Sample>());
             }
         }
     }

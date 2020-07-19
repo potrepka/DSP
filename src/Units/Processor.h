@@ -11,8 +11,8 @@ public:
     Processor(Type inType, Type outType, Space space = Space::TIME);
 
 protected:
-    void transform(std::function<DSP_FLOAT(DSP_FLOAT)> transform);
-    void transform(std::shared_ptr<InputParameter> input, std::function<DSP_FLOAT(DSP_FLOAT, DSP_FLOAT)> transform);
+    void transform(std::function<Sample(Sample)> transform);
+    void transform(std::shared_ptr<InputParameter> input, std::function<Sample(Sample, Sample)> transform);
 };
 
 } // namespace dsp

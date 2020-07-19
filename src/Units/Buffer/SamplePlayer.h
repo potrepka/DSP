@@ -43,7 +43,7 @@ private:
     const std::shared_ptr<OutputParameter> currentTime;
 
     Mode mode;
-    std::vector<DSP_FLOAT> readIndex;
+    std::vector<Sample> readIndex;
 };
 
 } // namespace dsp
