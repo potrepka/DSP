@@ -48,6 +48,7 @@ void dsp::VariableDelay::process() {
             Iterator outputIterator = outputBuffer.begin();
 #if DSP_USE_VC
             Vector index = writeIndex + Vector::IndexesFromZero();
+            Sample size = Vector::Size;
 #else
             Sample index = writeIndex;
 #endif
@@ -58,9 +59,9 @@ void dsp::VariableDelay::process() {
                 }
                 const Vector delayTimeClipped = clip(*delayTimeIterator, 0.0, maxDelayTime);
                 Vector readIndex = index - delayTimeClipped * getSampleRate();
-                readIndex(readIndex < 0.0) += buffer->getBufferSize();
+                readIndex(readIndex < Vector::Zero()) += buffer->getBufferSize();
                 *outputIterator = hermite(buffer->getChannel(i), readIndex);
-                index += Vector::Size;
+                index += size;
                 index(index >= buffer->getBufferSize()) -= buffer->getBufferSize();
 #else
                 buffer->getChannel(i)[static_cast<std::size_t>(index)] = *inputIterator;
@@ -70,7 +71,7 @@ void dsp::VariableDelay::process() {
                     readIndex += buffer->getBufferSize();
                 }
                 *outputIterator = hermite(buffer->getChannel(i), readIndex);
-                ++index;
+                index += 1.0;
                 if (index >= buffer->getBufferSize()) {
                     index = 0;
                 }
