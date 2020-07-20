@@ -25,8 +25,8 @@ std::shared_ptr<dsp::InputParameter> dsp::Counter::getSpeed() const {
 
 void dsp::Counter::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
-    memory.resize(numChannels, 0);
-    index.resize(numChannels, 0);
+    memory.resize(numChannels, 0.0);
+    index.resize(numChannels, 0.0);
 }
 
 void dsp::Counter::process() {
@@ -37,15 +37,40 @@ void dsp::Counter::process() {
         Array &offsetBuffer = getOffset()->getChannel(i)->getBuffer();
         Array &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); ++k) {
-            if (resetTriggerBuffer[k]) {
-                index[i] = 0;
+        Iterator resetTriggerIterator = resetTriggerBuffer.begin();
+        Iterator triggerIterator = triggerBuffer.begin();
+        Iterator offsetIterator = offsetBuffer.begin();
+        Iterator speedIterator = speedBuffer.begin();
+        Iterator outputIterator = outputBuffer.begin();
+        while (outputIterator != outputBuffer.end()) {
+#if DSP_USE_VC
+            Vector memoryVector;
+            for (int k = 0; k < Vector::Size; ++k) {
+                if ((*resetTriggerIterator)[k]) {
+                    index[i] = 0.0;
+                }
+                if ((*triggerIterator)[k]) {
+                    memory[i] = index[i];
+                    index[i] += (*speedIterator)[k];
+                }
+                memoryVector[k] = memory[i];
             }
-            if (triggerBuffer[k]) {
+            *outputIterator = Vc::floor(memoryVector + *offsetIterator);
+#else
+            if (*resetTriggerIterator) {
+                index[i] = 0.0;
+            }
+            if (*triggerIterator) {
                 memory[i] = index[i];
-                index[i] += speedBuffer[k];
+                index[i] += *speedIterator;
             }
-            outputBuffer[k] = floor(memory[i] + offsetBuffer[k]);
+            *outputIterator = floor(memory[i] + *offsetIterator);
+#endif
+            ++resetTriggerIterator;
+            ++triggerIterator;
+            ++offsetIterator;
+            ++speedIterator;
+            ++outputIterator;
         }
     }
 }

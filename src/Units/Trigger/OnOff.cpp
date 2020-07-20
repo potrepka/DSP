@@ -24,14 +24,35 @@ void dsp::OnOff::process() {
         Array &onTriggerBuffer = getOnTrigger()->getChannel(i)->getBuffer();
         Array &offTriggerBuffer = getOffTrigger()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); ++k) {
-            if (onTriggerBuffer[k]) {
+        Iterator onTriggerIterator = onTriggerBuffer.begin();
+        Iterator offTriggerIterator = offTriggerBuffer.begin();
+        Iterator outputIterator = outputBuffer.begin();
+        while (outputIterator != outputBuffer.end()) {
+#if DSP_USE_VC
+            Vector stateVector;
+            for (int k = 0; k < Vector::Size; ++k) {
+                if ((*onTriggerIterator)[k]) {
+                    state[i] = 1;
+                }
+                if ((*offTriggerIterator)[k]) {
+                    state[i] = 0;
+                }
+                stateVector[k] = state[i];
+            }
+            *outputIterator =
+                    Vc::iif(Vc::isnan(stateVector), Vector(getOutputSignal()->getDefaultValue()), stateVector);
+#else
+            if (*onTriggerIterator) {
                 state[i] = 1;
             }
-            if (offTriggerBuffer[k]) {
+            if (*offTriggerIterator) {
                 state[i] = 0;
             }
-            outputBuffer[k] = std::isnan(state[i]) ? getOutputSignal()->getDefaultValue() : state[i];
+            *outputIterator = std::isnan(state[i]) ? getOutputSignal()->getDefaultValue() : state[i];
+#endif
+            ++onTriggerIterator;
+            ++offTriggerIterator;
+            ++outputIterator;
         }
     }
 }

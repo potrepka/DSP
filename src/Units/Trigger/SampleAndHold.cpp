@@ -19,11 +19,29 @@ void dsp::SampleAndHold::process() {
         Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         Array &triggerBuffer = getTrigger()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); ++k) {
-            if (triggerBuffer[k]) {
-                memory[i] = inputBuffer[k];
+        Iterator inputIterator = inputBuffer.begin();
+        Iterator triggerIterator = triggerBuffer.begin();
+        Iterator outputIterator = outputBuffer.begin();
+        while (outputIterator != outputBuffer.end()) {
+#if DSP_USE_VC
+            Vector memoryVector;
+            for (int k = 0; k < Vector::Size; ++k) {
+                if ((*triggerIterator)[k]) {
+                    memory[i] = (*inputIterator)[k];
+                }
+                memoryVector[k] = memory[i];
             }
-            outputBuffer[k] = std::isnan(memory[i]) ? getOutputSignal()->getDefaultValue() : memory[i];
+            *outputIterator =
+                    Vc::iif(Vc::isnan(memoryVector), Vector(getOutputSignal()->getDefaultValue()), memoryVector);
+#else
+            if (*triggerIterator) {
+                memory[i] = *inputIterator;
+            }
+            *outputIterator = std::isnan(memory[i]) ? getOutputSignal()->getDefaultValue() : memory[i];
+#endif
+            ++inputIterator;
+            ++triggerIterator;
+            ++outputIterator;
         }
     }
 }

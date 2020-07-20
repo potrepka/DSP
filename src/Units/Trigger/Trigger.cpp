@@ -32,23 +32,50 @@ void dsp::Trigger::process() {
     Unit::process();
     for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
-        Array &intervalBuffer = getIntervalDuration()->getChannel(i)->getBuffer();
-        Array &delayBuffer = getDelayTime()->getChannel(i)->getBuffer();
+        Array &intervalDurationBuffer = getIntervalDuration()->getChannel(i)->getBuffer();
+        Array &delayTimeBuffer = getDelayTime()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         Array &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); ++k) {
-            if (resetTriggerBuffer[k] || intervalBuffer[k] == 0.0) {
+        Iterator resetTriggerIterator = resetTriggerBuffer.begin();
+        Iterator intervalDurationIterator = intervalDurationBuffer.begin();
+        Iterator delayTimeIterator = delayTimeBuffer.begin();
+        Iterator outputIterator = outputBuffer.begin();
+        Iterator currentTimeIterator = currentTimeBuffer.begin();
+        while (outputIterator != outputBuffer.end()) {
+#if DSP_USE_VC
+            Vector indexVector;
+            for (int k = 0; k < Vector::Size; ++k) {
+                if ((*resetTriggerIterator)[k] || (*intervalDurationIterator)[k] == 0.0) {
+                    index[i] = 0.0;
+                }
+                indexVector[k] = index[i];
+                index[i] += 1.0;
+            }
+            Vector interval = Vc::abs(*intervalDurationIterator * getSampleRate());
+            Vector delayed = indexVector - *delayTimeIterator * getSampleRate();
+            indexVector(delayed >= interval) -= Vc::floor(delayed / interval) * interval;
+            *outputIterator = Vc::iif(indexVector < Vector::One(), Vector::One(), Vector::Zero());
+            *currentTimeIterator = indexVector * getOneOverSampleRate();
+            index[i] = indexVector[Vector::Size - 1] + 1.0;
+#else
+            if (*resetTriggerIterator || *intervalDurationIterator == 0.0) {
                 index[i] = 0.0;
             } else {
-                Sample interval = abs(intervalBuffer[k] * getSampleRate());
-                Sample delayed = index[i] - delayBuffer[k] * getSampleRate();
+                Sample interval = abs(*intervalDurationIterator * getSampleRate());
+                Sample delayed = index[i] - *delayTimeIterator * getSampleRate();
                 if (delayed >= interval) {
                     index[i] -= floor(delayed / interval) * interval;
                 }
             }
-            outputBuffer[k] = index[i] < 1.0 ? 1.0 : 0.0;
-            currentTimeBuffer[k] = index[i] * getOneOverSampleRate();
+            *outputIterator = index[i] < 1.0 ? 1.0 : 0.0;
+            *currentTimeIterator = index[i] * getOneOverSampleRate();
             index[i] += 1.0;
+#endif
+            ++resetTriggerIterator;
+            ++intervalDurationIterator;
+            ++delayTimeIterator;
+            ++outputIterator;
+            ++currentTimeIterator;
         }
     }
 }
