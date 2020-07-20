@@ -17,8 +17,7 @@ const dsp::Sample dsp::PinkNoise::NOISE_COEFFICIENT_6 = 0.5362;
 const dsp::Sample dsp::PinkNoise::NOISE_COEFFICIENT_7 = 0.115926;
 
 dsp::PinkNoise::PinkNoise()
-        : Generator(Type::BIPOLAR)
-        , seed(1) {
+        : Generator(Type::BIPOLAR) {
 #if DSP_USE_VC
     valueCoefficients[0] = VALUE_COEFFICIENT_0;
     valueCoefficients[1] = VALUE_COEFFICIENT_1;
@@ -42,6 +41,10 @@ dsp::PinkNoise::PinkNoise()
 
 void dsp::PinkNoise::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
+    seed.resize(numChannels);
+    for (auto &s : seed) {
+        s = rand();
+    }
 #if DSP_USE_VC
     values.resize(numChannels, Vc::Memory<Vector, 8>() = 0.0);
 #else
@@ -59,8 +62,8 @@ void dsp::PinkNoise::process() {
         Array &b = values[i];
 #endif
         for (unsigned int k = 0; k < getBufferSize(); ++k) {
-            seed *= 282475249;
-            Sample white = static_cast<Sample>(seed) * 4.65661287e-10;
+            seed[i] *= 282475249;
+            Sample white = static_cast<Sample>(seed[i]) * 4.65661287e-10;
 #if DSP_USE_VC
             Vector sum = 0.0;
             for (std::size_t m = 0; m < b.vectorsCount(); ++m) {

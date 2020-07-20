@@ -30,7 +30,7 @@ private:
     static const Sample NOISE_COEFFICIENT_6;
     static const Sample NOISE_COEFFICIENT_7;
 
-    int seed;
+    std::vector<int> seed;
 #if DSP_USE_VC
     std::vector<Vc::Memory<Vector, 8>> values;
     Vc::Memory<Vector, 8> valueCoefficients;

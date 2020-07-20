@@ -10,10 +10,11 @@ public:
     WhiteNoise();
 
 protected:
+    void setNumChannelsNoLock(unsigned int numChannels) override;
     void process() override;
 
 private:
-    int seed;
+    std::vector<int> seed;
 };
 
 } // namespace dsp
