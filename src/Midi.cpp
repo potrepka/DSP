@@ -116,7 +116,7 @@ dsp::Midi::MidiInput::MidiInput(unsigned int port)
     reset = std::make_shared<Input>(getBufferSize(), Type::BINARY);
     clock = std::make_shared<Input>(getBufferSize(), Type::BINARY);
 
-    for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
+    for (unsigned char i = 0; i < MIDI_CHANNELS; ++i) {
         notePressureState[i].resize(MIDI_NOTES);
         controlChangeState[i].resize(MIDI_NOTES);
         channelPressureState[i] = 0.0;
@@ -230,7 +230,7 @@ void dsp::Midi::MidiInput::removeCallback(std::shared_ptr<std::function<void(Mid
 
 void dsp::Midi::MidiInput::run() {
     lock();
-    for (unsigned int k = 0; k < getBufferSize(); k++) {
+    for (unsigned int k = 0; k < getBufferSize(); ++k) {
         bool noteOnState = false;
         bool noteOffState = false;
         bool playState = false;
@@ -277,7 +277,7 @@ void dsp::Midi::MidiInput::run() {
                 case MIDI_SYSTEM_RESET: break;
             }
         }
-        for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
+        for (unsigned char i = 0; i < MIDI_CHANNELS; ++i) {
             for (unsigned char n = 0; n < MIDI_NOTES; n++) {
                 noteOn[i][n]->getBuffer()[k] = noteOnState ? 1.0 : 0.0;
                 noteOff[i][n]->getBuffer()[k] = noteOffState ? 1.0 : 0.0;
@@ -330,7 +330,7 @@ dsp::Midi::MidiOutput::MidiOutput(unsigned int port) {
     reset = std::make_shared<Output>(getBufferSize(), Type::BINARY);
     clock = std::make_shared<Output>(getBufferSize(), Type::BINARY);
 
-    for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
+    for (unsigned char i = 0; i < MIDI_CHANNELS; ++i) {
         notePressureState[i].resize(MIDI_NOTES);
         controlChangeState[i].resize(MIDI_NOTES);
         channelPressureState[i] = 0;
@@ -426,9 +426,9 @@ void dsp::Midi::MidiOutput::run() {
     TimedMessage message1(0.0, std::vector<unsigned char>(1));
     TimedMessage message2(0.0, std::vector<unsigned char>(2));
     TimedMessage message3(0.0, std::vector<unsigned char>(3));
-    for (unsigned int k = 0; k < getBufferSize(); k++) {
+    for (unsigned int k = 0; k < getBufferSize(); ++k) {
         int64_t nanoseconds = static_cast<int64_t>(1000000000 * getOneOverSampleRate() * k);
-        for (unsigned char i = 0; i < MIDI_CHANNELS; i++) {
+        for (unsigned char i = 0; i < MIDI_CHANNELS; ++i) {
             for (unsigned char n = 0; n < MIDI_NOTES; n++) {
                 if (noteOff[i][n]->getBuffer()[k]) {
                     message3.setByte(0, MIDI_NOTE_OFF);

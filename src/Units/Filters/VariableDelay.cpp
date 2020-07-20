@@ -39,23 +39,45 @@ void dsp::VariableDelay::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::VariableDelay::process() {
     Unit::process();
     if (buffer->getBufferSize() > 0) {
-        for (unsigned int i = 0; i < getNumChannels(); i++) {
+        for (unsigned int i = 0; i < getNumChannels(); ++i) {
             Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
             Array &delayTimeBuffer = getDelayTime()->getChannel(i)->getBuffer();
             Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-            unsigned int index = writeIndex;
-            for (unsigned int k = 0; k < getBufferSize(); k++) {
-                const Sample delayTime = clip(delayTimeBuffer[i], 0.0, maxDelayTime);
-                Sample readIndex = static_cast<Sample>(index) - delayTime * getSampleRate();
+            Iterator inputIterator = inputBuffer.begin();
+            Iterator delayTimeIterator = delayTimeBuffer.begin();
+            Iterator outputIterator = outputBuffer.begin();
+#if DSP_USE_VC
+            Vector index = writeIndex + Vector::IndexesFromZero();
+#else
+            Sample index = writeIndex;
+#endif
+            while (outputIterator != outputBuffer.end()) {
+#if DSP_USE_VC
+                for (int k = 0; k < Vector::Size; ++k) {
+                    buffer->getChannel(i)[static_cast<std::size_t>(index[k])] = (*inputIterator)[k];
+                }
+                const Vector delayTimeClipped = clip(*delayTimeIterator, 0.0, maxDelayTime);
+                Vector readIndex = index - delayTimeClipped * getSampleRate();
+                readIndex(readIndex < 0.0) += buffer->getBufferSize();
+                *outputIterator = hermite(buffer->getChannel(i), readIndex);
+                index += Vector::Size;
+                index(index >= buffer->getBufferSize()) -= buffer->getBufferSize();
+#else
+                buffer->getChannel(i)[static_cast<std::size_t>(index)] = *inputIterator;
+                const Sample delayTimeClipped = clip(*delayTimeIterator, 0.0, maxDelayTime);
+                Sample readIndex = index - delayTimeClipped * getSampleRate();
                 if (readIndex < 0.0) {
                     readIndex += buffer->getBufferSize();
                 }
-                buffer->getChannel(i)[index] = inputBuffer[k];
-                outputBuffer[k] = hermite(buffer->getChannel(i), readIndex);
-                index++;
+                *outputIterator = hermite(buffer->getChannel(i), readIndex);
+                ++index;
                 if (index >= buffer->getBufferSize()) {
                     index = 0;
                 }
+#endif
+                ++inputIterator;
+                ++delayTimeIterator;
+                ++outputIterator;
             }
         }
         writeIndex += getBufferSize();
@@ -64,5 +86,9 @@ void dsp::VariableDelay::process() {
 }
 
 unsigned int dsp::VariableDelay::getDelayBufferSize() {
+#if DSP_USE_VC
+    return static_cast<unsigned int>(ceil(maxDelayTime * getSampleRate())) + 2 + Vector::Size;
+#else
     return static_cast<unsigned int>(ceil(maxDelayTime * getSampleRate())) + 2;
+#endif
 }

@@ -7,6 +7,32 @@
 
 namespace dsp {
 
+#if DSP_USE_VC
+std::size_t getNumVectors(std::size_t size);
+
+Vector negative(const Vector value);
+Vector oneOver(const Vector value);
+
+Vector toBinary(const Vector value);
+Vector toInteger(const Vector value);
+
+Vector bipolarToUnipolar(const Vector bipolar);
+Vector unipolarToBipolar(const Vector unipolar);
+
+Vector decibelsToLinear(const Vector decibels);
+Vector linearToDecibels(const Vector linear);
+
+Vector decibelsToRatio(const Vector decibels);
+Vector ratioToDecibels(const Vector ratio);
+
+Vector clip(const Vector signal, const Vector min, const Vector max);
+Vector wrap(const Vector signal, const Vector min, const Vector max);
+
+std::function<Sample(Sample)> getValue(const Array &table, std::size_t offset);
+
+Vector linear(const Array &table, const Vector index, Vector defaultValue = 0.0);
+Vector hermite(const Array &table, const Vector index, Vector defaultValue = 0.0);
+#else
 Sample negative(const Sample value);
 Sample oneOver(const Sample value);
 
@@ -21,6 +47,7 @@ Sample linearToDecibels(const Sample linear);
 
 Sample decibelsToRatio(const Sample decibels);
 Sample ratioToDecibels(const Sample ratio);
+#endif
 
 Sample clip(const Sample signal, const Sample min, const Sample max);
 Sample wrap(const Sample signal, const Sample min, const Sample max);

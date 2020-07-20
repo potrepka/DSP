@@ -15,11 +15,11 @@ void dsp::SampleAndHold::setNumChannelsNoLock(unsigned int numChannels) {
 
 void dsp::SampleAndHold::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         Array &triggerBuffer = getTrigger()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); ++k) {
             if (triggerBuffer[k]) {
                 memory[i] = inputBuffer[k];
             }

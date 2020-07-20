@@ -11,7 +11,7 @@ void dsp::PinkNoise::setNumChannelsNoLock(unsigned int numChannels) {
 
 void dsp::PinkNoise::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         Sample &b0 = values[i][0];
         Sample &b1 = values[i][1];
@@ -20,7 +20,7 @@ void dsp::PinkNoise::process() {
         Sample &b4 = values[i][4];
         Sample &b5 = values[i][5];
         Sample &b6 = values[i][6];
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); ++k) {
             seed *= 16807;
             Sample white = static_cast<Sample>(seed) * 4.65661287e-10;
             b0 = 0.99886 * b0 + white * 0.0555179;

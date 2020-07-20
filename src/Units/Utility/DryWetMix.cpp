@@ -23,13 +23,28 @@ std::shared_ptr<dsp::InputParameter> dsp::DryWetMix::getMixAmount() const {
 
 void dsp::DryWetMix::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &dryBuffer = getDrySignal()->getChannel(i)->getBuffer();
         Array &wetBuffer = getWetSignal()->getChannel(i)->getBuffer();
-        Array &mixBuffer = getMixAmount()->getChannel(i)->getBuffer();
+        Array &mixAmountBuffer = getMixAmount()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
-            outputBuffer[k] = dryBuffer[k] + mixBuffer[k] * (wetBuffer[k] - dryBuffer[k]);
+        Iterator dryIterator = dryBuffer.begin();
+        Iterator wetIterator = wetBuffer.begin();
+        Iterator mixAmountIterator = mixAmountBuffer.begin();
+        Iterator outputIterator = outputBuffer.begin();
+        while (outputIterator != outputBuffer.end()) {
+#if DSP_USE_VC
+            Vector d = *dryIterator;
+            Vector w = *wetIterator;
+#else
+            Sample d = *dryIterator;
+            Sample w = *wetIterator;
+#endif
+            *outputIterator = d + *mixAmountIterator * (w - d);
+            ++dryIterator;
+            ++wetIterator;
+            ++mixAmountIterator;
+            ++outputIterator;
         }
     }
 }

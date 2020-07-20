@@ -20,16 +20,34 @@ void dsp::Phasor::setNumChannelsNoLock(unsigned int numChannels) {
 
 void dsp::Phasor::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
         Array &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
-            if (resetTriggerBuffer[k]) {
+        Iterator resetTriggerIterator = resetTriggerBuffer.begin();
+        Iterator frequencyIterator = frequencyBuffer.begin();
+        Iterator outputIterator = outputBuffer.begin();
+        while (outputIterator != outputBuffer.end()) {
+#if DSP_USE_VC
+            Vector phaseVector;
+            for (int k = 0; k < Vector::Size; ++k) {
+                if ((*resetTriggerIterator)[k]) {
+                    phase[i] = 0.0;
+                }
+                phaseVector[k] = phase[i];
+                phase[i] += (*frequencyIterator)[k] * getOneOverSampleRate();
+            }
+            *outputIterator = wrap(phaseVector, 0.0, 1.0);
+#else
+            if (*resetTriggerIterator) {
                 phase[i] = 0.0;
             }
-            outputBuffer[k] = phase[i];
-            phase[i] = wrap(phase[i] + frequencyBuffer[k] * getOneOverSampleRate(), 0.0, 1.0);
+            phase[i] += *frequencyIterator * getOneOverSampleRate();
+            *outputIterator = wrap(phase[i], 0.0, 1.0);
+#endif
+            ++resetTriggerIterator;
+            ++frequencyIterator;
+            ++outputIterator;
         }
     }
 }

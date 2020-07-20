@@ -20,7 +20,7 @@ void dsp::FrequencyToTime::setBufferSizeNoLock(unsigned int bufferSize) {
 
 void dsp::FrequencyToTime::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &realBuffer = getReal()->getChannel(i)->getBuffer();
         Array &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();

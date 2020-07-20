@@ -367,7 +367,7 @@ void dsp::Unit::sortUnitsNoLock() {
                 }
             }
             orderMap[unit] = increment;
-            increment++;
+            ++increment;
             queue.pop();
         }
         for (const auto &unit : children) {

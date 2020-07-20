@@ -36,14 +36,14 @@ void dsp::AHR::setNumChannelsNoLock(unsigned int numChannels) {
 
 void dsp::AHR::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
         Array &attackBuffer = getAttack()->getChannel(i)->getBuffer();
         Array &holdBuffer = getHold()->getChannel(i)->getBuffer();
         Array &releaseBuffer = getRelease()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         Array &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); ++k) {
             if (resetTriggerBuffer[k]) {
                 index[i] = 0;
                 value[i] = 1.0;
@@ -59,7 +59,7 @@ void dsp::AHR::process() {
                 outputBuffer[k] = value[i];
             }
             currentTimeBuffer[k] = index[i] * getOneOverSampleRate();
-            index[i]++;
+            ++index[i];
         }
     }
 }

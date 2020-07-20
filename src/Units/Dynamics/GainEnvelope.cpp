@@ -20,12 +20,12 @@ void dsp::GainEnvelope::setNumChannelsNoLock(unsigned int numChannels) {
 
 void dsp::GainEnvelope::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         Array &attackBuffer = getAttack()->getChannel(i)->getBuffer();
         Array &releaseBuffer = getRelease()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); ++k) {
             Sample samples;
             if (abs(inputBuffer[k]) > abs(outputPrevious[i])) {
                 samples = attackBuffer[k] * getSampleRate();

@@ -49,13 +49,25 @@ void dsp::Connection::setDefaultValue(Sample defaultValue) {
 
 void dsp::Connection::fillBuffer(Sample value) {
     lock();
-    std::fill(buffer.begin(), buffer.end(), value);
+    for (Iterator it = buffer.begin(); it != buffer.end(); ++it) {
+#if DSP_USE_VC
+        *it = Vector(value);
+#else
+        *it = value;
+#endif
+    }
     unlock();
 }
 
 void dsp::Connection::clearBuffer() {
     lock();
-    std::fill(buffer.begin(), buffer.end(), defaultValue);
+    for (Iterator it = buffer.begin(); it != buffer.end(); ++it) {
+#if DSP_USE_VC
+        *it = Vector(defaultValue);
+#else
+        *it = defaultValue;
+#endif
+    }
     unlock();
 }
 
@@ -119,14 +131,22 @@ void dsp::Input::copyBuffers() {
     lock();
     if (connections.size() == 0) {
         for (Iterator it = buffer.begin(); it != buffer.end(); ++it) {
+#if DSP_USE_VC
             *it = Vector(defaultValue);
+#else
+            *it = defaultValue;
+#endif
         }
     } else {
         for (std::size_t i = 0; i < connections.size(); ++i) {
             iterators[i] = connections[i]->getBuffer().begin();
         }
         for (Iterator it = buffer.begin(); it != buffer.end(); ++it) {
-            Vector sum = Vector(0.0);
+#if DSP_USE_VC
+            Vector sum = Vector::Zero();
+#else
+            Sample sum = 0.0;
+#endif
             for (Iterator &iterator : iterators) {
                 sum += *iterator;
                 ++iterator;
@@ -231,7 +251,7 @@ template <class T> void dsp::ConnectionParameter<T>::setNumChannels(unsigned int
         channels.erase(channels.begin() + numChannels, channels.end());
     } else {
         channels.reserve(numChannels);
-        for (unsigned int i = getNumChannels(); i < numChannels; i++) {
+        for (unsigned int i = getNumChannels(); i < numChannels; ++i) {
             channels.push_back(std::make_shared<T>(bufferSize, type, space, defaultValue));
         }
     }
@@ -335,7 +355,7 @@ void dsp::InputParameter::connect(std::shared_ptr<OutputParameter> output) {
     lock();
     output->lock();
     if (getNumChannels() > 0 && output->getNumChannels() > 0) {
-        for (unsigned int i = 0; i < getNumChannels() || i < output->getNumChannels(); i++) {
+        for (unsigned int i = 0; i < getNumChannels() || i < output->getNumChannels(); ++i) {
             std::shared_ptr<Input> channel = getChannel(i % getNumChannels());
             std::shared_ptr<Output> outputChannel = output->getChannel(i % output->getNumChannels());
             channel->connect(outputChannel);
@@ -349,7 +369,7 @@ void dsp::InputParameter::disconnect(std::shared_ptr<OutputParameter> output) {
     lock();
     output->lock();
     if (getNumChannels() > 0 && output->getNumChannels() > 0) {
-        for (unsigned int i = 0; i < getNumChannels() || i < output->getNumChannels(); i++) {
+        for (unsigned int i = 0; i < getNumChannels() || i < output->getNumChannels(); ++i) {
             std::shared_ptr<Input> channel = getChannel(i % getNumChannels());
             std::shared_ptr<Output> outputChannel = output->getChannel(i % output->getNumChannels());
             channel->disconnect(outputChannel);
@@ -395,7 +415,7 @@ void dsp::OutputParameter::connect(std::shared_ptr<InputParameter> input) {
     lock();
     input->lock();
     if (getNumChannels() > 0 && input->getNumChannels() > 0) {
-        for (unsigned int i = 0; i < getNumChannels() || i < input->getNumChannels(); i++) {
+        for (unsigned int i = 0; i < getNumChannels() || i < input->getNumChannels(); ++i) {
             std::shared_ptr<Output> channel = getChannel(i % getNumChannels());
             std::shared_ptr<Input> inputChannel = input->getChannel(i % input->getNumChannels());
             channel->connect(inputChannel);
@@ -409,7 +429,7 @@ void dsp::OutputParameter::disconnect(std::shared_ptr<InputParameter> input) {
     lock();
     input->lock();
     if (getNumChannels() > 0 && input->getNumChannels() > 0) {
-        for (unsigned int i = 0; i < getNumChannels() || i < input->getNumChannels(); i++) {
+        for (unsigned int i = 0; i < getNumChannels() || i < input->getNumChannels(); ++i) {
             std::shared_ptr<Output> channel = getChannel(i % getNumChannels());
             std::shared_ptr<Input> inputChannel = input->getChannel(i % input->getNumChannels());
             channel->disconnect(inputChannel);
@@ -454,7 +474,7 @@ void dsp::operator>>(Sample value, std::shared_ptr<dsp::OutputParameter> output)
 void dsp::operator>>(Array values, std::shared_ptr<InputParameter> input) {
     input->lock();
     if (values.size() > 0) {
-        for (unsigned int i = 0; i < input->getNumChannels(); i++) {
+        for (unsigned int i = 0; i < input->getNumChannels(); ++i) {
             values[i % values.size()] >> input->getChannel(i);
         }
     }
@@ -464,7 +484,7 @@ void dsp::operator>>(Array values, std::shared_ptr<InputParameter> input) {
 void dsp::operator>>(Array values, std::shared_ptr<OutputParameter> output) {
     output->lock();
     if (values.size() > 0) {
-        for (unsigned int i = 0; i < output->getNumChannels(); i++) {
+        for (unsigned int i = 0; i < output->getNumChannels(); ++i) {
             values[i % values.size()] >> output->getChannel(i);
         }
     }
@@ -481,7 +501,7 @@ void dsp::operator!=(std::shared_ptr<dsp::OutputParameter> output, std::shared_p
 
 void dsp::operator>>(std::shared_ptr<OutputParameter> output, std::shared_ptr<Input> input) {
     output->lock();
-    for (unsigned int i = 0; i < output->getNumChannels(); i++) {
+    for (unsigned int i = 0; i < output->getNumChannels(); ++i) {
         output->getChannel(i) >> input;
     }
     output->unlock();
@@ -489,7 +509,7 @@ void dsp::operator>>(std::shared_ptr<OutputParameter> output, std::shared_ptr<In
 
 void dsp::operator!=(std::shared_ptr<OutputParameter> output, std::shared_ptr<Input> input) {
     output->lock();
-    for (unsigned int i = 0; i < output->getNumChannels(); i++) {
+    for (unsigned int i = 0; i < output->getNumChannels(); ++i) {
         output->getChannel(i) != input;
     }
     output->unlock();
@@ -497,7 +517,7 @@ void dsp::operator!=(std::shared_ptr<OutputParameter> output, std::shared_ptr<In
 
 void dsp::operator>>(std::shared_ptr<Output> output, std::shared_ptr<InputParameter> input) {
     input->lock();
-    for (unsigned int i = 0; i < input->getNumChannels(); i++) {
+    for (unsigned int i = 0; i < input->getNumChannels(); ++i) {
         output >> input->getChannel(i);
     }
     input->unlock();
@@ -505,7 +525,7 @@ void dsp::operator>>(std::shared_ptr<Output> output, std::shared_ptr<InputParame
 
 void dsp::operator!=(std::shared_ptr<Output> output, std::shared_ptr<InputParameter> input) {
     input->lock();
-    for (unsigned int i = 0; i < input->getNumChannels(); i++) {
+    for (unsigned int i = 0; i < input->getNumChannels(); ++i) {
         output != input->getChannel(i);
     }
     input->unlock();

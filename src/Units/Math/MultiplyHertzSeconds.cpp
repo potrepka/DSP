@@ -15,11 +15,25 @@ std::shared_ptr<dsp::InputParameter> dsp::MultiplyHertzSeconds::getTime() const 
 
 void dsp::MultiplyHertzSeconds::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
-        std::transform(getFrequency()->getChannel(i)->getBuffer().begin(),
-                       getFrequency()->getChannel(i)->getBuffer().end(),
-                       getTime()->getChannel(i)->getBuffer().begin(),
-                       getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                       std::multiplies<Sample>());
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
+        Array &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
+        Array &timeBuffer = getTime()->getChannel(i)->getBuffer();
+        Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
+        Iterator frequencyIterator = frequencyBuffer.begin();
+        Iterator timeIterator = timeBuffer.begin();
+        Iterator outputIterator = outputBuffer.begin();
+        while (outputIterator != outputBuffer.end()) {
+#if DSP_USE_VC
+            Vector f = *frequencyIterator;
+            Vector t = *timeIterator;
+#else
+            Sample f = *frequencyIterator;
+            Sample t = *timeIterator;
+#endif
+            *outputIterator = f * t;
+            ++frequencyIterator;
+            ++timeIterator;
+            ++outputIterator;
+        }
     }
 }

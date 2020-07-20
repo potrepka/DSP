@@ -44,6 +44,11 @@ void dsp::Butterworth::setMode(Mode mode) {
     for (const auto &biquad : biquads) {
         setMode(biquad);
     }
+    if (order % 2 && mode != Mode::LOW_PASS && mode != Mode::HIGH_PASS) {
+        setActiveNoLock(false);
+    } else {
+        setActiveNoLock(true);
+    }
     unlock();
 }
 
@@ -71,7 +76,7 @@ void dsp::Butterworth::setOrder(unsigned int order) {
     if (order % 2 == 0) {
         firstAngle *= 0.5;
     }
-    for (unsigned int i = 0; i < halfOrder; i++) {
+    for (unsigned int i = 0; i < halfOrder; ++i) {
         std::shared_ptr<Multiply> multiply = std::make_shared<Multiply>(Type::RATIO);
         1.0 / (2.0 * cos(firstAngle + i * increment)) >> multiply->pushInputRatio();
         multiplies.push_back(multiply);
@@ -83,6 +88,11 @@ void dsp::Butterworth::setOrder(unsigned int order) {
         pushUnitNoLock(biquad);
     }
     pushUnitNoLock(output);
+    if (order % 2 && mode != Mode::LOW_PASS && mode != Mode::HIGH_PASS) {
+        setActiveNoLock(false);
+    } else {
+        setActiveNoLock(true);
+    }
     this->order = order;
     connect();
     unlock();
@@ -110,13 +120,13 @@ void dsp::Butterworth::connect() {
     } else if (order % 2 == 0) {
         input->getOutputSignal() >> biquads[0]->getInputSignal();
         biquads[halfOrder - 1]->getOutputSignal() >> output->getInputSignal();
-    } else if (mode == Mode::LOW_PASS || mode == Mode::HIGH_PASS) {
+    } else {
         input->getOutputSignal() >> onePole->getInputSignal();
         onePole->getOutputSignal() >> biquads[0]->getInputSignal();
         biquads[halfOrder - 1]->getOutputSignal() >> output->getInputSignal();
     }
     frequency->getOutputSignal() >> onePole->getFrequency();
-    for (unsigned int i = 0; i < halfOrder; i++) {
+    for (unsigned int i = 0; i < halfOrder; ++i) {
         std::shared_ptr<Multiply> multiply = multiplies[i];
         std::shared_ptr<Biquad> biquad = biquads[i];
         frequency->getOutputSignal() >> biquad->getFrequency();
@@ -145,7 +155,7 @@ void dsp::Butterworth::disconnect() {
         biquads[halfOrder - 1]->getOutputSignal() != output->getInputSignal();
     }
     frequency->getOutputSignal() != onePole->getFrequency();
-    for (unsigned int i = 0; i < halfOrder; i++) {
+    for (unsigned int i = 0; i < halfOrder; ++i) {
         std::shared_ptr<Multiply> multiply = multiplies[i];
         std::shared_ptr<Biquad> biquad = biquads[i];
         frequency->getOutputSignal() != biquad->getFrequency();

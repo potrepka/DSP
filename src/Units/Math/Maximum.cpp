@@ -10,16 +10,17 @@ std::shared_ptr<dsp::InputParameter> dsp::Maximum::pushInput() {
 
 void dsp::Maximum::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
-        if (getNumInputs() > 0) {
+    if (getNumInputs() > 0) {
+        for (unsigned int i = 0; i < getNumChannels(); ++i) {
             getOutputSignal()->getChannel(i)->fillBuffer(-std::numeric_limits<Sample>::infinity());
-            for (const auto &input : inputs) {
-                std::transform(getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                               getOutputSignal()->getChannel(i)->getBuffer().end(),
-                               input->getChannel(i)->getBuffer().begin(),
-                               getOutputSignal()->getChannel(i)->getBuffer().begin(),
-                               [](Sample x, Sample y) { return fmax(x, y); });
-            }
         }
+    }
+    for (const auto &input : inputs) {
+        transformOutput(input,
+#if DSP_USE_VC
+                        [](Vector x, Vector y) { return Vc::max(x, y); });
+#else
+                        [](Sample x, Sample y) { return fmax(x, y); });
+#endif
     }
 }

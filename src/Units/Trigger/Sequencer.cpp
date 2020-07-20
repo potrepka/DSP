@@ -63,11 +63,11 @@ void dsp::Sequencer::process() {
                 buffer->lock();
             }
         }
-        for (unsigned int i = 0; i < getNumChannels(); i++) {
+        for (unsigned int i = 0; i < getNumChannels(); ++i) {
             Array &indexBuffer = getIndex()->getChannel(i)->getBuffer();
             Array &sequenceIndexBuffer = getSequenceIndex()->getChannel(i)->getBuffer();
             Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-            for (unsigned int k = 0; k < getBufferSize(); k++) {
+            for (unsigned int k = 0; k < getBufferSize(); ++k) {
                 Sample p = sequenceIndexBuffer[k];
                 if (p >= 0 && p < collection.size() && collection[p] != nullptr) {
                     if (collection[p]->getNumChannels() > 0 && collection[p]->getBufferSize() > 0) {

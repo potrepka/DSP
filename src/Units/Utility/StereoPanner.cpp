@@ -31,26 +31,45 @@ std::shared_ptr<dsp::OutputParameter> dsp::StereoPanner::getRight() const {
 
 void dsp::StereoPanner::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         Array &directionBuffer = getDirection()->getChannel(i)->getBuffer();
         Array &leftBuffer = getLeft()->getChannel(i)->getBuffer();
         Array &rightBuffer = getRight()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
+        Iterator inputIterator = inputBuffer.begin();
+        Iterator directionIterator = directionBuffer.begin();
+        Iterator leftIterator = leftBuffer.begin();
+        Iterator rightIterator = rightBuffer.begin();
+        while (inputIterator != inputBuffer.end()) {
+#if DSP_USE_VC
+            Vector left;
+            Vector right;
+#else
             Sample left;
             Sample right;
+#endif
             switch (mode) {
                 case Mode::CONSTANT_POWER:
-                    left = cos(PI_OVER_TWO * bipolarToUnipolar(directionBuffer[k]));
-                    right = cos(PI_OVER_TWO * bipolarToUnipolar(-directionBuffer[k]));
+#if DSP_USE_VC
+                    left = Vc::cos(PI_OVER_TWO * bipolarToUnipolar(*directionIterator));
+                    right = Vc::cos(PI_OVER_TWO * bipolarToUnipolar(negative(*directionIterator)));
+#else
+                    left = cos(PI_OVER_TWO * bipolarToUnipolar(*directionIterator));
+                    right = cos(PI_OVER_TWO * bipolarToUnipolar(negative(*directionIterator)));
+#endif
                     break;
                 case Mode::LINEAR:
-                    left = bipolarToUnipolar(-directionBuffer[k]);
-                    right = bipolarToUnipolar(directionBuffer[k]);
+                    left = bipolarToUnipolar(negative(*directionIterator));
+                    right = bipolarToUnipolar(*directionIterator);
                     break;
             }
-            leftBuffer[k] = left * inputBuffer[k];
-            rightBuffer[k] = right * inputBuffer[k];
+            *leftIterator = left * *inputIterator;
+            *rightIterator = right * *inputIterator;
+
+            ++inputIterator;
+            ++directionIterator;
+            ++leftIterator;
+            ++rightIterator;
         }
     }
 }

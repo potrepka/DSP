@@ -13,5 +13,10 @@ std::shared_ptr<dsp::InputParameter> dsp::Floor::getDivisor() const {
 
 void dsp::Floor::process() {
     Unit::process();
-    transform(getDivisor(), [](Sample x, Sample y) { return y == 0.0 ? x : floor(x / y) * y; });
+    transform(getDivisor(),
+#if DSP_USE_VC
+              [](Vector x, Vector y) { return Vc::iif(y == 0.0, x, Vc::floor(x / y) * y); });
+#else
+              [](Sample x, Sample y) { return y == 0.0 ? x : floor(x / y) * y; });
+#endif
 }

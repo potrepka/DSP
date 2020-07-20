@@ -29,26 +29,47 @@ void dsp::ChannelMix::setBufferSizeNoLock(unsigned int bufferSize) {
 void dsp::ChannelMix::process() {
     Unit::process();
     if (getNumChannels() > 0) {
-        std::fill(buffer.begin(), buffer.end(), 0.0);
-        for (unsigned int i = 0; i < getNumChannels(); i++) {
-            std::transform(buffer.begin(),
-                           buffer.end(),
-                           getInputSignal()->getChannel(i)->getBuffer().begin(),
-                           buffer.begin(),
-                           std::plus<Sample>());
+        std::vector<Iterator> iterators(getNumChannels());
+        for (unsigned int i = 0; i < getNumChannels(); ++i) {
+            iterators[i] = getInputSignal()->getChannel(i)->getBuffer().begin();
         }
-        std::transform(buffer.begin(), buffer.end(), buffer.begin(), [this](Sample x) { return x / getNumChannels(); });
-        for (unsigned int i = 0; i < getNumChannels(); i++) {
+        for (Iterator it = buffer.begin(); it != buffer.end(); ++it) {
+#if DSP_USE_VC
+            Vector sum = Vector::Zero();
+#else
+            Sample sum = 0.0;
+#endif
+            for (Iterator &iterator : iterators) {
+                sum += *iterator;
+                ++iterator;
+            }
+            *it = sum / getNumChannels();
+        }
+        for (unsigned int i = 0; i < getNumChannels(); ++i) {
             Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
-            Array &mixBuffer = getMixAmount()->getChannel(i)->getBuffer();
+            Array &mixAmountBuffer = getMixAmount()->getChannel(i)->getBuffer();
             Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-            for (unsigned int k = 0; k < getBufferSize(); k++) {
+            Iterator mixIterator = buffer.begin();
+            Iterator inputIterator = inputBuffer.begin();
+            Iterator mixAmountIterator = mixAmountBuffer.begin();
+            Iterator outputIterator = outputBuffer.begin();
+            while (outputIterator != outputBuffer.end()) {
+#if DSP_USE_VC
+                Vector mix = *mixIterator;
+                Vector wet;
+#else
+                Sample mix = *mixIterator;
                 Sample wet;
+#endif
                 switch (mode) {
-                    case Mode::MID: wet = buffer[k] - inputBuffer[k]; break;
-                    case Mode::SIDE: wet = -buffer[k]; break;
+                    case Mode::MID: wet = mix - *inputIterator; break;
+                    case Mode::SIDE: wet = -mix; break;
                 }
-                outputBuffer[k] = inputBuffer[k] + mixBuffer[k] * wet;
+                *outputIterator = *inputIterator + *mixAmountIterator * wet;
+                ++mixIterator;
+                ++inputIterator;
+                ++mixAmountIterator;
+                ++outputIterator;
             }
         }
     }

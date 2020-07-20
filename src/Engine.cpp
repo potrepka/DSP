@@ -56,7 +56,7 @@ std::vector<unsigned int> dsp::Engine::getInputDevices() {
 #if DSP_USE_RTAUDIO
     unsigned int deviceCount = getDeviceCount();
 
-    for (unsigned int i = 0; i < deviceCount; i++) {
+    for (unsigned int i = 0; i < deviceCount; ++i) {
         try {
             RtAudio::DeviceInfo deviceInfo = dac.getDeviceInfo(i);
             if (deviceInfo.inputChannels != 0) {
@@ -77,7 +77,7 @@ std::vector<unsigned int> dsp::Engine::getOutputDevices() {
 #if DSP_USE_RTAUDIO
     unsigned int deviceCount = getDeviceCount();
 
-    for (unsigned int i = 0; i < deviceCount; i++) {
+    for (unsigned int i = 0; i < deviceCount; ++i) {
         try {
             RtAudio::DeviceInfo deviceInfo = dac.getDeviceInfo(i);
             if (deviceInfo.outputChannels != 0) {
@@ -116,7 +116,7 @@ std::vector<unsigned int> dsp::Engine::getSampleRates(unsigned int inputDevice, 
 unsigned int dsp::Engine::getDefaultInputDevice() {
 #if DSP_USE_RTAUDIO
     unsigned int deviceCount = getDeviceCount();
-    for (unsigned int i = 0; i < deviceCount; i++) {
+    for (unsigned int i = 0; i < deviceCount; ++i) {
         try {
             RtAudio::DeviceInfo deviceInfo = dac.getDeviceInfo(i);
             if (deviceInfo.inputChannels != 0) {
@@ -135,7 +135,7 @@ unsigned int dsp::Engine::getDefaultInputDevice() {
 unsigned int dsp::Engine::getDefaultOutputDevice() {
 #if DSP_USE_RTAUDIO
     unsigned int deviceCount = getDeviceCount();
-    for (unsigned int i = 0; i < deviceCount; i++) {
+    for (unsigned int i = 0; i < deviceCount; ++i) {
         try {
             RtAudio::DeviceInfo deviceInfo = dac.getDeviceInfo(i);
             if (deviceInfo.outputChannels != 0) {
@@ -167,9 +167,9 @@ unsigned int dsp::Engine::getDefaultSampleRate(unsigned int inputDevice, unsigne
     int i = 0, j = 0;
     while (i < inputSampleRates.size() && j < outputSampleRates.size()) {
         if (inputSampleRates[i] < outputSampleRates[j]) {
-            i++;
+            ++i;
         } else if (inputSampleRates[i] > outputSampleRates[j]) {
-            j++;
+            ++j;
         } else {
             return inputSampleRates[i];
         }

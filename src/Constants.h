@@ -15,10 +15,10 @@ namespace dsp {
 typedef double Sample;
 #if DSP_USE_VC
 typedef Vc::Vector<Sample> Vector;
+typedef Vc::Mask<Sample> Mask;
 typedef std::vector<Sample, Vc::Allocator<Sample>> Array;
 typedef Vc::simdize<Array::iterator> Iterator;
 #else
-typedef Sample Vector;
 typedef std::vector<Sample> Array;
 typedef Array::iterator Iterator;
 #endif

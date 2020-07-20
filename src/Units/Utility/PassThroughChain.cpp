@@ -25,7 +25,7 @@ void dsp::PassThroughChain::setOrder(unsigned int order) {
     }
     passes.clear();
     passes.reserve(order);
-    for (unsigned int i = 0; i < order; i++) {
+    for (unsigned int i = 0; i < order; ++i) {
         std::shared_ptr<PassThrough> pass = std::make_shared<PassThrough>(Type::BIPOLAR);
         passes.push_back(pass);
         pushUnitNoLock(pass);
@@ -43,7 +43,7 @@ void dsp::PassThroughChain::connect() {
         input->getOutputSignal() >> passes[0]->getInputSignal();
         passes[order - 1]->getOutputSignal() >> output->getInputSignal();
     }
-    for (unsigned int i = 0; i + 1 < order; i++) {
+    for (unsigned int i = 0; i + 1 < order; ++i) {
         passes[i]->getOutputSignal() >> passes[i + 1]->getInputSignal();
     }
 }
@@ -55,7 +55,7 @@ void dsp::PassThroughChain::disconnect() {
         input->getOutputSignal() != passes[0]->getInputSignal();
         passes[order - 1]->getOutputSignal() != output->getInputSignal();
     }
-    for (unsigned int i = 0; i + 1 < order; i++) {
+    for (unsigned int i = 0; i + 1 < order; ++i) {
         passes[i]->getOutputSignal() != passes[i + 1]->getInputSignal();
     }
 }

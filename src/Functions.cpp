@@ -1,5 +1,92 @@
 #include "Functions.h"
 
+#if DSP_USE_VC
+std::size_t dsp::getNumVectors(std::size_t size) {
+    return (size + Vector::Size - 1) / Vector::Size;
+}
+
+dsp::Vector dsp::negative(const Vector value) {
+    return -value;
+}
+
+dsp::Vector dsp::oneOver(const Vector value) {
+    return 1.0 / value;
+}
+
+dsp::Vector dsp::toBinary(const Vector value) {
+    return Vc::iif(value == 0.0, Vector::Zero(), Vector::One());
+}
+
+dsp::Vector dsp::toInteger(const Vector value) {
+    return Vc::floor(value);
+}
+
+dsp::Vector dsp::bipolarToUnipolar(const Vector bipolar) {
+    return 0.5 * bipolar + 0.5;
+}
+
+dsp::Vector dsp::unipolarToBipolar(const Vector unipolar) {
+    return 2.0 * unipolar - 1.0;
+}
+
+dsp::Vector dsp::decibelsToLinear(const Vector decibels) {
+    return ONE_OVER_SIX_DB * decibels;
+}
+
+dsp::Vector dsp::linearToDecibels(const Vector linear) {
+    return SIX_DB * linear;
+}
+
+dsp::Vector dsp::decibelsToRatio(const Vector decibels) {
+    return Vc::exp(LOG2 * decibelsToLinear(decibels));
+}
+
+dsp::Vector dsp::ratioToDecibels(const Vector ratio) {
+    return linearToDecibels(Vc::log2(ratio));
+}
+
+dsp::Vector dsp::clip(const Vector signal, const Vector min, const Vector max) {
+    return Vc::iif(min >= max || signal < min, min, Vc::iif(signal > max, max, signal));
+}
+
+dsp::Vector dsp::wrap(const Vector signal, const Vector min, const Vector max) {
+    const Vector diff = max - min;
+    return Vc::iif(diff == 0.0, min, signal - Vc::floor((signal - min) / diff) * diff);
+}
+
+std::function<dsp::Sample(dsp::Sample)> dsp::getValue(const Array &table, std::size_t offset) {
+    return [offset, &table](Sample index) { return table[(static_cast<std::size_t>(index) + offset) % table.size()]; };
+}
+
+dsp::Vector dsp::linear(const Array &table, const Vector index, Vector defaultValue) {
+    assert(Vc::all_of(index >= 0.0));
+    if (table.size() == 0) {
+        return defaultValue;
+    }
+    Vector indexFloor = Vc::floor(index);
+    Vector mu = index - indexFloor;
+    Vector x1 = indexFloor.apply(getValue(table, 0));
+    Vector x2 = indexFloor.apply(getValue(table, 1));
+    return x1 + mu * (x2 - x1);
+}
+
+dsp::Vector dsp::hermite(const Array &table, const Vector index, Vector defaultValue) {
+    assert(Vc::all_of(index >= 0.0));
+    if (table.size() == 0) {
+        return defaultValue;
+    }
+    Vector indexFloor = Vc::floor(index);
+    Vector mu = index - indexFloor;
+    Vector x0 = indexFloor.apply(getValue(table, table.size() - 1));
+    Vector x1 = indexFloor.apply(getValue(table, 0));
+    Vector x2 = indexFloor.apply(getValue(table, 1));
+    Vector x3 = indexFloor.apply(getValue(table, 2));
+    Vector a = 0.5 * (3.0 * (x1 - x2) - x0 + x3);
+    Vector b = x2 + x2 + x0 - 0.5 * (5.0 * x1 + x3);
+    Vector c = 0.5 * (x2 - x0);
+    return ((a * mu + b) * mu + c) * mu + x1;
+}
+#else
 dsp::Sample dsp::negative(const Sample value) {
     return -value;
 }
@@ -39,21 +126,18 @@ dsp::Sample dsp::decibelsToRatio(const Sample decibels) {
 dsp::Sample dsp::ratioToDecibels(const Sample ratio) {
     return linearToDecibels(log2(ratio));
 }
+#endif
 
 dsp::Sample dsp::clip(const Sample signal, const Sample min, const Sample max) {
-    if (min >= max) {
-        return min;
-    }
-    return signal < min ? min : signal > max ? max : signal;
+    return (min >= max || signal < min) ? min : signal > max ? max : signal;
 }
 
 dsp::Sample dsp::wrap(const Sample signal, const Sample min, const Sample max) {
     if (min == max) {
-        return 0.0;
+        return min;
     }
     const Sample diff = max - min;
-    const Sample adjusted = signal - min;
-    return signal - floor(adjusted / diff) * diff;
+    return signal - floor((signal - min) / diff) * diff;
 }
 
 dsp::Sample dsp::linear(const Array &table, const Sample index, Sample defaultValue) {

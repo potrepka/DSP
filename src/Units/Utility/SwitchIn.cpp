@@ -18,10 +18,10 @@ std::shared_ptr<dsp::InputParameter> dsp::SwitchIn::pushInput() {
 
 void dsp::SwitchIn::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &inputIndexBuffer = getInputIndex()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); ++k) {
             if (inputIndexBuffer[k] + 1 < getNumInputs()) {
                 outputBuffer[k] = getInput(inputIndexBuffer[k] + 1)->getChannel(i)->getBuffer()[k];
             } else {

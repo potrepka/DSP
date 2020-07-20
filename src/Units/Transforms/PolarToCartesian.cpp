@@ -24,15 +24,29 @@ std::shared_ptr<dsp::OutputParameter> dsp::PolarToCartesian::getImaginary() cons
 
 void dsp::PolarToCartesian::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &magnitudeBuffer = getMagnitude()->getChannel(i)->getBuffer();
         Array &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
         Array &realBuffer = getReal()->getChannel(i)->getBuffer();
         Array &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
-            Sample theta = TAU * phaseBuffer[k];
-            realBuffer[k] = magnitudeBuffer[k] * cos(theta);
-            imaginaryBuffer[k] = magnitudeBuffer[k] * sin(theta);
+        Iterator realIterator = realBuffer.begin();
+        Iterator imaginaryIterator = imaginaryBuffer.begin();
+        Iterator magnitudeIterator = magnitudeBuffer.begin();
+        Iterator phaseIterator = phaseBuffer.begin();
+        while (magnitudeIterator != magnitudeBuffer.end()) {
+#if DSP_USE_VC
+            Vector theta = TAU * *phaseIterator;
+            *realIterator = *magnitudeIterator * Vc::cos(theta);
+            *imaginaryIterator = *magnitudeIterator * Vc::sin(theta);
+#else
+            Sample theta = TAU * *phaseIterator;
+            *realIterator = *magnitudeIterator * cos(theta);
+            *imaginaryIterator = *magnitudeIterator * sin(theta);
+#endif
+            ++realIterator;
+            ++imaginaryIterator;
+            ++magnitudeIterator;
+            ++phaseIterator;
         }
     }
 }

@@ -31,13 +31,13 @@ void dsp::Counter::setNumChannelsNoLock(unsigned int numChannels) {
 
 void dsp::Counter::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
         Array &triggerBuffer = getTrigger()->getChannel(i)->getBuffer();
         Array &offsetBuffer = getOffset()->getChannel(i)->getBuffer();
         Array &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); ++k) {
             if (resetTriggerBuffer[k]) {
                 index[i] = 0;
             }

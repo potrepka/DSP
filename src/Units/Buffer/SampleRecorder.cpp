@@ -28,28 +28,28 @@ void dsp::SampleRecorder::setNumChannelsNoLock(unsigned int numChannels) {
 void dsp::SampleRecorder::process() {
     Unit::process();
     sample->lock();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         Array &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
         Array &gateBuffer = getGate()->getChannel(i)->getBuffer();
         int bufferStart = 0;
         unsigned int size = sample->getBufferSize();
         unsigned int index = size;
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); ++k) {
             if (resetTriggerBuffer[k]) {
                 bufferStart = k;
                 size = 0;
                 index = 0;
             }
             if (gateBuffer[k]) {
-                size++;
+                ++size;
             }
         }
         sample->setBufferSizeNoLock(size);
-        for (unsigned int k = bufferStart; k < getBufferSize(); k++) {
+        for (unsigned int k = bufferStart; k < getBufferSize(); ++k) {
             if (gateBuffer[k]) {
                 sample->getChannel(i)[index] = inputBuffer[k];
-                index++;
+                ++index;
             }
         }
     }

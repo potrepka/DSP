@@ -24,15 +24,33 @@ std::shared_ptr<dsp::OutputParameter> dsp::CartesianToPolar::getPhase() const {
 
 void dsp::CartesianToPolar::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &realBuffer = getReal()->getChannel(i)->getBuffer();
         Array &imaginaryBuffer = getImaginary()->getChannel(i)->getBuffer();
         Array &magnitudeBuffer = getMagnitude()->getChannel(i)->getBuffer();
         Array &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
-            magnitudeBuffer[k] = sqrt(realBuffer[k] * realBuffer[k] + imaginaryBuffer[k] * imaginaryBuffer[k]);
-            Sample bipolar = ONE_OVER_TAU * atan2(imaginaryBuffer[k], realBuffer[k]);
-            phaseBuffer[k] = bipolar < 0.0 ? bipolar + 1.0 : bipolar;
+        Iterator realIterator = realBuffer.begin();
+        Iterator imaginaryIterator = imaginaryBuffer.begin();
+        Iterator magnitudeIterator = magnitudeBuffer.begin();
+        Iterator phaseIterator = phaseBuffer.begin();
+        while (realIterator != realBuffer.end()) {
+#if DSP_USE_VC
+            Vector re = *realIterator;
+            Vector im = *imaginaryIterator;
+            *magnitudeIterator = Vc::sqrt(re * re + im * im);
+            Vector bipolar = ONE_OVER_TAU * Vc::atan2(im, re);
+            *phaseIterator = Vc::iif(bipolar < 0.0, bipolar + 1.0, bipolar);
+#else
+            Sample re = *realIterator;
+            Sample im = *imaginaryIterator;
+            *magnitudeIterator = sqrt(re * re + im * im);
+            Sample bipolar = ONE_OVER_TAU * atan2(im, re);
+            *phaseIterator = bipolar < 0.0 ? bipolar + 1.0 : bipolar;
+#endif
+            ++realIterator;
+            ++imaginaryIterator;
+            ++magnitudeIterator;
+            ++phaseIterator;
         }
     }
 }

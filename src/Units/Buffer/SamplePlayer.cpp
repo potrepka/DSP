@@ -88,7 +88,7 @@ void dsp::SamplePlayer::process() {
                 buffer->lock();
             }
         }
-        for (unsigned int i = 0; i < getNumChannels(); i++) {
+        for (unsigned int i = 0; i < getNumChannels(); ++i) {
             Array &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
             Array &gateBuffer = getGate()->getChannel(i)->getBuffer();
             Array &offsetTimeBuffer = getOffsetTime()->getChannel(i)->getBuffer();
@@ -96,7 +96,7 @@ void dsp::SamplePlayer::process() {
             Array &sampleIndexBuffer = getSampleIndex()->getChannel(i)->getBuffer();
             Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             Array &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
-            for (unsigned int k = 0; k < getBufferSize(); k++) {
+            for (unsigned int k = 0; k < getBufferSize(); ++k) {
                 if (resetTriggerBuffer[k]) {
                     readIndex[i] = 0.0;
                 }

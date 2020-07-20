@@ -71,10 +71,10 @@ void dsp::BufferRecorder::process() {
         if (externalBufferSizeSynced || writeIndex >= externalBufferSize) {
             writeIndex = 0.0;
         }
-        for (unsigned int i = 0; i < getNumChannels(); i++) {
+        for (unsigned int i = 0; i < getNumChannels(); ++i) {
             Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
             Sample index = writeIndex;
-            for (unsigned int k = 0; k < getBufferSize(); k++) {
+            for (unsigned int k = 0; k < getBufferSize(); ++k) {
                 switch (mode) {
                     case Mode::SINGLE_BUFFER: buffer->getChannel(i)[index] = inputBuffer[k]; break;
                     case Mode::DOUBLE_BUFFER: second->getChannel(i)[index] = inputBuffer[k]; break;

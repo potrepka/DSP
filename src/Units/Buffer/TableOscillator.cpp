@@ -63,30 +63,68 @@ void dsp::TableOscillator::process() {
                 buffer->lock();
             }
         }
-        Array points(4);
-        for (unsigned int i = 0; i < getNumChannels(); i++) {
+#if DSP_USE_VC
+        std::vector<Vector> vectors(4);
+#endif
+        Array samples(4);
+        for (unsigned int i = 0; i < getNumChannels(); ++i) {
             Array &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
             Array &positionBuffer = getPosition()->getChannel(i)->getBuffer();
             Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-            for (unsigned int k = 0; k < getBufferSize(); k++) {
-                const Sample positionIndex = clip(positionBuffer[k], 0.0, 1.0) * (collection.size() - 1);
-                const long indexBefore = static_cast<long>(positionIndex) - 1;
-                long p = indexBefore;
-                for (unsigned char j = 0; j < 4; j++) {
+            Iterator phaseIterator = phaseBuffer.begin();
+            Iterator positionIterator = positionBuffer.begin();
+            Iterator outputIterator = outputBuffer.begin();
+            while (outputIterator != outputBuffer.end()) {
+#if DSP_USE_VC
+                const Vector positionIndex = clip(*positionIterator, 0.0, 1.0) * (collection.size() - 1);
+                const Vector indexBefore = Vc::floor(positionIndex) - 1.0;
+                Vector p = indexBefore;
+#else
+                const Sample positionIndex = clip(*positionIterator, 0.0, 1.0) * (collection.size() - 1);
+                const Sample indexBefore = floor(positionIndex) - 1.0;
+                Sample p = indexBefore;
+#endif
+                for (unsigned char j = 0; j < 4; ++j) {
+#if DSP_USE_VC
+                    vectors[j] = Vector::generate([this, &i, &phaseIterator, &p](int k) {
+                        if (p[k] >= 0.0 && p[k] < collection.size() && collection[p[k]] != nullptr) {
+                            if (collection[p[k]]->getNumChannels() > 0) {
+                                return linear(collection[p[k]]->getChannel(i % collection[p[k]]->getNumChannels()),
+                                              wrap((*phaseIterator)[k], 0.0, 1.0) * collection[p[k]]->getBufferSize(),
+                                              collection[p[k]]->getDefaultValue());
+                            }
+                            return collection[k]->getDefaultValue();
+                        }
+                        return getOutputSignal()->getDefaultValue();
+                    });
+#else
                     if (p >= 0 && p < collection.size() && collection[p] != nullptr) {
-                        if (collection[p]->getNumChannels() > 0 && collection[p]->getBufferSize() > 0) {
-                            points[j] = linear(collection[p]->getChannel(i % collection[p]->getNumChannels()),
-                                               wrap(phaseBuffer[k], 0.0, 1.0) * collection[p]->getBufferSize(),
-                                               collection[p]->getDefaultValue());
+                        if (collection[p]->getNumChannels() > 0) {
+                            samples[j] = linear(collection[p]->getChannel(i % collection[p]->getNumChannels()),
+                                                wrap(*phaseIterator, 0.0, 1.0) * collection[p]->getBufferSize(),
+                                                collection[p]->getDefaultValue());
                         } else {
-                            points[j] = collection[p]->getDefaultValue();
+                            samples[j] = collection[p]->getDefaultValue();
                         }
                     } else {
-                        points[j] = getOutputSignal()->getDefaultValue();
+                        samples[j] = getOutputSignal()->getDefaultValue();
                     }
-                    p++;
+#endif
+                    ++p;
                 }
-                outputBuffer[k] = hermite(points, positionIndex - indexBefore);
+#if DSP_USE_VC
+                *outputIterator = Vector::generate([&vectors, &samples, &positionIndex, &indexBefore](int k) {
+                    for (int j = 0; j < 4; ++j) {
+                        samples[j] = vectors[j][k];
+                    }
+                    return hermite(samples, positionIndex[k] - indexBefore[k]);
+                });
+#else
+                *outputIterator = hermite(samples, positionIndex - indexBefore);
+#endif
+                ++phaseIterator;
+                ++positionIterator;
+                ++outputIterator;
             }
         }
         for (const auto &buffer : collection) {

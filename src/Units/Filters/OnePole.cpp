@@ -26,11 +26,11 @@ void dsp::OnePole::setNumChannelsNoLock(unsigned int numChannels) {
 
 void dsp::OnePole::process() {
     Unit::process();
-    for (unsigned int i = 0; i < getNumChannels(); i++) {
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
         Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         Array &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); k++) {
+        for (unsigned int k = 0; k < getBufferSize(); ++k) {
             Sample radians = PI * frequencyBuffer[k] * getOneOverSampleRate();
             Sample delta = tan(radians / (1.0 + radians)) * (inputBuffer[k] - state[i]);
             state[i] += delta;
