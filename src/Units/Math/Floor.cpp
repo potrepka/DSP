@@ -15,7 +15,7 @@ void dsp::Floor::process() {
     Unit::process();
     transform(getDivisor(),
 #if DSP_USE_VC
-              [](Vector x, Vector y) { return Vc::iif(y == 0.0, x, Vc::floor(x / y) * y); });
+              [](Vector x, Vector y) { return Vc::iif(y == Vector::Zero(), x, Vc::floor(x / y) * y); });
 #else
               [](Sample x, Sample y) { return y == 0.0 ? x : floor(x / y) * y; });
 #endif

@@ -1,20 +1,16 @@
 #include "Functions.h"
 
 #if DSP_USE_VC
-std::size_t dsp::getNumVectors(std::size_t size) {
-    return (size + Vector::Size - 1) / Vector::Size;
-}
-
 dsp::Vector dsp::negative(const Vector value) {
     return -value;
 }
 
 dsp::Vector dsp::oneOver(const Vector value) {
-    return 1.0 / value;
+    return Vector::One() / value;
 }
 
 dsp::Vector dsp::toBinary(const Vector value) {
-    return Vc::iif(value == 0.0, Vector::Zero(), Vector::One());
+    return Vc::iif(value == Vector::Zero(), Vector::Zero(), Vector::One());
 }
 
 dsp::Vector dsp::toInteger(const Vector value) {
@@ -51,7 +47,7 @@ dsp::Vector dsp::clip(const Vector signal, const Vector min, const Vector max) {
 
 dsp::Vector dsp::wrap(const Vector signal, const Vector min, const Vector max) {
     const Vector diff = max - min;
-    return Vc::iif(diff == 0.0, min, signal - Vc::floor((signal - min) / diff) * diff);
+    return Vc::iif(diff == Vector::Zero(), min, signal - Vc::floor((signal - min) / diff) * diff);
 }
 
 std::function<dsp::Sample(dsp::Sample)> dsp::getValue(const Array &table, std::size_t offset) {
@@ -59,7 +55,7 @@ std::function<dsp::Sample(dsp::Sample)> dsp::getValue(const Array &table, std::s
 }
 
 dsp::Vector dsp::linear(const Array &table, const Vector index, Vector defaultValue) {
-    assert(Vc::all_of(index >= 0.0));
+    assert(Vc::all_of(index >= Vector::Zero()));
     if (table.size() == 0) {
         return defaultValue;
     }
@@ -71,7 +67,7 @@ dsp::Vector dsp::linear(const Array &table, const Vector index, Vector defaultVa
 }
 
 dsp::Vector dsp::hermite(const Array &table, const Vector index, Vector defaultValue) {
-    assert(Vc::all_of(index >= 0.0));
+    assert(Vc::all_of(index >= Vector::Zero()));
     if (table.size() == 0) {
         return defaultValue;
     }

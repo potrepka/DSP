@@ -8,8 +8,6 @@
 namespace dsp {
 
 #if DSP_USE_VC
-std::size_t getNumVectors(std::size_t size);
-
 Vector negative(const Vector value);
 Vector oneOver(const Vector value);
 
@@ -30,8 +28,8 @@ Vector wrap(const Vector signal, const Vector min, const Vector max);
 
 std::function<Sample(Sample)> getValue(const Array &table, std::size_t offset);
 
-Vector linear(const Array &table, const Vector index, Vector defaultValue = 0.0);
-Vector hermite(const Array &table, const Vector index, Vector defaultValue = 0.0);
+Vector linear(const Array &table, const Vector index, Vector defaultValue = Vector::Zero());
+Vector hermite(const Array &table, const Vector index, Vector defaultValue = Vector::Zero());
 #else
 Sample negative(const Sample value);
 Sample oneOver(const Sample value);

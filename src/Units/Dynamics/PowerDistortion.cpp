@@ -12,11 +12,12 @@ void dsp::PowerDistortion::process() {
     Unit::process();
 #if DSP_USE_VC
     transform(getDrive(), [](Vector x, Vector y) {
-        return Vc::iif(y == 0.0,
-                       Vector::Zero(),
-                       Vc::iif(x < 0.0,
-                               Vc::exp(Vc::log(1.0 + clip(x, -1.0, 1.0)) * y),
-                               1.0 - Vc::exp(Vc::log(1.0 - clip(x, -1.0, 1.0)) * y)));
+        return Vc::iif(
+                y == Vector::Zero(),
+                Vector::Zero(),
+                Vc::iif(x < Vector::Zero(),
+                        Vc::exp(Vc::log(Vector::One() + clip(x, -Vector::One(), Vector::One())) * y),
+                        Vector::One() - Vc::exp(Vc::log(Vector::One() - clip(x, -Vector::One(), Vector::One())) * y)));
     });
 #else
     transform(getDrive(), [](Sample x, Sample y) {

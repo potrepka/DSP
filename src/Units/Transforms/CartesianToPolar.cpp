@@ -39,7 +39,7 @@ void dsp::CartesianToPolar::process() {
             Vector im = *imaginaryIterator;
             *magnitudeIterator = Vc::sqrt(re * re + im * im);
             Vector bipolar = ONE_OVER_TAU * Vc::atan2(im, re);
-            *phaseIterator = Vc::iif(bipolar < 0.0, bipolar + 1.0, bipolar);
+            *phaseIterator = Vc::iif(bipolar < Vector::Zero(), bipolar + Vector::One(), bipolar);
 #else
             Sample re = *realIterator;
             Sample im = *imaginaryIterator;
