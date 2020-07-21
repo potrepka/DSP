@@ -8,12 +8,8 @@ namespace dsp {
 class SamplePlayer : public Generator, public BufferCollection {
 
 public:
-    enum class Mode { ONE_SHOT, LOOP };
-
     SamplePlayer(Type type);
 
-    Mode getMode() const;
-    void setMode(Mode mode);
     unsigned int getNumSamples() const;
     std::shared_ptr<Buffer> getSample(unsigned int index) const;
     std::vector<std::shared_ptr<Buffer>> getSamples(unsigned int begin, unsigned int end) const;
@@ -42,7 +38,6 @@ private:
 
     const std::shared_ptr<OutputParameter> currentTime;
 
-    Mode mode;
     Array readIndex;
 };
 

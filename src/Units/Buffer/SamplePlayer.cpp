@@ -6,18 +6,7 @@ dsp::SamplePlayer::SamplePlayer(Type type)
         , gate(pushInput(Type::BINARY))
         , offsetTime(pushInput(Type::SECONDS))
         , speed(pushInput(Type::RATIO, Space::TIME, 1.0))
-        , currentTime(pushOutput(Type::SECONDS))
-        , mode(Mode::ONE_SHOT) {}
-
-dsp::SamplePlayer::Mode dsp::SamplePlayer::getMode() const {
-    return mode;
-}
-
-void dsp::SamplePlayer::setMode(Mode mode) {
-    lock();
-    this->mode = mode;
-    unlock();
-}
+        , currentTime(pushOutput(Type::SECONDS)) {}
 
 unsigned int dsp::SamplePlayer::getNumSamples() const {
     return getNumBuffers();
@@ -108,11 +97,7 @@ void dsp::SamplePlayer::process() {
                         Array &channel = collection[p]->getChannel(i % numChannels);
                         if (gateBuffer[k]) {
                             Sample offset = offsetTimeBuffer[k] * getSampleRate();
-                            Sample index;
-                            switch (mode) {
-                                case Mode::ONE_SHOT: index = clip(readIndex[i] + offset, 0.0, channelSize); break;
-                                case Mode::LOOP: index = wrap(readIndex[i] + offset, 0.0, channelSize); break;
-                            }
+                            Sample index = clip(readIndex[i] + offset, 0.0, channelSize);
                             unsigned int k1 = static_cast<unsigned int>(index);
                             unsigned int k0 = (k1 + channelSize - 1) % channelSize;
                             unsigned int k2 = (k1 + 1) % channelSize;
