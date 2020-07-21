@@ -64,9 +64,10 @@ void dsp::TableOscillator::process() {
             }
         }
 #if DSP_USE_VC
-        std::vector<Vector> vectors(4);
-#endif
+        std::vector<Array> samples(Vector::Size, Array(4));
+#else
         Array samples(4);
+#endif
         for (unsigned int i = 0; i < getNumChannels(); ++i) {
             Array &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
             Array &positionBuffer = getPosition()->getChannel(i)->getBuffer();
@@ -86,17 +87,20 @@ void dsp::TableOscillator::process() {
 #endif
                 for (unsigned char j = 0; j < 4; ++j) {
 #if DSP_USE_VC
-                    vectors[j] = Vector::generate([this, &i, &phaseIterator, &p](int k) {
+                    for (int k = 0; k < Vector::Size; ++k) {
                         if (p[k] >= 0.0 && p[k] < collection.size() && collection[p[k]] != nullptr) {
                             if (collection[p[k]]->getNumChannels() > 0) {
-                                return linear(collection[p[k]]->getChannel(i % collection[p[k]]->getNumChannels()),
-                                              wrap((*phaseIterator)[k], 0.0, 1.0) * collection[p[k]]->getBufferSize(),
-                                              collection[p[k]]->getDefaultValue());
+                                samples[k][j] =
+                                        linear(collection[p[k]]->getChannel(i % collection[p[k]]->getNumChannels()),
+                                               wrap((*phaseIterator)[k], 0.0, 1.0) * collection[p[k]]->getBufferSize(),
+                                               collection[p[k]]->getDefaultValue());
+                            } else {
+                                samples[k][j] = collection[p[k]]->getDefaultValue();
                             }
-                            return collection[k]->getDefaultValue();
+                        } else {
+                            samples[k][j] = getOutputSignal()->getDefaultValue();
                         }
-                        return getOutputSignal()->getDefaultValue();
-                    });
+                    }
 #else
                     if (p >= 0 && p < collection.size() && collection[p] != nullptr) {
                         if (collection[p]->getNumChannels() > 0) {
@@ -113,12 +117,11 @@ void dsp::TableOscillator::process() {
                     ++p;
                 }
 #if DSP_USE_VC
-                *outputIterator = Vector::generate([&vectors, &samples, &positionIndex, &indexBefore](int k) {
-                    for (int j = 0; j < 4; ++j) {
-                        samples[j] = vectors[j][k];
-                    }
-                    return hermite(samples, positionIndex[k] - indexBefore[k]);
-                });
+                Vector outputVector;
+                for (int k = 0; k < Vector::Size; ++k) {
+                    outputVector[k] = hermite(samples[k], positionIndex[k] - indexBefore[k]);
+                }
+                *outputIterator = outputVector;
 #else
                 *outputIterator = hermite(samples, positionIndex - indexBefore);
 #endif
