@@ -19,7 +19,7 @@ public:
     unsigned int getOrder() const;
     void setOrder(unsigned int order);
     std::shared_ptr<InputParameter> getFrequency() const;
-    std::shared_ptr<InputParameter> getQ() const;
+    std::shared_ptr<InputParameter> getResonance() const;
     std::shared_ptr<InputParameter> getGain() const;
 
 protected:
@@ -29,7 +29,7 @@ protected:
 private:
     const std::shared_ptr<PassThrough> input;
     const std::shared_ptr<PassThrough> frequency;
-    const std::shared_ptr<PassThrough> q;
+    const std::shared_ptr<PassThrough> resonance;
     const std::shared_ptr<PassThrough> gain;
     const std::shared_ptr<OnePole> onePole;
 

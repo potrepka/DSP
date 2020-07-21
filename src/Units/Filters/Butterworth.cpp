@@ -4,24 +4,24 @@ dsp::Butterworth::Butterworth()
         : Processor(Type::BIPOLAR, Type::BIPOLAR)
         , input(std::make_shared<PassThrough>(Type::BIPOLAR))
         , frequency(std::make_shared<PassThrough>(Type::HERTZ))
-        , q(std::make_shared<PassThrough>(Type::RATIO))
+        , resonance(std::make_shared<PassThrough>(Type::RATIO))
         , gain(std::make_shared<PassThrough>(Type::LINEAR))
         , onePole(std::make_shared<OnePole>(Type::BIPOLAR))
         , output(std::make_shared<PassThrough>(Type::BIPOLAR))
         , mode(Mode::LOW_PASS)
         , order(1) {
-    1.0 >> q->getInputSignal();
+    1.0 >> resonance->getInputSignal();
 
     setInputSignal(input->getInputSignal());
     pushInput(frequency->getInputSignal());
-    pushInput(q->getInputSignal());
+    pushInput(resonance->getInputSignal());
     pushInput(gain->getInputSignal());
 
     setOutputSignal(output->getOutputSignal());
 
     pushUnit(input);
     pushUnit(frequency);
-    pushUnit(q);
+    pushUnit(resonance);
     pushUnit(gain);
     pushUnit(onePole);
     pushUnit(output);
@@ -102,8 +102,8 @@ std::shared_ptr<dsp::InputParameter> dsp::Butterworth::getFrequency() const {
     return frequency->getInputSignal();
 }
 
-std::shared_ptr<dsp::InputParameter> dsp::Butterworth::getQ() const {
-    return q->getInputSignal();
+std::shared_ptr<dsp::InputParameter> dsp::Butterworth::getResonance() const {
+    return resonance->getInputSignal();
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::Butterworth::getGain() const {
@@ -130,8 +130,8 @@ void dsp::Butterworth::connect() {
         std::shared_ptr<Multiply> multiply = multiplies[i];
         std::shared_ptr<Biquad> biquad = biquads[i];
         frequency->getOutputSignal() >> biquad->getFrequency();
-        q->getOutputSignal() >> multiply->getInputSignal();
-        multiply->getOutputSignal() >> biquad->getQ();
+        resonance->getOutputSignal() >> multiply->getInputSignal();
+        multiply->getOutputSignal() >> biquad->getResonance();
         gain->getOutputSignal() >> biquad->getGain();
         if (i + 1 < halfOrder) {
             biquads[i]->getOutputSignal() >> biquads[i + 1]->getInputSignal();
@@ -159,8 +159,8 @@ void dsp::Butterworth::disconnect() {
         std::shared_ptr<Multiply> multiply = multiplies[i];
         std::shared_ptr<Biquad> biquad = biquads[i];
         frequency->getOutputSignal() != biquad->getFrequency();
-        q->getOutputSignal() != multiply->getInputSignal();
-        multiply->getOutputSignal() != biquad->getQ();
+        resonance->getOutputSignal() != multiply->getInputSignal();
+        multiply->getOutputSignal() != biquad->getResonance();
         gain->getOutputSignal() != biquad->getGain();
         if (i + 1 < halfOrder) {
             biquads[i]->getOutputSignal() != biquads[i + 1]->getInputSignal();
