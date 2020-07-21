@@ -30,15 +30,41 @@ void dsp::OnePole::process() {
         Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
         Array &frequencyBuffer = getFrequency()->getChannel(i)->getBuffer();
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-        for (unsigned int k = 0; k < getBufferSize(); ++k) {
-            Sample radians = PI * frequencyBuffer[k] * getOneOverSampleRate();
-            Sample delta = tan(radians / (1.0 + radians)) * (inputBuffer[k] - state[i]);
+        Iterator inputIterator = inputBuffer.begin();
+        Iterator frequencyIterator = frequencyBuffer.begin();
+        Iterator outputIterator = outputBuffer.begin();
+        while (outputIterator != outputBuffer.end()) {
+#if DSP_USE_VC
+            Vector radians = PI * *frequencyIterator * getOneOverSampleRate();
+            Vector gammaSin;
+            Vector gammaCos;
+            Vc::sincos(radians / (Vector::One() + radians), &gammaSin, &gammaCos);
+            Vector gamma = gammaSin / gammaCos;
+            Vector outputVector;
+            for (int k = 0; k < Vector::Size; ++k) {
+                Sample delta = gamma[k] * ((*inputIterator)[k] - state[i]);
+                state[i] += delta;
+                switch (mode) {
+                    case Mode::LOW_PASS: outputVector[k] = state[i]; break;
+                    case Mode::HIGH_PASS: outputVector[k] = (*inputIterator)[k] - state[i]; break;
+                }
+                state[i] += delta;
+            }
+            *outputIterator = outputVector;
+#else
+            Sample radians = PI * *frequencyIterator * getOneOverSampleRate();
+            Sample delta = tan(radians / (1.0 + radians)) * (*inputIterator - state[i]);
             state[i] += delta;
             switch (mode) {
-                case Mode::LOW_PASS: outputBuffer[k] = state[i]; break;
-                case Mode::HIGH_PASS: outputBuffer[k] = inputBuffer[k] - state[i]; break;
+                case Mode::LOW_PASS: *outputIterator = state[i]; break;
+                case Mode::HIGH_PASS: *outputIterator = *inputIterator - state[i]; break;
             }
             state[i] += delta;
+#endif
+
+            ++inputIterator;
+            ++frequencyIterator;
+            ++outputIterator;
         }
     }
 }
