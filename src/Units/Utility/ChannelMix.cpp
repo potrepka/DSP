@@ -1,24 +1,24 @@
 #include "ChannelMix.h"
 
 dsp::ChannelMix::ChannelMix(Type type, Space space)
-        : Processor(type, type, space)
-        , mixAmount(pushInput(Type::UNIPOLAR, space)) {
+        : Consumer(type, space)
+        , mixAmount(pushInput(Type::UNIPOLAR, space))
+        , mid(pushOutput(type, space))
+        , side(pushOutput(type, space)) {
     assert(type != Type::BINARY);
     assert(type != Type::INTEGER);
 }
 
-dsp::ChannelMix::Mode dsp::ChannelMix::getMode() const {
-    return mode;
-}
-
-void dsp::ChannelMix::setMode(Mode mode) {
-    lock();
-    this->mode = mode;
-    unlock();
-}
-
 std::shared_ptr<dsp::InputParameter> dsp::ChannelMix::getMixAmount() const {
     return mixAmount;
+}
+
+std::shared_ptr<dsp::OutputParameter> dsp::ChannelMix::getMid() const {
+    return mid;
+}
+
+std::shared_ptr<dsp::OutputParameter> dsp::ChannelMix::getSide() const {
+    return side;
 }
 
 void dsp::ChannelMix::setBufferSizeNoLock(unsigned int bufferSize) {
@@ -48,28 +48,26 @@ void dsp::ChannelMix::process() {
         for (unsigned int i = 0; i < getNumChannels(); ++i) {
             Array &inputBuffer = getInputSignal()->getChannel(i)->getBuffer();
             Array &mixAmountBuffer = getMixAmount()->getChannel(i)->getBuffer();
-            Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
-            Iterator mixIterator = buffer.begin();
+            Array &midBuffer = getMid()->getChannel(i)->getBuffer();
+            Array &sideBuffer = getSide()->getChannel(i)->getBuffer();
+            Iterator bufferIterator = buffer.begin();
             Iterator inputIterator = inputBuffer.begin();
             Iterator mixAmountIterator = mixAmountBuffer.begin();
-            Iterator outputIterator = outputBuffer.begin();
-            while (outputIterator != outputBuffer.end()) {
+            Iterator midIterator = midBuffer.begin();
+            Iterator sideIterator = sideBuffer.begin();
+            while (inputIterator != inputBuffer.end()) {
 #if DSP_USE_VC
-                Vector mix = *mixIterator;
-                Vector wet;
+                Vector bufferValue = *bufferIterator;
 #else
-                Sample mix = *mixIterator;
-                Sample wet;
+                Sample bufferValue = *bufferIterator;
 #endif
-                switch (mode) {
-                    case Mode::MID: wet = mix - *inputIterator; break;
-                    case Mode::SIDE: wet = -mix; break;
-                }
-                *outputIterator = *inputIterator + *mixAmountIterator * wet;
-                ++mixIterator;
+                *midIterator = *inputIterator + *mixAmountIterator * (bufferValue - *inputIterator);
+                *sideIterator = *inputIterator + *mixAmountIterator * -bufferValue;
+                ++bufferIterator;
                 ++inputIterator;
                 ++mixAmountIterator;
-                ++outputIterator;
+                ++midIterator;
+                ++sideIterator;
             }
         }
     }

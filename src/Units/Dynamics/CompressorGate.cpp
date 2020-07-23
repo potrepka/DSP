@@ -83,7 +83,7 @@ std::shared_ptr<dsp::OutputParameter> dsp::CompressorGate::getGainDelta() const 
 }
 
 void dsp::CompressorGate::connect() {
-    channelMix->getOutputSignal() >> absoluteValue->getInputSignal();
+    channelMix->getMid() >> absoluteValue->getInputSignal();
     absoluteValue->getOutputSignal() >> base2Log->getInputSignal();
     base2Log->getOutputSignal() >> gainComputer->getInputSignal();
     gainComputer->getOutputSignal() >> gainEnvelope->getInputSignal();
@@ -91,7 +91,7 @@ void dsp::CompressorGate::connect() {
 }
 
 void dsp::CompressorGate::disconnect() {
-    channelMix->getOutputSignal() != absoluteValue->getInputSignal();
+    channelMix->getMid() != absoluteValue->getInputSignal();
     absoluteValue->getOutputSignal() != base2Log->getInputSignal();
     base2Log->getOutputSignal() != gainComputer->getInputSignal();
     gainComputer->getOutputSignal() != gainEnvelope->getInputSignal();

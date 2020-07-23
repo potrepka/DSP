@@ -1,19 +1,16 @@
 #pragma once
 
-#include "Processor.h"
+#include "Consumer.h"
 
 namespace dsp {
 
-class ChannelMix : public Processor {
+class ChannelMix : public Consumer {
 
 public:
-    enum class Mode { MID, SIDE };
-
     ChannelMix(Type type, Space space = Space::TIME);
-
-    Mode getMode() const;
-    void setMode(Mode mode);
     std::shared_ptr<InputParameter> getMixAmount() const;
+    std::shared_ptr<OutputParameter> getMid() const;
+    std::shared_ptr<OutputParameter> getSide() const;
 
 protected:
     void setBufferSizeNoLock(unsigned int bufferSize) override;
@@ -21,8 +18,9 @@ protected:
 
 private:
     const std::shared_ptr<InputParameter> mixAmount;
+    const std::shared_ptr<OutputParameter> mid;
+    const std::shared_ptr<OutputParameter> side;
 
-    Mode mode;
     Array buffer;
 };
 
