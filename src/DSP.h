@@ -13,10 +13,10 @@
 // Dynamics
 #include "AHR.h"
 #include "CompressorGate.h"
+#include "Distortion.h"
 #include "GainComputer.h"
 #include "GainEnvelope.h"
 #include "GainScale.h"
-#include "PowerDistortion.h"
 
 // Filters
 #include "Biquad.h"

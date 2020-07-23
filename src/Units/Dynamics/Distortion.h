@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class PowerDistortion : public Processor {
+class Distortion : public Processor {
 
 public:
-    PowerDistortion(Space space = Space::TIME);
+    Distortion(Space space = Space::TIME);
 
     std::shared_ptr<InputParameter> getDrive() const;
 
