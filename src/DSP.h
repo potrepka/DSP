@@ -14,7 +14,6 @@
 #include "GainComputer.h"
 #include "GainEnvelope.h"
 #include "GainScale.h"
-#include "HardClip.h"
 #include "PowerDistortion.h"
 
 // Filters
