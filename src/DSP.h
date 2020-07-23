@@ -18,7 +18,7 @@
 
 // Filters
 #include "Biquad.h"
-#include "Butterworth.h"
+#include "Cascade.h"
 #include "Convolver.h"
 #include "OnePole.h"
 #include "VariableDelay.h"

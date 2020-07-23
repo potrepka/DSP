@@ -7,12 +7,12 @@
 
 namespace dsp {
 
-class Butterworth : public Processor {
+class Cascade : public Processor {
 
 public:
     enum class Mode { LOW_PASS, HIGH_PASS, BAND_PASS, BAND_STOP, LOW_SHELF, HIGH_SHELF, PEAK, ALL_PASS };
 
-    Butterworth();
+    Cascade();
 
     Mode getMode() const;
     void setMode(Mode mode);
@@ -36,7 +36,7 @@ private:
     const std::shared_ptr<PassThrough> output;
 
     Mode mode;
-    unsigned int order;
+    unsigned int halfOrder;
     std::vector<std::shared_ptr<Biquad>> biquads;
     std::vector<std::shared_ptr<Multiply>> multiplies;
 
