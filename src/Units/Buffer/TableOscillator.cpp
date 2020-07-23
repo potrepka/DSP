@@ -3,7 +3,18 @@
 dsp::TableOscillator::TableOscillator(Type type)
         : Generator(type)
         , phase(pushInput(Type::UNIPOLAR))
-        , position(pushInput(Type::UNIPOLAR)) {}
+        , position(pushInput(Type::UNIPOLAR))
+        , interpolation(Interpolation::NONE) {}
+
+dsp::Interpolation dsp::TableOscillator::getInterpolation() const {
+    return interpolation;
+}
+
+void dsp::TableOscillator::setInterpolation(Interpolation interpolation) {
+    lock();
+    this->interpolation = interpolation;
+    unlock();
+}
 
 unsigned int dsp::TableOscillator::getNumTables() const {
     return getNumBuffers();
@@ -63,10 +74,16 @@ void dsp::TableOscillator::process() {
                 buffer->lock();
             }
         }
+        int numPoints;
+        switch (interpolation) {
+            case Interpolation::NONE: numPoints = 1; break;
+            case Interpolation::LINEAR: numPoints = 2; break;
+            case Interpolation::HERMITE: numPoints = 4; break;
+        }
 #if DSP_USE_VC
-        std::vector<Array> samples(Vector::Size, Array(4));
+        std::vector<Array> samples(Vector::Size, Array(numPoints));
 #else
-        Array samples(4);
+        Array samples(numPoints);
 #endif
         for (unsigned int i = 0; i < getNumChannels(); ++i) {
             Array &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
@@ -77,15 +94,15 @@ void dsp::TableOscillator::process() {
             Iterator outputIterator = outputBuffer.begin();
             while (outputIterator != outputBuffer.end()) {
 #if DSP_USE_VC
-                const Vector positionIndex = clip(*positionIterator, 0.0, 1.0) * (collection.size() - 1);
-                const Vector indexBefore = Vc::floor(positionIndex) - 1.0;
+                const Vector positionIndex = clip(*positionIterator, 0.0, 1.0) * (collection.size() - (interpolation == Interpolation::NONE ? 0 : 1));
+                const Vector indexBefore = Vc::floor(positionIndex) - (interpolation == Interpolation::HERMITE ? Vector::One() : Vector::Zero());
                 Vector p = indexBefore;
 #else
-                const Sample positionIndex = clip(*positionIterator, 0.0, 1.0) * (collection.size() - 1);
-                const Sample indexBefore = floor(positionIndex) - 1.0;
+                const Sample positionIndex = clip(*positionIterator, 0.0, 1.0) * (collection.size() - (interpolation == Interpolation::NONE ? 0 : 1));
+                const Sample indexBefore = floor(positionIndex) - (interpolation == Interpolation::HERMITE ? 1.0 : 0.0);
                 Sample p = indexBefore;
 #endif
-                for (unsigned char j = 0; j < 4; ++j) {
+                for (int j = 0; j < numPoints; ++j) {
 #if DSP_USE_VC
                     for (int k = 0; k < Vector::Size; ++k) {
                         if (p[k] >= 0.0 && p[k] < collection.size() && collection[p[k]] != nullptr) {
@@ -119,11 +136,19 @@ void dsp::TableOscillator::process() {
 #if DSP_USE_VC
                 Vector outputVector;
                 for (int k = 0; k < Vector::Size; ++k) {
-                    outputVector[k] = hermite(samples[k], positionIndex[k] - indexBefore[k]);
+                    switch (interpolation) {
+                        case Interpolation::NONE: outputVector[k] = samples[k][0]; break;
+                        case Interpolation::LINEAR: outputVector[k] = linear(samples[k], positionIndex[k] - indexBefore[k]); break;
+                        case Interpolation::HERMITE: outputVector[k] = hermite(samples[k], positionIndex[k] - indexBefore[k]); break;
+                    }
                 }
                 *outputIterator = outputVector;
 #else
-                *outputIterator = hermite(samples, positionIndex - indexBefore);
+                switch (interpolation) {
+                    case Interpolation::NONE: *outputIterator = samples[0]; break;
+                    case Interpolation::LINEAR: *outputIterator = linear(samples, positionIndex - indexBefore); break;
+                    case Interpolation::HERMITE: *outputIterator = hermite(samples, positionIndex - indexBefore); break;
+                }
 #endif
                 ++phaseIterator;
                 ++positionIterator;

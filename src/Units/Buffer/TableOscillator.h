@@ -10,6 +10,8 @@ class TableOscillator : public Generator, public BufferCollection {
 public:
     TableOscillator(Type type);
 
+    Interpolation getInterpolation() const;
+    void setInterpolation(Interpolation mode);
     unsigned int getNumTables() const;
     std::shared_ptr<Buffer> getTable(unsigned int index) const;
     std::vector<std::shared_ptr<Buffer>> getTables(unsigned int begin, unsigned int end) const;
@@ -27,6 +29,8 @@ protected:
 private:
     const std::shared_ptr<InputParameter> phase;
     const std::shared_ptr<InputParameter> position;
+
+    Interpolation interpolation;
 };
 
 } // namespace dsp
