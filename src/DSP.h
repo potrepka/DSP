@@ -2,11 +2,13 @@
 
 #include "Engine.h"
 
+// Audio
+#include "Audio.h"
+
 // Buffer
 #include "BufferRecorder.h"
 #include "SamplePlayer.h"
 #include "SampleRecorder.h"
-#include "TableOscillator.h"
 
 // Dynamics
 #include "AHR.h"
@@ -45,6 +47,9 @@
 #include "PinkNoise.h"
 #include "WhiteNoise.h"
 
+// Oscillators
+#include "TableOscillator.h"
+
 // Phase
 #include "Phasor.h"
 
@@ -70,7 +75,6 @@
 #include "Trigger.h"
 
 // Utility
-#include "Audio.h"
 #include "ChannelMix.h"
 #include "DryWetMix.h"
 #include "PassThrough.h"
