@@ -4,15 +4,26 @@ dsp::TableOscillator::TableOscillator(Type type)
         : Generator(type)
         , phase(pushInput(Type::UNIPOLAR))
         , position(pushInput(Type::UNIPOLAR))
-        , interpolation(Interpolation::NONE) {}
+        , phaseInterpolation(Interpolation::LINEAR)
+        , positionInterpolation(Interpolation::LINEAR) {}
 
-dsp::Interpolation dsp::TableOscillator::getInterpolation() const {
-    return interpolation;
+dsp::Interpolation dsp::TableOscillator::getPhaseInterpolation() const {
+    return phaseInterpolation;
 }
 
-void dsp::TableOscillator::setInterpolation(Interpolation interpolation) {
+void dsp::TableOscillator::setPhaseInterpolation(Interpolation interpolation) {
     lock();
-    this->interpolation = interpolation;
+    phaseInterpolation = interpolation;
+    unlock();
+}
+
+dsp::Interpolation dsp::TableOscillator::getPositionInterpolation() const {
+    return positionInterpolation;
+}
+
+void dsp::TableOscillator::setPositionInterpolation(Interpolation interpolation) {
+    lock();
+    positionInterpolation = interpolation;
     unlock();
 }
 
@@ -75,7 +86,7 @@ void dsp::TableOscillator::process() {
             }
         }
         int numPoints;
-        switch (interpolation) {
+        switch (positionInterpolation) {
             case Interpolation::NONE: numPoints = 1; break;
             case Interpolation::LINEAR: numPoints = 2; break;
             case Interpolation::HERMITE: numPoints = 4; break;
@@ -94,12 +105,19 @@ void dsp::TableOscillator::process() {
             Iterator outputIterator = outputBuffer.begin();
             while (outputIterator != outputBuffer.end()) {
 #if DSP_USE_VC
-                const Vector positionIndex = clip(*positionIterator, 0.0, 1.0) * (collection.size() - (interpolation == Interpolation::NONE ? 0 : 1));
-                const Vector indexBefore = Vc::floor(positionIndex) - (interpolation == Interpolation::HERMITE ? Vector::One() : Vector::Zero());
+                const Vector positionIndex =
+                        clip(*positionIterator, 0.0, 1.0) *
+                        (collection.size() - (positionInterpolation == Interpolation::NONE ? 0 : 1));
+                const Vector indexBefore =
+                        Vc::floor(positionIndex) -
+                        (positionInterpolation == Interpolation::HERMITE ? Vector::One() : Vector::Zero());
                 Vector p = indexBefore;
 #else
-                const Sample positionIndex = clip(*positionIterator, 0.0, 1.0) * (collection.size() - (interpolation == Interpolation::NONE ? 0 : 1));
-                const Sample indexBefore = floor(positionIndex) - (interpolation == Interpolation::HERMITE ? 1.0 : 0.0);
+                const Sample positionIndex =
+                        clip(*positionIterator, 0.0, 1.0) *
+                        (collection.size() - (positionInterpolation == Interpolation::NONE ? 0 : 1));
+                const Sample indexBefore =
+                        floor(positionIndex) - (positionInterpolation == Interpolation::HERMITE ? 1.0 : 0.0);
                 Sample p = indexBefore;
 #endif
                 for (int j = 0; j < numPoints; ++j) {
@@ -107,10 +125,17 @@ void dsp::TableOscillator::process() {
                     for (int k = 0; k < Vector::Size; ++k) {
                         if (p[k] >= 0.0 && p[k] < collection.size() && collection[p[k]] != nullptr) {
                             if (collection[p[k]]->getNumChannels() > 0) {
-                                samples[k][j] =
-                                        linear(collection[p[k]]->getChannel(i % collection[p[k]]->getNumChannels()),
-                                               wrap((*phaseIterator)[k], 1.0) * collection[p[k]]->getBufferSize(),
-                                               collection[p[k]]->getDefaultValue());
+                                Array &buffer = collection[p[k]]->getChannel(i % collection[p[k]]->getNumChannels());
+                                Sample index = wrap((*phaseIterator)[k], 1.0) * collection[p[k]]->getBufferSize();
+                                switch (phaseInterpolation) {
+                                    case Interpolation::NONE: samples[k][j] = buffer[index]; break;
+                                    case Interpolation::LINEAR:
+                                        samples[k][j] = linear(buffer, index, collection[p[k]]->getDefaultValue());
+                                        break;
+                                    case Interpolation::HERMITE:
+                                        samples[k][j] = hermite(buffer, index, collection[p[k]]->getDefaultValue());
+                                        break;
+                                }
                             } else {
                                 samples[k][j] = collection[p[k]]->getDefaultValue();
                             }
@@ -121,9 +146,17 @@ void dsp::TableOscillator::process() {
 #else
                     if (p >= 0 && p < collection.size() && collection[p] != nullptr) {
                         if (collection[p]->getNumChannels() > 0) {
-                            samples[j] = linear(collection[p]->getChannel(i % collection[p]->getNumChannels()),
-                                                wrap(*phaseIterator, 1.0) * collection[p]->getBufferSize(),
-                                                collection[p]->getDefaultValue());
+                            Array &buffer = collection[p]->getChannel(i % collection[p]->getNumChannels());
+                            Sample index = wrap(*phaseIterator, 1.0) * collection[p]->getBufferSize();
+                            switch (phaseInterpolation) {
+                                case Interpolation::NONE: samples[j] = buffer[index]; break;
+                                case Interpolation::LINEAR:
+                                    samples[j] = linear(buffer, index, collection[p]->getDefaultValue());
+                                    break;
+                                case Interpolation::HERMITE:
+                                    samples[j] = hermite(buffer, index, collection[p]->getDefaultValue());
+                                    break;
+                            }
                         } else {
                             samples[j] = collection[p]->getDefaultValue();
                         }
@@ -136,15 +169,19 @@ void dsp::TableOscillator::process() {
 #if DSP_USE_VC
                 Vector outputVector;
                 for (int k = 0; k < Vector::Size; ++k) {
-                    switch (interpolation) {
+                    switch (positionInterpolation) {
                         case Interpolation::NONE: outputVector[k] = samples[k][0]; break;
-                        case Interpolation::LINEAR: outputVector[k] = linear(samples[k], positionIndex[k] - indexBefore[k]); break;
-                        case Interpolation::HERMITE: outputVector[k] = hermite(samples[k], positionIndex[k] - indexBefore[k]); break;
+                        case Interpolation::LINEAR:
+                            outputVector[k] = linear(samples[k], positionIndex[k] - indexBefore[k]);
+                            break;
+                        case Interpolation::HERMITE:
+                            outputVector[k] = hermite(samples[k], positionIndex[k] - indexBefore[k]);
+                            break;
                     }
                 }
                 *outputIterator = outputVector;
 #else
-                switch (interpolation) {
+                switch (positionInterpolation) {
                     case Interpolation::NONE: *outputIterator = samples[0]; break;
                     case Interpolation::LINEAR: *outputIterator = linear(samples, positionIndex - indexBefore); break;
                     case Interpolation::HERMITE: *outputIterator = hermite(samples, positionIndex - indexBefore); break;
