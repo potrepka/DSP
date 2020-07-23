@@ -92,7 +92,7 @@ void dsp::TableOscillator::process() {
                             if (collection[p[k]]->getNumChannels() > 0) {
                                 samples[k][j] =
                                         linear(collection[p[k]]->getChannel(i % collection[p[k]]->getNumChannels()),
-                                               wrap((*phaseIterator)[k], 0.0, 1.0) * collection[p[k]]->getBufferSize(),
+                                               wrap((*phaseIterator)[k], 1.0) * collection[p[k]]->getBufferSize(),
                                                collection[p[k]]->getDefaultValue());
                             } else {
                                 samples[k][j] = collection[p[k]]->getDefaultValue();
@@ -105,7 +105,7 @@ void dsp::TableOscillator::process() {
                     if (p >= 0 && p < collection.size() && collection[p] != nullptr) {
                         if (collection[p]->getNumChannels() > 0) {
                             samples[j] = linear(collection[p]->getChannel(i % collection[p]->getNumChannels()),
-                                                wrap(*phaseIterator, 0.0, 1.0) * collection[p]->getBufferSize(),
+                                                wrap(*phaseIterator, 1.0) * collection[p]->getBufferSize(),
                                                 collection[p]->getDefaultValue());
                         } else {
                             samples[j] = collection[p]->getDefaultValue();

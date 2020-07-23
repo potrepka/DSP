@@ -29,7 +29,7 @@ void dsp::Phasor::process() {
                 phase[i] = 0.0;
             }
             outputBuffer[k] = phase[i];
-            phase[i] = wrap(phase[i] + frequencyBuffer[k] * getOneOverSampleRate(), 0.0, 1.0);
+            phase[i] = wrap(phase[i] + frequencyBuffer[k] * getOneOverSampleRate(), 1.0);
         }
     }
 }

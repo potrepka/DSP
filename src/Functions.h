@@ -23,8 +23,8 @@ Vector linearToDecibels(const Vector linear);
 Vector decibelsToRatio(const Vector decibels);
 Vector ratioToDecibels(const Vector ratio);
 
-Vector clip(const Vector signal, const Vector min, const Vector max);
-Vector wrap(const Vector signal, const Vector min, const Vector max);
+Vector clip(Vector signal, const Vector min, const Vector max);
+Vector wrap(Vector signal, const Vector max);
 
 std::function<Sample(Sample)> getValue(const Array &table, std::size_t offset);
 
@@ -47,8 +47,8 @@ Sample decibelsToRatio(const Sample decibels);
 Sample ratioToDecibels(const Sample ratio);
 #endif
 
-Sample clip(const Sample signal, const Sample min, const Sample max);
-Sample wrap(const Sample signal, const Sample min, const Sample max);
+Sample clip(Sample signal, const Sample min, const Sample max);
+Sample wrap(Sample signal, const Sample max);
 
 Sample linear(const Array &table, const Sample index, Sample defaultValue = 0.0);
 Sample hermite(const Array &table, const Sample index, Sample defaultValue = 0.0);

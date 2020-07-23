@@ -41,13 +41,15 @@ dsp::Vector dsp::ratioToDecibels(const Vector ratio) {
     return linearToDecibels(Vc::log2(ratio));
 }
 
-dsp::Vector dsp::clip(const Vector signal, const Vector min, const Vector max) {
-    return Vc::iif(min >= max || signal < min, min, Vc::iif(signal > max, max, signal));
+dsp::Vector dsp::clip(Vector signal, const Vector min, const Vector max) {
+    signal(signal > max) = max;
+    signal(signal < min) = min;
+    return signal;
 }
 
-dsp::Vector dsp::wrap(const Vector signal, const Vector min, const Vector max) {
-    const Vector diff = max - min;
-    return Vc::iif(diff == Vector::Zero(), min, signal - Vc::floor((signal - min) / diff) * diff);
+dsp::Vector dsp::wrap(Vector signal, const Vector max) {
+    signal(max != Vector::Zero()) -= Vc::floor(signal / max) * max;
+    return signal;
 }
 
 std::function<dsp::Sample(dsp::Sample)> dsp::getValue(const Array &table, std::size_t offset) {
@@ -124,16 +126,21 @@ dsp::Sample dsp::ratioToDecibels(const Sample ratio) {
 }
 #endif
 
-dsp::Sample dsp::clip(const Sample signal, const Sample min, const Sample max) {
-    return (min >= max || signal < min) ? min : signal > max ? max : signal;
+dsp::Sample dsp::clip(Sample signal, const Sample min, const Sample max) {
+    if (signal > max) {
+        signal = max;
+    }
+    if (signal < min) {
+        signal = min;
+    }
+    return signal;
 }
 
-dsp::Sample dsp::wrap(const Sample signal, const Sample min, const Sample max) {
-    if (min == max) {
-        return min;
+dsp::Sample dsp::wrap(Sample signal, const Sample max) {
+    if (max != 0.0) {
+        signal -= floor(signal / max) * max;
     }
-    const Sample diff = max - min;
-    return signal - floor((signal - min) / diff) * diff;
+    return signal;
 }
 
 dsp::Sample dsp::linear(const Array &table, const Sample index, Sample defaultValue) {

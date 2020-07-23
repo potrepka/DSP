@@ -72,7 +72,7 @@ void dsp::Sequencer::process() {
                 if (p >= 0 && p < collection.size() && collection[p] != nullptr) {
                     if (collection[p]->getNumChannels() > 0 && collection[p]->getBufferSize() > 0) {
                         Array &channel = collection[p]->getChannel(i % collection[p]->getNumChannels());
-                        outputBuffer[k] = channel[wrap(indexBuffer[k], 0.0, collection[p]->getBufferSize())];
+                        outputBuffer[k] = channel[wrap(indexBuffer[k], collection[p]->getBufferSize())];
                     } else {
                         outputBuffer[k] = collection[p]->getDefaultValue();
                     }

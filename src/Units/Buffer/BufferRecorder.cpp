@@ -97,7 +97,7 @@ void dsp::BufferRecorder::process() {
             }
         }
         if (!externalBufferSizeSynced) {
-            writeIndex = wrap(writeIndex + getBufferSize(), 0.0, externalBufferSize);
+            writeIndex = wrap(writeIndex + getBufferSize(), externalBufferSize);
         }
     }
     buffer->unlock();
