@@ -27,6 +27,10 @@ dsp::Cascade::Cascade()
     connect();
 }
 
+dsp::Cascade::~Cascade() {
+    disconnect();
+}
+
 dsp::Cascade::Mode dsp::Cascade::getMode() const {
     return mode;
 }

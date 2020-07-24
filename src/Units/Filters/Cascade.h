@@ -13,6 +13,7 @@ public:
     enum class Mode { LOW_PASS, HIGH_PASS, BAND_PASS, BAND_STOP, LOW_SHELF, HIGH_SHELF, PEAK, ALL_PASS };
 
     Cascade();
+    ~Cascade();
 
     Mode getMode() const;
     void setMode(Mode mode);
@@ -32,7 +33,6 @@ private:
     const std::shared_ptr<PassThrough> resonance;
     const std::shared_ptr<PassThrough> gain;
     const std::shared_ptr<OnePole> onePole;
-
     const std::shared_ptr<PassThrough> output;
 
     Mode mode;
