@@ -53,23 +53,33 @@ void dsp::Cascade::setOrder(unsigned int order) {
     disconnect();
     halfOrder = order >> 1;
     removeUnitNoLock(output);
-    for (const auto &multiply : multiplies) {
-        removeUnitNoLock(multiply);
+    for (const auto &resonanceFactor : resonanceFactors) {
+        removeUnitNoLock(resonanceFactor);
+    }
+    for (const auto &gainFactor : gainFactors) {
+        removeUnitNoLock(gainFactor);
     }
     for (const auto &biquad : biquads) {
         removeUnitNoLock(biquad);
     }
-    multiplies.clear();
+    resonanceFactors.clear();
+    gainFactors.clear();
     biquads.clear();
-    multiplies.reserve(halfOrder);
+    resonanceFactors.reserve(halfOrder);
+    gainFactors.reserve(halfOrder);
     biquads.reserve(halfOrder);
     Sample increment = PI_OVER_TWO / halfOrder;
     Sample firstAngle = 0.5 * increment;
     for (unsigned int i = 0; i < halfOrder; ++i) {
-        std::shared_ptr<Multiply> multiply = std::make_shared<Multiply>(Type::RATIO);
-        1.0 / (2.0 * cos(firstAngle + i * increment)) >> multiply->pushInputRatio();
-        multiplies.push_back(multiply);
-        pushUnitNoLock(multiply);
+        std::shared_ptr<Multiply> resonanceFactor = std::make_shared<Multiply>(Type::RATIO);
+        1.0 / (2.0 * cos(firstAngle + i * increment)) >> resonanceFactor->pushInputRatio();
+        resonanceFactors.push_back(resonanceFactor);
+        pushUnitNoLock(resonanceFactor);
+
+        std::shared_ptr<Multiply> gainFactor = std::make_shared<Multiply>(Type::RATIO);
+        1.0 / halfOrder >> gainFactor->pushInputRatio();
+        gainFactors.push_back(gainFactor);
+        pushUnitNoLock(gainFactor);
 
         std::shared_ptr<Biquad> biquad = std::make_shared<Biquad>();
         setMode(biquad);
@@ -101,12 +111,14 @@ void dsp::Cascade::connect() {
         biquads[halfOrder - 1]->getOutputSignal() >> output->getInputSignal();
     }
     for (unsigned int i = 0; i < halfOrder; ++i) {
-        std::shared_ptr<Multiply> multiply = multiplies[i];
+        std::shared_ptr<Multiply> resonanceFactor = resonanceFactors[i];
+        std::shared_ptr<Multiply> gainFactor = gainFactors[i];
         std::shared_ptr<Biquad> biquad = biquads[i];
         frequency->getOutputSignal() >> biquad->getFrequency();
-        resonance->getOutputSignal() >> multiply->getInputSignal();
-        multiply->getOutputSignal() >> biquad->getResonance();
-        gain->getOutputSignal() >> biquad->getGain();
+        resonance->getOutputSignal() >> resonanceFactor->getInputSignal();
+        resonanceFactor->getOutputSignal() >> biquad->getResonance();
+        gain->getOutputSignal() >> gainFactor->getInputSignal();
+        gainFactor->getOutputSignal() >> biquad->getGain();
         if (i + 1 < halfOrder) {
             biquads[i]->getOutputSignal() >> biquads[i + 1]->getInputSignal();
         }
@@ -121,12 +133,14 @@ void dsp::Cascade::disconnect() {
         biquads[halfOrder - 1]->getOutputSignal() != output->getInputSignal();
     }
     for (unsigned int i = 0; i < halfOrder; ++i) {
-        std::shared_ptr<Multiply> multiply = multiplies[i];
+        std::shared_ptr<Multiply> resonanceFactor = resonanceFactors[i];
+        std::shared_ptr<Multiply> gainFactor = gainFactors[i];
         std::shared_ptr<Biquad> biquad = biquads[i];
         frequency->getOutputSignal() != biquad->getFrequency();
-        resonance->getOutputSignal() != multiply->getInputSignal();
-        multiply->getOutputSignal() != biquad->getResonance();
-        gain->getOutputSignal() != biquad->getGain();
+        resonance->getOutputSignal() != resonanceFactor->getInputSignal();
+        resonanceFactor->getOutputSignal() != biquad->getResonance();
+        gain->getOutputSignal() != gainFactor->getInputSignal();
+        gainFactor->getOutputSignal() != biquad->getGain();
         if (i + 1 < halfOrder) {
             biquads[i]->getOutputSignal() != biquads[i + 1]->getInputSignal();
         }

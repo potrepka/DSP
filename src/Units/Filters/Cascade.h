@@ -37,8 +37,9 @@ private:
 
     Mode mode;
     unsigned int halfOrder;
+    std::vector<std::shared_ptr<Multiply>> resonanceFactors;
+    std::vector<std::shared_ptr<Multiply>> gainFactors;
     std::vector<std::shared_ptr<Biquad>> biquads;
-    std::vector<std::shared_ptr<Multiply>> multiplies;
 
     void setMode(std::shared_ptr<Biquad> biquad);
 };
