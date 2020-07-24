@@ -43,12 +43,8 @@ int main() {
 ## Future Direction
 
 The following are possible directions for future development:
-- Delay effects
 - Elliptic filter
-- Crossover filter
 - Frequency response calculation
 - Pitch detection/shifting
-- Wavetable factory
 - Saving/Loading state
-- SIMD operations
 - Parallel computing
