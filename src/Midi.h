@@ -99,7 +99,7 @@ public:
 
         unsigned int getNumCallbacks() const;
         std::shared_ptr<std::function<void(TimedMessage)>> getCallback(unsigned int index) const;
-        void pushCallback(std::function<void(TimedMessage)> callback);
+        std::shared_ptr<std::function<void(TimedMessage)>> pushCallback(std::function<void(TimedMessage)> callback);
         void removeCallback(std::shared_ptr<std::function<void(TimedMessage)>> callback);
 
         void run();

@@ -216,10 +216,14 @@ dsp::Midi::MidiInput::getCallback(unsigned int index) const {
     return callbacks[index];
 }
 
-void dsp::Midi::MidiInput::pushCallback(std::function<void(TimedMessage)> callback) {
+std::shared_ptr<std::function<void(dsp::Midi::TimedMessage)>>
+dsp::Midi::MidiInput::pushCallback(std::function<void(TimedMessage)> callback) {
+    std::shared_ptr<std::function<void(TimedMessage)>> pointer =
+            std::make_shared<std::function<void(TimedMessage)>>(callback);
     lock();
-    callbacks.push_back(std::make_shared<std::function<void(TimedMessage)>>(callback));
+    callbacks.push_back(pointer);
     unlock();
+    return pointer;
 }
 
 void dsp::Midi::MidiInput::removeCallback(std::shared_ptr<std::function<void(Midi::TimedMessage)>> callback) {
