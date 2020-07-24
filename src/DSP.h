@@ -48,6 +48,7 @@
 #include "WhiteNoise.h"
 
 // Oscillators
+#include "FunctionOscillator.h"
 #include "TableOscillator.h"
 
 // Phase
