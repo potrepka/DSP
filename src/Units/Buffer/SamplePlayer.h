@@ -10,6 +10,8 @@ class SamplePlayer : public Generator, public BufferCollection {
 public:
     SamplePlayer(Type type);
 
+    Interpolation getInterpolation() const;
+    void setInterpolation(Interpolation interpolation);
     unsigned int getNumSamples() const;
     std::shared_ptr<Buffer> getSample(unsigned int index) const;
     std::vector<std::shared_ptr<Buffer>> getSamples(unsigned int begin, unsigned int end) const;
@@ -38,6 +40,7 @@ private:
 
     const std::shared_ptr<OutputParameter> currentTime;
 
+    Interpolation interpolation;
     Array readIndex;
 };
 
