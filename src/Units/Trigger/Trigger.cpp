@@ -7,6 +7,14 @@ dsp::Trigger::Trigger()
         , delayTime(pushInput(Type::SECONDS))
         , currentTime(pushOutput(Type::SECONDS)) {}
 
+void dsp::Trigger::setTimeToZero() {
+    lock();
+    for (unsigned int i = 0; i < getNumChannels(); ++i) {
+        index[i] = 0.0;
+    }
+    unlock();
+}
+
 std::shared_ptr<dsp::InputParameter> dsp::Trigger::getResetTrigger() const {
     return resetTrigger;
 }

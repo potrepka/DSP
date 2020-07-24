@@ -9,6 +9,7 @@ class Trigger : public Generator {
 public:
     Trigger();
 
+    void setTimeToZero();
     std::shared_ptr<InputParameter> getResetTrigger() const;
     std::shared_ptr<InputParameter> getIntervalDuration() const;
     std::shared_ptr<InputParameter> getDelayTime() const;
