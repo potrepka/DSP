@@ -22,6 +22,7 @@
 #include "Biquad.h"
 #include "Cascade.h"
 #include "Convolver.h"
+#include "Crossover.h"
 #include "OnePole.h"
 #include "VariableDelay.h"
 
