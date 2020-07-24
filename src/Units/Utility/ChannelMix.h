@@ -8,6 +8,7 @@ class ChannelMix : public Consumer {
 
 public:
     ChannelMix(Type type, Space space = Space::TIME);
+
     std::shared_ptr<InputParameter> getMixAmount() const;
     std::shared_ptr<OutputParameter> getMid() const;
     std::shared_ptr<OutputParameter> getSide() const;
