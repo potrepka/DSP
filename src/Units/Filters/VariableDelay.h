@@ -13,6 +13,7 @@ public:
     unsigned int getMaxDelayTime() const;
     void setMaxDelayTime(Sample seconds);
     std::shared_ptr<InputParameter> getDelayTime() const;
+    std::shared_ptr<InputParameter> getFeedback() const;
 
 protected:
     void setSampleRateNoLock(unsigned int sampleRate) override;
@@ -21,6 +22,7 @@ protected:
 
 private:
     const std::shared_ptr<InputParameter> delayTime;
+    const std::shared_ptr<InputParameter> feedback;
 
     Sample maxDelayTime;
     unsigned int writeIndex;
