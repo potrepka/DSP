@@ -11,7 +11,7 @@ public:
 
     std::shared_ptr<InputParameter> getResetTrigger() const;
     std::shared_ptr<InputParameter> getTrigger() const;
-    std::shared_ptr<InputParameter> getOffset() const;
+    std::shared_ptr<InputParameter> getOffsetCount() const;
     std::shared_ptr<InputParameter> getSpeed() const;
 
 protected:
