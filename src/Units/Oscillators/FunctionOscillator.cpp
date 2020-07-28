@@ -25,9 +25,11 @@ void dsp::FunctionOscillator::process() {
         Iterator outputIterator = outputBuffer.begin();
         while (outputIterator != outputBuffer.end()) {
 #if DSP_USE_VC
-            *outputIterator = (*phaseIterator).apply(function);
+            Vector phase = wrap(*phaseIterator, Vector::One());
+            *outputIterator = (phase).apply(function);
 #else
-            *outputIterator = function(*phaseIterator);
+            Sample phase = wrap(*phaseIterator, 1.0);
+            *outputIterator = function(phase);
 #endif
             ++phaseIterator;
             ++outputIterator;
