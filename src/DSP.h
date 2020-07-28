@@ -50,6 +50,7 @@
 
 // Oscillators
 #include "FunctionOscillator.h"
+#include "Moorer.h"
 #include "TableOscillator.h"
 
 // Phase
