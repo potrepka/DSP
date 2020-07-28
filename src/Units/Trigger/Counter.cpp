@@ -5,7 +5,7 @@ dsp::Counter::Counter()
         , resetTrigger(pushInput(Type::BINARY))
         , trigger(pushInput(Type::BINARY))
         , offset(pushInput(Type::INTEGER))
-        , speed(pushInput(Type::RATIO)) {}
+        , speed(pushInput(Type::RATIO, Space::TIME, 1.0)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::Counter::getResetTrigger() const {
     return resetTrigger;
