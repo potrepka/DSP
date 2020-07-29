@@ -2,9 +2,6 @@
 
 #include "Engine.h"
 
-// Audio
-#include "Audio.h"
-
 // Buffer
 #include "BufferRecorder.h"
 #include "SamplePlayer.h"
@@ -78,6 +75,7 @@
 #include "Trigger.h"
 
 // Utility
+#include "Audio.h"
 #include "ChannelMix.h"
 #include "DryWetMix.h"
 #include "PassThrough.h"
