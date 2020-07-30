@@ -8,9 +8,9 @@
 #include "SampleRecorder.h"
 
 // Dynamics
-#include "AHR.h"
 #include "CompressorGate.h"
 #include "Distortion.h"
+#include "Envelope.h"
 #include "GainComputer.h"
 #include "GainEnvelope.h"
 #include "GainScale.h"
