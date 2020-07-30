@@ -6,7 +6,7 @@ dsp::Phasor::Phasor()
         , frequency(pushInput(Type::HERTZ))
         , mode(Mode::WRAPPED) {}
 
-dsp::Phasor::Mode dsp::Phasor::getMode() {
+dsp::Phasor::Mode dsp::Phasor::getMode() const {
     return mode;
 }
 

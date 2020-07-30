@@ -11,7 +11,7 @@ public:
 
     Phasor();
 
-    Mode getMode();
+    Mode getMode() const;
     void setMode(Mode mode);
     std::shared_ptr<InputParameter> getResetTrigger() const;
     std::shared_ptr<InputParameter> getFrequency() const;

@@ -11,7 +11,7 @@ public:
 
     Moorer();
 
-    Mode getMode();
+    Mode getMode() const;
     void setMode(Mode mode);
     std::shared_ptr<InputParameter> getPhase() const;
     std::shared_ptr<InputParameter> getModulationRatio() const;

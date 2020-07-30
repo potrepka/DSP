@@ -8,7 +8,7 @@ dsp::Moorer::Moorer()
         , overtones(pushInput(Type::INTEGER))
         , mode(Mode::ONE_SIDED) {}
 
-dsp::Moorer::Mode dsp::Moorer::getMode() {
+dsp::Moorer::Mode dsp::Moorer::getMode() const {
     return mode;
 }
 
