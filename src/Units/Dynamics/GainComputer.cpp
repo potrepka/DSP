@@ -1,11 +1,11 @@
 #include "GainComputer.h"
 
 dsp::GainComputer::GainComputer(Space space)
-        : Processor(Type::LINEAR, Type::LINEAR, space)
-        , threshold(pushInput(Type::LINEAR, space))
+        : Processor(Type::LOGARITHMIC, Type::LOGARITHMIC, space)
+        , threshold(pushInput(Type::LOGARITHMIC, space))
         , compressionRatio(pushInput(Type::RATIO, space, 1.0))
         , gateRatio(pushInput(Type::RATIO, space, 1.0))
-        , knee(pushInput(Type::LINEAR, space)) {}
+        , knee(pushInput(Type::LOGARITHMIC, space)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::GainComputer::getThreshold() const {
     return threshold;

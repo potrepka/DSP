@@ -1,7 +1,7 @@
 #include "Base2Log.h"
 
 dsp::Base2Log::Base2Log(Space space)
-        : Processor(Type::RATIO, Type::LINEAR, space) {}
+        : Processor(Type::RATIO, Type::LOGARITHMIC, space) {}
 
 void dsp::Base2Log::process() {
     Unit::process();

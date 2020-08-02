@@ -2,7 +2,7 @@
 
 dsp::GainScale::GainScale(Type type, Space space)
         : Processor(type, type, space)
-        , gain(pushInput(Type::LINEAR, space)) {}
+        , gain(pushInput(Type::LOGARITHMIC, space)) {}
 
 std::shared_ptr<dsp::InputParameter> dsp::GainScale::getGain() const {
     return gain;

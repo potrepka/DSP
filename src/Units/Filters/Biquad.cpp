@@ -4,7 +4,7 @@ dsp::Biquad::Biquad()
         : Processor(dsp::Type::BIPOLAR, dsp::Type::BIPOLAR)
         , frequency(pushInput(Type::HERTZ))
         , resonance(pushInput(Type::RATIO, Space::TIME, 1.0))
-        , gain(pushInput(Type::LINEAR))
+        , gain(pushInput(Type::LOGARITHMIC))
         , mode(Mode::LOW_PASS) {}
 
 dsp::Biquad::Mode dsp::Biquad::getMode() const {

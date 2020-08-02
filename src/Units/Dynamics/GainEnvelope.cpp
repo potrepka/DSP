@@ -1,7 +1,7 @@
 #include "GainEnvelope.h"
 
 dsp::GainEnvelope::GainEnvelope()
-        : Processor(Type::LINEAR, Type::LINEAR)
+        : Processor(Type::LOGARITHMIC, Type::LOGARITHMIC)
         , attack(pushInput(Type::SECONDS))
         , release(pushInput(Type::SECONDS)) {}
 

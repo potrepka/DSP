@@ -4,7 +4,7 @@ dsp::Cascade::Cascade()
         : Processor(Type::BIPOLAR, Type::BIPOLAR)
         , input(std::make_shared<PassThrough>(Type::BIPOLAR))
         , frequency(std::make_shared<PassThrough>(Type::HERTZ))
-        , gain(std::make_shared<PassThrough>(Type::LINEAR))
+        , gain(std::make_shared<PassThrough>(Type::LOGARITHMIC))
         , output(std::make_shared<PassThrough>(Type::BIPOLAR))
         , mode(Mode::LOW_PASS)
         , halfOrder(0) {
