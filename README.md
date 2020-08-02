@@ -2,7 +2,7 @@
 
 DSP is an open-source C++ library for audio digital signal processing.
 
-This project is a work in progress. Feedback and contributions are welcome!
+This repository is a work in progress. Feedback and contributions are welcome!
 
 ## Usage
 
@@ -43,7 +43,7 @@ int main() {
 ## Future Direction
 
 The following are possible directions for future development:
-- Elliptic filter
+- Additional filters
 - Frequency response calculation
 - Pitch detection/shifting
 - Saving/Loading state
