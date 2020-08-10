@@ -8,7 +8,7 @@ namespace dsp {
 class TimeToFrequency : public Consumer {
 
 public:
-    TimeToFrequency();
+    TimeToFrequency(Type type);
 
     std::shared_ptr<OutputParameter> getReal() const;
     std::shared_ptr<OutputParameter> getImaginary() const;

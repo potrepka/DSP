@@ -1,7 +1,7 @@
 #include "FrequencyToTime.h"
 
-dsp::FrequencyToTime::FrequencyToTime()
-        : Generator(Type::BIPOLAR)
+dsp::FrequencyToTime::FrequencyToTime(Type type)
+        : Generator(type)
         , real(pushInput(Type::BIPOLAR, Space::FREQUENCY))
         , imaginary(pushInput(Type::BIPOLAR, Space::FREQUENCY)) {}
 

@@ -8,7 +8,7 @@ namespace dsp {
 class FrequencyToTime : public Generator {
 
 public:
-    FrequencyToTime();
+    FrequencyToTime(Type type);
 
     std::shared_ptr<InputParameter> getReal() const;
     std::shared_ptr<InputParameter> getImaginary() const;

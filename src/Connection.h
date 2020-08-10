@@ -46,7 +46,7 @@ class Input : public Connection, public std::enable_shared_from_this<Input> {
     friend class Output;
 
 public:
-    Input(unsigned int bufferSize, Type type, Space space = Space::TIME, Sample value = 0.0);
+    Input(unsigned int bufferSize, Type type, Space space = Space::TIME, Sample defaultValue = 0.0);
     ~Input();
 
     std::vector<std::shared_ptr<Output>> getConnections() const;
@@ -67,7 +67,7 @@ class Output : public Connection, public std::enable_shared_from_this<Output> {
     friend class Input;
 
 public:
-    Output(unsigned int bufferSize, Type type, Space space = Space::TIME, Sample value = 0.0);
+    Output(unsigned int bufferSize, Type type, Space space = Space::TIME, Sample defaultValue = 0.0);
     ~Output();
 
     std::vector<std::shared_ptr<Input>> getConnections() const;

@@ -1,7 +1,7 @@
 #include "TimeToFrequency.h"
 
-dsp::TimeToFrequency::TimeToFrequency()
-        : Consumer(Type::BIPOLAR)
+dsp::TimeToFrequency::TimeToFrequency(Type type)
+        : Consumer(type)
         , real(pushOutput(Type::BIPOLAR, Space::FREQUENCY))
         , imaginary(pushOutput(Type::BIPOLAR, Space::FREQUENCY)) {}
 
