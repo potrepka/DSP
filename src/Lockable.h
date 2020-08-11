@@ -7,6 +7,8 @@ namespace dsp {
 class Lockable {
 
 public:
+    virtual ~Lockable() = 0;
+
     virtual void lock();
     virtual void unlock();
 

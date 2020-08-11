@@ -1,7 +1,8 @@
 #include "Processor.h"
 
 dsp::Processor::Processor(Type inType, Type outType, Space space)
-        : Consumer(inType, space)
+        : Unit()
+        , Consumer(inType, space)
         , Generator(outType, space) {}
 
 #if DSP_USE_VC

@@ -14,6 +14,7 @@ class Unit : public Runnable {
 
 public:
     Unit();
+    virtual ~Unit();
 
     unsigned int getNumChannels() const;
     void setNumChannels(unsigned int numChannels);
@@ -88,5 +89,7 @@ private:
 
     void prepare();
 };
+
+
 
 } // namespace dsp

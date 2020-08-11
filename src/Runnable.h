@@ -9,6 +9,7 @@ class Runnable : public Lockable {
 
 public:
     Runnable();
+    virtual ~Runnable() = 0;
 
     Sample getOneOverSampleRate() const;
     Sample getOneOverBufferSize() const;

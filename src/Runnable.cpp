@@ -6,6 +6,8 @@ dsp::Runnable::Runnable()
         , sampleRate(0)
         , bufferSize(0) {}
 
+dsp::Runnable::~Runnable() {}
+
 dsp::Sample dsp::Runnable::getOneOverSampleRate() const {
     return oneOverSampleRate;
 }

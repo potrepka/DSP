@@ -4,6 +4,15 @@ dsp::Unit::Unit()
         : numChannels(0)
         , active(true) {}
 
+dsp::Unit::~Unit() {
+    for (const auto &input : inputs) {
+        input->disconnectAll();
+    }
+    for (const auto &output : outputs) {
+        output->disconnectAll();
+    }
+}
+
 unsigned int dsp::Unit::getNumChannels() const {
     return numChannels;
 }

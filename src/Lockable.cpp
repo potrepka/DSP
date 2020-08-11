@@ -1,5 +1,7 @@
 #include "Lockable.h"
 
+dsp::Lockable::~Lockable() {}
+
 void dsp::Lockable::lock() {
     mtx.lock();
 }
