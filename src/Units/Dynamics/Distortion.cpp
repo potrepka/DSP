@@ -38,12 +38,12 @@ void dsp::Distortion::process() {
         if (std::isinf(y)) {
             return x < 0.0 ? -1.0 : 1.0;
         }
-        Sample ry = 1.0 / y;
-        Sample a = y - ry;
+        Sample yy = y * y;
+        Sample minus = yy - 1;
         if (x < 0.0) {
-            return (1.0 / (ry - a * x) - y) / a;
+            return (yy / (1.0 - minus * x) - yy) / minus;
         } else {
-            return (y - 1.0 / (ry + a * x)) / a;
+            return (yy - yy / (1.0 + minus * x)) / minus;
         }
     });
 #endif
