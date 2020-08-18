@@ -2,20 +2,10 @@
 
 dsp::TableOscillator::TableOscillator(Type type)
         : Generator(type)
-        , phase(pushInput(Type::UNIPOLAR))
         , position(pushInput(Type::UNIPOLAR))
-        , phaseInterpolation(Interpolation::LINEAR)
-        , positionInterpolation(Interpolation::LINEAR) {}
-
-dsp::Interpolation dsp::TableOscillator::getPhaseInterpolation() const {
-    return phaseInterpolation;
-}
-
-void dsp::TableOscillator::setPhaseInterpolation(Interpolation interpolation) {
-    lock();
-    phaseInterpolation = interpolation;
-    unlock();
-}
+        , phase(pushInput(Type::UNIPOLAR))
+        , positionInterpolation(Interpolation::LINEAR)
+        , phaseInterpolation(Interpolation::LINEAR) {}
 
 dsp::Interpolation dsp::TableOscillator::getPositionInterpolation() const {
     return positionInterpolation;
@@ -24,6 +14,16 @@ dsp::Interpolation dsp::TableOscillator::getPositionInterpolation() const {
 void dsp::TableOscillator::setPositionInterpolation(Interpolation interpolation) {
     lock();
     positionInterpolation = interpolation;
+    unlock();
+}
+
+dsp::Interpolation dsp::TableOscillator::getPhaseInterpolation() const {
+    return phaseInterpolation;
+}
+
+void dsp::TableOscillator::setPhaseInterpolation(Interpolation interpolation) {
+    lock();
+    phaseInterpolation = interpolation;
     unlock();
 }
 
@@ -97,8 +97,8 @@ void dsp::TableOscillator::process() {
         Array samples(numPoints);
 #endif
         for (unsigned int i = 0; i < getNumChannels(); ++i) {
-            Array &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
             Array &positionBuffer = getPosition()->getChannel(i)->getBuffer();
+            Array &phaseBuffer = getPhase()->getChannel(i)->getBuffer();
             Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             Iterator phaseIterator = phaseBuffer.begin();
             Iterator positionIterator = positionBuffer.begin();

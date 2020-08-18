@@ -5,7 +5,7 @@ dsp::Envelope::Envelope()
         , resetTrigger(pushInput(Type::BINARY))
         , gate(pushInput(Type::BINARY))
         , attack(pushInput(Type::SECONDS))
-        , release((pushInput(Type::SECONDS)))
+        , release(pushInput(Type::SECONDS))
         , currentTime(pushOutput(Type::SECONDS))
         , attackMode(Mode::LINEAR)
         , releaseMode(Mode::LINEAR) {}

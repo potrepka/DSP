@@ -1,7 +1,7 @@
 #include "Biquad.h"
 
 dsp::Biquad::Biquad()
-        : Processor(dsp::Type::BIPOLAR, dsp::Type::BIPOLAR)
+        : Processor(Type::BIPOLAR, Type::BIPOLAR)
         , frequency(pushInput(Type::HERTZ))
         , resonance(pushInput(Type::RATIO, Space::TIME, 1.0))
         , gain(pushInput(Type::LOGARITHMIC))

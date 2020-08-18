@@ -22,7 +22,6 @@ std::shared_ptr<dsp::InputParameter> dsp::SampleRecorder::getGate() const {
 void dsp::SampleRecorder::setNumChannelsNoLock(unsigned int numChannels) {
     Unit::setNumChannelsNoLock(numChannels);
     sample->setNumChannels(numChannels);
-    gatePrevious.resize(numChannels, 0.0);
 }
 
 void dsp::SampleRecorder::process() {
