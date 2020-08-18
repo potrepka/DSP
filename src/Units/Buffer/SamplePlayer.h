@@ -22,9 +22,9 @@ public:
     void removeSamples(std::vector<std::shared_ptr<Buffer>> samples);
     std::shared_ptr<InputParameter> getResetTrigger() const;
     std::shared_ptr<InputParameter> getGate() const;
-    std::shared_ptr<InputParameter> getOffsetTime() const;
-    std::shared_ptr<InputParameter> getSpeed() const;
     std::shared_ptr<InputParameter> getSampleIndex() const;
+    std::shared_ptr<InputParameter> getSpeed() const;
+    std::shared_ptr<InputParameter> getOffsetTime() const;
     std::shared_ptr<OutputParameter> getCurrentTime() const;
 
 protected:
@@ -34,9 +34,9 @@ protected:
 private:
     const std::shared_ptr<InputParameter> resetTrigger;
     const std::shared_ptr<InputParameter> gate;
-    const std::shared_ptr<InputParameter> offsetTime;
-    const std::shared_ptr<InputParameter> speed;
     const std::shared_ptr<InputParameter> sampleIndex;
+    const std::shared_ptr<InputParameter> speed;
+    const std::shared_ptr<InputParameter> offsetTime;
 
     const std::shared_ptr<OutputParameter> currentTime;
 

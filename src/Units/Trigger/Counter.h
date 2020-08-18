@@ -4,7 +4,7 @@
 
 namespace dsp {
 
-class Counter : Generator {
+class Counter : public Generator {
 
 public:
     Counter();

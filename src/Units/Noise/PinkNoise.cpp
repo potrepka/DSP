@@ -63,7 +63,7 @@ void dsp::PinkNoise::process() {
 #endif
         for (unsigned int k = 0; k < getBufferSize(); ++k) {
             seed[i] *= 282475249;
-            Sample white = static_cast<Sample>(seed[i]) * 4.65661287e-10;
+            Sample white = static_cast<Sample>(seed[i]) * 4.656612873077392578125e-10;
 #if DSP_USE_VC
             Vector sum = 0.0;
             for (std::size_t m = 0; m < b.vectorsCount(); ++m) {

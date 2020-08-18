@@ -17,7 +17,7 @@ void dsp::WhiteNoise::process() {
         Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
         for (unsigned int k = 0; k < getBufferSize(); ++k) {
             seed[i] *= 282475249;
-            outputBuffer[k] = static_cast<Sample>(seed[i]) * 4.65661287e-10;
+            outputBuffer[k] = static_cast<Sample>(seed[i]) * 4.656612873077392578125e-10;
         }
     }
 }

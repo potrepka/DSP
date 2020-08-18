@@ -4,8 +4,9 @@ dsp::SamplePlayer::SamplePlayer(Type type)
         : Generator(type)
         , resetTrigger(pushInput(Type::BINARY))
         , gate(pushInput(Type::BINARY))
-        , offsetTime(pushInput(Type::SECONDS))
+        , sampleIndex(pushInput(Type::INTEGER))
         , speed(pushInput(Type::RATIO, Space::TIME, 1.0))
+        , offsetTime(pushInput(Type::SECONDS))
         , currentTime(pushOutput(Type::SECONDS))
         , interpolation(Interpolation::HERMITE) {}
 
@@ -59,16 +60,16 @@ std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getGate() const {
     return gate;
 }
 
-std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getOffsetTime() const {
-    return offsetTime;
+std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getSampleIndex() const {
+    return sampleIndex;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getSpeed() const {
     return speed;
 }
 
-std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getSampleIndex() const {
-    return sampleIndex;
+std::shared_ptr<dsp::InputParameter> dsp::SamplePlayer::getOffsetTime() const {
+    return offsetTime;
 }
 
 std::shared_ptr<dsp::OutputParameter> dsp::SamplePlayer::getCurrentTime() const {
@@ -91,9 +92,9 @@ void dsp::SamplePlayer::process() {
         for (unsigned int i = 0; i < getNumChannels(); ++i) {
             Array &resetTriggerBuffer = getResetTrigger()->getChannel(i)->getBuffer();
             Array &gateBuffer = getGate()->getChannel(i)->getBuffer();
-            Array &offsetTimeBuffer = getOffsetTime()->getChannel(i)->getBuffer();
-            Array &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
             Array &sampleIndexBuffer = getSampleIndex()->getChannel(i)->getBuffer();
+            Array &speedBuffer = getSpeed()->getChannel(i)->getBuffer();
+            Array &offsetTimeBuffer = getOffsetTime()->getChannel(i)->getBuffer();
             Array &outputBuffer = getOutputSignal()->getChannel(i)->getBuffer();
             Array &currentTimeBuffer = getCurrentTime()->getChannel(i)->getBuffer();
             for (unsigned int k = 0; k < getBufferSize(); ++k) {
