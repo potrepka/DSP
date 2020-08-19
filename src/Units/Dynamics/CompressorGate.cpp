@@ -2,14 +2,12 @@
 
 dsp::CompressorGate::CompressorGate()
         : Processor(Type::BIPOLAR, Type::BIPOLAR)
-        , channelMix(std::make_shared<ChannelMix>(Type::BIPOLAR))
         , absoluteValue(std::make_shared<AbsoluteValue>(Type::BIPOLAR))
         , base2Log(std::make_shared<Base2Log>())
         , gainComputer(std::make_shared<GainComputer>())
         , gainEnvelope(std::make_shared<GainEnvelope>())
         , gainScale(std::make_shared<GainScale>(Type::BIPOLAR))
-        , controlSignal(channelMix->getInputSignal())
-        , link(channelMix->getMixAmount())
+        , controlSignal(absoluteValue->getInputSignal())
         , threshold(gainComputer->getThreshold())
         , compressionRatio(gainComputer->getCompressionRatio())
         , gateRatio(gainComputer->getGateRatio())
@@ -21,7 +19,6 @@ dsp::CompressorGate::CompressorGate()
 
     setInputSignal(gainScale->getInputSignal());
     pushInput(controlSignal);
-    pushInput(link);
     pushInput(threshold);
     pushInput(compressionRatio);
     pushInput(gateRatio);
@@ -32,7 +29,6 @@ dsp::CompressorGate::CompressorGate()
     setOutputSignal(gainScale->getOutputSignal());
     pushOutput(gainDelta);
 
-    pushUnit(channelMix);
     pushUnit(absoluteValue);
     pushUnit(base2Log);
     pushUnit(gainComputer);
@@ -48,10 +44,6 @@ dsp::CompressorGate::~CompressorGate() {
 
 std::shared_ptr<dsp::InputParameter> dsp::CompressorGate::getControlSignal() const {
     return controlSignal;
-}
-
-std::shared_ptr<dsp::InputParameter> dsp::CompressorGate::getLink() const {
-    return link;
 }
 
 std::shared_ptr<dsp::InputParameter> dsp::CompressorGate::getThreshold() const {
@@ -83,7 +75,6 @@ std::shared_ptr<dsp::OutputParameter> dsp::CompressorGate::getGainDelta() const 
 }
 
 void dsp::CompressorGate::connect() {
-    channelMix->getMid() >> absoluteValue->getInputSignal();
     absoluteValue->getOutputSignal() >> base2Log->getInputSignal();
     base2Log->getOutputSignal() >> gainComputer->getInputSignal();
     gainComputer->getOutputSignal() >> gainEnvelope->getInputSignal();
@@ -91,7 +82,6 @@ void dsp::CompressorGate::connect() {
 }
 
 void dsp::CompressorGate::disconnect() {
-    channelMix->getMid() != absoluteValue->getInputSignal();
     absoluteValue->getOutputSignal() != base2Log->getInputSignal();
     base2Log->getOutputSignal() != gainComputer->getInputSignal();
     gainComputer->getOutputSignal() != gainEnvelope->getInputSignal();

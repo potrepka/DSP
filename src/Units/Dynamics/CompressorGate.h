@@ -2,7 +2,6 @@
 
 #include "AbsoluteValue.h"
 #include "Base2Log.h"
-#include "ChannelMix.h"
 #include "GainComputer.h"
 #include "GainEnvelope.h"
 #include "GainScale.h"
@@ -16,7 +15,6 @@ public:
     ~CompressorGate();
 
     std::shared_ptr<InputParameter> getControlSignal() const;
-    std::shared_ptr<InputParameter> getLink() const;
     std::shared_ptr<InputParameter> getThreshold() const;
     std::shared_ptr<InputParameter> getCompressionRatio() const;
     std::shared_ptr<InputParameter> getGateRatio() const;
@@ -30,7 +28,6 @@ protected:
     void disconnect() override;
 
 private:
-    const std::shared_ptr<ChannelMix> channelMix;
     const std::shared_ptr<AbsoluteValue> absoluteValue;
     const std::shared_ptr<Base2Log> base2Log;
     const std::shared_ptr<GainComputer> gainComputer;
@@ -38,7 +35,6 @@ private:
     const std::shared_ptr<GainScale> gainScale;
 
     const std::shared_ptr<InputParameter> controlSignal;
-    const std::shared_ptr<InputParameter> link;
     const std::shared_ptr<InputParameter> threshold;
     const std::shared_ptr<InputParameter> compressionRatio;
     const std::shared_ptr<InputParameter> gateRatio;
