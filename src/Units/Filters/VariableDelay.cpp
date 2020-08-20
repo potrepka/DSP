@@ -52,13 +52,16 @@ void dsp::VariableDelay::process() {
             Sample index = writeIndex;
             for (unsigned int k = 0; k < getBufferSize(); ++k) {
                 buffer->getChannel(i)[static_cast<std::size_t>(index)] = inputBuffer[k];
-                const Sample delayTimeClipped = clip(delayTimeBuffer[k], 0.0, maxDelayTime);
+                Sample delayTimeClipped = clip(delayTimeBuffer[k], 0.0, maxDelayTime);
+                if (delayTimeClipped < getOneOverSampleRate()) {
+                    delayTimeClipped = 0.0;
+                }
                 Sample readIndex = index - delayTimeClipped * getSampleRate();
                 if (readIndex < 0.0) {
                     readIndex += buffer->getBufferSize();
                 }
                 outputBuffer[k] = hermite(buffer->getChannel(i), readIndex);
-                if (std::isnan(outputBuffer[k])) {
+                if (std::isinf(outputBuffer[k]) || std::isnan(outputBuffer[k])) {
                     outputBuffer[k] = 0.0;
                 }
                 if (delayTimeClipped >= getOneOverSampleRate()) {

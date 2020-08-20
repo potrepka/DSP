@@ -58,19 +58,17 @@ void dsp::Biquad::process() {
                 outputVector[k] =
                         (b0[k] * (*inputIterator)[k] + b1[k] * x1[i] + b2[k] * x2[i] - a1[k] * y1[i] - a2[k] * y2[i]) /
                         a0[k];
+                outputVector[k] = isinf(outputVector[k]) || isnan(outputVector[k]) ? 0.0 : outputVector[k];
                 x2[i] = x1[i];
                 x1[i] = (*inputIterator)[k];
                 y2[i] = y1[i];
                 y1[i] = outputVector[k];
             }
-            *outputIterator = Vc::iif(*resonanceIterator == Vector::Zero(), Vector::Zero(), outputVector);
+            *outputIterator = outputVector;
 #else
-            if (*resonanceIterator == 0.0) {
-                *outputIterator = 0.0;
-            } else {
-                calculateCoefficients(*frequencyIterator, *resonanceIterator, *gainIterator);
-                *outputIterator = (b0 * *inputIterator + b1 * x1[i] + b2 * x2[i] - a1 * y1[i] - a2 * y2[i]) / a0;
-            }
+            calculateCoefficients(*frequencyIterator, *resonanceIterator, *gainIterator);
+            *outputIterator = (b0 * *inputIterator + b1 * x1[i] + b2 * x2[i] - a1 * y1[i] - a2 * y2[i]) / a0;
+            *outputIterator = isinf(*outputIterator) || isnan(*outputIterator) ? 0.0 : *outputIterator;
             x2[i] = x1[i];
             x1[i] = *inputIterator;
             y2[i] = y1[i];
