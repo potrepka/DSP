@@ -1,12 +1,11 @@
 #pragma once
 
+#include "MidiProcessor.h"
+#include "NodeProcessor.h"
+
 #ifndef DSP_USE_RTAUDIO
 #define DSP_USE_RTAUDIO 1
 #endif
-
-#include "Audio.h"
-#include "Midi.h"
-#include "Runnable.h"
 
 #if DSP_USE_RTAUDIO
 #include "RtAudio.h"
@@ -14,17 +13,11 @@
 
 namespace dsp {
 
-class Engine : public Runnable {
+class Engine : public Lockable {
 
 public:
     Engine();
     ~Engine();
-
-    void lockAudio();
-    void unlockAudio();
-
-    void lockMidi();
-    void unlockMidi();
 
     std::vector<unsigned int> getInputDevices();
     std::vector<unsigned int> getOutputDevices();
@@ -34,7 +27,7 @@ public:
     unsigned int getDefaultOutputDevice();
     unsigned int getDefaultSampleRate(unsigned int inputDevice, unsigned int outputDevice);
 
-    void setup(unsigned int inputDevice, unsigned int outputDevice, unsigned int sampleRate, unsigned int bufferSize);
+    void setup(unsigned int inputDevice, unsigned int outputDevice, unsigned int numSamples, unsigned int sampleRate);
     void start();
 
     std::string getDeviceName(unsigned int device);
@@ -43,33 +36,19 @@ public:
 
     unsigned int getNumInputChannels() const;
     unsigned int getNumOutputChannels() const;
+    unsigned int getNumSamples() const;
+    unsigned int getSampleRate() const;
 
-    std::shared_ptr<OutputParameter> getAudioInput() const;
-    std::shared_ptr<InputParameter> getAudioOutput() const;
-    std::shared_ptr<OutputParameter> getAudioInputClipping() const;
-    std::shared_ptr<OutputParameter> getAudioOutputClipping() const;
+    AudioData<Sample> &getAudioData();
+    void processAudioDataNoLock(Sample *inputBuffer, Sample *outputBuffer);
 
-    unsigned int getNumUnits() const;
-    std::shared_ptr<Unit> getUnit(unsigned int index) const;
-    void pushUnit(std::shared_ptr<Unit> unit, bool sort = false);
-    void pushUnits(std::vector<std::shared_ptr<Unit>> units, bool sort = false);
-    void replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement);
-    void removeUnit(std::shared_ptr<Unit> unit);
-    void removeUnits(std::vector<std::shared_ptr<Unit>> units);
-    void sortUnits();
-
-    unsigned int getNumMidiInputs() const;
-    unsigned int getNumMidiOutputs() const;
-    std::shared_ptr<Midi::MidiInput> getMidiInput(unsigned int index) const;
-    std::shared_ptr<Midi::MidiOutput> getMidiOutput(unsigned int index) const;
-    std::shared_ptr<Midi::MidiInput> pushMidiInput(unsigned int port);
-    std::shared_ptr<Midi::MidiOutput> pushMidiOutput(unsigned int port);
-    void removeMidiInput(std::shared_ptr<Midi::MidiInput> input);
-    void removeMidiOutput(std::shared_ptr<Midi::MidiOutput> output);
+    std::shared_ptr<NodeProcessor> getNodeProcessor() const;
+    std::shared_ptr<MidiProcessor> getMidiProcessor() const;
 
 private:
-    std::shared_ptr<Audio> audio;
-    std::shared_ptr<Midi> midi;
+    AudioData<Sample> audioData;
+    std::shared_ptr<NodeProcessor> nodeProcessor;
+    std::shared_ptr<MidiProcessor> midiProcessor;
 #if DSP_USE_RTAUDIO
     RtAudio dac;
 #endif
@@ -77,6 +56,8 @@ private:
     std::string outputDeviceName;
     unsigned int numInputChannels;
     unsigned int numOutputChannels;
+    unsigned int numSamples;
+    unsigned int sampleRate;
 #if DSP_USE_RTAUDIO
     static int tick(void *outputBuffer,
                     void *inputBuffer,
@@ -87,9 +68,9 @@ private:
 #endif
     static void process(Sample *inputBuffer,
                         Sample *outputBuffer,
-                        unsigned int numFrames,
-                        unsigned int numInputChannels,
-                        unsigned int numOutputChannels,
+                        int numInputChannels,
+                        int numOutputChannels,
+                        int numSamples,
                         Engine *engine);
     unsigned int getDeviceCount();
     std::vector<unsigned int> getInputSampleRates(unsigned int inputDevice);

@@ -1,27 +1,18 @@
 #pragma once
 
-#ifndef DSP_USE_VC
-#define DSP_USE_VC 1
-#endif
+#include "AudioData.h"
+#include "MidiData.h"
 
-#if DSP_USE_VC
-#include <Vc/Vc>
-#else
-#include <vector>
-#endif
+#define DSP_ASSERT assert
 
 namespace dsp {
 
+typedef uint8_t uint8;
 typedef double Sample;
-#if DSP_USE_VC
-typedef Vc::Vector<Sample> Vector;
-typedef Vc::Mask<Sample> Mask;
-typedef std::vector<Sample, Vc::Allocator<Sample>> Array;
-typedef Vc::simdize<Array::iterator> Iterator;
-#else
 typedef std::vector<Sample> Array;
-typedef Array::iterator Iterator;
-#endif
+
+typedef AudioData<Sample> Data;
+typedef AudioBlock<Sample> Block;
 
 const Sample PI = 3.141592653589793;
 const Sample TAU = 6.283185307179586;
@@ -39,7 +30,7 @@ const Sample ONE_OVER_SQRT2 = 0.7071067811865475;
 const Sample ONE_OVER_SIX_DB = 0.1660964047443681;
 const Sample ONE_OVER_LOG2 = 1.4426950408889634;
 
-enum class Type { BIPOLAR, UNIPOLAR, SECONDS, HERTZ, RATIO, LOGARITHMIC, INTEGER, BINARY };
+enum class Type { RATIO, LOGARITHMIC, INTEGER, SECONDS, HERTZ };
 
 enum class Space { TIME, FREQUENCY };
 

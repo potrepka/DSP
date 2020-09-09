@@ -1,11 +1,10 @@
 #include "Lockable.h"
 
-dsp::Lockable::~Lockable() {}
-
 void dsp::Lockable::lock() {
-    mtx.lock();
+    while (flag.test_and_set(std::memory_order_acquire))
+        ;
 }
 
 void dsp::Lockable::unlock() {
-    mtx.unlock();
+    flag.clear(std::memory_order_release);
 }

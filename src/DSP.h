@@ -1,90 +1,65 @@
 #pragma once
 
+#ifndef DSP_USE_ENGINE
+#define DSP_USE_ENGINE 1
+#endif
+
+#if DSP_USE_ENGINE
 #include "Engine.h"
+#else
+#include "NodeProcessor.h"
+#endif
 
-// Buffer
-#include "BufferRecorder.h"
-#include "SamplePlayer.h"
-#include "SampleRecorder.h"
+#include "Nodes/Analyzers/Recorder.h"
 
-// Dynamics
-#include "CompressorGate.h"
-#include "Distortion.h"
-#include "Envelope.h"
-#include "GainComputer.h"
-#include "GainEnvelope.h"
-#include "GainScale.h"
+#include "Nodes/Channel/MidSide.h"
+#include "Nodes/Channel/StereoPanner.h"
 
-// Filters
-#include "Biquad.h"
-#include "Cascade.h"
-#include "Convolver.h"
-#include "Crossover.h"
-#include "OnePole.h"
-#include "VariableDelay.h"
+#include "Nodes/Delays/Convolver.h"
+#include "Nodes/Delays/VariableDelay.h"
 
-// Math
-#include "AbsoluteValue.h"
-#include "AndGate.h"
-#include "EqualTo.h"
-#include "Floor.h"
-#include "GreaterThan.h"
-#include "LessThan.h"
-#include "Maximum.h"
-#include "Minimum.h"
-#include "Modulo.h"
-#include "Multiply.h"
-#include "MultiplyHertzSeconds.h"
-#include "Negative.h"
-#include "NotGate.h"
-#include "OneOver.h"
-#include "OrGate.h"
-#include "XorGate.h"
+#include "Nodes/Dynamics/CompressorGate.h"
+#include "Nodes/Dynamics/Distortion.h"
+#include "Nodes/Dynamics/DryWet.h"
+#include "Nodes/Dynamics/Envelope.h"
 
-// Noise
-#include "PinkNoise.h"
-#include "WhiteNoise.h"
+#include "Nodes/External/MidiInput.h"
+#include "Nodes/External/MidiOutput.h"
 
-// Oscillators
-#include "FunctionOscillator.h"
-#include "Moorer.h"
-#include "TableOscillator.h"
+#include "Nodes/Filters/Biquad.h"
+#include "Nodes/Filters/Crossover.h"
+#include "Nodes/Filters/OnePole.h"
 
-// Phase
-#include "Phasor.h"
+#include "Nodes/Generators/FunctionOscillator.h"
+#include "Nodes/Generators/MoorerOscillator.h"
+#include "Nodes/Generators/Phasor.h"
+#include "Nodes/Generators/PinkNoise.h"
+#include "Nodes/Generators/SamplePlayer.h"
+#include "Nodes/Generators/TableOscillator.h"
+#include "Nodes/Generators/WhiteNoise.h"
 
-// Transforms
-#include "Base2Exp.h"
-#include "Base2Log.h"
-#include "BipolarToUnipolar.h"
-#include "CartesianToPolar.h"
-#include "FrequencyToTime.h"
-#include "HertzToSeconds.h"
-#include "PolarToCartesian.h"
-#include "SecondsToHertz.h"
-#include "TimeToFrequency.h"
-#include "ToBinary.h"
-#include "ToInteger.h"
-#include "UnipolarToBipolar.h"
+#include "Nodes/Math/AbsoluteValue.h"
+#include "Nodes/Math/Comparison.h"
+#include "Nodes/Math/Exp2.h"
+#include "Nodes/Math/Floor.h"
+#include "Nodes/Math/ForwardFFT.h"
+#include "Nodes/Math/InverseFFT.h"
+#include "Nodes/Math/Log2.h"
+#include "Nodes/Math/LogarithmicToRatio.h"
+#include "Nodes/Math/Modulo.h"
+#include "Nodes/Math/Multiply.h"
+#include "Nodes/Math/MultiplyHertzSeconds.h"
+#include "Nodes/Math/NotGate.h"
+#include "Nodes/Math/OneOver.h"
+#include "Nodes/Math/PassThrough.h"
 
-// Trigger
-#include "Counter.h"
-#include "OnOff.h"
-#include "SampleAndHold.h"
-#include "Sequencer.h"
-#include "Trigger.h"
+#include "Nodes/Trigger/Counter.h"
+#include "Nodes/Trigger/OnOff.h"
+#include "Nodes/Trigger/SampleAndHold.h"
+#include "Nodes/Trigger/Sequencer.h"
+#include "Nodes/Trigger/Trigger.h"
 
-// Utility
-#include "Audio.h"
-#include "ChannelMix.h"
-#include "DryWetMix.h"
-#include "PassThrough.h"
-#include "StereoPanner.h"
-#include "SwitchIn.h"
-#include "SwitchOut.h"
-
-// Variables
-#include "BufferDuration.h"
-#include "BufferRate.h"
-#include "SampleDuration.h"
-#include "SampleRate.h"
+#include "Nodes/Variables/BufferDuration.h"
+#include "Nodes/Variables/BufferRate.h"
+#include "Nodes/Variables/SampleDuration.h"
+#include "Nodes/Variables/SampleRate.h"

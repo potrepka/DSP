@@ -1,0 +1,28 @@
+#include "ForwardFFT.h"
+
+dsp::ForwardFFT::ForwardFFT()
+        : Consumer(Type::RATIO)
+        , magnitude(std::make_shared<Output>(Type::RATIO, Space::FREQUENCY))
+        , phase(std::make_shared<Output>(Type::RATIO, Space::FREQUENCY)) {}
+
+std::shared_ptr<dsp::Output> dsp::ForwardFFT::getMagnitude() const {
+    return magnitude;
+}
+
+std::shared_ptr<dsp::Output> dsp::ForwardFFT::getPhase() const {
+    return phase;
+}
+
+void dsp::ForwardFFT::setNumSamplesNoLock(int numSamples) {
+    Node::setNumSamplesNoLock(numSamples);
+    fft.setup(numSamples);
+}
+
+void dsp::ForwardFFT::processNoLock() {
+    for (int channel = 0; channel < getNumChannels(); ++channel) {
+        Sample *inputChannel = getInput()->getBlock().getChannelPointer(channel);
+        Sample *magnitudeChannel = getMagnitude()->getBlock().getChannelPointer(channel);
+        Sample *phaseChannel = getPhase()->getBlock().getChannelPointer(channel);
+        fft.toMagnitudePhase(inputChannel, magnitudeChannel, phaseChannel);
+    }
+}

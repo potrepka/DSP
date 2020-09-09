@@ -9,20 +9,7 @@ namespace dsp {
 class Buffer : public Lockable {
 
 public:
-    Buffer(unsigned int numChannels,
-           unsigned int bufferSize,
-           Type type,
-           Space space = Space::TIME,
-           Sample defaultValue = 0.0);
-    Buffer(const Buffer &buffer);
-
-    unsigned int getNumChannels() const;
-    void setNumChannels(unsigned int numChannels);
-    void setNumChannelsNoLock(unsigned int numChannels);
-
-    unsigned int getBufferSize() const;
-    void setBufferSize(unsigned int bufferSize);
-    void setBufferSizeNoLock(unsigned int bufferSize);
+    Buffer(Type type, Space space = Space::TIME, Sample defaultValue = 0.0, int numChannels = 0, int numSamples = 0);
 
     Type getType() const;
     void setType(Type type);
@@ -33,45 +20,93 @@ public:
     Sample getDefaultValue() const;
     void setDefaultValue(Sample defaultValue);
 
-    void fillBuffer(Sample value);
-    void clearBuffer();
+    int getNumChannels() const;
+    void setNumChannels(int numChannels);
 
-    std::vector<Array> &getChannels();
-    Array &getChannel(unsigned int channel);
+    int getNumSamples() const;
+    void setNumSamples(int numSamples);
 
-    Sample getMinimum(unsigned int channel) const;
-    Sample getMaximum(unsigned int channel) const;
-    Sample getMean(unsigned int channel) const;
-    Sample getRMS(unsigned int channel) const;
+    void setSize(int numChannels, int numSamples);
 
-    void clip(unsigned int begin, unsigned int end);
-    void stretch(unsigned int bufferSize);
-    void insert(unsigned int index, std::shared_ptr<Buffer> buffer);
+    Array getChannelValues() const;
+    void setChannelValues(Array value);
 
-    std::shared_ptr<Buffer> clone();
+    Sample getChannelValue(int channel) const;
+    void setSingleChannelValue(int channel, Sample value);
+    void setAllChannelValues(Sample value);
 
-private:
-    unsigned int bufferSize;
+    Array getPeak();
+    Array getRMS();
+
+    Block &getBlock();
+
+protected:
     Type type;
     Space space;
     Sample defaultValue;
-    std::vector<Array> buffers;
+    Data data;
+    Block block;
+    Array channelValues;
+
+    void fillChannels();
 };
 
-class BufferCollection {
+class Input;
+class Output;
+
+class Input : public Buffer, public std::enable_shared_from_this<Input> {
+    friend class Output;
 
 public:
-    unsigned int getNumBuffers() const;
-    std::shared_ptr<Buffer> getBuffer(unsigned int index) const;
-    std::vector<std::shared_ptr<Buffer>> getBuffers(unsigned int begin, unsigned int end) const;
-    void pushBuffer(std::shared_ptr<Buffer> buffer);
-    void pushBuffers(std::vector<std::shared_ptr<Buffer>> buffers);
-    void replaceBuffer(std::shared_ptr<Buffer> buffer, std::shared_ptr<Buffer> replacement);
-    void removeBuffer(std::shared_ptr<Buffer> buffer);
-    void removeBuffers(std::vector<std::shared_ptr<Buffer>> buffers);
+    enum class Mode { SUM, MINIMUM, MAXIMUM };
 
-protected:
-    std::vector<std::shared_ptr<Buffer>> collection;
+    Input(Type type, Space space = Space::TIME, Sample defaultValue = 0.0, int numChannels = 0, int numSamples = 0);
+    ~Input();
+
+    Mode getMode() const;
+    void setMode(Mode mode);
+
+    std::vector<std::shared_ptr<Output>> getConnections() const;
+    void connect(std::shared_ptr<Output> output);
+    void disconnect(std::shared_ptr<Output> output);
+    void disconnectAll();
+    void processNoLock();
+
+private:
+    Mode mode;
+    std::vector<std::shared_ptr<Output>> connections;
+
+    void addConnection(std::shared_ptr<Output> output);
+    void removeConnection(std::shared_ptr<Output> output);
 };
+
+class Output : public Buffer, public std::enable_shared_from_this<Output> {
+    friend class Input;
+
+public:
+    Output(Type type, Space space = Space::TIME, Sample defaultValue = 0.0, int numChannels = 0, int numSamples = 0);
+    ~Output();
+
+    std::vector<std::shared_ptr<Input>> getConnections() const;
+    void connect(std::shared_ptr<Input> input);
+    void disconnect(std::shared_ptr<Input> input);
+    void disconnectAll();
+    void processNoLock();
+
+private:
+    std::vector<std::shared_ptr<Input>> connections;
+
+    void addConnection(std::shared_ptr<Input> input);
+    void removeConnection(std::shared_ptr<Input> input);
+};
+
+void operator>>(Sample value, std::shared_ptr<Input> input);
+void operator>>(Sample value, std::shared_ptr<Output> output);
+
+void operator>>(Array values, std::shared_ptr<Input> input);
+void operator>>(Array values, std::shared_ptr<Output> output);
+
+void operator>>(std::shared_ptr<Output> output, std::shared_ptr<Input> input);
+void operator!=(std::shared_ptr<Output> output, std::shared_ptr<Input> input);
 
 } // namespace dsp

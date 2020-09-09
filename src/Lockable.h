@@ -1,19 +1,17 @@
 #pragma once
 
-#include <mutex>
+#include <atomic>
 
 namespace dsp {
 
 class Lockable {
 
 public:
-    virtual ~Lockable() = 0;
-
-    virtual void lock();
-    virtual void unlock();
+    void lock();
+    void unlock();
 
 private:
-    std::mutex mtx;
+    std::atomic_flag flag = ATOMIC_FLAG_INIT;
 };
 
 } // namespace dsp

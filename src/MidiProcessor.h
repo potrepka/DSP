@@ -1,0 +1,92 @@
+#pragma once
+
+#include "Lockable.h"
+#include "MidiData.h"
+#include <thread>
+
+#ifndef DSP_USE_RTMIDI
+#define DSP_USE_RTMIDI 1
+#endif
+
+#if DSP_USE_RTMIDI
+#include "RtMidi.h"
+#endif
+
+namespace dsp {
+
+class MidiProcessor : public Lockable {
+
+public:
+    class Input : public Lockable {
+
+    public:
+        static void callback(double delta, std::vector<unsigned char> *message, void *data);
+
+        Input(unsigned int port);
+
+        std::string getDeviceName() const;
+        void setPort(unsigned int port);
+
+        std::multimap<double, MidiMessage> &getMessages();
+
+    private:
+#if DSP_USE_RTMIDI
+        RtMidiIn midiIn;
+#endif
+        std::string deviceName;
+        double messageTime;
+        std::multimap<double, MidiMessage> messages;
+    };
+
+    class Output : public Lockable {
+
+    public:
+        Output(unsigned int port);
+
+        std::string getDeviceName() const;
+        void setPort(unsigned int port);
+
+        void sendMessageWithDelay(std::vector<unsigned char> bytes, int64_t nanoseconds);
+
+    private:
+#if DSP_USE_RTMIDI
+        RtMidiOut midiOut;
+#endif
+        std::string deviceName;
+    };
+
+    static unsigned int getNumMidiInputPorts();
+    static unsigned int getNumMidiOutputPorts();
+    static std::string getMidiInputName(unsigned int port);
+    static std::string getMidiOutputName(unsigned int port);
+
+    MidiProcessor();
+
+    int getNumSamples() const;
+    void setNumSamples(int numSamples);
+
+    double getSampleRate() const;
+    void setSampleRate(double sampleRate);
+
+    MidiData &getMidiData();
+    std::vector<std::shared_ptr<Input>> &getInputs();
+    std::vector<std::shared_ptr<Output>> &getOutputs();
+
+    void processInputs();
+    void processOutputs();
+
+private:
+#if DSP_USE_RTMIDI
+    static RtMidiIn midiIn;
+    static RtMidiOut midiOut;
+#endif
+    int numSamples;
+    double sampleRate;
+    double oneOverSampleRate;
+    double messageTime;
+    MidiData midiData;
+    std::vector<std::shared_ptr<Input>> inputs;
+    std::vector<std::shared_ptr<Output>> outputs;
+};
+
+} // namespace dsp

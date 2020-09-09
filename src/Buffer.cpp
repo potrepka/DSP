@@ -1,60 +1,12 @@
 #include "Buffer.h"
 
-dsp::Buffer::Buffer(unsigned int numChannels, unsigned int bufferSize, Type type, Space space, Sample defaultValue)
-        : bufferSize(bufferSize)
-        , type(type)
+dsp::Buffer::Buffer(Type type, Space space, Sample defaultValue, int numChannels, int numSamples)
+        : type(type)
         , space(space)
-        , defaultValue(defaultValue) {
-    setNumChannels(numChannels);
-    setBufferSize(bufferSize);
-}
-
-dsp::Buffer::Buffer(const Buffer &buffer) {
-    buffers = buffer.buffers;
-    setNumChannels(buffer.getNumChannels());
-    setBufferSize(buffer.getBufferSize());
-    setType(buffer.getType());
-    setSpace(buffer.getSpace());
-    setDefaultValue(buffer.getDefaultValue());
-}
-
-unsigned int dsp::Buffer::getNumChannels() const {
-    return static_cast<unsigned int>(buffers.size());
-}
-
-void dsp::Buffer::setNumChannels(unsigned int numChannels) {
-    lock();
-    setNumChannelsNoLock(numChannels);
-    unlock();
-}
-
-void dsp::Buffer::setNumChannelsNoLock(unsigned int numChannels) {
-    if (numChannels < buffers.size()) {
-        buffers.erase(buffers.begin() + numChannels, buffers.end());
-    } else {
-        buffers.reserve(numChannels);
-        for (unsigned int i = getNumChannels(); i < numChannels; ++i) {
-            buffers.push_back(Array(bufferSize, defaultValue));
-        }
-    }
-}
-
-unsigned int dsp::Buffer::getBufferSize() const {
-    return bufferSize;
-}
-
-void dsp::Buffer::setBufferSize(unsigned int bufferSize) {
-    lock();
-    setBufferSizeNoLock(bufferSize);
-    unlock();
-}
-
-void dsp::Buffer::setBufferSizeNoLock(unsigned int bufferSize) {
-    this->bufferSize = bufferSize;
-    for (unsigned int i = 0; i < getNumChannels(); ++i) {
-        buffers[i].resize(bufferSize, defaultValue);
-    }
-}
+        , defaultValue(defaultValue)
+        , data(numChannels, numSamples)
+        , block(data)
+        , channelValues(numChannels, defaultValue) {}
 
 dsp::Type dsp::Buffer::getType() const {
     return type;
@@ -86,172 +38,276 @@ void dsp::Buffer::setDefaultValue(Sample defaultValue) {
     unlock();
 }
 
-void dsp::Buffer::fillBuffer(Sample value) {
+int dsp::Buffer::getNumChannels() const {
+    return data.getNumChannels();
+}
+
+void dsp::Buffer::setNumChannels(int numChannels) {
+    DSP_ASSERT(numChannels >= 0);
     lock();
-    for (unsigned int i = 0; i < getNumChannels(); ++i) {
-        for (Iterator it = buffers[i].begin(); it != buffers[i].end(); ++it) {
-#if DSP_USE_VC
-            *it = Vector(value);
-#else
-            *it = value;
-#endif
+    data.setSize(numChannels, getNumSamples());
+    block = Block(data);
+    channelValues.resize(numChannels, defaultValue);
+    unlock();
+}
+
+int dsp::Buffer::getNumSamples() const {
+    return data.getNumSamples();
+}
+
+void dsp::Buffer::setNumSamples(int numSamples) {
+    DSP_ASSERT(numSamples >= 0);
+    lock();
+    data.setSize(getNumChannels(), numSamples);
+    block = Block(data);
+    unlock();
+}
+
+void dsp::Buffer::setSize(int numChannels, int numSamples) {
+    DSP_ASSERT(numChannels >= 0 && numSamples >= 0);
+    lock();
+    data.setSize(numChannels, numSamples);
+    block = Block(data);
+    channelValues.resize(numChannels, defaultValue);
+    unlock();
+}
+
+dsp::Array dsp::Buffer::getChannelValues() const {
+    return channelValues;
+}
+
+void dsp::Buffer::setChannelValues(Array values) {
+    lock();
+    DSP_ASSERT(values.size() == getNumChannels());
+    channelValues = values;
+    unlock();
+}
+
+dsp::Sample dsp::Buffer::getChannelValue(int channel) const {
+    return channelValues[channel];
+}
+
+void dsp::Buffer::setSingleChannelValue(int channel, Sample value) {
+    lock();
+    DSP_ASSERT(channel >= 0 && channel < getNumChannels());
+    channelValues[channel] = value;
+    unlock();
+}
+
+void dsp::Buffer::setAllChannelValues(Sample value) {
+    lock();
+    std::fill(channelValues.begin(), channelValues.end(), value);
+    unlock();
+}
+
+dsp::Array dsp::Buffer::getPeak() {
+    lock();
+    Array peak(getNumChannels());
+    for (int channel = 0; channel < getNumChannels(); ++channel) {
+        peak[channel] = data.getMagnitude(channel, 0, getNumSamples());
+    }
+    unlock();
+    return peak;
+}
+
+dsp::Array dsp::Buffer::getRMS() {
+    lock();
+    Array rms(getNumChannels());
+    for (int channel = 0; channel < getNumChannels(); ++channel) {
+        rms[channel] = data.getRMSLevel(channel, 0, getNumSamples());
+    }
+    unlock();
+    return rms;
+}
+
+dsp::Block &dsp::Buffer::getBlock() {
+    return block;
+}
+
+void dsp::Buffer::fillChannels() {
+    for (int channel = 0; channel < getNumChannels(); ++channel) {
+        block.getSingleChannelBlock(channel).fill(channelValues[channel]);
+    }
+}
+
+dsp::Input::Input(Type type, Space space, Sample defaultValue, int numChannels, int numSamples)
+        : Buffer(type, space, defaultValue, numChannels, numSamples)
+        , mode(Mode::SUM) {}
+
+dsp::Input::~Input() {
+    disconnectAll();
+}
+
+dsp::Input::Mode dsp::Input::getMode() const {
+    return mode;
+}
+
+void dsp::Input::setMode(Mode mode) {
+    lock();
+    this->mode = mode;
+    unlock();
+}
+
+std::vector<std::shared_ptr<dsp::Output>> dsp::Input::getConnections() const {
+    return connections;
+}
+
+void dsp::Input::connect(std::shared_ptr<Output> output) {
+    DSP_ASSERT(output != nullptr);
+
+    lock();
+    output->lock();
+
+    addConnection(output);
+    output->addConnection(shared_from_this());
+
+    output->unlock();
+    unlock();
+}
+
+void dsp::Input::disconnect(std::shared_ptr<Output> output) {
+    DSP_ASSERT(output != nullptr);
+
+    lock();
+    output->lock();
+
+    removeConnection(output);
+    output->removeConnection(shared_from_this());
+
+    output->unlock();
+    unlock();
+}
+
+void dsp::Input::disconnectAll() {
+    lock();
+    for (const auto &output : connections) {
+        output->lock();
+    }
+    for (const auto &output : connections) {
+        output->removeConnection(shared_from_this());
+    }
+    for (const auto &output : connections) {
+        output->unlock();
+    }
+    connections.clear();
+    unlock();
+}
+
+void dsp::Input::processNoLock() {
+    if (connections.size() == 0) {
+        fillChannels();
+    } else {
+        switch (mode) {
+            case Mode::SUM: block.fill(0.0); break;
+            case Mode::MINIMUM: block.fill(std::numeric_limits<Sample>::infinity()); break;
+            case Mode::MAXIMUM: block.fill(-std::numeric_limits<Sample>::infinity()); break;
         }
     }
-    unlock();
-}
-
-void dsp::Buffer::clearBuffer() {
-    lock();
-    for (unsigned int i = 0; i < getNumChannels(); ++i) {
-        for (Iterator it = buffers[i].begin(); it != buffers[i].end(); ++it) {
-#if DSP_USE_VC
-            *it = Vector(defaultValue);
-#else
-            *it = defaultValue;
-#endif
+    for (const auto &output : connections) {
+        switch (mode) {
+            case Mode::SUM: block.add(output->getBlock()); break;
+            case Mode::MINIMUM: block.replaceWithMinOf(block, output->getBlock()); break;
+            case Mode::MAXIMUM: block.replaceWithMaxOf(block, output->getBlock()); break;
         }
     }
-    unlock();
 }
 
-std::vector<dsp::Array> &dsp::Buffer::getChannels() {
-    return buffers;
-}
-
-dsp::Array &dsp::Buffer::getChannel(unsigned int channel) {
-    assert(channel < buffers.size());
-    return buffers[channel];
-}
-
-dsp::Sample dsp::Buffer::getMinimum(unsigned int channel) const {
-    Sample minimum = std::numeric_limits<Sample>::infinity();
-    for (const Sample &x : buffers[channel]) {
-        if (minimum > x) {
-            minimum = x;
-        }
+void dsp::Input::addConnection(std::shared_ptr<Output> output) {
+    if (std::find(connections.begin(), connections.end(), output) == connections.end()) {
+        connections.push_back(output);
     }
-    return minimum;
 }
 
-dsp::Sample dsp::Buffer::getMaximum(unsigned int channel) const {
-    Sample maximum = -std::numeric_limits<Sample>::infinity();
-    for (const Sample &x : buffers[channel]) {
-        if (maximum < x) {
-            maximum = x;
-        }
-    }
-    return maximum;
+void dsp::Input::removeConnection(std::shared_ptr<Output> output) {
+    connections.erase(std::remove(connections.begin(), connections.end(), output), connections.end());
 }
 
-dsp::Sample dsp::Buffer::getMean(unsigned int channel) const {
-    if (bufferSize == 0) {
-        return defaultValue;
-    }
-    Sample sum = 0.0;
-    for (const Sample &x : buffers[channel]) {
-        sum += x;
-    }
-    return sum / bufferSize;
+dsp::Output::Output(Type type, Space space, Sample defaultValue, int numChannels, int numSamples)
+        : Buffer(type, space, defaultValue, numChannels, numSamples) {}
+
+dsp::Output::~Output() {
+    disconnectAll();
 }
 
-dsp::Sample dsp::Buffer::getRMS(unsigned int channel) const {
-    if (bufferSize == 0) {
-        return defaultValue;
-    }
-    Sample sum = 0.0;
-    for (const Sample &x : buffers[channel]) {
-        sum += x * x;
-    }
-    return sqrt(sum / bufferSize);
+std::vector<std::shared_ptr<dsp::Input>> dsp::Output::getConnections() const {
+    return connections;
 }
 
-void dsp::Buffer::clip(unsigned int begin, unsigned int end) {
+void dsp::Output::connect(std::shared_ptr<Input> input) {
+    DSP_ASSERT(input != nullptr);
+
     lock();
-    if (end > bufferSize) {
-        end = bufferSize;
-    }
-    if (begin > end) {
-        begin = end;
-    }
-    for (unsigned int i = 0; i < getNumChannels(); ++i) {
-        buffers[i] = Array(buffers[i].begin() + begin, buffers[i].begin() + end);
-    }
-    bufferSize = end - begin;
+    input->lock();
+
+    addConnection(input);
+    input->addConnection(shared_from_this());
+
+    input->unlock();
     unlock();
 }
 
-void dsp::Buffer::stretch(unsigned int bufferSize) {
+void dsp::Output::disconnect(std::shared_ptr<Input> input) {
+    DSP_ASSERT(input != nullptr);
+
     lock();
-    std::vector<Array> temp = buffers;
-    Sample reverseScale = static_cast<Sample>(this->bufferSize) / bufferSize;
-    for (unsigned int i = 0; i < getNumChannels(); ++i) {
-        buffers[i].resize(bufferSize);
-        for (unsigned int k = 0; k < bufferSize; ++k) {
-            buffers[i][k] = hermite(temp[i], k * reverseScale);
-        }
-    }
-    this->bufferSize = bufferSize;
+    input->lock();
+
+    removeConnection(input);
+    input->removeConnection(shared_from_this());
+
+    input->unlock();
     unlock();
 }
 
-void dsp::Buffer::insert(unsigned int index, std::shared_ptr<Buffer> buffer) {
-    buffer->lock();
-    std::vector<Array> temp = buffer->buffers;
-    unsigned int bufferSize = buffer->bufferSize;
-    buffer->unlock();
+void dsp::Output::disconnectAll() {
     lock();
-    if (index > getBufferSize()) {
-        index = getBufferSize();
+    for (const auto &input : connections) {
+        input->lock();
     }
-    for (unsigned int i = 0; i < getNumChannels() && i < temp.size(); ++i) {
-        buffers[i].insert(buffers[i].begin() + index, temp[i].begin(), temp[i].end());
+    for (const auto &input : connections) {
+        input->removeConnection(shared_from_this());
     }
-    this->bufferSize += bufferSize;
+    for (const auto &input : connections) {
+        input->unlock();
+    }
+    connections.clear();
     unlock();
 }
 
-std::shared_ptr<dsp::Buffer> dsp::Buffer::clone() {
-    lock();
-    std::shared_ptr<Buffer> buffer = std::make_shared<Buffer>(*this);
-    unlock();
-    return buffer;
+void dsp::Output::processNoLock() {
+    fillChannels();
 }
 
-unsigned int dsp::BufferCollection::getNumBuffers() const {
-    return static_cast<unsigned int>(collection.size());
-}
-
-std::shared_ptr<dsp::Buffer> dsp::BufferCollection::getBuffer(unsigned int index) const {
-    assert(index < collection.size());
-    return collection[index];
-}
-
-std::vector<std::shared_ptr<dsp::Buffer>> dsp::BufferCollection::getBuffers(unsigned int begin,
-                                                                            unsigned int end) const {
-    assert(begin <= end && end <= collection.size());
-    return std::vector<std::shared_ptr<dsp::Buffer>>(collection.begin() + begin, collection.begin() + end);
-}
-
-void dsp::BufferCollection::pushBuffer(std::shared_ptr<Buffer> buffer) {
-    collection.push_back(buffer);
-}
-
-void dsp::BufferCollection::pushBuffers(std::vector<std::shared_ptr<Buffer>> buffers) {
-    for (const auto &buffer : buffers) {
-        collection.push_back(buffer);
+void dsp::Output::addConnection(std::shared_ptr<Input> input) {
+    if (std::find(connections.begin(), connections.end(), input) == connections.end()) {
+        connections.push_back(input);
     }
 }
 
-void dsp::BufferCollection::replaceBuffer(std::shared_ptr<Buffer> buffer, std::shared_ptr<Buffer> replacement) {
-    std::replace(collection.begin(), collection.end(), buffer, replacement);
+void dsp::Output::removeConnection(std::shared_ptr<Input> input) {
+    connections.erase(std::remove(connections.begin(), connections.end(), input), connections.end());
 }
 
-void dsp::BufferCollection::removeBuffer(std::shared_ptr<Buffer> buffer) {
-    collection.erase(std::remove(collection.begin(), collection.end(), buffer), collection.end());
+void dsp::operator>>(Sample value, std::shared_ptr<Input> input) {
+    input->setAllChannelValues(value);
 }
 
-void dsp::BufferCollection::removeBuffers(std::vector<std::shared_ptr<Buffer>> buffers) {
-    for (const auto &buffer : buffers) {
-        collection.erase(std::remove(collection.begin(), collection.end(), buffer), collection.end());
-    }
+void dsp::operator>>(Sample value, std::shared_ptr<Output> output) {
+    output->setAllChannelValues(value);
+}
+
+void dsp::operator>>(Array values, std::shared_ptr<Input> input) {
+    input->setChannelValues(values);
+}
+
+void dsp::operator>>(Array values, std::shared_ptr<Output> output) {
+    output->setChannelValues(values);
+}
+
+void dsp::operator>>(std::shared_ptr<Output> output, std::shared_ptr<Input> input) {
+    output->connect(input);
+}
+
+void dsp::operator!=(std::shared_ptr<Output> output, std::shared_ptr<Input> input) {
+    input->disconnect(output);
 }

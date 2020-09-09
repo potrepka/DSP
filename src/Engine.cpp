@@ -1,10 +1,13 @@
 #include "Engine.h"
 
 dsp::Engine::Engine()
-        : numInputChannels(0)
-        , numOutputChannels(0) {
-    audio = std::make_shared<Audio>();
-    midi = std::make_shared<Midi>();
+        : audioData(0, 0)
+        , numInputChannels(0)
+        , numOutputChannels(0)
+        , numSamples(0)
+        , sampleRate(0.0) {
+    nodeProcessor = std::make_shared<NodeProcessor>(0, 0, 0, 0);
+    midiProcessor = std::make_shared<MidiProcessor>();
 }
 
 dsp::Engine::~Engine() {
@@ -33,22 +36,6 @@ dsp::Engine::~Engine() {
 #endif
 
     unlock();
-}
-
-void dsp::Engine::lockAudio() {
-    audio->lock();
-}
-
-void dsp::Engine::unlockAudio() {
-    audio->unlock();
-}
-
-void dsp::Engine::lockMidi() {
-    midi->lock();
-}
-
-void dsp::Engine::unlockMidi() {
-    midi->unlock();
 }
 
 std::vector<unsigned int> dsp::Engine::getInputDevices() {
@@ -180,8 +167,8 @@ unsigned int dsp::Engine::getDefaultSampleRate(unsigned int inputDevice, unsigne
 
 void dsp::Engine::setup(unsigned int inputDevice,
                         unsigned int outputDevice,
-                        unsigned int sampleRate,
-                        unsigned int bufferSize) {
+                        unsigned int numSamples,
+                        unsigned int sampleRate) {
     lock();
 
 #if DSP_USE_RTAUDIO
@@ -232,7 +219,7 @@ void dsp::Engine::setup(unsigned int inputDevice,
                        inputParameters.nChannels > 0 ? &inputParameters : NULL,
                        format,
                        sampleRate,
-                       &bufferSize,
+                       &numSamples,
                        &dsp::Engine::tick,
                        this,
                        &options);
@@ -247,20 +234,24 @@ void dsp::Engine::setup(unsigned int inputDevice,
 
     numInputChannels = inputParameters.nChannels;
     numOutputChannels = outputParameters.nChannels;
-    setSampleRateNoLock(sampleRate);
-    setBufferSizeNoLock(bufferSize);
+    this->numSamples = numSamples;
+    this->sampleRate = sampleRate;
 #endif
 
-    if (numInputChannels > audio->getAudioInput()->getNumChannels()) {
-        audio->getAudioInput()->setNumChannels(numInputChannels);
-        audio->getAudioInputClipping()->setNumChannels(numInputChannels);
+    if (numInputChannels > nodeProcessor->getNumInputChannels()) {
+        nodeProcessor->setNumInputChannels(static_cast<int>(numInputChannels));
     }
-    if (numOutputChannels > audio->getAudioOutput()->getNumChannels()) {
-        audio->getAudioOutput()->setNumChannels(numOutputChannels);
-        audio->getAudioOutputClipping()->setNumChannels(numOutputChannels);
+    if (numOutputChannels > nodeProcessor->getNumOutputChannels()) {
+        nodeProcessor->setNumOutputChannels(static_cast<int>(numOutputChannels));
     }
-    audio->setSampleRate(sampleRate);
-    audio->setBufferSize(bufferSize);
+    nodeProcessor->setNumSamples(static_cast<int>(this->numSamples));
+    nodeProcessor->setSampleRate(static_cast<double>(this->sampleRate));
+
+    audioData.setSize(static_cast<int>(std::max(this->numInputChannels, this->numOutputChannels)),
+                      static_cast<int>(this->numSamples));
+
+    midiProcessor->setNumSamples(static_cast<int>(this->numSamples));
+    midiProcessor->setSampleRate(static_cast<double>(this->sampleRate));
 
     unlock();
 }
@@ -306,84 +297,42 @@ unsigned int dsp::Engine::getNumOutputChannels() const {
     return numOutputChannels;
 }
 
-std::shared_ptr<dsp::OutputParameter> dsp::Engine::getAudioInput() const {
-    return audio->getAudioInput();
+unsigned int dsp::Engine::getNumSamples() const {
+    return numSamples;
 }
 
-std::shared_ptr<dsp::InputParameter> dsp::Engine::getAudioOutput() const {
-    return audio->getAudioOutput();
+unsigned int dsp::Engine::getSampleRate() const {
+    return sampleRate;
 }
 
-std::shared_ptr<dsp::OutputParameter> dsp::Engine::getAudioInputClipping() const {
-    return audio->getAudioInputClipping();
+dsp::AudioData<dsp::Sample> &dsp::Engine::getAudioData() {
+    return audioData;
 }
 
-std::shared_ptr<dsp::OutputParameter> dsp::Engine::getAudioOutputClipping() const {
-    return audio->getAudioOutputClipping();
+void dsp::Engine::processAudioDataNoLock(Sample *inputBuffer, Sample *outputBuffer) {
+    for (int channel = 0; channel < numInputChannels; ++channel) {
+        Sample *audioInputChannel = audioData.getWritePointer(channel);
+        for (int k = 0, sample = channel; k < numSamples; ++k, sample += numInputChannels) {
+            audioInputChannel[k] = inputBuffer[sample];
+        }
+    }
+
+    nodeProcessor->process(audioData, midiProcessor->getMidiData());
+
+    for (int channel = 0; channel < numOutputChannels; ++channel) {
+        const Sample *audioOutputChannel = audioData.getReadPointer(channel);
+        for (int k = 0, sample = channel; k < numSamples; ++k, sample += numOutputChannels) {
+            outputBuffer[sample] = clip(audioOutputChannel[k], -1.0, 1.0);
+        }
+    }
 }
 
-unsigned int dsp::Engine::getNumUnits() const {
-    return audio->getNumUnits();
+std::shared_ptr<dsp::NodeProcessor> dsp::Engine::getNodeProcessor() const {
+    return nodeProcessor;
 }
 
-std::shared_ptr<dsp::Unit> dsp::Engine::getUnit(unsigned int index) const {
-    return audio->getUnit(index);
-}
-
-void dsp::Engine::pushUnit(std::shared_ptr<Unit> unit, bool sort) {
-    audio->pushUnit(unit, sort);
-}
-
-void dsp::Engine::pushUnits(std::vector<std::shared_ptr<Unit>> units, bool sort) {
-    audio->pushUnits(units, sort);
-}
-
-void dsp::Engine::replaceUnit(std::shared_ptr<Unit> unit, std::shared_ptr<Unit> replacement) {
-    audio->replaceUnit(unit, replacement);
-}
-
-void dsp::Engine::removeUnit(std::shared_ptr<Unit> unit) {
-    audio->removeUnit(unit);
-}
-
-void dsp::Engine::removeUnits(std::vector<std::shared_ptr<Unit>> units) {
-    audio->removeUnits(units);
-}
-
-void dsp::Engine::sortUnits() {
-    audio->sortUnits();
-}
-
-unsigned int dsp::Engine::getNumMidiInputs() const {
-    return midi->getNumMidiInputs();
-}
-
-unsigned int dsp::Engine::getNumMidiOutputs() const {
-    return midi->getNumMidiOutputs();
-}
-
-std::shared_ptr<dsp::Midi::MidiInput> dsp::Engine::getMidiInput(unsigned int index) const {
-    return midi->getMidiInput(index);
-}
-
-std::shared_ptr<dsp::Midi::MidiOutput> dsp::Engine::getMidiOutput(unsigned int index) const {
-    return midi->getMidiOutput(index);
-}
-
-std::shared_ptr<dsp::Midi::MidiInput> dsp::Engine::pushMidiInput(unsigned int port) {
-    return midi->pushMidiInput(port);
-}
-
-std::shared_ptr<dsp::Midi::MidiOutput> dsp::Engine::pushMidiOutput(unsigned int port) {
-    return midi->pushMidiOutput(port);
-}
-
-void dsp::Engine::removeMidiInput(std::shared_ptr<Midi::MidiInput> input) {
-    midi->removeMidiInput(input);
-}
-
-void dsp::Engine::removeMidiOutput(std::shared_ptr<Midi::MidiOutput> output) {
-    midi->removeMidiOutput(output);
+std::shared_ptr<dsp::MidiProcessor> dsp::Engine::getMidiProcessor() const {
+    return midiProcessor;
 }
 
 #if DSP_USE_RTAUDIO
@@ -393,13 +342,13 @@ int dsp::Engine::tick(void *outputBuffer,
                       double streamTime,
                       RtAudioStreamStatus status,
                       void *pointer) {
-    Engine *engine = (Engine *)pointer;
+    Engine *engine = reinterpret_cast<Engine *>(pointer);
     engine->lock();
-    process((Sample *)inputBuffer,
-            (Sample *)outputBuffer,
-            nBufferFrames,
+    process(reinterpret_cast<Sample *>(inputBuffer),
+            reinterpret_cast<Sample *>(outputBuffer),
             engine->getNumInputChannels(),
             engine->getNumOutputChannels(),
+            nBufferFrames,
             engine);
     engine->unlock();
     return 0;
@@ -408,17 +357,13 @@ int dsp::Engine::tick(void *outputBuffer,
 
 void dsp::Engine::process(Sample *inputBuffer,
                           Sample *outputBuffer,
-                          unsigned int numFrames,
-                          unsigned int numInputChannels,
-                          unsigned int numOutputChannels,
+                          int numInputChannels,
+                          int numOutputChannels,
+                          int numSamples,
                           Engine *engine) {
-    engine->audio->zeroBuffers();
-    engine->audio->readInterleaved(inputBuffer, numInputChannels, numFrames);
-    engine->midi->processInputs();
-    engine->audio->run();
-    engine->midi->processOutputs();
-    engine->audio->copyBuffers();
-    engine->audio->writeInterleaved(outputBuffer, numOutputChannels, numFrames);
+    engine->getMidiProcessor()->processInputs();
+    engine->processAudioDataNoLock(inputBuffer, outputBuffer);
+    engine->getMidiProcessor()->processOutputs();
 }
 
 unsigned int dsp::Engine::getDeviceCount() {
