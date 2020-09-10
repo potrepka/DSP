@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <cmath>
-
 #include <vector>
 
 namespace dsp {
