@@ -66,7 +66,7 @@ void dsp::PinkNoise::processNoLock() {
     for (int channel = 0; channel < getNumOutputChannels(); ++channel) {
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample *whiteChannel = white.getChannelPointer(channel);
-        Wrapper memoryWrapper = memory.getSingleChannelWrapper(channel);
+        Wrapper memoryWrapper = memory.getSingleChannel(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
             memoryWrapper.multiplyBy(memoryCoefficients);
             memoryWrapper.addProductOf(noiseCoefficients, whiteChannel[sample]);

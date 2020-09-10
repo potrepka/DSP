@@ -23,13 +23,13 @@ T *dsp::AudioWrapper<T>::getChannelPointer(size_t channel) const {
 }
 
 template <typename T>
-dsp::AudioWrapper<T> dsp::AudioWrapper<T>::getSingleChannelWrapper(size_t channel) const {
+dsp::AudioWrapper<T> dsp::AudioWrapper<T>::getSingleChannel(size_t channel) const {
     assert(channel < numChannels);
     return AudioWrapper(data + channel, 1, startSample, numSamples);
 }
 
 template <typename T>
-dsp::AudioWrapper<T> dsp::AudioWrapper<T>::getSubset(size_t sampleOffset, size_t numSamples) const {
+dsp::AudioWrapper<T> dsp::AudioWrapper<T>::getSampleRange(size_t sampleOffset, size_t numSamples) const {
     assert(sampleOffset + numSamples <= this->numSamples);
     return AudioWrapper(data, numChannels, startSample + sampleOffset, numSamples);
 }

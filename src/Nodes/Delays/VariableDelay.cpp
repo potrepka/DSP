@@ -61,7 +61,7 @@ void dsp::VariableDelay::processNoLock() {
             int writeIndex = index;
             for (int sample = 0; sample < getNumSamples(); ++sample) {
                 if (resetTriggerChannel[sample]) {
-                    buffer->getWrapper().getSingleChannelWrapper(channel).clear();
+                    buffer->getWrapper().getSingleChannel(channel).clear();
                 }
                 // WRITING
                 bufferChannel[writeIndex] = inputChannel[sample];

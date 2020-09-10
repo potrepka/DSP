@@ -126,7 +126,7 @@ dsp::Wrapper &dsp::Buffer::getWrapper() {
 
 void dsp::Buffer::fillChannels() {
     for (int channel = 0; channel < getNumChannels(); ++channel) {
-        wrapper.getSingleChannelWrapper(channel).fill(channelValues[channel]);
+        wrapper.getSingleChannel(channel).fill(channelValues[channel]);
     }
 }
 

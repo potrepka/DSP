@@ -35,7 +35,7 @@ void dsp::MidSide::processNoLock() {
         wrapper.clear();
         std::vector<Wrapper> wrappers(getNumChannels());
         for (int channel = 0; channel < getNumChannels(); ++channel) {
-            wrapper.add(getInput()->getWrapper().getSingleChannelWrapper(channel));
+            wrapper.add(getInput()->getWrapper().getSingleChannel(channel));
         }
         for (int channel = 0; channel < getNumChannels(); ++channel) {
             Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);

@@ -182,12 +182,12 @@ void dsp::MidiInput::processContinuous(std::function<bool(MidiMessage)> conditio
     for (const auto meta : *inputMessages) {
         const MidiMessage message = meta.getMessage();
         if (conditional(message)) {
-            getOutput()->getWrapper().getSubset(start, meta.samplePosition - start).fill(previous);
+            getOutput()->getWrapper().getSampleRange(start, meta.samplePosition - start).fill(previous);
             start = meta.samplePosition;
             previous = capture(message);
         }
     }
-    getOutput()->getWrapper().getSubset(start, getOutput()->getNumSamples() - start).fill(previous);
+    getOutput()->getWrapper().getSampleRange(start, getOutput()->getNumSamples() - start).fill(previous);
 }
 
 void dsp::MidiInput::processNoLock() {

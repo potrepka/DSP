@@ -16,8 +16,8 @@ public:
 
     T *getChannelPointer(size_t channel) const;
 
-    AudioWrapper getSingleChannelWrapper(size_t channel) const;
-    AudioWrapper getSubset(size_t sampleOffset, size_t numSamples) const;
+    AudioWrapper getSingleChannel(size_t channel) const;
+    AudioWrapper getSampleRange(size_t sampleOffset, size_t numSamples) const;
 
     AudioWrapper &clear();
     AudioWrapper &fill(T value);
