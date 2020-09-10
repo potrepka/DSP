@@ -13,14 +13,23 @@ int main() {
 
     // TODO: Do something more interesting than passing input to output
 
-    // Create engine
+    // Setup engine
     std::shared_ptr<dsp::Engine> engine = std::make_shared<dsp::Engine>();
+    
+    unsigned int inputDevice = engine->getDefaultInputDevice();
+    unsigned int outputDevice = engine->getDefaultOutputDevice();
+    unsigned int numSamples = 512;
+    unsigned int sampleRate = engine->getDefaultSampleRate(inputDevice, outputDevice);
+    
+    engine->setup(inputDevice, outputDevice, numSamples, sampleRate);
     
     // Create units
     std::shared_ptr<dsp::PassThrough> pass;
 
     pass = std::make_shared<dsp::PassThrough>(dsp::Type::RATIO);
     pass->setNumChannels(2);
+    pass->setNumSamples(engine->getNumSamples());
+    pass->setSampleRate(engine->getSampleRate());
 
     // Push units
     engine->getNodeProcessor()->getNodes().push_back(pass);
@@ -28,14 +37,6 @@ int main() {
     // Connect units
     engine->getNodeProcessor()->getAudioInput() >> pass->getInput();
     pass->getOutput() >> engine->getNodeProcessor()->getAudioOutput();
-
-    // Setup engine
-    unsigned int inputDevice = engine->getDefaultInputDevice();
-    unsigned int outputDevice = engine->getDefaultOutputDevice();
-    unsigned int numSamples = 512;
-    unsigned int sampleRate = engine->getDefaultSampleRate(inputDevice, outputDevice);
-
-    engine->setup(inputDevice, outputDevice, numSamples, sampleRate);
 
     return 0;
 }
