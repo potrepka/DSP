@@ -13,12 +13,16 @@ int main() {
 
     // TODO: Do something more interesting than passing input to output
 
-    // Setup units
+    // Create engine
+    std::shared_ptr<dsp::Engine> engine = std::make_shared<dsp::Engine>();
+    
+    // Create units
     std::shared_ptr<dsp::PassThrough> pass;
 
     pass = std::make_shared<dsp::PassThrough>(dsp::Type::RATIO);
     pass->setNumChannels(2);
 
+    // Push units
     engine->getNodeProcessor()->getNodes().push_back(pass);
 
     // Connect units
@@ -26,8 +30,6 @@ int main() {
     pass->getOutput() >> engine->getNodeProcessor()->getAudioOutput();
 
     // Setup engine
-    std::shared_ptr<dsp::Engine> engine = std::make_shared<dsp::Engine>();
-
     unsigned int inputDevice = engine->getDefaultInputDevice();
     unsigned int outputDevice = engine->getDefaultOutputDevice();
     unsigned int numSamples = 512;
@@ -48,4 +50,5 @@ The following are possible directions for future development:
 - Pitch shifting
 - Saving state
 - Loading state
+- Vectorization
 - Parallel computing
