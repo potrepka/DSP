@@ -4,11 +4,11 @@
 #include "MidiBuffer.h"
 #include <thread>
 
-#ifndef DSP_USE_RTMIDI
-#define DSP_USE_RTMIDI 1
+#ifndef DSP_NO_RTMIDI
+#define DSP_USE_RTMIDI
 #endif
 
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
 #include "RtMidi.h"
 #endif
 
@@ -30,7 +30,7 @@ public:
         std::multimap<double, MidiMessage> &getMessages();
 
     private:
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
         RtMidiIn midiIn;
 #endif
         std::string deviceName;
@@ -49,7 +49,7 @@ public:
         void sendMessageWithDelay(std::vector<unsigned char> bytes, int64_t nanoseconds);
 
     private:
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
         RtMidiOut midiOut;
 #endif
         std::string deviceName;
@@ -76,7 +76,7 @@ public:
     void processOutputs();
 
 private:
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
     static RtMidiIn midiIn;
     static RtMidiOut midiOut;
 #endif

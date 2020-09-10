@@ -1,10 +1,10 @@
 #pragma once
 
-#ifndef DSP_USE_ENGINE
-#define DSP_USE_ENGINE 1
+#ifndef DSP_NO_ENGINE
+#define DSP_USE_ENGINE
 #endif
 
-#if DSP_USE_ENGINE
+#ifdef DSP_USE_ENGINE
 #include "Engine.h"
 #else
 #include "NodeProcessor.h"

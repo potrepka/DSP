@@ -3,11 +3,11 @@
 #include "MidiProcessor.h"
 #include "NodeProcessor.h"
 
-#ifndef DSP_USE_RTAUDIO
-#define DSP_USE_RTAUDIO 1
+#ifndef DSP_NO_RTAUDIO
+#define DSP_USE_RTAUDIO
 #endif
 
-#if DSP_USE_RTAUDIO
+#ifdef DSP_USE_RTAUDIO
 #include "RtAudio.h"
 #endif
 
@@ -49,7 +49,7 @@ private:
     AudioBuffer<Sample> audioBuffer;
     std::shared_ptr<NodeProcessor> nodeProcessor;
     std::shared_ptr<MidiProcessor> midiProcessor;
-#if DSP_USE_RTAUDIO
+#ifdef DSP_USE_RTAUDIO
     RtAudio dac;
 #endif
     std::string inputDeviceName;
@@ -58,7 +58,7 @@ private:
     unsigned int numOutputChannels;
     unsigned int numSamples;
     unsigned int sampleRate;
-#if DSP_USE_RTAUDIO
+#ifdef DSP_USE_RTAUDIO
     static int tick(void *outputBuffer,
                     void *inputBuffer,
                     unsigned int nBufferFrames,

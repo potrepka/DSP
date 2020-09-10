@@ -9,11 +9,11 @@ void dsp::MidiProcessor::Input::callback(double delta, std::vector<unsigned char
 
 dsp::MidiProcessor::Input::Input(unsigned int port)
         : messageTime(0.0) {
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
     try {
         midiIn.setCallback(callback, this);
     } catch (RtMidiError &error) {
-#if DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
         error.printMessage();
 #endif
     }
@@ -27,11 +27,11 @@ std::string dsp::MidiProcessor::Input::getDeviceName() const {
 
 void dsp::MidiProcessor::Input::setPort(unsigned int port) {
     lock();
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
     try {
         midiIn.openPort(port);
     } catch (RtMidiError &error) {
-#if DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
         error.printMessage();
 #endif
     }
@@ -54,11 +54,11 @@ std::string dsp::MidiProcessor::Output::getDeviceName() const {
 
 void dsp::MidiProcessor::Output::setPort(unsigned int port) {
     lock();
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
     try {
         midiOut.openPort(port);
     } catch (RtMidiError &error) {
-#if DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
         error.printMessage();
 #endif
     }
@@ -68,13 +68,13 @@ void dsp::MidiProcessor::Output::setPort(unsigned int port) {
 }
 
 void dsp::MidiProcessor::Output::sendMessageWithDelay(std::vector<unsigned char> bytes, int64_t nanoseconds) {
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
     std::thread([this, nanoseconds, bytes]() mutable {
         std::this_thread::sleep_for(std::chrono::nanoseconds(nanoseconds));
         try {
             midiOut.sendMessage(&bytes);
         } catch (RtMidiError &error) {
-#if DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
             error.printMessage();
 #endif
         }
@@ -82,19 +82,19 @@ void dsp::MidiProcessor::Output::sendMessageWithDelay(std::vector<unsigned char>
 #endif
 }
 
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
 RtMidiIn dsp::MidiProcessor::midiIn;
 RtMidiOut dsp::MidiProcessor::midiOut;
 #endif
 
 unsigned int dsp::MidiProcessor::getNumMidiInputPorts() {
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
     unsigned int portCount;
     try {
         portCount = midiIn.getPortCount();
     } catch (RtMidiError &error) {
         portCount = 0;
-#if DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
         error.printMessage();
 #endif
     }
@@ -105,13 +105,13 @@ unsigned int dsp::MidiProcessor::getNumMidiInputPorts() {
 }
 
 unsigned int dsp::MidiProcessor::getNumMidiOutputPorts() {
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
     unsigned int portCount;
     try {
         portCount = midiOut.getPortCount();
     } catch (RtMidiError &error) {
         portCount = 0;
-#if DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
         error.printMessage();
 #endif
     }
@@ -122,13 +122,13 @@ unsigned int dsp::MidiProcessor::getNumMidiOutputPorts() {
 }
 
 std::string dsp::MidiProcessor::getMidiInputName(unsigned int port) {
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
     std::string name;
     try {
         name = midiIn.getPortName(port);
     } catch (RtMidiError &error) {
         name = "None";
-#if DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
         error.printMessage();
 #endif
     }
@@ -139,13 +139,13 @@ std::string dsp::MidiProcessor::getMidiInputName(unsigned int port) {
 }
 
 std::string dsp::MidiProcessor::getMidiOutputName(unsigned int port) {
-#if DSP_USE_RTMIDI
+#ifdef DSP_USE_RTMIDI
     std::string name;
     try {
         name = midiOut.getPortName(port);
     } catch (RtMidiError &error) {
         name = "None";
-#if DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
         error.printMessage();
 #endif
     }
