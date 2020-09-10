@@ -12,14 +12,14 @@ public:
     class Iterator {
 
     public:
-        Iterator(std::multimap<int, TimedMidiMessage>::const_iterator it);
+        Iterator(std::multimap<size_t, TimedMidiMessage>::const_iterator it);
         Iterator &operator++();
         bool operator==(const Iterator &other) const;
         bool operator!=(const Iterator &other) const;
         TimedMidiMessage operator*() const;
 
     private:
-        std::map<int, TimedMidiMessage>::const_iterator it;
+        std::map<size_t, TimedMidiMessage>::const_iterator it;
     };
 
     MidiBuffer();
@@ -27,12 +27,12 @@ public:
     Iterator begin() const;
     Iterator end() const;
 
-    void addEvent(const MidiMessage &midiMessage, int sample);
-    void addEvents(const MidiBuffer &midiBuffer, int startSample, int numSamples, int sampleDeltaToAdd);
+    void addEvent(const MidiMessage &midiMessage, size_t sample);
+    void addEvents(const MidiBuffer &midiBuffer, size_t startSample, size_t numSamples, size_t sampleDeltaToAdd);
     void clear();
 
 private:
-    std::multimap<int, TimedMidiMessage> events;
+    std::multimap<size_t, TimedMidiMessage> events;
 };
 
 } // namespace dsp

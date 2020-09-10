@@ -22,7 +22,7 @@ public:
     std::shared_ptr<Input> getGate() const;
 
 protected:
-    void setNumInputChannelsNoLock(int numChannels) override;
+    void setNumInputChannelsNoLock(size_t numChannels) override;
     void setSampleRateNoLock(double sampleRate) override;
     void processNoLock() override;
 

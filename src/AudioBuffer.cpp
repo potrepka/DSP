@@ -17,7 +17,6 @@ size_t dsp::AudioBuffer<T>::getNumSamples() const {
 
 template <typename T>
 void dsp::AudioBuffer<T>::setSize(size_t numChannels, size_t numSamples) {
-    assert(numChannels >= 0 && numSamples >= 0);
     this->numChannels = numChannels;
     this->numSamples = numSamples;
     data.resize(numChannels);
@@ -48,7 +47,7 @@ T *dsp::AudioBuffer<T>::getWritePointer(size_t channel) {
 }
 
 template <typename T>
-T dsp::AudioBuffer<T>::getMagnitude(int channel, int startSample, int numSamples) const {
+T dsp::AudioBuffer<T>::getMagnitude(size_t channel, size_t startSample, size_t numSamples) const {
     assert(channel < numChannels);
     assert(startSample + numSamples <= this->numSamples);
     if (numSamples == 0) {
@@ -61,7 +60,7 @@ T dsp::AudioBuffer<T>::getMagnitude(int channel, int startSample, int numSamples
 }
 
 template <typename T>
-T dsp::AudioBuffer<T>::getRMSLevel(int channel, int startSample, int numSamples) const {
+T dsp::AudioBuffer<T>::getRMSLevel(size_t channel, size_t startSample, size_t numSamples) const {
     assert(channel < numChannels);
     assert(startSample + numSamples <= this->numSamples);
     if (numSamples == 0) {

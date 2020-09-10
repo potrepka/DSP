@@ -21,7 +21,7 @@ public:
     Sample getGainDelta(Sample &gain, Sample &threshold, Sample &compressionRatio, Sample &gateRatio, Sample &halfKnee);
 
 protected:
-    void setNumOutputChannelsNoLock(int numChannels) override;
+    void setNumOutputChannelsNoLock(size_t numChannels) override;
     void processNoLock() override;
 
 private:

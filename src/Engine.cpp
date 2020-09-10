@@ -151,7 +151,7 @@ unsigned int dsp::Engine::getDefaultSampleRate(unsigned int inputDevice, unsigne
     if (outputSampleRates.size() == 0) {
         return inputSampleRates[0];
     }
-    int i = 0, j = 0;
+    size_t i = 0, j = 0;
     while (i < inputSampleRates.size() && j < outputSampleRates.size()) {
         if (inputSampleRates[i] < outputSampleRates[j]) {
             ++i;
@@ -239,19 +239,18 @@ void dsp::Engine::setup(unsigned int inputDevice,
 #endif
 
     if (numInputChannels > nodeProcessor->getNumInputChannels()) {
-        nodeProcessor->setNumInputChannels(static_cast<int>(numInputChannels));
+        nodeProcessor->setNumInputChannels(numInputChannels);
     }
     if (numOutputChannels > nodeProcessor->getNumOutputChannels()) {
-        nodeProcessor->setNumOutputChannels(static_cast<int>(numOutputChannels));
+        nodeProcessor->setNumOutputChannels(numOutputChannels);
     }
-    nodeProcessor->setNumSamples(static_cast<int>(this->numSamples));
-    nodeProcessor->setSampleRate(static_cast<double>(this->sampleRate));
+    nodeProcessor->setNumSamples(this->numSamples);
+    nodeProcessor->setSampleRate(this->sampleRate);
 
-    audioBuffer.setSize(static_cast<int>(std::max(this->numInputChannels, this->numOutputChannels)),
-                        static_cast<int>(this->numSamples));
+    audioBuffer.setSize(std::max(this->numInputChannels, this->numOutputChannels), this->numSamples);
 
-    midiProcessor->setNumSamples(static_cast<int>(this->numSamples));
-    midiProcessor->setSampleRate(static_cast<double>(this->sampleRate));
+    midiProcessor->setNumSamples(this->numSamples);
+    midiProcessor->setSampleRate(this->sampleRate);
 
     unlock();
 }
@@ -310,18 +309,18 @@ dsp::AudioBuffer<dsp::Sample> &dsp::Engine::getAudioBuffer() {
 }
 
 void dsp::Engine::processAudioBufferNoLock(Sample *inputBuffer, Sample *outputBuffer) {
-    for (int channel = 0; channel < numInputChannels; ++channel) {
+    for (unsigned int channel = 0; channel < numInputChannels; ++channel) {
         Sample *audioInputChannel = audioBuffer.getWritePointer(channel);
-        for (int k = 0, sample = channel; k < numSamples; ++k, sample += numInputChannels) {
+        for (unsigned int k = 0, sample = channel; k < numSamples; ++k, sample += numInputChannels) {
             audioInputChannel[k] = inputBuffer[sample];
         }
     }
 
     nodeProcessor->process(audioBuffer, midiProcessor->getMidiBuffer());
 
-    for (int channel = 0; channel < numOutputChannels; ++channel) {
+    for (unsigned int channel = 0; channel < numOutputChannels; ++channel) {
         const Sample *audioOutputChannel = audioBuffer.getReadPointer(channel);
-        for (int k = 0, sample = channel; k < numSamples; ++k, sample += numOutputChannels) {
+        for (unsigned int k = 0, sample = channel; k < numSamples; ++k, sample += numOutputChannels) {
             outputBuffer[sample] = clip(audioOutputChannel[k], -1.0, 1.0);
         }
     }
@@ -357,9 +356,9 @@ int dsp::Engine::tick(void *outputBuffer,
 
 void dsp::Engine::process(Sample *inputBuffer,
                           Sample *outputBuffer,
-                          int numInputChannels,
-                          int numOutputChannels,
-                          int numSamples,
+                          size_t numInputChannels,
+                          size_t numOutputChannels,
+                          size_t numSamples,
                           Engine *engine) {
     engine->getMidiProcessor()->processInputs();
     engine->processAudioBufferNoLock(inputBuffer, outputBuffer);

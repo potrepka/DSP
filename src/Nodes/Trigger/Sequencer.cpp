@@ -27,18 +27,18 @@ void dsp::Sequencer::processNoLock() {
                 sequence->lock();
             }
         }
-        for (int channel = 0; channel < getNumChannels(); ++channel) {
+        for (size_t channel = 0; channel < getNumChannels(); ++channel) {
             Sample *sequenceIndexChannel = getSequenceIndex()->getWrapper().getChannelPointer(channel);
             Sample *indexChannel = getIndex()->getWrapper().getChannelPointer(channel);
             Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
-            for (int sample = 0; sample < getNumSamples(); ++sample) {
-                int p = static_cast<int>(sequenceIndexChannel[sample]);
-                if (p >= 0 && p < sequences.size() && sequences[p] != nullptr) {
-                    int numChannels = sequences[p]->getNumChannels();
-                    int numSamples = sequences[p]->getNumSamples();
+            for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+                size_t p = static_cast<size_t>(sequenceIndexChannel[sample]);
+                if (p < sequences.size() && sequences[p] != nullptr) {
+                    size_t numChannels = sequences[p]->getNumChannels();
+                    size_t numSamples = sequences[p]->getNumSamples();
                     if (numChannels > 0 && numSamples > 0) {
                         Sample *sequenceChannel = sequences[p]->getWrapper().getChannelPointer(channel % numChannels);
-                        int index = static_cast<int>(indexChannel[sample]) % numSamples;
+                        size_t index = static_cast<size_t>(indexChannel[sample]) % numSamples;
                         outputChannel[sample] = sequenceChannel[index + (index < 0) * numSamples];
                     } else {
                         outputChannel[sample] = sequences[p]->getDefaultValue();

@@ -3,7 +3,7 @@
 dsp::BufferRate::BufferRate()
         : Producer(Type::HERTZ) {}
 
-void dsp::BufferRate::setNumSamplesNoLock(int numSamples) {
+void dsp::BufferRate::setNumSamplesNoLock(size_t numSamples) {
     Node::setNumSamplesNoLock(numSamples);
     getOutput()->setAllChannelValues(getSampleRate() * getOneOverNumSamples());
 }

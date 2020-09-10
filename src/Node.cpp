@@ -23,46 +23,42 @@ void dsp::Node::setActive(bool active) {
     unlock();
 }
 
-int dsp::Node::getNumChannels() const {
+size_t dsp::Node::getNumChannels() const {
     return numInputChannels < numOutputChannels ? numInputChannels : numOutputChannels;
 }
 
-void dsp::Node::setNumChannels(int numChannels) {
-    DSP_ASSERT(numChannels >= 0);
+void dsp::Node::setNumChannels(size_t numChannels) {
     lock();
     setNumInputChannelsNoLock(numChannels);
     setNumOutputChannelsNoLock(numChannels);
     unlock();
 }
 
-int dsp::Node::getNumInputChannels() const {
+size_t dsp::Node::getNumInputChannels() const {
     return numInputChannels;
 }
 
-void dsp::Node::setNumInputChannels(int numChannels) {
-    DSP_ASSERT(numChannels >= 0);
+void dsp::Node::setNumInputChannels(size_t numChannels) {
     lock();
     setNumInputChannelsNoLock(numChannels);
     unlock();
 }
 
-int dsp::Node::getNumOutputChannels() const {
+size_t dsp::Node::getNumOutputChannels() const {
     return numOutputChannels;
 }
 
-void dsp::Node::setNumOutputChannels(int numChannels) {
-    DSP_ASSERT(numChannels >= 0);
+void dsp::Node::setNumOutputChannels(size_t numChannels) {
     lock();
     setNumOutputChannelsNoLock(numChannels);
     unlock();
 }
 
-int dsp::Node::getNumSamples() const {
+size_t dsp::Node::getNumSamples() const {
     return numSamples;
 }
 
-void dsp::Node::setNumSamples(int numSamples) {
-    DSP_ASSERT(numSamples >= 0);
+void dsp::Node::setNumSamples(size_t numSamples) {
     lock();
     setNumSamplesNoLock(numSamples);
     unlock();
@@ -73,7 +69,7 @@ double dsp::Node::getSampleRate() const {
 }
 
 void dsp::Node::setSampleRate(double sampleRate) {
-    DSP_ASSERT(sampleRate >= 0);
+    DSP_ASSERT(sampleRate >= 0.0);
     lock();
     setSampleRateNoLock(sampleRate);
     unlock();
@@ -133,8 +129,8 @@ void dsp::Node::sortChildren() {
             }
         }
         std::unordered_set<Node *> explored;
-        std::unordered_map<Node *, unsigned int> orderMap;
-        unsigned int increment = 0;
+        std::unordered_map<Node *, size_t> orderMap;
+        size_t increment = 0;
         while (!queue.empty()) {
             Node *node = queue.front();
             explored.insert(node);
@@ -199,21 +195,21 @@ void dsp::Node::process() {
     unlock();
 }
 
-void dsp::Node::setNumInputChannelsNoLock(int numChannels) {
+void dsp::Node::setNumInputChannelsNoLock(size_t numChannels) {
     numInputChannels = numChannels;
     for (const auto &input : inputs) {
         input->setNumChannels(numChannels);
     }
 }
 
-void dsp::Node::setNumOutputChannelsNoLock(int numChannels) {
+void dsp::Node::setNumOutputChannelsNoLock(size_t numChannels) {
     numOutputChannels = numChannels;
     for (const auto &output : outputs) {
         output->setNumChannels(numChannels);
     }
 }
 
-void dsp::Node::setNumSamplesNoLock(int numSamples) {
+void dsp::Node::setNumSamplesNoLock(size_t numSamples) {
     this->numSamples = numSamples;
     oneOverNumSamples = 1.0 / numSamples;
     for (const auto &input : inputs) {

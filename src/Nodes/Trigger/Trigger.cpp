@@ -28,19 +28,19 @@ std::shared_ptr<dsp::Output> dsp::Trigger::getCurrentTime() const {
     return currentTime;
 }
 
-void dsp::Trigger::setNumOutputChannelsNoLock(int numChannels) {
+void dsp::Trigger::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     index.resize(numChannels, 0.0);
 }
 
 void dsp::Trigger::processNoLock() {
-    for (int channel = 0; channel < getNumChannels(); ++channel) {
+    for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
         Sample *intervalDurationChannel = getIntervalDuration()->getWrapper().getChannelPointer(channel);
         Sample *delayTimeChannel = getDelayTime()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample *currentTimeChannel = getCurrentTime()->getWrapper().getChannelPointer(channel);
-        for (int sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             if (resetTriggerChannel[sample] || intervalDurationChannel[sample] == 0.0) {
                 index[channel] = 0.0;
             } else {

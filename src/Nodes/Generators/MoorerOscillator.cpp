@@ -53,7 +53,7 @@ void dsp::MoorerOscillator::processNoLock() {
             Sample n = overtonesChannel[sample];
             Sample aa = a * a;
             Sample a1 = a;
-            for (unsigned int j = 0; j < n; ++j) {
+            for (size_t j = 0; j < static_cast<size_t>(n); ++j) {
                 a1 *= a;
             }
             Sample scale;

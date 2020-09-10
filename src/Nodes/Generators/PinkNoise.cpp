@@ -35,7 +35,7 @@ dsp::PinkNoise::PinkNoise()
         , white(whiteData)
         , memory(memoryData) {}
 
-void dsp::PinkNoise::setNumOutputChannelsNoLock(int numChannels) {
+void dsp::PinkNoise::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     seed.resize(numChannels);
     std::generate(seed.begin(), seed.end(), []() {
@@ -49,30 +49,30 @@ void dsp::PinkNoise::setNumOutputChannelsNoLock(int numChannels) {
     memory = Wrapper(memoryData);
 }
 
-void dsp::PinkNoise::setNumSamplesNoLock(int numSamples) {
+void dsp::PinkNoise::setNumSamplesNoLock(size_t numSamples) {
     Node::setNumSamplesNoLock(numSamples);
     whiteData.setSize(getNumOutputChannels(), numSamples);
     white = Wrapper(whiteData);
 }
 
 void dsp::PinkNoise::processNoLock() {
-    for (int channel = 0; channel < getNumOutputChannels(); ++channel) {
+    for (size_t channel = 0; channel < getNumOutputChannels(); ++channel) {
         Sample *whiteChannel = white.getChannelPointer(channel);
-        for (int sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             whiteChannel[sample] = static_cast<Sample>(seed[channel] *= 282475249);
         }
     }
     white.multiplyBy(4.656612873077392578125e-10);
-    for (int channel = 0; channel < getNumOutputChannels(); ++channel) {
+    for (size_t channel = 0; channel < getNumOutputChannels(); ++channel) {
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample *whiteChannel = white.getChannelPointer(channel);
         Wrapper memoryWrapper = memory.getSingleChannel(channel);
-        for (int sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             memoryWrapper.multiplyBy(memoryCoefficients);
             memoryWrapper.addProductOf(noiseCoefficients, whiteChannel[sample]);
             Sample *memoryChannel = memoryWrapper.getChannelPointer(0);
             Sample sum = 0.0;
-            for (int i = 0; i < 8; ++i) {
+            for (unsigned int i = 0; i < 8; ++i) {
                 sum += memoryChannel[i];
             }
             outputChannel[sample] = 0.125 * sum;

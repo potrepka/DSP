@@ -1,6 +1,6 @@
 #include "Buffer.h"
 
-dsp::Buffer::Buffer(Type type, Space space, Sample defaultValue, int numChannels, int numSamples)
+dsp::Buffer::Buffer(Type type, Space space, Sample defaultValue, size_t numChannels, size_t numSamples)
         : type(type)
         , space(space)
         , defaultValue(defaultValue)
@@ -38,12 +38,11 @@ void dsp::Buffer::setDefaultValue(Sample defaultValue) {
     unlock();
 }
 
-int dsp::Buffer::getNumChannels() const {
+size_t dsp::Buffer::getNumChannels() const {
     return data.getNumChannels();
 }
 
-void dsp::Buffer::setNumChannels(int numChannels) {
-    DSP_ASSERT(numChannels >= 0);
+void dsp::Buffer::setNumChannels(size_t numChannels) {
     lock();
     data.setSize(numChannels, getNumSamples());
     wrapper = Wrapper(data);
@@ -51,20 +50,18 @@ void dsp::Buffer::setNumChannels(int numChannels) {
     unlock();
 }
 
-int dsp::Buffer::getNumSamples() const {
+size_t dsp::Buffer::getNumSamples() const {
     return data.getNumSamples();
 }
 
-void dsp::Buffer::setNumSamples(int numSamples) {
-    DSP_ASSERT(numSamples >= 0);
+void dsp::Buffer::setNumSamples(size_t numSamples) {
     lock();
     data.setSize(getNumChannels(), numSamples);
     wrapper = Wrapper(data);
     unlock();
 }
 
-void dsp::Buffer::setSize(int numChannels, int numSamples) {
-    DSP_ASSERT(numChannels >= 0 && numSamples >= 0);
+void dsp::Buffer::setSize(size_t numChannels, size_t numSamples) {
     lock();
     data.setSize(numChannels, numSamples);
     wrapper = Wrapper(data);
@@ -83,13 +80,13 @@ void dsp::Buffer::setChannelValues(Array values) {
     unlock();
 }
 
-dsp::Sample dsp::Buffer::getChannelValue(int channel) const {
+dsp::Sample dsp::Buffer::getChannelValue(size_t channel) const {
     return channelValues[channel];
 }
 
-void dsp::Buffer::setSingleChannelValue(int channel, Sample value) {
+void dsp::Buffer::setSingleChannelValue(size_t channel, Sample value) {
     lock();
-    DSP_ASSERT(channel >= 0 && channel < getNumChannels());
+    DSP_ASSERT(channel < getNumChannels());
     channelValues[channel] = value;
     unlock();
 }
@@ -103,7 +100,7 @@ void dsp::Buffer::setAllChannelValues(Sample value) {
 dsp::Array dsp::Buffer::getPeak() {
     lock();
     Array peak(getNumChannels());
-    for (int channel = 0; channel < getNumChannels(); ++channel) {
+    for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         peak[channel] = data.getMagnitude(channel, 0, getNumSamples());
     }
     unlock();
@@ -113,7 +110,7 @@ dsp::Array dsp::Buffer::getPeak() {
 dsp::Array dsp::Buffer::getRMS() {
     lock();
     Array rms(getNumChannels());
-    for (int channel = 0; channel < getNumChannels(); ++channel) {
+    for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         rms[channel] = data.getRMSLevel(channel, 0, getNumSamples());
     }
     unlock();
@@ -125,12 +122,12 @@ dsp::Wrapper &dsp::Buffer::getWrapper() {
 }
 
 void dsp::Buffer::fillChannels() {
-    for (int channel = 0; channel < getNumChannels(); ++channel) {
+    for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         wrapper.getSingleChannel(channel).fill(channelValues[channel]);
     }
 }
 
-dsp::Input::Input(Type type, Space space, Sample defaultValue, int numChannels, int numSamples)
+dsp::Input::Input(Type type, Space space, Sample defaultValue, size_t numChannels, size_t numSamples)
         : Buffer(type, space, defaultValue, numChannels, numSamples)
         , mode(Mode::SUM) {}
 
@@ -222,7 +219,7 @@ void dsp::Input::removeConnection(std::shared_ptr<Output> output) {
     connections.erase(std::remove(connections.begin(), connections.end(), output), connections.end());
 }
 
-dsp::Output::Output(Type type, Space space, Sample defaultValue, int numChannels, int numSamples)
+dsp::Output::Output(Type type, Space space, Sample defaultValue, size_t numChannels, size_t numSamples)
         : Buffer(type, space, defaultValue, numChannels, numSamples) {}
 
 dsp::Output::~Output() {

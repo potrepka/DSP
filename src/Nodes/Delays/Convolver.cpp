@@ -5,34 +5,31 @@ dsp::Convolver::Convolver()
         , headSize(0)
         , tailSize(0) {}
 
-int dsp::Convolver::getHeadSize() const {
+size_t dsp::Convolver::getHeadSize() const {
     return headSize;
 }
 
-void dsp::Convolver::setHeadSize(int headSize) {
+void dsp::Convolver::setHeadSize(size_t headSize) {
     this->headSize = headSize;
     initConvolvers();
 }
 
-int dsp::Convolver::getTailSize() const {
+size_t dsp::Convolver::getTailSize() const {
     return tailSize;
 }
 
-void dsp::Convolver::setTailSize(int tailSize) {
+void dsp::Convolver::setTailSize(size_t tailSize) {
     this->tailSize = tailSize;
     initConvolvers();
 }
 
-std::shared_ptr<dsp::Buffer> dsp::Convolver::getBuffer(int inChannel, int outChannel) const {
-    DSP_ASSERT(inChannel >= 0 && inChannel < buffers.size());
-    DSP_ASSERT(outChannel >= 0 && outChannel < buffers[inChannel].size());
+std::shared_ptr<dsp::Buffer> dsp::Convolver::getBuffer(size_t inChannel, size_t outChannel) const {
+    DSP_ASSERT(inChannel < buffers.size() && outChannel < buffers[inChannel].size());
     return buffers[inChannel][outChannel];
 }
 
-void dsp::Convolver::setBuffer(int inChannel, int outChannel, std::shared_ptr<dsp::Buffer> buffer) {
-    DSP_ASSERT(inChannel >= 0 && inChannel < buffers.size());
-    DSP_ASSERT(outChannel >= 0 && outChannel < buffers[inChannel].size());
-    DSP_ASSERT(buffer->getNumChannels() == 1);
+void dsp::Convolver::setBuffer(size_t inChannel, size_t outChannel, std::shared_ptr<dsp::Buffer> buffer) {
+    DSP_ASSERT(inChannel < buffers.size() && outChannel < buffers[inChannel].size() && buffer->getNumChannels() == 1);
     buffers[inChannel][outChannel] = buffer;
     lock();
     initConvolver(inChannel, outChannel);
@@ -41,45 +38,45 @@ void dsp::Convolver::setBuffer(int inChannel, int outChannel, std::shared_ptr<ds
 
 void dsp::Convolver::initConvolvers() {
     lock();
-    for (int inChannel = 0; inChannel < getNumInputChannels(); ++inChannel) {
-        for (int outChannel = 0; outChannel < getNumInputChannels(); ++outChannel) {
+    for (size_t inChannel = 0; inChannel < getNumInputChannels(); ++inChannel) {
+        for (size_t outChannel = 0; outChannel < getNumInputChannels(); ++outChannel) {
             initConvolver(inChannel, outChannel);
         }
     }
     unlock();
 }
 
-void dsp::Convolver::setNumInputChannelsNoLock(int numChannels) {
+void dsp::Convolver::setNumInputChannelsNoLock(size_t numChannels) {
     Node::setNumInputChannelsNoLock(numChannels);
     buffers.resize(numChannels);
     convolvers.resize(numChannels);
 }
 
-void dsp::Convolver::setNumOutputChannelsNoLock(int numChannels) {
+void dsp::Convolver::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
-    for (int inChannel = 0; inChannel < getNumInputChannels(); ++inChannel) {
+    for (size_t inChannel = 0; inChannel < getNumInputChannels(); ++inChannel) {
         buffers[inChannel].resize(numChannels);
         convolvers[inChannel].resize(numChannels);
     }
 }
 
-void dsp::Convolver::setNumSamplesNoLock(int numSamples) {
+void dsp::Convolver::setNumSamplesNoLock(size_t numSamples) {
     Node::setNumSamplesNoLock(numSamples);
     input.resize(numSamples);
     output.resize(numSamples);
 }
 
 void dsp::Convolver::processNoLock() {
-    for (int inChannel = 0; inChannel < getNumInputChannels(); ++inChannel) {
+    for (size_t inChannel = 0; inChannel < getNumInputChannels(); ++inChannel) {
         Sample *inputChannel = getInput()->getWrapper().getChannelPointer(inChannel);
-        for (int outChannel = 0; outChannel < getNumOutputChannels(); ++outChannel) {
+        for (size_t outChannel = 0; outChannel < getNumOutputChannels(); ++outChannel) {
             Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(outChannel);
             if (convolvers[inChannel][outChannel] != nullptr) {
-                for (int sample = 0; sample < getNumSamples(); ++sample) {
+                for (size_t sample = 0; sample < getNumSamples(); ++sample) {
                     input[sample] = inputChannel[sample];
                 }
                 convolvers[inChannel][outChannel]->process(input.data(), output.data(), getNumSamples());
-                for (int sample = 0; sample < getNumSamples(); ++sample) {
+                for (size_t sample = 0; sample < getNumSamples(); ++sample) {
                     outputChannel[sample] += output[sample];
                 }
             }
@@ -87,14 +84,13 @@ void dsp::Convolver::processNoLock() {
     }
 }
 
-void dsp::Convolver::initConvolver(int inChannel, int outChannel) {
-    DSP_ASSERT(inChannel >= 0 && inChannel < convolvers.size());
-    DSP_ASSERT(outChannel >= 0 && outChannel < convolvers[inChannel].size());
+void dsp::Convolver::initConvolver(size_t inChannel, size_t outChannel) {
+    DSP_ASSERT(inChannel < convolvers.size() && outChannel < convolvers[inChannel].size());
     if (buffers[inChannel][outChannel] != nullptr) {
         buffers[inChannel][outChannel]->lock();
-        int numSamples = buffers[inChannel][outChannel]->getNumSamples();
+        size_t numSamples = buffers[inChannel][outChannel]->getNumSamples();
         std::vector<fftconvolver::Sample> buffer(numSamples);
-        for (int sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             Sample *channel = buffers[inChannel][outChannel]->getWrapper().getChannelPointer(0);
             buffer[sample] = channel[sample];
         }

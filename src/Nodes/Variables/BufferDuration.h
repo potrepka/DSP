@@ -10,7 +10,7 @@ public:
     BufferDuration();
 
 protected:
-    void setNumSamplesNoLock(int numSamples) override;
+    void setNumSamplesNoLock(size_t numSamples) override;
     void setSampleRateNoLock(double sampleRate) override;
 };
 

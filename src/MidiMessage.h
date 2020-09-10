@@ -61,9 +61,9 @@ private:
 class TimedMidiMessage {
 
 public:
-    int samplePosition;
+    size_t samplePosition;
 
-    TimedMidiMessage(MidiMessage midiMessage, int samplePosition = 0);
+    TimedMidiMessage(MidiMessage midiMessage, size_t samplePosition = 0);
 
     MidiMessage getMessage() const;
 

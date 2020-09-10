@@ -13,7 +13,7 @@ public:
     std::shared_ptr<Input> getPhase() const;
 
 protected:
-    void setNumSamplesNoLock(int numSamples) override;
+    void setNumSamplesNoLock(size_t numSamples) override;
     void processNoLock() override;
 
 private:

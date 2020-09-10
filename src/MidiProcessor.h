@@ -62,8 +62,8 @@ public:
 
     MidiProcessor();
 
-    int getNumSamples() const;
-    void setNumSamples(int numSamples);
+    size_t getNumSamples() const;
+    void setNumSamples(size_t numSamples);
 
     double getSampleRate() const;
     void setSampleRate(double sampleRate);
@@ -80,7 +80,7 @@ private:
     static RtMidiIn midiIn;
     static RtMidiOut midiOut;
 #endif
-    int numSamples;
+    size_t numSamples;
     double sampleRate;
     double oneOverSampleRate;
     double messageTime;

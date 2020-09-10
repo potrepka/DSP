@@ -1,6 +1,6 @@
 #include "NodeProcessor.h"
 
-dsp::NodeProcessor::NodeProcessor(int numInputChannels, int numOutputChannels, int numSamples, double sampleRate)
+dsp::NodeProcessor::NodeProcessor(size_t numInputChannels, size_t numOutputChannels, size_t numSamples, double sampleRate)
         : audioInput(std::make_shared<Output>(Type::RATIO, Space::TIME, numInputChannels, numSamples))
         , audioOutput(std::make_shared<Input>(Type::RATIO, Space::TIME, numOutputChannels, numSamples))
         , audioInputClipping(std::make_shared<Output>(Type::RATIO, Space::TIME, numInputChannels, numSamples))
@@ -32,12 +32,11 @@ std::shared_ptr<dsp::Output> dsp::NodeProcessor::getAudioOutputClipping() const 
     return audioOutputClipping;
 }
 
-int dsp::NodeProcessor::getNumInputChannels() const {
+size_t dsp::NodeProcessor::getNumInputChannels() const {
     return numInputChannels;
 }
 
-void dsp::NodeProcessor::setNumInputChannels(int numChannels) {
-    DSP_ASSERT(numChannels >= 0);
+void dsp::NodeProcessor::setNumInputChannels(size_t numChannels) {
     lock();
     numInputChannels = numChannels;
     audioInput->setSize(numChannels, getNumSamples());
@@ -45,12 +44,11 @@ void dsp::NodeProcessor::setNumInputChannels(int numChannels) {
     unlock();
 }
 
-int dsp::NodeProcessor::getNumOutputChannels() const {
+size_t dsp::NodeProcessor::getNumOutputChannels() const {
     return numOutputChannels;
 }
 
-void dsp::NodeProcessor::setNumOutputChannels(int numChannels) {
-    DSP_ASSERT(numChannels >= 0);
+void dsp::NodeProcessor::setNumOutputChannels(size_t numChannels) {
     lock();
     numOutputChannels = numChannels;
     audioOutput->setNumChannels(numChannels);
@@ -58,12 +56,11 @@ void dsp::NodeProcessor::setNumOutputChannels(int numChannels) {
     unlock();
 }
 
-int dsp::NodeProcessor::getNumSamples() const {
+size_t dsp::NodeProcessor::getNumSamples() const {
     return numSamples;
 }
 
-void dsp::NodeProcessor::setNumSamples(int numSamples) {
-    DSP_ASSERT(numSamples >= 0);
+void dsp::NodeProcessor::setNumSamples(size_t numSamples) {
     lock();
     this->numSamples = numSamples;
     audioInput->setNumSamples(numSamples);
@@ -81,7 +78,7 @@ double dsp::NodeProcessor::getSampleRate() const {
 }
 
 void dsp::NodeProcessor::setSampleRate(double sampleRate) {
-    DSP_ASSERT(sampleRate >= 0);
+    DSP_ASSERT(sampleRate >= 0.0);
     lock();
     this->sampleRate = sampleRate;
     for (const auto &node : nodes) {
@@ -90,8 +87,7 @@ void dsp::NodeProcessor::setSampleRate(double sampleRate) {
     unlock();
 }
 
-void dsp::NodeProcessor::setInputSize(int numChannels, int numSamples) {
-    DSP_ASSERT(numChannels >= 0 && numSamples >= 0);
+void dsp::NodeProcessor::setInputSize(size_t numChannels, size_t numSamples) {
     lock();
     numInputChannels = numChannels;
     this->numSamples = numSamples;
@@ -103,8 +99,7 @@ void dsp::NodeProcessor::setInputSize(int numChannels, int numSamples) {
     unlock();
 }
 
-void dsp::NodeProcessor::setOutputSize(int numChannels, int numSamples) {
-    DSP_ASSERT(numChannels >= 0 && numSamples >= 0);
+void dsp::NodeProcessor::setOutputSize(size_t numChannels, size_t numSamples) {
     lock();
     numOutputChannels = numChannels;
     this->numSamples = numSamples;
@@ -136,7 +131,7 @@ void dsp::NodeProcessor::process(AudioBuffer<T> &audioBuffer, MidiBuffer &midiBu
     audioInput->processNoLock();
     audioInput->unlock();
 
-    for (int channel = 0; channel < audioInput->getNumChannels(); ++channel) {
+    for (size_t channel = 0; channel < audioInput->getNumChannels(); ++channel) {
         auto *bufferChannel = audioBuffer.getReadPointer(channel);
         auto *inputChannel = audioInput->getWrapper().getChannelPointer(channel);
         for (auto sample = 0; sample < audioInput->getNumSamples(); ++sample) {
@@ -146,19 +141,19 @@ void dsp::NodeProcessor::process(AudioBuffer<T> &audioBuffer, MidiBuffer &midiBu
     processClipping(audioInput->getWrapper(), audioInputClipping->getWrapper());
 
     inputMessages->clear();
-    inputMessages->addEvents(midiBuffer, 0, static_cast<int>(audioBuffer.getNumSamples()), 0);
+    inputMessages->addEvents(midiBuffer, 0, audioBuffer.getNumSamples(), 0);
     outputMessages->clear();
     for (const auto &node : nodes) {
         node->process();
     }
     midiBuffer.clear();
-    midiBuffer.addEvents(*outputMessages, 0, static_cast<int>(audioBuffer.getNumSamples()), 0);
+    midiBuffer.addEvents(*outputMessages, 0, audioBuffer.getNumSamples(), 0);
 
     audioOutput->lock();
     audioOutput->processNoLock();
     audioOutput->unlock();
 
-    for (int channel = 0; channel < audioOutput->getNumChannels(); ++channel) {
+    for (size_t channel = 0; channel < audioOutput->getNumChannels(); ++channel) {
         auto *outputChannel = audioOutput->getWrapper().getChannelPointer(channel);
         auto *bufferChannel = audioBuffer.getWritePointer(channel);
         for (auto sample = 0; sample < audioOutput->getNumSamples(); ++sample) {
@@ -174,7 +169,7 @@ template void dsp::NodeProcessor::process(AudioBuffer<float> &audioBuffer, MidiB
 template void dsp::NodeProcessor::process(AudioBuffer<double> &audioBuffer, MidiBuffer &midiBuffer);
 
 void dsp::NodeProcessor::processClipping(Wrapper &audioWrapper, Wrapper &audioClippingWrapper) {
-    for (int channel = 0; channel < audioWrapper.getNumChannels(); ++channel) {
+    for (size_t channel = 0; channel < audioWrapper.getNumChannels(); ++channel) {
         auto *audioChannel = audioWrapper.getChannelPointer(channel);
         auto *audioClippingChannel = audioClippingWrapper.getChannelPointer(channel);
         for (auto sample = 0; sample < audioWrapper.getNumSamples(); ++sample) {

@@ -1,6 +1,6 @@
 #include "MidiBuffer.h"
 
-dsp::MidiBuffer::Iterator::Iterator(std::multimap<int, TimedMidiMessage>::const_iterator it)
+dsp::MidiBuffer::Iterator::Iterator(std::multimap<size_t, TimedMidiMessage>::const_iterator it)
         : it(it) {}
 
 dsp::MidiBuffer::Iterator &dsp::MidiBuffer::Iterator::operator++() {
@@ -30,11 +30,11 @@ dsp::MidiBuffer::Iterator dsp::MidiBuffer::end() const {
     return Iterator(events.end());
 }
 
-void dsp::MidiBuffer::addEvent(const MidiMessage &midiMessage, int sample) {
+void dsp::MidiBuffer::addEvent(const MidiMessage &midiMessage, size_t sample) {
     events.insert({sample, TimedMidiMessage(midiMessage, sample)});
 }
 
-void dsp::MidiBuffer::addEvents(const MidiBuffer &midiData, int startSample, int numSamples, int sampleDeltaToAdd) {
+void dsp::MidiBuffer::addEvents(const MidiBuffer &midiData, size_t startSample, size_t numSamples, size_t sampleDeltaToAdd) {
     for (const auto meta : midiData) {
         if (meta.samplePosition >= startSample && meta.samplePosition < startSample + numSamples) {
             MidiMessage message = meta.getMessage();

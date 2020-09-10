@@ -6,14 +6,14 @@ dsp::VariableDelay::VariableDelay(Type type)
         , resetTrigger(std::make_shared<Input>(Type::INTEGER))
         , delayTime(std::make_shared<Input>(Type::SECONDS))
         , decayTime(std::make_shared<Input>(Type::SECONDS))
-        , index(0)
+        , indexState(0)
         , buffer(std::make_shared<Buffer>(type)) {
     getInputs().push_back(resetTrigger);
     getInputs().push_back(delayTime);
     getInputs().push_back(decayTime);
 }
 
-unsigned int dsp::VariableDelay::getMaxDelayTime() const {
+dsp::Sample dsp::VariableDelay::getMaxDelayTime() const {
     return maxDelayTime;
 }
 
@@ -21,7 +21,7 @@ void dsp::VariableDelay::setMaxDelayTime(Sample seconds) {
     assert(seconds > 0.0);
     lock();
     maxDelayTime = seconds;
-    index = 0;
+    indexState = 0;
     buffer->setNumSamples(getDelayBufferSize());
     unlock();
 }
@@ -38,28 +38,28 @@ std::shared_ptr<dsp::Input> dsp::VariableDelay::getDecayTime() const {
     return decayTime;
 }
 
-void dsp::VariableDelay::setNumOutputChannelsNoLock(int numChannels) {
+void dsp::VariableDelay::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     buffer->setNumChannels(numChannels);
 }
 
 void dsp::VariableDelay::setSampleRateNoLock(double sampleRate) {
     Node::setSampleRateNoLock(sampleRate);
-    index = 0;
+    indexState = 0;
     buffer->setNumSamples(getDelayBufferSize());
 }
 
 void dsp::VariableDelay::processNoLock() {
     if (buffer->getNumSamples() > 0) {
-        for (int channel = 0; channel < getNumChannels(); ++channel) {
+        for (size_t channel = 0; channel < getNumChannels(); ++channel) {
             Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
             Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
             Sample *delayTimeChannel = getDelayTime()->getWrapper().getChannelPointer(channel);
             Sample *decayTimeChannel = getDecayTime()->getWrapper().getChannelPointer(channel);
             Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
             Sample *bufferChannel = buffer->getWrapper().getChannelPointer(channel);
-            int writeIndex = index;
-            for (int sample = 0; sample < getNumSamples(); ++sample) {
+            size_t writeIndex = indexState;
+            for (size_t sample = 0; sample < getNumSamples(); ++sample) {
                 if (resetTriggerChannel[sample]) {
                     buffer->getWrapper().getSingleChannel(channel).clear();
                 }
@@ -90,11 +90,11 @@ void dsp::VariableDelay::processNoLock() {
                 }
             }
         }
-        index += getNumSamples();
-        index %= buffer->getNumSamples();
+        indexState += getNumSamples();
+        indexState %= buffer->getNumSamples();
     }
 }
 
-int dsp::VariableDelay::getDelayBufferSize() {
-    return static_cast<int>(ceil(maxDelayTime * getSampleRate())) + 2;
+size_t dsp::VariableDelay::getDelayBufferSize() {
+    return static_cast<size_t>(ceil(maxDelayTime * getSampleRate())) + 2;
 }

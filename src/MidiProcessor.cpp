@@ -161,12 +161,11 @@ dsp::MidiProcessor::MidiProcessor()
         , oneOverSampleRate(0.0)
         , messageTime(0.0) {}
 
-int dsp::MidiProcessor::getNumSamples() const {
+size_t dsp::MidiProcessor::getNumSamples() const {
     return numSamples;
 }
 
-void dsp::MidiProcessor::setNumSamples(int numSamples) {
-    assert(numSamples >= 0);
+void dsp::MidiProcessor::setNumSamples(size_t numSamples) {
     lock();
     this->numSamples = numSamples;
     unlock();
@@ -177,7 +176,7 @@ double dsp::MidiProcessor::getSampleRate() const {
 }
 
 void dsp::MidiProcessor::setSampleRate(double sampleRate) {
-    assert(sampleRate >= 0);
+    assert(sampleRate >= 0.0);
     lock();
     this->sampleRate = sampleRate;
     oneOverSampleRate = 1.0 / sampleRate;
@@ -205,7 +204,7 @@ void dsp::MidiProcessor::processInputs() {
             if (pair.first == 0.0) {
                 messageTime = 0.0;
             }
-            int timeInBuffer = static_cast<int>((pair.first - messageTime) * sampleRate);
+            size_t timeInBuffer = static_cast<size_t>((pair.first - messageTime) * sampleRate);
             if (timeInBuffer < 0) {
                 timeInBuffer = 0;
             }

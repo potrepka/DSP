@@ -199,7 +199,7 @@ std::vector<uint8_t> &dsp::MidiMessage::getBytes() {
     return bytes;
 }
 
-dsp::TimedMidiMessage::TimedMidiMessage(MidiMessage midiMessage, int samplePosition)
+dsp::TimedMidiMessage::TimedMidiMessage(MidiMessage midiMessage, size_t samplePosition)
         : midiMessage(midiMessage)
         , samplePosition(samplePosition) {}
 

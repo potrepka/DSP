@@ -55,7 +55,7 @@ std::shared_ptr<dsp::Output> dsp::SamplePlayer::getCurrentTime() const {
     return currentTime;
 }
 
-void dsp::SamplePlayer::setNumOutputChannelsNoLock(int numChannels) {
+void dsp::SamplePlayer::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     readIndex.resize(numChannels, 0.0);
 }
@@ -67,7 +67,7 @@ void dsp::SamplePlayer::processNoLock() {
                 sample->lock();
             }
         }
-        for (int channel = 0; channel < getNumChannels(); ++channel) {
+        for (size_t channel = 0; channel < getNumChannels(); ++channel) {
             Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
             Sample *gateChannel = getGate()->getWrapper().getChannelPointer(channel);
             Sample *sampleIndexChannel = getSampleIndex()->getWrapper().getChannelPointer(channel);
@@ -75,14 +75,14 @@ void dsp::SamplePlayer::processNoLock() {
             Sample *offsetTimeChannel = getOffsetTime()->getWrapper().getChannelPointer(channel);
             Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
             Sample *currentTimeChannel = getCurrentTime()->getWrapper().getChannelPointer(channel);
-            for (int sample = 0; sample < getNumSamples(); ++sample) {
+            for (size_t sample = 0; sample < getNumSamples(); ++sample) {
                 if (resetTriggerChannel[sample]) {
                     readIndex[channel] = 0.0;
                 }
-                int p = static_cast<int>(sampleIndexChannel[sample]);
-                if (p >= 0 && p < samples.size() && samples[p] != nullptr) {
-                    int numChannels = samples[p]->getNumChannels();
-                    int numSamples = samples[p]->getNumSamples();
+                size_t p = static_cast<size_t>(sampleIndexChannel[sample]);
+                if (p < samples.size() && samples[p] != nullptr) {
+                    size_t numChannels = samples[p]->getNumChannels();
+                    size_t numSamples = samples[p]->getNumSamples();
                     if (numChannels > 0 && numSamples > 0) {
                         Sample *sampleChannel = samples[p]->getWrapper().getChannelPointer(channel % numChannels);
                         if (gateChannel[sample]) {
@@ -91,21 +91,21 @@ void dsp::SamplePlayer::processNoLock() {
                             Array points;
                             switch (interpolation) {
                                 case Interpolation::NONE:
-                                    outputChannel[sample] = sampleChannel[static_cast<int>(index)];
+                                    outputChannel[sample] = sampleChannel[static_cast<size_t>(index)];
                                     break;
                                 case Interpolation::LINEAR: {
-                                    int k0 = static_cast<int>(index);
-                                    int k1 = (k0 + 1) % numSamples;
+                                    size_t k0 = static_cast<size_t>(index);
+                                    size_t k1 = (k0 + 1) % numSamples;
                                     points.resize(2);
                                     points[0] = sampleChannel[k0];
                                     points[1] = sampleChannel[k1];
                                     outputChannel[sample] = linear(points.data(), 2, index - k0);
                                 } break;
                                 case Interpolation::HERMITE: {
-                                    int k1 = static_cast<int>(index);
-                                    int k2 = (k1 + 1) % numSamples;
-                                    int k3 = (k1 + 2) % numSamples;
-                                    int k0 = (k1 + numSamples - 1) % numSamples;
+                                    size_t k1 = static_cast<size_t>(index);
+                                    size_t k2 = (k1 + 1) % numSamples;
+                                    size_t k3 = (k1 + 2) % numSamples;
+                                    size_t k0 = (k1 + numSamples - 1) % numSamples;
                                     points.resize(4);
                                     points[0] = sampleChannel[k0];
                                     points[1] = sampleChannel[k1];

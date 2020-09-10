@@ -52,14 +52,14 @@ std::shared_ptr<dsp::Output> dsp::CompressorGate::getGainDelta() const {
     return gainDelta;
 }
 
-void dsp::CompressorGate::setNumOutputChannelsNoLock(int numChannels) {
+void dsp::CompressorGate::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     gainState.resize(numChannels, 0.0);
 }
 
 void dsp::CompressorGate::processNoLock() {
     getHalfKnee()->getWrapper().replaceWithAbsoluteValueOf(getHalfKnee()->getWrapper());
-    for (int channel = 0; channel < getNumChannels(); ++channel) {
+    for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
         Sample *controlChannel = getControl()->getWrapper().getChannelPointer(channel);
         Sample *thresholdChannel = getThreshold()->getWrapper().getChannelPointer(channel);
@@ -70,7 +70,7 @@ void dsp::CompressorGate::processNoLock() {
         Sample *releaseChannel = getRelease()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample *gainDeltaChannel = getGainDelta()->getWrapper().getChannelPointer(channel);
-        for (int sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             Sample &input = inputChannel[sample];
             Sample &control = controlChannel[sample];
             Sample &threshold = thresholdChannel[sample];

@@ -27,18 +27,18 @@ std::shared_ptr<dsp::Input> dsp::Phasor::getFrequency() const {
     return frequency;
 }
 
-void dsp::Phasor::setNumOutputChannelsNoLock(int numChannels) {
+void dsp::Phasor::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     phase.resize(numChannels, 0.0);
 }
 
 void dsp::Phasor::processNoLock() {
     const bool wrapped = mode == Mode::WRAPPED;
-    for (int channel = 0; channel < getNumChannels(); ++channel) {
+    for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
         Sample *frequencyChannel = getFrequency()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
-        for (int sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             if (resetTriggerChannel[sample]) {
                 phase[channel] = 0.0;
             }

@@ -3,7 +3,7 @@
 dsp::BufferDuration::BufferDuration()
         : Producer(Type::SECONDS) {}
 
-void dsp::BufferDuration::setNumSamplesNoLock(int numSamples) {
+void dsp::BufferDuration::setNumSamplesNoLock(size_t numSamples) {
     Node::setNumSamplesNoLock(numSamples);
     getOutput()->setAllChannelValues(getOneOverSampleRate() * getNumSamples());
 }

@@ -7,7 +7,7 @@ namespace dsp {
 class NodeProcessor : public Lockable {
 
 public:
-    NodeProcessor(int numInputChannels, int numOutputChannels, int numSamples, double sampleRate);
+    NodeProcessor(size_t numInputChannels, size_t numOutputChannels, size_t numSamples, double sampleRate);
     ~NodeProcessor();
 
     std::shared_ptr<Output> getAudioInput() const;
@@ -16,20 +16,20 @@ public:
     std::shared_ptr<Output> getAudioInputClipping() const;
     std::shared_ptr<Output> getAudioOutputClipping() const;
 
-    int getNumInputChannels() const;
-    void setNumInputChannels(int numChannels);
+    size_t getNumInputChannels() const;
+    void setNumInputChannels(size_t numChannels);
 
-    int getNumOutputChannels() const;
-    void setNumOutputChannels(int numChannels);
+    size_t getNumOutputChannels() const;
+    void setNumOutputChannels(size_t numChannels);
 
-    int getNumSamples() const;
-    void setNumSamples(int numSamples);
+    size_t getNumSamples() const;
+    void setNumSamples(size_t numSamples);
 
     double getSampleRate() const;
     void setSampleRate(double sampleRate);
 
-    void setInputSize(int numChannels, int numSamples);
-    void setOutputSize(int numChannels, int numSamples);
+    void setInputSize(size_t numChannels, size_t numSamples);
+    void setOutputSize(size_t numChannels, size_t numSamples);
 
     std::vector<std::shared_ptr<Node>> &getNodes();
     std::shared_ptr<MidiBuffer> getInputMessages() const;
@@ -43,9 +43,9 @@ private:
     std::shared_ptr<Input> audioOutput;
     std::shared_ptr<Output> audioInputClipping;
     std::shared_ptr<Output> audioOutputClipping;
-    int numInputChannels;
-    int numOutputChannels;
-    int numSamples;
+    size_t numInputChannels;
+    size_t numOutputChannels;
+    size_t numSamples;
     double sampleRate;
 
     std::vector<std::shared_ptr<Node>> nodes;

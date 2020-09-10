@@ -49,14 +49,14 @@ void dsp::TableOscillator::processNoLock() {
                 table->lock();
             }
         }
-        int numPoints;
+        unsigned int numPoints;
         switch (positionInterpolation) {
             case Interpolation::NONE: numPoints = 1; break;
             case Interpolation::LINEAR: numPoints = 2; break;
             case Interpolation::HERMITE: numPoints = 4; break;
         }
         Array samples(numPoints);
-        for (int channel = 0; channel < getNumChannels(); ++channel) {
+        for (size_t channel = 0; channel < getNumChannels(); ++channel) {
             Sample *phaseChannel = getPhase()->getWrapper().getChannelPointer(channel);
             Sample *positionChannel = getPosition()->getWrapper().getChannelPointer(channel);
             Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
@@ -65,17 +65,17 @@ void dsp::TableOscillator::processNoLock() {
                                              (tables.size() - (positionInterpolation == Interpolation::NONE ? 0 : 1));
                 const Sample indexBefore =
                         floor(positionIndex) - (positionInterpolation == Interpolation::HERMITE ? 1.0 : 0.0);
-                Sample p = indexBefore;
-                for (int j = 0; j < numPoints; ++j) {
-                    if (p >= 0 && p < tables.size() && tables[p] != nullptr) {
-                        int numChannels = tables[p]->getNumChannels();
-                        int numSamples = tables[p]->getNumSamples();
+                size_t p = static_cast<size_t>(indexBefore);
+                for (unsigned int j = 0; j < numPoints; ++j) {
+                    if (p < tables.size() && tables[p] != nullptr) {
+                        size_t numChannels = tables[p]->getNumChannels();
+                        size_t numSamples = tables[p]->getNumSamples();
                         if (numChannels > 0) {
-                            int c = channel % numChannels;
+                            size_t c = channel % numChannels;
                             Sample *table = tables[p]->getWrapper().getChannelPointer(c);
                             Sample index = wrap(phaseChannel[sample], 1.0) * numSamples;
                             switch (phaseInterpolation) {
-                                case Interpolation::NONE: samples[j] = table[static_cast<int>(index)]; break;
+                                case Interpolation::NONE: samples[j] = table[static_cast<size_t>(index)]; break;
                                 case Interpolation::LINEAR:
                                     samples[j] = linear(table, numSamples, index, tables[p]->getChannelValue(c));
                                     break;

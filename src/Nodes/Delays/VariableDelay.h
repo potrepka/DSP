@@ -9,7 +9,7 @@ class VariableDelay : public Transformer {
 public:
     VariableDelay(Type type);
 
-    unsigned int getMaxDelayTime() const;
+    Sample getMaxDelayTime() const;
     void setMaxDelayTime(Sample seconds);
 
     std::shared_ptr<Input> getResetTrigger() const;
@@ -17,7 +17,7 @@ public:
     std::shared_ptr<Input> getDecayTime() const;
 
 protected:
-    void setNumOutputChannelsNoLock(int numChannels) override;
+    void setNumOutputChannelsNoLock(size_t numChannels) override;
     void setSampleRateNoLock(double sampleRate) override;
     void processNoLock() override;
 
@@ -26,10 +26,10 @@ private:
     const std::shared_ptr<Input> resetTrigger;
     const std::shared_ptr<Input> delayTime;
     const std::shared_ptr<Input> decayTime;
-    int index;
+    size_t indexState;
     std::shared_ptr<Buffer> buffer;
 
-    int getDelayBufferSize();
+    size_t getDelayBufferSize();
 };
 
 } // namespace dsp

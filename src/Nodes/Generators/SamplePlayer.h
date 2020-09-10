@@ -22,7 +22,7 @@ public:
     std::shared_ptr<Output> getCurrentTime() const;
 
 protected:
-    void setNumOutputChannelsNoLock(int numChannels) override;
+    void setNumOutputChannelsNoLock(size_t numChannels) override;
     void processNoLock() override;
 
 private:

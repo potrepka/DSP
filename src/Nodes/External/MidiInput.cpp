@@ -20,7 +20,7 @@ void dsp::MidiInput::setProcessFunction(std::function<void()> processFunction) {
     unlock();
 }
 
-std::function<void()> dsp::MidiInput::processNote(int channel, std::unordered_set<int> noteSet) {
+std::function<void()> dsp::MidiInput::processNote(size_t channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
         processContinuous(
                 [channel, noteSet](MidiMessage message) {
@@ -31,7 +31,7 @@ std::function<void()> dsp::MidiInput::processNote(int channel, std::unordered_se
     };
 }
 
-std::function<void()> dsp::MidiInput::processNoteOn(int channel, std::unordered_set<int> noteSet) {
+std::function<void()> dsp::MidiInput::processNoteOn(size_t channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
         processImpulse(
                 [channel, noteSet](MidiMessage message) {
@@ -42,7 +42,7 @@ std::function<void()> dsp::MidiInput::processNoteOn(int channel, std::unordered_
     };
 }
 
-std::function<void()> dsp::MidiInput::processNoteOff(int channel, std::unordered_set<int> noteSet) {
+std::function<void()> dsp::MidiInput::processNoteOff(size_t channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
         processImpulse(
                 [channel, noteSet](MidiMessage message) {
@@ -53,7 +53,7 @@ std::function<void()> dsp::MidiInput::processNoteOff(int channel, std::unordered
     };
 }
 
-std::function<void()> dsp::MidiInput::processNotePressure(int channel, std::unordered_set<int> noteSet) {
+std::function<void()> dsp::MidiInput::processNotePressure(size_t channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
         processContinuous(
                 [channel, noteSet](MidiMessage message) {
@@ -68,7 +68,7 @@ std::function<void()> dsp::MidiInput::processNotePressure(int channel, std::unor
     };
 }
 
-std::function<void()> dsp::MidiInput::processControl(int channel, std::unordered_set<int> controlSet) {
+std::function<void()> dsp::MidiInput::processControl(size_t channel, std::unordered_set<uint8> controlSet) {
     return [this, channel, controlSet]() {
         processContinuous(
                 [channel, controlSet](MidiMessage message) {
@@ -79,7 +79,7 @@ std::function<void()> dsp::MidiInput::processControl(int channel, std::unordered
     };
 }
 
-std::function<void()> dsp::MidiInput::processControlValue(int channel, std::unordered_set<int> controlSet) {
+std::function<void()> dsp::MidiInput::processControlValue(size_t channel, std::unordered_set<uint8> controlSet) {
     return [this, channel, controlSet]() {
         processContinuous(
                 [channel, controlSet](MidiMessage message) {
@@ -90,7 +90,7 @@ std::function<void()> dsp::MidiInput::processControlValue(int channel, std::unor
     };
 }
 
-std::function<void()> dsp::MidiInput::processProgram(int channel) {
+std::function<void()> dsp::MidiInput::processProgram(size_t channel) {
     return [this, channel]() {
         processContinuous(
                 [channel](MidiMessage message) {
@@ -100,7 +100,7 @@ std::function<void()> dsp::MidiInput::processProgram(int channel) {
     };
 }
 
-std::function<void()> dsp::MidiInput::processChannelPressure(int channel) {
+std::function<void()> dsp::MidiInput::processChannelPressure(size_t channel) {
     return [this, channel]() {
         processContinuous(
                 [channel](MidiMessage message) {
@@ -110,7 +110,7 @@ std::function<void()> dsp::MidiInput::processChannelPressure(int channel) {
     };
 }
 
-std::function<void()> dsp::MidiInput::processPitchBend(int channel) {
+std::function<void()> dsp::MidiInput::processPitchBend(size_t channel) {
     return [this, channel]() {
         processContinuous(
                 [channel](MidiMessage message) {
@@ -120,7 +120,7 @@ std::function<void()> dsp::MidiInput::processPitchBend(int channel) {
     };
 }
 
-std::function<void()> dsp::MidiInput::processAllNotesOff(int channel) {
+std::function<void()> dsp::MidiInput::processAllNotesOff(size_t channel) {
     return [this, channel]() {
         processImpulse(
                 [channel](MidiMessage message) {
@@ -170,7 +170,7 @@ void dsp::MidiInput::processImpulse(std::function<bool(MidiMessage)> conditional
     for (const auto meta : *inputMessages) {
         const MidiMessage message = meta.getMessage();
         const Sample current = conditional(message) ? capture(message) : 0.0;
-        for (int channel = 0; channel < getNumOutputChannels(); ++channel) {
+        for (size_t channel = 0; channel < getNumOutputChannels(); ++channel) {
             getOutput()->getWrapper().setSample(channel, meta.samplePosition, current);
         }
     }
@@ -178,16 +178,16 @@ void dsp::MidiInput::processImpulse(std::function<bool(MidiMessage)> conditional
 
 void dsp::MidiInput::processContinuous(std::function<bool(MidiMessage)> conditional,
                                        std::function<Sample(MidiMessage)> capture) {
-    int start = 0;
+    size_t startSample = 0;
     for (const auto meta : *inputMessages) {
         const MidiMessage message = meta.getMessage();
         if (conditional(message)) {
-            getOutput()->getWrapper().getSampleRange(start, meta.samplePosition - start).fill(previous);
-            start = meta.samplePosition;
+            getOutput()->getWrapper().getSampleRange(startSample, meta.samplePosition - startSample).fill(previous);
+            startSample = meta.samplePosition;
             previous = capture(message);
         }
     }
-    getOutput()->getWrapper().getSampleRange(start, getOutput()->getNumSamples() - start).fill(previous);
+    getOutput()->getWrapper().getSampleRange(startSample, getOutput()->getNumSamples() - startSample).fill(previous);
 }
 
 void dsp::MidiInput::processNoLock() {

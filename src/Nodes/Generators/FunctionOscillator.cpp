@@ -20,10 +20,10 @@ std::shared_ptr<dsp::Input> dsp::FunctionOscillator::getPhase() {
 
 void dsp::FunctionOscillator::processNoLock() {
     if (function) {
-        for (int channel = 0; channel < getNumChannels(); ++channel) {
+        for (size_t channel = 0; channel < getNumChannels(); ++channel) {
             Sample *phaseChannel = getPhase()->getWrapper().getChannelPointer(channel);
             Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
-            for (int sample = 0; sample < getNumSamples(); ++sample) {
+            for (size_t sample = 0; sample < getNumSamples(); ++sample) {
                 outputChannel[sample] = function(phaseChannel[sample]);
             }
         }

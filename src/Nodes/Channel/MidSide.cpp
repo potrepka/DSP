@@ -24,7 +24,7 @@ std::shared_ptr<dsp::Output> dsp::MidSide::getSide() const {
     return side;
 }
 
-void dsp::MidSide::setNumSamplesNoLock(int numSamples) {
+void dsp::MidSide::setNumSamplesNoLock(size_t numSamples) {
     Node::setNumSamplesNoLock(numSamples);
     data.setSize(1, numSamples);
     wrapper = Wrapper(data);
@@ -34,16 +34,16 @@ void dsp::MidSide::processNoLock() {
     if (getNumChannels() > 0) {
         wrapper.clear();
         std::vector<Wrapper> wrappers(getNumChannels());
-        for (int channel = 0; channel < getNumChannels(); ++channel) {
+        for (size_t channel = 0; channel < getNumChannels(); ++channel) {
             wrapper.add(getInput()->getWrapper().getSingleChannel(channel));
         }
-        for (int channel = 0; channel < getNumChannels(); ++channel) {
+        for (size_t channel = 0; channel < getNumChannels(); ++channel) {
             Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
             Sample *mixAmountChannel = getMixAmount()->getWrapper().getChannelPointer(channel);
             Sample *midChannel = getMid()->getWrapper().getChannelPointer(channel);
             Sample *sideChannel = getSide()->getWrapper().getChannelPointer(channel);
             Sample *wrapperChannel = wrapper.getChannelPointer(0);
-            for (int sample = 0; sample < getNumSamples(); ++sample) {
+            for (size_t sample = 0; sample < getNumSamples(); ++sample) {
                 Sample signal = inputChannel[sample];
                 Sample amount = clip(mixAmountChannel[sample], 0.0, 1.0);
                 Sample together = wrapperChannel[sample];

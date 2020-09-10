@@ -20,14 +20,14 @@ void dsp::MidiOutput::setProcessFunction(std::function<void()> processFunction) 
     unlock();
 }
 
-std::function<void()> dsp::MidiOutput::processNote(int channel) {
+std::function<void()> dsp::MidiOutput::processNote(size_t channel) {
     return [this, channel]() {
-        for (int sample = 0; sample < getNumSamples(); ++sample) {
-            for (int channel = 0; channel < getNumInputChannels(); ++channel) {
+        for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+            for (size_t channel = 0; channel < getNumInputChannels(); ++channel) {
                 Sample current = getInput()->getWrapper().getSample(channel, sample);
                 if (previous != current) {
-                    const int previousNote = static_cast<int>(previous);
-                    const int currentNote = static_cast<int>(current);
+                    uint8 previousNote = static_cast<uint8>(previous);
+                    uint8 currentNote = static_cast<uint8>(current);
                     outputMessages->addEvent(MidiMessage::noteOff(channel, previousNote, uint8(0)), sample);
                     outputMessages->addEvent(MidiMessage::noteOn(channel, currentNote, uint8(127)), sample);
                     previous = current;
@@ -37,75 +37,75 @@ std::function<void()> dsp::MidiOutput::processNote(int channel) {
     };
 }
 
-std::function<void()> dsp::MidiOutput::processNoteOn(int channel, std::unordered_set<int> noteSet) {
+std::function<void()> dsp::MidiOutput::processNoteOn(size_t channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
-        processImpulse(noteSet, [channel](int note, Sample current) {
+        processImpulse(noteSet, [channel](size_t note, Sample current) {
             return MidiMessage::noteOn(channel, note, static_cast<uint8>(unipolarToByte(current)));
         });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processNoteOff(int channel, std::unordered_set<int> noteSet) {
+std::function<void()> dsp::MidiOutput::processNoteOff(size_t channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
-        processImpulse(noteSet, [channel](int note) { return MidiMessage::noteOff(channel, note, uint8(0)); });
+        processImpulse(noteSet, [channel](size_t note) { return MidiMessage::noteOff(channel, note, uint8(0)); });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processNotePressure(int channel, std::unordered_set<int> noteSet) {
+std::function<void()> dsp::MidiOutput::processNotePressure(size_t channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
-        processContinuous(noteSet, [channel](int note, Sample current) {
+        processContinuous(noteSet, [channel](size_t note, Sample current) {
             return MidiMessage::aftertouchChange(channel, note, static_cast<uint8>(unipolarToByte(current)));
         });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processControl(int channel) {
+std::function<void()> dsp::MidiOutput::processControl(size_t channel) {
     return [this, channel]() {
         processContinuous([channel](Sample current) {
-            return MidiMessage::controllerEvent(channel, static_cast<int>(current), uint8(0));
+            return MidiMessage::controllerEvent(channel, static_cast<uint8>(current), uint8(0));
         });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processControlValue(int channel, std::unordered_set<int> controlSet) {
+std::function<void()> dsp::MidiOutput::processControlValue(size_t channel, std::unordered_set<uint8> controlSet) {
     return [this, channel, controlSet]() {
-        processContinuous(controlSet, [channel](int control, Sample current) {
+        processContinuous(controlSet, [channel](size_t control, Sample current) {
             return MidiMessage::controllerEvent(channel, control, static_cast<uint8>(unipolarToByte(current)));
         });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processProgram(int channel) {
+std::function<void()> dsp::MidiOutput::processProgram(size_t channel) {
     return [this, channel]() {
         processContinuous(
-                [channel](Sample current) { return MidiMessage::programChange(channel, static_cast<int>(current)); });
+                [channel](Sample current) { return MidiMessage::programChange(channel, static_cast<uint8>(current)); });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processChannelPressure(int channel) {
+std::function<void()> dsp::MidiOutput::processChannelPressure(size_t channel) {
     return [this, channel]() {
         processContinuous([channel](Sample current) {
-            return MidiMessage::channelPressureChange(channel, static_cast<int>(unipolarToByte(current)));
+            return MidiMessage::channelPressureChange(channel, static_cast<uint8>(unipolarToByte(current)));
         });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processPitchBend(int channel) {
+std::function<void()> dsp::MidiOutput::processPitchBend(size_t channel) {
     return [this, channel]() {
         processContinuous([channel](Sample current) {
-            return MidiMessage::channelPressureChange(channel, static_cast<int>(bipolarToShort(current)));
+            return MidiMessage::channelPressureChange(channel, static_cast<uint8>(bipolarToShort(current)));
         });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processAllNotesOff(int channel) {
+std::function<void()> dsp::MidiOutput::processAllNotesOff(size_t channel) {
     return [this, channel]() { processImpulse([channel]() { return MidiMessage::allNotesOff(channel); }); };
 }
 
 std::function<void()> dsp::MidiOutput::processSongPositionInQuarterNotes() {
     return [this]() {
         processContinuous(
-                [](Sample current) { return MidiMessage::songPositionPointer(static_cast<int>(current * 4)); });
+                [](Sample current) { return MidiMessage::songPositionPointer(static_cast<uint8>(current * 4)); });
     };
 }
 
@@ -125,9 +125,9 @@ std::function<void()> dsp::MidiOutput::processStop() {
     return [this]() { processImpulse([]() { return MidiMessage::midiStop(); }); };
 }
 
-void dsp::MidiOutput::processImpulse(std::unordered_set<int> itemSet, std::function<MidiMessage(int, Sample)> publish) {
-    for (int sample = 0; sample < getNumSamples(); ++sample) {
-        for (int channel = 0; channel < getNumInputChannels(); ++channel) {
+void dsp::MidiOutput::processImpulse(std::unordered_set<uint8> itemSet, std::function<MidiMessage(uint8, Sample)> publish) {
+    for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t channel = 0; channel < getNumInputChannels(); ++channel) {
             const Sample current = getInput()->getWrapper().getSample(channel, sample);
             if (current) {
                 for (const auto item : itemSet) {
@@ -138,9 +138,9 @@ void dsp::MidiOutput::processImpulse(std::unordered_set<int> itemSet, std::funct
     }
 }
 
-void dsp::MidiOutput::processImpulse(std::unordered_set<int> itemSet, std::function<MidiMessage(int)> publish) {
-    for (int sample = 0; sample < getNumSamples(); ++sample) {
-        for (int channel = 0; channel < getNumInputChannels(); ++channel) {
+void dsp::MidiOutput::processImpulse(std::unordered_set<uint8> itemSet, std::function<MidiMessage(uint8)> publish) {
+    for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t channel = 0; channel < getNumInputChannels(); ++channel) {
             if (getInput()->getWrapper().getSample(channel, sample)) {
                 for (const auto item : itemSet) {
                     outputMessages->addEvent(publish(item), sample);
@@ -151,8 +151,8 @@ void dsp::MidiOutput::processImpulse(std::unordered_set<int> itemSet, std::funct
 }
 
 void dsp::MidiOutput::processImpulse(std::function<MidiMessage(Sample)> publish) {
-    for (int sample = 0; sample < getNumSamples(); ++sample) {
-        for (int channel = 0; channel < getNumInputChannels(); ++channel) {
+    for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t channel = 0; channel < getNumInputChannels(); ++channel) {
             const Sample current = getInput()->getWrapper().getSample(channel, sample);
             if (current) {
                 outputMessages->addEvent(publish(current), sample);
@@ -162,8 +162,8 @@ void dsp::MidiOutput::processImpulse(std::function<MidiMessage(Sample)> publish)
 }
 
 void dsp::MidiOutput::processImpulse(std::function<MidiMessage()> publish) {
-    for (int sample = 0; sample < getNumSamples(); ++sample) {
-        for (int channel = 0; channel < getNumInputChannels(); ++channel) {
+    for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t channel = 0; channel < getNumInputChannels(); ++channel) {
             if (getInput()->getWrapper().getSample(channel, sample)) {
                 outputMessages->addEvent(publish(), sample);
             }
@@ -171,10 +171,10 @@ void dsp::MidiOutput::processImpulse(std::function<MidiMessage()> publish) {
     }
 }
 
-void dsp::MidiOutput::processContinuous(std::unordered_set<int> itemSet,
-                                        std::function<MidiMessage(int, Sample)> publish) {
-    for (int sample = 0; sample < getNumSamples(); ++sample) {
-        for (int channel = 0; channel < getNumInputChannels(); ++channel) {
+void dsp::MidiOutput::processContinuous(std::unordered_set<uint8> itemSet,
+                                        std::function<MidiMessage(uint8, Sample)> publish) {
+    for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t channel = 0; channel < getNumInputChannels(); ++channel) {
             Sample current = getInput()->getWrapper().getSample(channel, sample);
             if (previous != current) {
                 for (const auto item : itemSet) {
@@ -187,8 +187,8 @@ void dsp::MidiOutput::processContinuous(std::unordered_set<int> itemSet,
 }
 
 void dsp::MidiOutput::processContinuous(std::function<MidiMessage(Sample)> publish) {
-    for (int sample = 0; sample < getNumSamples(); ++sample) {
-        for (int channel = 0; channel < getNumInputChannels(); ++channel) {
+    for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t channel = 0; channel < getNumInputChannels(); ++channel) {
             Sample current = getInput()->getWrapper().getSample(channel, sample);
             if (previous != current) {
                 outputMessages->addEvent(publish(current), sample);

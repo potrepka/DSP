@@ -41,7 +41,7 @@ std::shared_ptr<dsp::Input> dsp::Biquad::getGain() const {
     return gain;
 }
 
-void dsp::Biquad::setNumOutputChannelsNoLock(int numChannels) {
+void dsp::Biquad::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     x1.resize(numChannels, 0.0);
     x2.resize(numChannels, 0.0);
@@ -50,14 +50,14 @@ void dsp::Biquad::setNumOutputChannelsNoLock(int numChannels) {
 }
 
 void dsp::Biquad::processNoLock() {
-    for (int channel = 0; channel < getNumChannels(); ++channel) {
+    for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
         Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
         Sample *frequencyChannel = getFrequency()->getWrapper().getChannelPointer(channel);
         Sample *resonanceChannel = getResonance()->getWrapper().getChannelPointer(channel);
         Sample *gainChannel = getGain()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
-        for (int sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             if (resetTriggerChannel[sample]) {
                 x1[channel] = 0.0;
                 x2[channel] = 0.0;

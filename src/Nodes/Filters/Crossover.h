@@ -17,8 +17,8 @@ public:
     std::shared_ptr<Output> getHigh();
 
 protected:
-    void setNumInputChannelsNoLock(int numChannels) override;
-    void setNumOutputChannelsNoLock(int numChannels) override;
+    void setNumInputChannelsNoLock(size_t numChannels) override;
+    void setNumOutputChannelsNoLock(size_t numChannels) override;
     void processNoLock() override;
 
 private:

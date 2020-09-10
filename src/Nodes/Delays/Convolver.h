@@ -11,29 +11,29 @@ class Convolver : public Transformer {
 public:
     Convolver();
 
-    int getHeadSize() const;
-    void setHeadSize(int headSize);
-    int getTailSize() const;
-    void setTailSize(int tailSize);
-    std::shared_ptr<dsp::Buffer> getBuffer(int inChannel, int outChannel) const;
-    void setBuffer(int inChannel, int outChannel, std::shared_ptr<Buffer> buffer);
+    size_t getHeadSize() const;
+    void setHeadSize(size_t headSize);
+    size_t getTailSize() const;
+    void setTailSize(size_t tailSize);
+    std::shared_ptr<dsp::Buffer> getBuffer(size_t inChannel, size_t outChannel) const;
+    void setBuffer(size_t inChannel, size_t outChannel, std::shared_ptr<Buffer> buffer);
     void initConvolvers();
 
 protected:
-    void setNumInputChannelsNoLock(int numChannels) override;
-    void setNumOutputChannelsNoLock(int numChannels) override;
-    void setNumSamplesNoLock(int numSamples) override;
+    void setNumInputChannelsNoLock(size_t numChannels) override;
+    void setNumOutputChannelsNoLock(size_t numChannels) override;
+    void setNumSamplesNoLock(size_t numSamples) override;
     void processNoLock() override;
 
 private:
     std::vector<std::vector<std::shared_ptr<Buffer>>> buffers;
     std::vector<std::vector<std::unique_ptr<fftconvolver::TwoStageFFTConvolver>>> convolvers;
-    unsigned int headSize;
-    unsigned int tailSize;
+    size_t headSize;
+    size_t tailSize;
     std::vector<fftconvolver::Sample> input;
     std::vector<fftconvolver::Sample> output;
 
-    void initConvolver(int inChannel, int outChannel);
+    void initConvolver(size_t inChannel, size_t outChannel);
 };
 
 } // namespace dsp

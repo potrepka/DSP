@@ -21,17 +21,17 @@ std::shared_ptr<dsp::Input> dsp::OnePole::getFrequency() const {
     return frequency;
 }
 
-void dsp::OnePole::setNumOutputChannelsNoLock(int numChannels) {
+void dsp::OnePole::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     state.resize(numChannels, 0.0);
 }
 
 void dsp::OnePole::processNoLock() {
-    for (int channel = 0; channel < getNumChannels(); ++channel) {
+    for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
         Sample *frequencyChannel = getFrequency()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
-        for (int sample = 0; sample < getNumSamples(); ++sample) {
+        for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             Sample radians = PI * frequencyChannel[sample] * getOneOverSampleRate();
             Sample delta = tan(radians / (1.0 + radians)) * (inputChannel[sample] - state[channel]);
             state[channel] += delta;

@@ -24,24 +24,24 @@ dsp::Sample dsp::wrap(const Sample signal, const Sample max) {
     return max == 0.0 ? 0.0 : signal - floor(signal / max) * max;
 }
 
-dsp::Sample dsp::linear(Sample *data, const int length, const Sample index, const Sample defaultValue) {
+dsp::Sample dsp::linear(Sample *data, const size_t length, const Sample index, const Sample defaultValue) {
     DSP_ASSERT(index >= 0.0);
     if (length == 0) {
         return defaultValue;
     }
-    int indexFloor = static_cast<int>(index);
+    size_t indexFloor = static_cast<size_t>(index);
     Sample mu = index - indexFloor;
     Sample x1 = data[indexFloor % length];
     Sample x2 = data[(indexFloor + 1) % length];
     return x1 + mu * (x2 - x1);
 }
 
-dsp::Sample dsp::hermite(Sample *data, const int length, const Sample index, const Sample defaultValue) {
+dsp::Sample dsp::hermite(Sample *data, const size_t length, const Sample index, const Sample defaultValue) {
     DSP_ASSERT(index >= 0.0);
     if (length == 0) {
         return defaultValue;
     }
-    int indexFloor = static_cast<int>(index);
+    size_t indexFloor = static_cast<size_t>(index);
     Sample mu = index - indexFloor;
     Sample x0 = data[(indexFloor + length - 1) % length];
     Sample x1 = data[indexFloor % length];

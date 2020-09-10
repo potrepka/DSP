@@ -16,8 +16,8 @@ int bipolarToShort(const Sample sample);
 Sample clip(const Sample sample, const Sample min, const Sample max);
 Sample wrap(const Sample sample, const Sample max);
 
-Sample linear(Sample *data, const int size, const Sample index, const Sample defaultValue = 0.0);
-Sample hermite(Sample *data, const int size, const Sample index, const Sample defaultValue = 0.0);
+Sample linear(Sample *data, const size_t size, const Sample index, const Sample defaultValue = 0.0);
+Sample hermite(Sample *data, const size_t size, const Sample index, const Sample defaultValue = 0.0);
 
 class ScaledFFT {
 

@@ -41,14 +41,14 @@ std::shared_ptr<dsp::Output> dsp::Crossover::getHigh() {
     return highTwo->getOutput();
 }
 
-void dsp::Crossover::setNumInputChannelsNoLock(int numChannels) {
+void dsp::Crossover::setNumInputChannelsNoLock(size_t numChannels) {
     Node::setNumInputChannelsNoLock(numChannels);
     for (const auto &child : getChildren()) {
         child->setNumInputChannels(numChannels);
     }
 }
 
-void dsp::Crossover::setNumOutputChannelsNoLock(int numChannels) {
+void dsp::Crossover::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     for (const auto &child : getChildren()) {
         child->setNumOutputChannels(numChannels);

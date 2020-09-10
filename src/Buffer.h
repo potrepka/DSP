@@ -9,7 +9,7 @@ namespace dsp {
 class Buffer : public Lockable {
 
 public:
-    Buffer(Type type, Space space = Space::TIME, Sample defaultValue = 0.0, int numChannels = 0, int numSamples = 0);
+    Buffer(Type type, Space space = Space::TIME, Sample defaultValue = 0.0, size_t numChannels = 0, size_t numSamples = 0);
 
     Type getType() const;
     void setType(Type type);
@@ -20,19 +20,19 @@ public:
     Sample getDefaultValue() const;
     void setDefaultValue(Sample defaultValue);
 
-    int getNumChannels() const;
-    void setNumChannels(int numChannels);
+    size_t getNumChannels() const;
+    void setNumChannels(size_t numChannels);
 
-    int getNumSamples() const;
-    void setNumSamples(int numSamples);
+    size_t getNumSamples() const;
+    void setNumSamples(size_t numSamples);
 
-    void setSize(int numChannels, int numSamples);
+    void setSize(size_t numChannels, size_t numSamples);
 
     Array getChannelValues() const;
     void setChannelValues(Array value);
 
-    Sample getChannelValue(int channel) const;
-    void setSingleChannelValue(int channel, Sample value);
+    Sample getChannelValue(size_t channel) const;
+    void setSingleChannelValue(size_t channel, Sample value);
     void setAllChannelValues(Sample value);
 
     Array getPeak();
@@ -60,7 +60,7 @@ class Input : public Buffer, public std::enable_shared_from_this<Input> {
 public:
     enum class Mode { SUM, MINIMUM, MAXIMUM };
 
-    Input(Type type, Space space = Space::TIME, Sample defaultValue = 0.0, int numChannels = 0, int numSamples = 0);
+    Input(Type type, Space space = Space::TIME, Sample defaultValue = 0.0, size_t numChannels = 0, size_t numSamples = 0);
     ~Input();
 
     Mode getMode() const;
@@ -84,7 +84,7 @@ class Output : public Buffer, public std::enable_shared_from_this<Output> {
     friend class Input;
 
 public:
-    Output(Type type, Space space = Space::TIME, Sample defaultValue = 0.0, int numChannels = 0, int numSamples = 0);
+    Output(Type type, Space space = Space::TIME, Sample defaultValue = 0.0, size_t numChannels = 0, size_t numSamples = 0);
     ~Output();
 
     std::vector<std::shared_ptr<Input>> getConnections() const;

@@ -17,17 +17,17 @@ public:
     bool isActive() const;
     void setActive(bool active);
 
-    int getNumChannels() const;
-    void setNumChannels(int numChannels);
+    size_t getNumChannels() const;
+    void setNumChannels(size_t numChannels);
 
-    int getNumInputChannels() const;
-    void setNumInputChannels(int numChannels);
+    size_t getNumInputChannels() const;
+    void setNumInputChannels(size_t numChannels);
 
-    int getNumOutputChannels() const;
-    void setNumOutputChannels(int numChannels);
+    size_t getNumOutputChannels() const;
+    void setNumOutputChannels(size_t numChannels);
 
-    int getNumSamples() const;
-    void setNumSamples(int numSamples);
+    size_t getNumSamples() const;
+    void setNumSamples(size_t numSamples);
 
     double getSampleRate() const;
     void setSampleRate(double sampleRate);
@@ -45,17 +45,17 @@ public:
     void process();
 
 protected:
-    virtual void setNumInputChannelsNoLock(int numInputChannels);
-    virtual void setNumOutputChannelsNoLock(int numOutputChannels);
-    virtual void setNumSamplesNoLock(int numSamples);
+    virtual void setNumInputChannelsNoLock(size_t numInputChannels);
+    virtual void setNumOutputChannelsNoLock(size_t numOutputChannels);
+    virtual void setNumSamplesNoLock(size_t numSamples);
     virtual void setSampleRateNoLock(double sampleRate);
     virtual void processNoLock() {}
 
 private:
     bool active;
-    int numInputChannels;
-    int numOutputChannels;
-    int numSamples;
+    size_t numInputChannels;
+    size_t numOutputChannels;
+    size_t numSamples;
     double sampleRate;
     double oneOverNumSamples;
     double oneOverSampleRate;

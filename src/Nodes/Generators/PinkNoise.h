@@ -10,8 +10,8 @@ public:
     PinkNoise();
 
 protected:
-    void setNumOutputChannelsNoLock(int numChannels) override;
-    void setNumSamplesNoLock(int numSamples) override;
+    void setNumOutputChannelsNoLock(size_t numChannels) override;
+    void setNumSamplesNoLock(size_t numSamples) override;
     void processNoLock() override;
 
 private:
