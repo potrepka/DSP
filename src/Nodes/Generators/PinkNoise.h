@@ -17,15 +17,15 @@ protected:
 private:
     static Data memoryCoefficientsData;
     static Data noiseCoefficientsData;
-    static Block memoryCoefficients;
-    static Block noiseCoefficients;
+    static Wrapper memoryCoefficients;
+    static Wrapper noiseCoefficients;
     static const Sample delayedNoiseCoefficient;
 
     std::vector<int> seed;
     Data whiteData;
     Data memoryData;
-    Block white;
-    Block memory;
+    Wrapper white;
+    Wrapper memory;
 };
 
 } // namespace dsp

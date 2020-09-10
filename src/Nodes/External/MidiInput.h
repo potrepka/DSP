@@ -9,9 +9,9 @@ namespace dsp {
 class MidiInput : public Producer {
 
 public:
-    MidiInput(Type type, std::shared_ptr<MidiData> inputMessages);
+    MidiInput(Type type, std::shared_ptr<MidiBuffer> inputMessages);
 
-    std::shared_ptr<MidiData> getInputMessages() const;
+    std::shared_ptr<MidiBuffer> getInputMessages() const;
 
     std::function<void()> getProcessFunction() const;
     void setProcessFunction(std::function<void()> processFunction);
@@ -38,7 +38,7 @@ protected:
     void processNoLock();
 
 private:
-    std::shared_ptr<MidiData> inputMessages;
+    std::shared_ptr<MidiBuffer> inputMessages;
     std::function<void()> processFunction;
     Sample previous;
 };

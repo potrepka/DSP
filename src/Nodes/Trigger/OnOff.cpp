@@ -23,9 +23,9 @@ void dsp::OnOff::setNumOutputChannelsNoLock(int numChannels) {
 
 void dsp::OnOff::processNoLock() {
     for (int channel = 0; channel < getNumChannels(); ++channel) {
-        Sample *onTriggerChannel = getOnTrigger()->getBlock().getChannelPointer(channel);
-        Sample *offTriggerChannel = getOffTrigger()->getBlock().getChannelPointer(channel);
-        Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
+        Sample *onTriggerChannel = getOnTrigger()->getWrapper().getChannelPointer(channel);
+        Sample *offTriggerChannel = getOffTrigger()->getWrapper().getChannelPointer(channel);
+        Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
             if (onTriggerChannel[sample]) {
                 state[channel] = true;

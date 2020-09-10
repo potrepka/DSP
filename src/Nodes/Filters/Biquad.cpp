@@ -51,12 +51,12 @@ void dsp::Biquad::setNumOutputChannelsNoLock(int numChannels) {
 
 void dsp::Biquad::processNoLock() {
     for (int channel = 0; channel < getNumChannels(); ++channel) {
-        Sample *inputChannel = getInput()->getBlock().getChannelPointer(channel);
-        Sample *resetTriggerChannel = getResetTrigger()->getBlock().getChannelPointer(channel);
-        Sample *frequencyChannel = getFrequency()->getBlock().getChannelPointer(channel);
-        Sample *resonanceChannel = getResonance()->getBlock().getChannelPointer(channel);
-        Sample *gainChannel = getGain()->getBlock().getChannelPointer(channel);
-        Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
+        Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
+        Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
+        Sample *frequencyChannel = getFrequency()->getWrapper().getChannelPointer(channel);
+        Sample *resonanceChannel = getResonance()->getWrapper().getChannelPointer(channel);
+        Sample *gainChannel = getGain()->getWrapper().getChannelPointer(channel);
+        Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
             if (resetTriggerChannel[sample]) {
                 x1[channel] = 0.0;

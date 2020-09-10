@@ -39,14 +39,14 @@ public:
     unsigned int getNumSamples() const;
     unsigned int getSampleRate() const;
 
-    AudioData<Sample> &getAudioData();
-    void processAudioDataNoLock(Sample *inputBuffer, Sample *outputBuffer);
+    AudioBuffer<Sample> &getAudioBuffer();
+    void processAudioBufferNoLock(Sample *inputBuffer, Sample *outputBuffer);
 
     std::shared_ptr<NodeProcessor> getNodeProcessor() const;
     std::shared_ptr<MidiProcessor> getMidiProcessor() const;
 
 private:
-    AudioData<Sample> audioData;
+    AudioBuffer<Sample> audioBuffer;
     std::shared_ptr<NodeProcessor> nodeProcessor;
     std::shared_ptr<MidiProcessor> midiProcessor;
 #if DSP_USE_RTAUDIO

@@ -72,9 +72,9 @@ void dsp::Recorder::processNoLock() {
     }
     if (recordingNumSamples > 0.0) {
         for (int channel = 0; channel < getNumChannels(); ++channel) {
-            Sample *inputChannel = getInput()->getBlock().getChannelPointer(channel);
-            Sample *resetTriggerChannel = getResetTrigger()->getBlock().getChannelPointer(channel);
-            Sample *gateChannel = getGate()->getBlock().getChannelPointer(channel);
+            Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
+            Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
+            Sample *gateChannel = getGate()->getWrapper().getChannelPointer(channel);
             for (int sample = 0; sample < getNumSamples(); ++sample) {
                 if (resetTriggerChannel[sample]) {
                     writeIndex[channel] = 0.0;
@@ -82,32 +82,32 @@ void dsp::Recorder::processNoLock() {
                 if (gateChannel[sample]) {
                     switch (mode) {
                         case Mode::FIXED_SINGLE:
-                            primary->getBlock().getChannelPointer(channel)[static_cast<int>(writeIndex[channel])] =
+                            primary->getWrapper().getChannelPointer(channel)[static_cast<int>(writeIndex[channel])] =
                                     inputChannel[sample];
                             writeIndex[channel] += 1.0;
                             if (writeIndex[channel] >= recordingNumSamples) {
                                 if (writeIndex[channel] < static_cast<int>(ceil(recordingNumSamples))) {
-                                    primary->getBlock().getChannelPointer(
+                                    primary->getWrapper().getChannelPointer(
                                             channel)[static_cast<int>(writeIndex[channel])] = inputChannel[sample];
                                 }
                                 writeIndex[channel] -= recordingNumSamples;
                             }
                             break;
                         case Mode::FIXED_DOUBLE:
-                            secondary->getBlock().getChannelPointer(channel)[static_cast<int>(writeIndex[channel])] =
+                            secondary->getWrapper().getChannelPointer(channel)[static_cast<int>(writeIndex[channel])] =
                                     inputChannel[sample];
                             writeIndex[channel] += 1.0;
                             if (writeIndex[channel] >= recordingNumSamples) {
                                 if (writeIndex[channel] < static_cast<int>(ceil(recordingNumSamples))) {
-                                    primary->getBlock().getChannelPointer(
+                                    primary->getWrapper().getChannelPointer(
                                             channel)[static_cast<int>(writeIndex[channel])] = inputChannel[sample];
                                 }
                                 writeIndex[channel] -= recordingNumSamples;
-                                primary->getBlock().copyFrom(secondary->getBlock());
+                                primary->getWrapper().copyFrom(secondary->getWrapper());
                             }
                             break;
                         case Mode::VARIABLE:
-                            primary->getBlock().getChannelPointer(channel)[static_cast<int>(writeIndex[channel])] =
+                            primary->getWrapper().getChannelPointer(channel)[static_cast<int>(writeIndex[channel])] =
                                     inputChannel[sample];
                             writeIndex[channel] += 1.0;
                             break;

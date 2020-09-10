@@ -17,5 +17,5 @@ std::shared_ptr<dsp::Input> dsp::MultiplyHertzSeconds::getTime() const {
 }
 
 void dsp::MultiplyHertzSeconds::processNoLock() {
-    getOutput()->getBlock().replaceWithProductOf(getFrequency()->getBlock(), getTime()->getBlock());
+    getOutput()->getWrapper().replaceWithProductOf(getFrequency()->getWrapper(), getTime()->getWrapper());
 }

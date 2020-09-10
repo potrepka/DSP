@@ -32,11 +32,11 @@ public:
     void setOutputSize(int numChannels, int numSamples);
 
     std::vector<std::shared_ptr<Node>> &getNodes();
-    std::shared_ptr<MidiData> getInputMessages() const;
-    std::shared_ptr<MidiData> getOutputMessages() const;
+    std::shared_ptr<MidiBuffer> getInputMessages() const;
+    std::shared_ptr<MidiBuffer> getOutputMessages() const;
 
     template <typename T>
-    void process(AudioData<T> &audioData, MidiData &midiData);
+    void process(AudioBuffer<T> &audioBuffer, MidiBuffer &midiBuffer);
 
 private:
     std::shared_ptr<Output> audioInput;
@@ -49,10 +49,10 @@ private:
     double sampleRate;
 
     std::vector<std::shared_ptr<Node>> nodes;
-    std::shared_ptr<MidiData> inputMessages;
-    std::shared_ptr<MidiData> outputMessages;
+    std::shared_ptr<MidiBuffer> inputMessages;
+    std::shared_ptr<MidiBuffer> outputMessages;
 
-    void processClipping(Block &audioBlock, Block &audioClippingBlock);
+    void processClipping(Wrapper &audioWrapper, Wrapper &audioClippingWrapper);
 };
 
 } // namespace dsp

@@ -24,10 +24,10 @@ std::shared_ptr<dsp::Input> dsp::DryWet::getMixAmount() const {
 
 void dsp::DryWet::processNoLock() {
     for (int channel = 0; channel < getNumChannels(); ++channel) {
-        Sample *dryChannel = getDry()->getBlock().getChannelPointer(channel);
-        Sample *wetChannel = getWet()->getBlock().getChannelPointer(channel);
-        Sample *mixAmountChannel = getMixAmount()->getBlock().getChannelPointer(channel);
-        Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
+        Sample *dryChannel = getDry()->getWrapper().getChannelPointer(channel);
+        Sample *wetChannel = getWet()->getWrapper().getChannelPointer(channel);
+        Sample *mixAmountChannel = getMixAmount()->getWrapper().getChannelPointer(channel);
+        Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
             Sample dry = dryChannel[sample];
             Sample wet = wetChannel[sample];

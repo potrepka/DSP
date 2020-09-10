@@ -1,11 +1,11 @@
 #include "MidiOutput.h"
 
-dsp::MidiOutput::MidiOutput(Type type, std::shared_ptr<MidiData> outputMessages)
+dsp::MidiOutput::MidiOutput(Type type, std::shared_ptr<MidiBuffer> outputMessages)
         : Consumer(type)
         , outputMessages(outputMessages)
         , previous(0.0) {}
 
-std::shared_ptr<dsp::MidiData> dsp::MidiOutput::getOutputMessages() const {
+std::shared_ptr<dsp::MidiBuffer> dsp::MidiOutput::getOutputMessages() const {
     return outputMessages;
 }
 
@@ -24,7 +24,7 @@ std::function<void()> dsp::MidiOutput::processNote(int channel) {
     return [this, channel]() {
         for (int sample = 0; sample < getNumSamples(); ++sample) {
             for (int channel = 0; channel < getNumInputChannels(); ++channel) {
-                Sample current = getInput()->getBlock().getSample(channel, sample);
+                Sample current = getInput()->getWrapper().getSample(channel, sample);
                 if (previous != current) {
                     const int previousNote = static_cast<int>(previous);
                     const int currentNote = static_cast<int>(current);
@@ -128,7 +128,7 @@ std::function<void()> dsp::MidiOutput::processStop() {
 void dsp::MidiOutput::processImpulse(std::unordered_set<int> itemSet, std::function<MidiMessage(int, Sample)> publish) {
     for (int sample = 0; sample < getNumSamples(); ++sample) {
         for (int channel = 0; channel < getNumInputChannels(); ++channel) {
-            const Sample current = getInput()->getBlock().getSample(channel, sample);
+            const Sample current = getInput()->getWrapper().getSample(channel, sample);
             if (current) {
                 for (const auto item : itemSet) {
                     outputMessages->addEvent(publish(item, current), sample);
@@ -141,7 +141,7 @@ void dsp::MidiOutput::processImpulse(std::unordered_set<int> itemSet, std::funct
 void dsp::MidiOutput::processImpulse(std::unordered_set<int> itemSet, std::function<MidiMessage(int)> publish) {
     for (int sample = 0; sample < getNumSamples(); ++sample) {
         for (int channel = 0; channel < getNumInputChannels(); ++channel) {
-            if (getInput()->getBlock().getSample(channel, sample)) {
+            if (getInput()->getWrapper().getSample(channel, sample)) {
                 for (const auto item : itemSet) {
                     outputMessages->addEvent(publish(item), sample);
                 }
@@ -153,7 +153,7 @@ void dsp::MidiOutput::processImpulse(std::unordered_set<int> itemSet, std::funct
 void dsp::MidiOutput::processImpulse(std::function<MidiMessage(Sample)> publish) {
     for (int sample = 0; sample < getNumSamples(); ++sample) {
         for (int channel = 0; channel < getNumInputChannels(); ++channel) {
-            const Sample current = getInput()->getBlock().getSample(channel, sample);
+            const Sample current = getInput()->getWrapper().getSample(channel, sample);
             if (current) {
                 outputMessages->addEvent(publish(current), sample);
             }
@@ -164,7 +164,7 @@ void dsp::MidiOutput::processImpulse(std::function<MidiMessage(Sample)> publish)
 void dsp::MidiOutput::processImpulse(std::function<MidiMessage()> publish) {
     for (int sample = 0; sample < getNumSamples(); ++sample) {
         for (int channel = 0; channel < getNumInputChannels(); ++channel) {
-            if (getInput()->getBlock().getSample(channel, sample)) {
+            if (getInput()->getWrapper().getSample(channel, sample)) {
                 outputMessages->addEvent(publish(), sample);
             }
         }
@@ -175,7 +175,7 @@ void dsp::MidiOutput::processContinuous(std::unordered_set<int> itemSet,
                                         std::function<MidiMessage(int, Sample)> publish) {
     for (int sample = 0; sample < getNumSamples(); ++sample) {
         for (int channel = 0; channel < getNumInputChannels(); ++channel) {
-            Sample current = getInput()->getBlock().getSample(channel, sample);
+            Sample current = getInput()->getWrapper().getSample(channel, sample);
             if (previous != current) {
                 for (const auto item : itemSet) {
                     outputMessages->addEvent(publish(item, current), sample);
@@ -189,7 +189,7 @@ void dsp::MidiOutput::processContinuous(std::unordered_set<int> itemSet,
 void dsp::MidiOutput::processContinuous(std::function<MidiMessage(Sample)> publish) {
     for (int sample = 0; sample < getNumSamples(); ++sample) {
         for (int channel = 0; channel < getNumInputChannels(); ++channel) {
-            Sample current = getInput()->getBlock().getSample(channel, sample);
+            Sample current = getInput()->getWrapper().getSample(channel, sample);
             if (previous != current) {
                 outputMessages->addEvent(publish(current), sample);
                 previous = current;

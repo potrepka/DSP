@@ -35,9 +35,9 @@ void dsp::Phasor::setNumOutputChannelsNoLock(int numChannels) {
 void dsp::Phasor::processNoLock() {
     const bool wrapped = mode == Mode::WRAPPED;
     for (int channel = 0; channel < getNumChannels(); ++channel) {
-        Sample *resetTriggerChannel = getResetTrigger()->getBlock().getChannelPointer(channel);
-        Sample *frequencyChannel = getFrequency()->getBlock().getChannelPointer(channel);
-        Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
+        Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
+        Sample *frequencyChannel = getFrequency()->getWrapper().getChannelPointer(channel);
+        Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
             if (resetTriggerChannel[sample]) {
                 phase[channel] = 0.0;

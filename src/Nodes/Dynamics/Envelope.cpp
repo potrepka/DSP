@@ -61,12 +61,12 @@ void dsp::Envelope::setNumOutputChannelsNoLock(int numChannels) {
 
 void dsp::Envelope::processNoLock() {
     for (int channel = 0; channel < getNumChannels(); ++channel) {
-        Sample *resetTriggerChannel = getResetTrigger()->getBlock().getChannelPointer(channel);
-        Sample *gateChannel = getGate()->getBlock().getChannelPointer(channel);
-        Sample *attackChannel = getAttack()->getBlock().getChannelPointer(channel);
-        Sample *releaseChannel = getRelease()->getBlock().getChannelPointer(channel);
-        Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
-        Sample *currentTimeChannel = getCurrentTime()->getBlock().getChannelPointer(channel);
+        Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
+        Sample *gateChannel = getGate()->getWrapper().getChannelPointer(channel);
+        Sample *attackChannel = getAttack()->getWrapper().getChannelPointer(channel);
+        Sample *releaseChannel = getRelease()->getWrapper().getChannelPointer(channel);
+        Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
+        Sample *currentTimeChannel = getCurrentTime()->getWrapper().getChannelPointer(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
             if (gateChannel[sample]) {
                 if (resetTriggerChannel[sample]) {

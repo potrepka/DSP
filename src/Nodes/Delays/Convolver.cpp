@@ -71,9 +71,9 @@ void dsp::Convolver::setNumSamplesNoLock(int numSamples) {
 
 void dsp::Convolver::processNoLock() {
     for (int inChannel = 0; inChannel < getNumInputChannels(); ++inChannel) {
-        Sample *inputChannel = getInput()->getBlock().getChannelPointer(inChannel);
+        Sample *inputChannel = getInput()->getWrapper().getChannelPointer(inChannel);
         for (int outChannel = 0; outChannel < getNumOutputChannels(); ++outChannel) {
-            Sample *outputChannel = getOutput()->getBlock().getChannelPointer(outChannel);
+            Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(outChannel);
             if (convolvers[inChannel][outChannel] != nullptr) {
                 for (int sample = 0; sample < getNumSamples(); ++sample) {
                     input[sample] = inputChannel[sample];
@@ -95,7 +95,7 @@ void dsp::Convolver::initConvolver(int inChannel, int outChannel) {
         int numSamples = buffers[inChannel][outChannel]->getNumSamples();
         std::vector<fftconvolver::Sample> buffer(numSamples);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
-            Sample *channel = buffers[inChannel][outChannel]->getBlock().getChannelPointer(0);
+            Sample *channel = buffers[inChannel][outChannel]->getWrapper().getChannelPointer(0);
             buffer[sample] = channel[sample];
         }
         convolvers[inChannel][outChannel] = std::make_unique<fftconvolver::TwoStageFFTConvolver>();

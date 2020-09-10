@@ -57,9 +57,9 @@ void dsp::TableOscillator::processNoLock() {
         }
         Array samples(numPoints);
         for (int channel = 0; channel < getNumChannels(); ++channel) {
-            Sample *phaseChannel = getPhase()->getBlock().getChannelPointer(channel);
-            Sample *positionChannel = getPosition()->getBlock().getChannelPointer(channel);
-            Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
+            Sample *phaseChannel = getPhase()->getWrapper().getChannelPointer(channel);
+            Sample *positionChannel = getPosition()->getWrapper().getChannelPointer(channel);
+            Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
             for (int sample = 0; sample < getNumSamples(); ++sample) {
                 const Sample positionIndex = clip(positionChannel[sample], 0.0, 1.0) *
                                              (tables.size() - (positionInterpolation == Interpolation::NONE ? 0 : 1));
@@ -72,7 +72,7 @@ void dsp::TableOscillator::processNoLock() {
                         int numSamples = tables[p]->getNumSamples();
                         if (numChannels > 0) {
                             int c = channel % numChannels;
-                            Sample *table = tables[p]->getBlock().getChannelPointer(c);
+                            Sample *table = tables[p]->getWrapper().getChannelPointer(c);
                             Sample index = wrap(phaseChannel[sample], 1.0) * numSamples;
                             switch (phaseInterpolation) {
                                 case Interpolation::NONE: samples[j] = table[static_cast<int>(index)]; break;

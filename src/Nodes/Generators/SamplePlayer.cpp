@@ -68,13 +68,13 @@ void dsp::SamplePlayer::processNoLock() {
             }
         }
         for (int channel = 0; channel < getNumChannels(); ++channel) {
-            Sample *resetTriggerChannel = getResetTrigger()->getBlock().getChannelPointer(channel);
-            Sample *gateChannel = getGate()->getBlock().getChannelPointer(channel);
-            Sample *sampleIndexChannel = getSampleIndex()->getBlock().getChannelPointer(channel);
-            Sample *speedChannel = getSpeed()->getBlock().getChannelPointer(channel);
-            Sample *offsetTimeChannel = getOffsetTime()->getBlock().getChannelPointer(channel);
-            Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
-            Sample *currentTimeChannel = getCurrentTime()->getBlock().getChannelPointer(channel);
+            Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
+            Sample *gateChannel = getGate()->getWrapper().getChannelPointer(channel);
+            Sample *sampleIndexChannel = getSampleIndex()->getWrapper().getChannelPointer(channel);
+            Sample *speedChannel = getSpeed()->getWrapper().getChannelPointer(channel);
+            Sample *offsetTimeChannel = getOffsetTime()->getWrapper().getChannelPointer(channel);
+            Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
+            Sample *currentTimeChannel = getCurrentTime()->getWrapper().getChannelPointer(channel);
             for (int sample = 0; sample < getNumSamples(); ++sample) {
                 if (resetTriggerChannel[sample]) {
                     readIndex[channel] = 0.0;
@@ -84,7 +84,7 @@ void dsp::SamplePlayer::processNoLock() {
                     int numChannels = samples[p]->getNumChannels();
                     int numSamples = samples[p]->getNumSamples();
                     if (numChannels > 0 && numSamples > 0) {
-                        Sample *sampleChannel = samples[p]->getBlock().getChannelPointer(channel % numChannels);
+                        Sample *sampleChannel = samples[p]->getWrapper().getChannelPointer(channel % numChannels);
                         if (gateChannel[sample]) {
                             Sample offset = offsetTimeChannel[sample] * getSampleRate();
                             Sample index = clip(readIndex[channel] + offset, 0.0, numSamples);

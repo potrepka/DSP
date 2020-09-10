@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Lockable.h"
-#include "MidiData.h"
+#include "MidiBuffer.h"
 #include <thread>
 
 #ifndef DSP_USE_RTMIDI
@@ -68,7 +68,7 @@ public:
     double getSampleRate() const;
     void setSampleRate(double sampleRate);
 
-    MidiData &getMidiData();
+    MidiBuffer &getMidiBuffer();
     std::vector<std::shared_ptr<Input>> &getInputs();
     std::vector<std::shared_ptr<Output>> &getOutputs();
 
@@ -84,7 +84,7 @@ private:
     double sampleRate;
     double oneOverSampleRate;
     double messageTime;
-    MidiData midiData;
+    MidiBuffer midiBuffer;
     std::vector<std::shared_ptr<Input>> inputs;
     std::vector<std::shared_ptr<Output>> outputs;
 };

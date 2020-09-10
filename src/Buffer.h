@@ -38,14 +38,14 @@ public:
     Array getPeak();
     Array getRMS();
 
-    Block &getBlock();
+    Wrapper &getWrapper();
 
 protected:
     Type type;
     Space space;
     Sample defaultValue;
     Data data;
-    Block block;
+    Wrapper wrapper;
     Array channelValues;
 
     void fillChannels();

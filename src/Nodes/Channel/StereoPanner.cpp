@@ -24,10 +24,10 @@ std::shared_ptr<dsp::Output> dsp::StereoPanner::getRight() const {
 
 void dsp::StereoPanner::processNoLock() {
     for (int channel = 0; channel < getNumChannels(); ++channel) {
-        Sample *inputChannel = getInput()->getBlock().getChannelPointer(channel);
-        Sample *directionChannel = getDirection()->getBlock().getChannelPointer(channel);
-        Sample *leftChannel = getLeft()->getBlock().getChannelPointer(channel);
-        Sample *rightChannel = getRight()->getBlock().getChannelPointer(channel);
+        Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
+        Sample *directionChannel = getDirection()->getWrapper().getChannelPointer(channel);
+        Sample *leftChannel = getLeft()->getWrapper().getChannelPointer(channel);
+        Sample *rightChannel = getRight()->getWrapper().getChannelPointer(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
             Sample direction = clip(directionChannel[sample], -1.0, 1.0);
             leftChannel[sample] = SQRT2 * cos(PI_OVER_TWO * (0.5 * direction + 0.5)) * inputChannel[sample];

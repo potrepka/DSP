@@ -30,10 +30,10 @@ void dsp::Counter::setNumOutputChannelsNoLock(int numChannels) {
 
 void dsp::Counter::processNoLock() {
     for (int channel = 0; channel < getNumChannels(); ++channel) {
-        Sample *resetTriggerChannel = getResetTrigger()->getBlock().getChannelPointer(channel);
-        Sample *triggerChannel = getTrigger()->getBlock().getChannelPointer(channel);
-        Sample *speedChannel = getSpeed()->getBlock().getChannelPointer(channel);
-        Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
+        Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
+        Sample *triggerChannel = getTrigger()->getWrapper().getChannelPointer(channel);
+        Sample *speedChannel = getSpeed()->getWrapper().getChannelPointer(channel);
+        Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
             if (resetTriggerChannel[sample]) {
                 index[channel] = 0.0;

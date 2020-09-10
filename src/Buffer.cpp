@@ -5,7 +5,7 @@ dsp::Buffer::Buffer(Type type, Space space, Sample defaultValue, int numChannels
         , space(space)
         , defaultValue(defaultValue)
         , data(numChannels, numSamples)
-        , block(data)
+        , wrapper(data)
         , channelValues(numChannels, defaultValue) {}
 
 dsp::Type dsp::Buffer::getType() const {
@@ -46,7 +46,7 @@ void dsp::Buffer::setNumChannels(int numChannels) {
     DSP_ASSERT(numChannels >= 0);
     lock();
     data.setSize(numChannels, getNumSamples());
-    block = Block(data);
+    wrapper = Wrapper(data);
     channelValues.resize(numChannels, defaultValue);
     unlock();
 }
@@ -59,7 +59,7 @@ void dsp::Buffer::setNumSamples(int numSamples) {
     DSP_ASSERT(numSamples >= 0);
     lock();
     data.setSize(getNumChannels(), numSamples);
-    block = Block(data);
+    wrapper = Wrapper(data);
     unlock();
 }
 
@@ -67,7 +67,7 @@ void dsp::Buffer::setSize(int numChannels, int numSamples) {
     DSP_ASSERT(numChannels >= 0 && numSamples >= 0);
     lock();
     data.setSize(numChannels, numSamples);
-    block = Block(data);
+    wrapper = Wrapper(data);
     channelValues.resize(numChannels, defaultValue);
     unlock();
 }
@@ -120,13 +120,13 @@ dsp::Array dsp::Buffer::getRMS() {
     return rms;
 }
 
-dsp::Block &dsp::Buffer::getBlock() {
-    return block;
+dsp::Wrapper &dsp::Buffer::getWrapper() {
+    return wrapper;
 }
 
 void dsp::Buffer::fillChannels() {
     for (int channel = 0; channel < getNumChannels(); ++channel) {
-        block.getSingleChannelBlock(channel).fill(channelValues[channel]);
+        wrapper.getSingleChannelWrapper(channel).fill(channelValues[channel]);
     }
 }
 
@@ -198,16 +198,16 @@ void dsp::Input::processNoLock() {
         fillChannels();
     } else {
         switch (mode) {
-            case Mode::SUM: block.fill(0.0); break;
-            case Mode::MINIMUM: block.fill(std::numeric_limits<Sample>::infinity()); break;
-            case Mode::MAXIMUM: block.fill(-std::numeric_limits<Sample>::infinity()); break;
+            case Mode::SUM: wrapper.fill(0.0); break;
+            case Mode::MINIMUM: wrapper.fill(std::numeric_limits<Sample>::infinity()); break;
+            case Mode::MAXIMUM: wrapper.fill(-std::numeric_limits<Sample>::infinity()); break;
         }
     }
     for (const auto &output : connections) {
         switch (mode) {
-            case Mode::SUM: block.add(output->getBlock()); break;
-            case Mode::MINIMUM: block.replaceWithMinOf(block, output->getBlock()); break;
-            case Mode::MAXIMUM: block.replaceWithMaxOf(block, output->getBlock()); break;
+            case Mode::SUM: wrapper.add(output->getWrapper()); break;
+            case Mode::MINIMUM: wrapper.replaceWithMinOf(wrapper, output->getWrapper()); break;
+            case Mode::MAXIMUM: wrapper.replaceWithMaxOf(wrapper, output->getWrapper()); break;
         }
     }
 }

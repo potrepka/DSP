@@ -52,16 +52,16 @@ void dsp::VariableDelay::setSampleRateNoLock(double sampleRate) {
 void dsp::VariableDelay::processNoLock() {
     if (buffer->getNumSamples() > 0) {
         for (int channel = 0; channel < getNumChannels(); ++channel) {
-            Sample *inputChannel = getInput()->getBlock().getChannelPointer(channel);
-            Sample *resetTriggerChannel = getResetTrigger()->getBlock().getChannelPointer(channel);
-            Sample *delayTimeChannel = getDelayTime()->getBlock().getChannelPointer(channel);
-            Sample *decayTimeChannel = getDecayTime()->getBlock().getChannelPointer(channel);
-            Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
-            Sample *bufferChannel = buffer->getBlock().getChannelPointer(channel);
+            Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
+            Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
+            Sample *delayTimeChannel = getDelayTime()->getWrapper().getChannelPointer(channel);
+            Sample *decayTimeChannel = getDecayTime()->getWrapper().getChannelPointer(channel);
+            Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
+            Sample *bufferChannel = buffer->getWrapper().getChannelPointer(channel);
             int writeIndex = index;
             for (int sample = 0; sample < getNumSamples(); ++sample) {
                 if (resetTriggerChannel[sample]) {
-                    buffer->getBlock().getSingleChannelBlock(channel).clear();
+                    buffer->getWrapper().getSingleChannelWrapper(channel).clear();
                 }
                 // WRITING
                 bufferChannel[writeIndex] = inputChannel[sample];

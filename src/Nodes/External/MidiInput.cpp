@@ -1,11 +1,11 @@
 #include "MidiInput.h"
 
-dsp::MidiInput::MidiInput(Type type, std::shared_ptr<MidiData> inputMessages)
+dsp::MidiInput::MidiInput(Type type, std::shared_ptr<MidiBuffer> inputMessages)
         : Producer(type)
         , inputMessages(inputMessages)
         , previous(0.0) {}
 
-std::shared_ptr<dsp::MidiData> dsp::MidiInput::getInputMessages() const {
+std::shared_ptr<dsp::MidiBuffer> dsp::MidiInput::getInputMessages() const {
     return inputMessages;
 }
 
@@ -171,7 +171,7 @@ void dsp::MidiInput::processImpulse(std::function<bool(MidiMessage)> conditional
         const MidiMessage message = meta.getMessage();
         const Sample current = conditional(message) ? capture(message) : 0.0;
         for (int channel = 0; channel < getNumOutputChannels(); ++channel) {
-            getOutput()->getBlock().setSample(channel, meta.samplePosition, current);
+            getOutput()->getWrapper().setSample(channel, meta.samplePosition, current);
         }
     }
 }
@@ -182,12 +182,12 @@ void dsp::MidiInput::processContinuous(std::function<bool(MidiMessage)> conditio
     for (const auto meta : *inputMessages) {
         const MidiMessage message = meta.getMessage();
         if (conditional(message)) {
-            getOutput()->getBlock().getSubBlock(start, meta.samplePosition - start).fill(previous);
+            getOutput()->getWrapper().getSubset(start, meta.samplePosition - start).fill(previous);
             start = meta.samplePosition;
             previous = capture(message);
         }
     }
-    getOutput()->getBlock().getSubBlock(start, getOutput()->getNumSamples() - start).fill(previous);
+    getOutput()->getWrapper().getSubset(start, getOutput()->getNumSamples() - start).fill(previous);
 }
 
 void dsp::MidiInput::processNoLock() {

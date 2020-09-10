@@ -58,18 +58,18 @@ void dsp::CompressorGate::setNumOutputChannelsNoLock(int numChannels) {
 }
 
 void dsp::CompressorGate::processNoLock() {
-    getHalfKnee()->getBlock().replaceWithAbsoluteValueOf(getHalfKnee()->getBlock());
+    getHalfKnee()->getWrapper().replaceWithAbsoluteValueOf(getHalfKnee()->getWrapper());
     for (int channel = 0; channel < getNumChannels(); ++channel) {
-        Sample *inputChannel = getInput()->getBlock().getChannelPointer(channel);
-        Sample *controlChannel = getControl()->getBlock().getChannelPointer(channel);
-        Sample *thresholdChannel = getThreshold()->getBlock().getChannelPointer(channel);
-        Sample *compressionRatioChannel = getCompressionRatio()->getBlock().getChannelPointer(channel);
-        Sample *gateRatioChannel = getGateRatio()->getBlock().getChannelPointer(channel);
-        Sample *halfKneeChannel = getHalfKnee()->getBlock().getChannelPointer(channel);
-        Sample *attackChannel = getAttack()->getBlock().getChannelPointer(channel);
-        Sample *releaseChannel = getRelease()->getBlock().getChannelPointer(channel);
-        Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
-        Sample *gainDeltaChannel = getGainDelta()->getBlock().getChannelPointer(channel);
+        Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
+        Sample *controlChannel = getControl()->getWrapper().getChannelPointer(channel);
+        Sample *thresholdChannel = getThreshold()->getWrapper().getChannelPointer(channel);
+        Sample *compressionRatioChannel = getCompressionRatio()->getWrapper().getChannelPointer(channel);
+        Sample *gateRatioChannel = getGateRatio()->getWrapper().getChannelPointer(channel);
+        Sample *halfKneeChannel = getHalfKnee()->getWrapper().getChannelPointer(channel);
+        Sample *attackChannel = getAttack()->getWrapper().getChannelPointer(channel);
+        Sample *releaseChannel = getRelease()->getWrapper().getChannelPointer(channel);
+        Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
+        Sample *gainDeltaChannel = getGainDelta()->getWrapper().getChannelPointer(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
             Sample &input = inputChannel[sample];
             Sample &control = controlChannel[sample];

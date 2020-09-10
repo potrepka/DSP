@@ -41,11 +41,11 @@ std::shared_ptr<dsp::Input> dsp::MoorerOscillator::getOvertones() const {
 
 void dsp::MoorerOscillator::processNoLock() {
     for (int channel = 0; channel < getNumChannels(); ++channel) {
-        Sample *phaseChannel = getPhase()->getBlock().getChannelPointer(channel);
-        Sample *modulationIndexChannel = getModulationIndex()->getBlock().getChannelPointer(channel);
-        Sample *intensityChannel = getIntensity()->getBlock().getChannelPointer(channel);
-        Sample *overtonesChannel = getOvertones()->getBlock().getChannelPointer(channel);
-        Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
+        Sample *phaseChannel = getPhase()->getWrapper().getChannelPointer(channel);
+        Sample *modulationIndexChannel = getModulationIndex()->getWrapper().getChannelPointer(channel);
+        Sample *intensityChannel = getIntensity()->getWrapper().getChannelPointer(channel);
+        Sample *overtonesChannel = getOvertones()->getWrapper().getChannelPointer(channel);
+        Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
             Sample t = TAU * phaseChannel[sample];
             Sample s = modulationIndexChannel[sample] * t;

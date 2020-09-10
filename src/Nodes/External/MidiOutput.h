@@ -9,9 +9,9 @@ namespace dsp {
 class MidiOutput : public Consumer {
 
 public:
-    MidiOutput(Type type, std::shared_ptr<MidiData> outputMessages);
+    MidiOutput(Type type, std::shared_ptr<MidiBuffer> outputMessages);
 
-    std::shared_ptr<MidiData> getOutputMessages() const;
+    std::shared_ptr<MidiBuffer> getOutputMessages() const;
 
     std::function<void()> getProcessFunction() const;
     void setProcessFunction(std::function<void()> processFunction);
@@ -42,7 +42,7 @@ protected:
     void processNoLock();
 
 private:
-    std::shared_ptr<MidiData> outputMessages;
+    std::shared_ptr<MidiBuffer> outputMessages;
     std::function<void()> processFunction;
     Sample previous;
 };

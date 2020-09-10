@@ -14,10 +14,10 @@ void dsp::WhiteNoise::setNumOutputChannelsNoLock(int numChannels) {
 
 void dsp::WhiteNoise::processNoLock() {
     for (unsigned int channel = 0; channel < getNumOutputChannels(); ++channel) {
-        Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
+        Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         for (unsigned int sample = 0; sample < getNumSamples(); ++sample) {
             outputChannel[sample] = static_cast<Sample>(seed[channel] *= 282475249);
         }
     }
-    getOutput()->getBlock().multiplyBy(4.656612873077392578125e-10);
+    getOutput()->getWrapper().multiplyBy(4.656612873077392578125e-10);
 }

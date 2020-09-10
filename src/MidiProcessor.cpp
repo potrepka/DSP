@@ -192,13 +192,13 @@ std::vector<std::shared_ptr<dsp::MidiProcessor::Output>> &dsp::MidiProcessor::ge
     return outputs;
 }
 
-dsp::MidiData &dsp::MidiProcessor::getMidiData() {
-    return midiData;
+dsp::MidiBuffer &dsp::MidiProcessor::getMidiBuffer() {
+    return midiBuffer;
 }
 
 void dsp::MidiProcessor::processInputs() {
     lock();
-    midiData.clear();
+    midiBuffer.clear();
     for (const auto &input : inputs) {
         input->lock();
         for (const auto &pair : input->getMessages()) {
@@ -213,7 +213,7 @@ void dsp::MidiProcessor::processInputs() {
                 timeInBuffer = numSamples - 1;
             }
             MidiMessage message = pair.second;
-            midiData.addEvent(message, timeInBuffer);
+            midiBuffer.addEvent(message, timeInBuffer);
         }
         input->getMessages().clear();
         input->unlock();
@@ -225,7 +225,7 @@ void dsp::MidiProcessor::processOutputs() {
     lock();
     for (const auto &output : outputs) {
         output->lock();
-        for (const auto &meta : midiData) {
+        for (const auto &meta : midiBuffer) {
             MidiMessage message = meta.getMessage();
             output->sendMessageWithDelay(message.getBytes(), meta.samplePosition * oneOverSampleRate);
         }

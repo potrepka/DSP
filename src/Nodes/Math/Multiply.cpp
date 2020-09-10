@@ -11,5 +11,5 @@ std::shared_ptr<dsp::Input> dsp::Multiply::getFactor() const {
 }
 
 void dsp::Multiply::processNoLock() {
-    getOutput()->getBlock().replaceWithProductOf(getInput()->getBlock(), getFactor()->getBlock());
+    getOutput()->getWrapper().replaceWithProductOf(getInput()->getWrapper(), getFactor()->getWrapper());
 }

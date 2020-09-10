@@ -22,7 +22,7 @@ private:
     const std::shared_ptr<Output> mid;
     const std::shared_ptr<Output> side;
     Data data;
-    Block block;
+    Wrapper wrapper;
 };
 
 } // namespace dsp

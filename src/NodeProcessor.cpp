@@ -9,8 +9,8 @@ dsp::NodeProcessor::NodeProcessor(int numInputChannels, int numOutputChannels, i
         , numOutputChannels(numOutputChannels)
         , numSamples(numSamples)
         , sampleRate(sampleRate)
-        , inputMessages(std::make_shared<dsp::MidiData>())
-        , outputMessages(std::make_shared<dsp::MidiData>()) {}
+        , inputMessages(std::make_shared<dsp::MidiBuffer>())
+        , outputMessages(std::make_shared<dsp::MidiBuffer>()) {}
 
 dsp::NodeProcessor::~NodeProcessor() {
     nodes.clear();
@@ -120,16 +120,16 @@ std::vector<std::shared_ptr<dsp::Node>> &dsp::NodeProcessor::getNodes() {
     return nodes;
 }
 
-std::shared_ptr<dsp::MidiData> dsp::NodeProcessor::getInputMessages() const {
+std::shared_ptr<dsp::MidiBuffer> dsp::NodeProcessor::getInputMessages() const {
     return inputMessages;
 }
 
-std::shared_ptr<dsp::MidiData> dsp::NodeProcessor::getOutputMessages() const {
+std::shared_ptr<dsp::MidiBuffer> dsp::NodeProcessor::getOutputMessages() const {
     return outputMessages;
 }
 
 template <typename T>
-void dsp::NodeProcessor::process(AudioData<T> &audioData, MidiData &midiData) {
+void dsp::NodeProcessor::process(AudioBuffer<T> &audioBuffer, MidiBuffer &midiBuffer) {
     lock();
 
     audioInput->lock();
@@ -137,47 +137,47 @@ void dsp::NodeProcessor::process(AudioData<T> &audioData, MidiData &midiData) {
     audioInput->unlock();
 
     for (int channel = 0; channel < audioInput->getNumChannels(); ++channel) {
-        auto *dataChannel = audioData.getReadPointer(channel);
-        auto *inputChannel = audioInput->getBlock().getChannelPointer(channel);
+        auto *bufferChannel = audioBuffer.getReadPointer(channel);
+        auto *inputChannel = audioInput->getWrapper().getChannelPointer(channel);
         for (auto sample = 0; sample < audioInput->getNumSamples(); ++sample) {
-            inputChannel[sample] = static_cast<Sample>(dataChannel[sample]);
+            inputChannel[sample] = static_cast<Sample>(bufferChannel[sample]);
         }
     }
-    processClipping(audioInput->getBlock(), audioInputClipping->getBlock());
+    processClipping(audioInput->getWrapper(), audioInputClipping->getWrapper());
 
     inputMessages->clear();
-    inputMessages->addEvents(midiData, 0, static_cast<int>(audioData.getNumSamples()), 0);
+    inputMessages->addEvents(midiBuffer, 0, static_cast<int>(audioBuffer.getNumSamples()), 0);
     outputMessages->clear();
     for (const auto &node : nodes) {
         node->process();
     }
-    midiData.clear();
-    midiData.addEvents(*outputMessages, 0, static_cast<int>(audioData.getNumSamples()), 0);
+    midiBuffer.clear();
+    midiBuffer.addEvents(*outputMessages, 0, static_cast<int>(audioBuffer.getNumSamples()), 0);
 
     audioOutput->lock();
     audioOutput->processNoLock();
     audioOutput->unlock();
 
     for (int channel = 0; channel < audioOutput->getNumChannels(); ++channel) {
-        auto *outputChannel = audioOutput->getBlock().getChannelPointer(channel);
-        auto *dataChannel = audioData.getWritePointer(channel);
+        auto *outputChannel = audioOutput->getWrapper().getChannelPointer(channel);
+        auto *bufferChannel = audioBuffer.getWritePointer(channel);
         for (auto sample = 0; sample < audioOutput->getNumSamples(); ++sample) {
-            dataChannel[sample] = static_cast<T>(outputChannel[sample]);
+            bufferChannel[sample] = static_cast<T>(outputChannel[sample]);
         }
     }
-    processClipping(audioOutput->getBlock(), audioOutputClipping->getBlock());
+    processClipping(audioOutput->getWrapper(), audioOutputClipping->getWrapper());
 
     unlock();
 }
 
-template void dsp::NodeProcessor::process(AudioData<float> &audioData, MidiData &midiData);
-template void dsp::NodeProcessor::process(AudioData<double> &audioData, MidiData &midiData);
+template void dsp::NodeProcessor::process(AudioBuffer<float> &audioBuffer, MidiBuffer &midiBuffer);
+template void dsp::NodeProcessor::process(AudioBuffer<double> &audioBuffer, MidiBuffer &midiBuffer);
 
-void dsp::NodeProcessor::processClipping(Block &audioBlock, Block &audioClippingBlock) {
-    for (int channel = 0; channel < audioBlock.getNumChannels(); ++channel) {
-        auto *audioChannel = audioBlock.getChannelPointer(channel);
-        auto *audioClippingChannel = audioClippingBlock.getChannelPointer(channel);
-        for (auto sample = 0; sample < audioBlock.getNumSamples(); ++sample) {
+void dsp::NodeProcessor::processClipping(Wrapper &audioWrapper, Wrapper &audioClippingWrapper) {
+    for (int channel = 0; channel < audioWrapper.getNumChannels(); ++channel) {
+        auto *audioChannel = audioWrapper.getChannelPointer(channel);
+        auto *audioClippingChannel = audioClippingWrapper.getChannelPointer(channel);
+        for (auto sample = 0; sample < audioWrapper.getNumSamples(); ++sample) {
             audioClippingChannel[sample] = abs(audioChannel[sample]) > 1.0;
         }
     }

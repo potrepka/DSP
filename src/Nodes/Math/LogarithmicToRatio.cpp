@@ -4,5 +4,5 @@ dsp::LogarithmicToRatio::LogarithmicToRatio(Space space)
         : Transformer(Type::LOGARITHMIC, Type::RATIO, space) {}
 
 void dsp::LogarithmicToRatio::processNoLock() {
-    getOutput()->getBlock().copyFrom(getInput()->getBlock());
+    getOutput()->getWrapper().copyFrom(getInput()->getWrapper());
 }

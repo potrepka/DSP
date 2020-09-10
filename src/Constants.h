@@ -1,7 +1,7 @@
 #pragma once
 
-#include "AudioData.h"
-#include "MidiData.h"
+#include "AudioWrapper.h"
+#include "MidiBuffer.h"
 
 #define DSP_ASSERT assert
 
@@ -11,8 +11,8 @@ typedef uint8_t uint8;
 typedef double Sample;
 typedef std::vector<Sample> Array;
 
-typedef AudioData<Sample> Data;
-typedef AudioBlock<Sample> Block;
+typedef AudioBuffer<Sample> Data;
+typedef AudioWrapper<Sample> Wrapper;
 
 const Sample PI = 3.141592653589793;
 const Sample TAU = 6.283185307179586;

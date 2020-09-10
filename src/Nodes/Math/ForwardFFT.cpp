@@ -20,9 +20,9 @@ void dsp::ForwardFFT::setNumSamplesNoLock(int numSamples) {
 
 void dsp::ForwardFFT::processNoLock() {
     for (int channel = 0; channel < getNumChannels(); ++channel) {
-        Sample *inputChannel = getInput()->getBlock().getChannelPointer(channel);
-        Sample *magnitudeChannel = getMagnitude()->getBlock().getChannelPointer(channel);
-        Sample *phaseChannel = getPhase()->getBlock().getChannelPointer(channel);
+        Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
+        Sample *magnitudeChannel = getMagnitude()->getWrapper().getChannelPointer(channel);
+        Sample *phaseChannel = getPhase()->getWrapper().getChannelPointer(channel);
         fft.toMagnitudePhase(inputChannel, magnitudeChannel, phaseChannel);
     }
 }

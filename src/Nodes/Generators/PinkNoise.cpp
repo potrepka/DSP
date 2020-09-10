@@ -2,7 +2,7 @@
 
 dsp::Data dsp::PinkNoise::memoryCoefficientsData = dsp::Data(1, 8);
 dsp::Data dsp::PinkNoise::noiseCoefficientsData = dsp::Data(1, 8);
-dsp::Block dsp::PinkNoise::memoryCoefficients = []() {
+dsp::Wrapper dsp::PinkNoise::memoryCoefficients = []() {
     dsp::Sample *pointer = memoryCoefficientsData.getWritePointer(0);
     pointer[0] = 0.99886;
     pointer[1] = 0.99332;
@@ -12,9 +12,9 @@ dsp::Block dsp::PinkNoise::memoryCoefficients = []() {
     pointer[5] = -0.7616;
     pointer[6] = 0.0;
     pointer[7] = 1.0;
-    return dsp::Block(memoryCoefficientsData);
+    return dsp::Wrapper(memoryCoefficientsData);
 }();
-dsp::Block dsp::PinkNoise::noiseCoefficients = []() {
+dsp::Wrapper dsp::PinkNoise::noiseCoefficients = []() {
     dsp::Sample *pointer = noiseCoefficientsData.getWritePointer(0);
     pointer[0] = 0.0555179;
     pointer[1] = 0.0750759;
@@ -24,7 +24,7 @@ dsp::Block dsp::PinkNoise::noiseCoefficients = []() {
     pointer[5] = -0.016898;
     pointer[6] = 0.5362;
     pointer[7] = 0.0;
-    return dsp::Block(noiseCoefficientsData);
+    return dsp::Wrapper(noiseCoefficientsData);
 }();
 const dsp::Sample dsp::PinkNoise::delayedNoiseCoefficient = 0.115926;
 
@@ -43,16 +43,16 @@ void dsp::PinkNoise::setNumOutputChannelsNoLock(int numChannels) {
         return x ? x : 1;
     });
     whiteData.setSize(numChannels, getNumSamples());
-    white = Block(whiteData);
+    white = Wrapper(whiteData);
     memoryData.setSize(numChannels, 8);
     memoryData.clear();
-    memory = Block(memoryData);
+    memory = Wrapper(memoryData);
 }
 
 void dsp::PinkNoise::setNumSamplesNoLock(int numSamples) {
     Node::setNumSamplesNoLock(numSamples);
     whiteData.setSize(getNumOutputChannels(), numSamples);
-    white = Block(whiteData);
+    white = Wrapper(whiteData);
 }
 
 void dsp::PinkNoise::processNoLock() {
@@ -64,19 +64,19 @@ void dsp::PinkNoise::processNoLock() {
     }
     white.multiplyBy(4.656612873077392578125e-10);
     for (int channel = 0; channel < getNumOutputChannels(); ++channel) {
-        Sample *outputChannel = getOutput()->getBlock().getChannelPointer(channel);
+        Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample *whiteChannel = white.getChannelPointer(channel);
-        Block memoryBlock = memory.getSingleChannelBlock(channel);
+        Wrapper memoryWrapper = memory.getSingleChannelWrapper(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
-            memoryBlock.multiplyBy(memoryCoefficients);
-            memoryBlock.addProductOf(noiseCoefficients, whiteChannel[sample]);
-            Sample *memoryChannel = memoryBlock.getChannelPointer(0);
+            memoryWrapper.multiplyBy(memoryCoefficients);
+            memoryWrapper.addProductOf(noiseCoefficients, whiteChannel[sample]);
+            Sample *memoryChannel = memoryWrapper.getChannelPointer(0);
             Sample sum = 0.0;
             for (int i = 0; i < 8; ++i) {
                 sum += memoryChannel[i];
             }
             outputChannel[sample] = 0.125 * sum;
-            memoryBlock.setSample(0, 7, whiteChannel[sample] * delayedNoiseCoefficient);
+            memoryWrapper.setSample(0, 7, whiteChannel[sample] * delayedNoiseCoefficient);
         }
     }
 }
