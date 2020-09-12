@@ -43,7 +43,15 @@ template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::fill(T value) {
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vfill(&value, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vfillD(&value, a, 1, numSamples);
+        }
+#else
         std::fill(a, a + numSamples, value);
+#endif
     }
     return *this;
 }
@@ -64,10 +72,18 @@ template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::add(T value) {
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vsadd(a, 1, &value, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vsaddD(a, 1, &value, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a += value;
             ++a;
         }
+#endif
     }
     return *this;
 }
@@ -79,11 +95,19 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::add(AudioWrapper<T> src) {
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vadd(a, 1, b, 1, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vaddD(a, 1, b, 1, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a += *b;
             ++a;
             ++b;
         }
+#endif
     }
     return *this;
 }
@@ -92,10 +116,18 @@ template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::multiplyBy(T value) {
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vsmul(a, 1, &value, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vsmulD(a, 1, &value, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a *= value;
             ++a;
         }
+#endif
     }
     return *this;
 }
@@ -107,11 +139,19 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::multiplyBy(AudioWrapper<T> src) {
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vmul(a, 1, b, 1, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vmulD(a, 1, b, 1, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a *= *b;
             ++a;
             ++b;
         }
+#endif
     }
     return *this;
 }
@@ -123,11 +163,19 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::addProductOf(AudioWrapper<T> src, T 
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vsma(b, 1, &value, a, 1, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vsmaD(b, 1, &value, a, 1, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a += *b * value;
             ++a;
             ++b;
         }
+#endif
     }
     return *this;
 }
@@ -140,12 +188,20 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::addProductOf(AudioWrapper<T> src1, A
         auto a = data[channel] + startSample;
         auto b = src1.data[channel] + src1.startSample;
         auto c = src2.data[channel] + src2.startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vma(b, 1, c, 1, a, 1, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vmaD(b, 1, c, 1, a, 1, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a += *b * *c;
             ++a;
             ++b;
             ++c;
         }
+#endif
     }
     return *this;
 }
@@ -157,11 +213,19 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithNegativeOf(AudioWrapper<T
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vneg(b, 1, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vnegD(b, 1, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a = -*b;
             ++a;
             ++b;
         }
+#endif
     }
     return *this;
 }
@@ -173,12 +237,20 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithAbsoluteValueOf(AudioWrap
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vabs(b, 1, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vabsD(b, 1, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             T value = *b;
             *a = value < 0.0 ? -value : value;
             ++a;
             ++b;
         }
+#endif
     }
     return *this;
 }
@@ -190,11 +262,19 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithSumOf(AudioWrapper<T> src
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vsadd(b, 1, &value, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vsaddD(b, 1, &value, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a = *b + value;
             ++a;
             ++b;
         }
+#endif
     }
     return *this;
 }
@@ -207,12 +287,20 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithSumOf(AudioWrapper<T> src
         auto a = data[channel] + startSample;
         auto b = src1.data[channel] + src1.startSample;
         auto c = src2.data[channel] + src2.startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vadd(b, 1, c, 1, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vaddD(b, 1, c, 1, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a = *b + *c;
             ++a;
             ++b;
             ++c;
         }
+#endif
     }
     return *this;
 }
@@ -224,11 +312,19 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithProductOf(AudioWrapper<T>
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vsmul(b, 1, &value, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vsmulD(b, 1, &value, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a = *b * value;
             ++a;
             ++b;
         }
+#endif
     }
     return *this;
 }
@@ -241,12 +337,20 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithProductOf(AudioWrapper<T>
         auto a = data[channel] + startSample;
         auto b = src1.data[channel] + src1.startSample;
         auto c = src2.data[channel] + src2.startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vmul(b, 1, c, 1, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vmulD(b, 1, c, 1, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a = *b * *c;
             ++a;
             ++b;
             ++c;
         }
+#endif
     }
     return *this;
 }
@@ -259,12 +363,20 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMinOf(AudioWrapper<T> src
         auto a = data[channel] + startSample;
         auto b = src1.data[channel] + src1.startSample;
         auto c = src2.data[channel] + src2.startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vmin(b, 1, c, 1, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vminD(b, 1, c, 1, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a = std::min(*b, *c);
             ++a;
             ++b;
             ++c;
         }
+#endif
     }
     return *this;
 }
@@ -277,12 +389,20 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMaxOf(AudioWrapper<T> src
         auto a = data[channel] + startSample;
         auto b = src1.data[channel] + src1.startSample;
         auto c = src2.data[channel] + src2.startSample;
+#ifdef DSP_USE_VDSP
+        if constexpr (std::is_same_v<T, float>) {
+            vDSP_vmax(b, 1, c, 1, a, 1, numSamples);
+        } else if constexpr (std::is_same_v<T, double>) {
+            vDSP_vmaxD(b, 1, c, 1, a, 1, numSamples);
+        }
+#else
         for (size_t sample = 0; sample < numSamples; ++sample) {
             *a = std::max(*b, *c);
             ++a;
             ++b;
             ++c;
         }
+#endif
     }
     return *this;
 }

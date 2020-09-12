@@ -2,6 +2,18 @@
 
 #include "AudioBuffer.h"
 
+#include <type_traits>
+
+#ifdef __APPLE__
+#ifndef DSP_NO_VDSP
+#define DSP_USE_VDSP
+#endif
+#endif
+
+#ifdef DSP_USE_VDSP
+#include <Accelerate/Accelerate.h>
+#endif
+
 namespace dsp {
 
 template <typename T>
