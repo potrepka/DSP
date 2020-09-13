@@ -62,13 +62,16 @@ const unsigned int RtApi::SAMPLE_RATES[] = {
 
 #include "tchar.h"
 
-template <typename T> inline std::string convertCharPointerToStdString(const T *text);
+template <typename T>
+inline std::string convertCharPointerToStdString(const T *text);
 
-template <> inline std::string convertCharPointerToStdString(const char *text) {
+template <>
+inline std::string convertCharPointerToStdString(const char *text) {
     return std::string(text);
 }
 
-template <> inline std::string convertCharPointerToStdString(const wchar_t *text) {
+template <>
+inline std::string convertCharPointerToStdString(const wchar_t *text) {
     int length = WideCharToMultiByte(CP_UTF8, 0, text, -1, NULL, 0, NULL, NULL);
     std::string s(length - 1, '\0');
     WideCharToMultiByte(CP_UTF8, 0, text, -1, &s[0], length, NULL, NULL);
@@ -152,11 +155,13 @@ extern "C" const unsigned int rtaudio_num_compiled_apis =
 
 // This is a compile-time check that rtaudio_num_api_names == RtAudio::NUM_APIS.
 // If the build breaks here, check that they match.
-template <bool b> class StaticAssert {
+template <bool b>
+class StaticAssert {
 private:
     StaticAssert() {}
 };
-template <> class StaticAssert<true> {
+template <>
+class StaticAssert<true> {
 public:
     StaticAssert() {}
 };

@@ -56,7 +56,8 @@ bool SSEEnabled();
  * @class Buffer
  * @brief Simple buffer implementation (uses 16-byte alignment if SSE optimization is enabled)
  */
-template <typename T> class Buffer {
+template <typename T>
+class Buffer {
 public:
     explicit Buffer(size_t initialSize = 0)
             : _data(0)
@@ -242,7 +243,8 @@ private:
  * @param val The number
  * @return The next power of 2
  */
-template <typename T> T NextPowerOf2(const T &val) {
+template <typename T>
+T NextPowerOf2(const T &val) {
     T nextPowerOf2 = 1;
     while (nextPowerOf2 < val) {
         nextPowerOf2 *= 2;
@@ -268,7 +270,8 @@ void Sum(Sample *FFTCONVOLVER_RESTRICT result,
  * @param src The source array
  * @param srcSize The size of the source array
  */
-template <typename T> void CopyAndPad(Buffer<T> &dest, const T *src, size_t srcSize) {
+template <typename T>
+void CopyAndPad(Buffer<T> &dest, const T *src, size_t srcSize) {
     assert(dest.size() >= srcSize);
     ::memcpy(dest.data(), src, srcSize * sizeof(T));
     ::memset(dest.data() + srcSize, 0, (dest.size() - srcSize) * sizeof(T));

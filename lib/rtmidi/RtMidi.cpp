@@ -369,11 +369,13 @@ extern "C" const unsigned int rtmidi_num_compiled_apis =
 
 // This is a compile-time check that rtmidi_num_api_names == RtMidi::NUM_APIS.
 // If the build breaks here, check that they match.
-template <bool b> class StaticAssert {
+template <bool b>
+class StaticAssert {
 private:
     StaticAssert() {}
 };
-template <> class StaticAssert<true> {
+template <>
+class StaticAssert<true> {
 public:
     StaticAssert() {}
 };

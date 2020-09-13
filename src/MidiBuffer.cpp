@@ -34,7 +34,10 @@ void dsp::MidiBuffer::addEvent(const MidiMessage &midiMessage, size_t sample) {
     events.insert({sample, TimedMidiMessage(midiMessage, sample)});
 }
 
-void dsp::MidiBuffer::addEvents(const MidiBuffer &midiData, size_t startSample, size_t numSamples, size_t sampleDeltaToAdd) {
+void dsp::MidiBuffer::addEvents(const MidiBuffer &midiData,
+                                size_t startSample,
+                                size_t numSamples,
+                                size_t sampleDeltaToAdd) {
     for (const auto meta : midiData) {
         if (meta.samplePosition >= startSample && meta.samplePosition < startSample + numSamples) {
             MidiMessage message = meta.getMessage();

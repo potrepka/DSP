@@ -94,8 +94,8 @@ void dsp::Recorder::processNoLock() {
                             }
                             break;
                         case Mode::FIXED_DOUBLE:
-                            secondary->getWrapper().getChannelPointer(channel)[static_cast<size_t>(writeIndex[channel])] =
-                                    inputChannel[sample];
+                            secondary->getWrapper().getChannelPointer(
+                                    channel)[static_cast<size_t>(writeIndex[channel])] = inputChannel[sample];
                             writeIndex[channel] += 1.0;
                             if (writeIndex[channel] >= recordingNumSamples) {
                                 if (writeIndex[channel] < static_cast<int>(ceil(recordingNumSamples))) {

@@ -1,6 +1,9 @@
 #include "NodeProcessor.h"
 
-dsp::NodeProcessor::NodeProcessor(size_t numInputChannels, size_t numOutputChannels, size_t numSamples, double sampleRate)
+dsp::NodeProcessor::NodeProcessor(size_t numInputChannels,
+                                  size_t numOutputChannels,
+                                  size_t numSamples,
+                                  double sampleRate)
         : audioInput(std::make_shared<Output>(Type::RATIO, Space::TIME, numInputChannels, numSamples))
         , audioOutput(std::make_shared<Input>(Type::RATIO, Space::TIME, numOutputChannels, numSamples))
         , audioInputClipping(std::make_shared<Output>(Type::RATIO, Space::TIME, numInputChannels, numSamples))

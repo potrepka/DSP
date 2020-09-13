@@ -125,7 +125,8 @@ std::function<void()> dsp::MidiOutput::processStop() {
     return [this]() { processImpulse([]() { return MidiMessage::midiStop(); }); };
 }
 
-void dsp::MidiOutput::processImpulse(std::unordered_set<uint8> itemSet, std::function<MidiMessage(uint8, Sample)> publish) {
+void dsp::MidiOutput::processImpulse(std::unordered_set<uint8> itemSet,
+                                     std::function<MidiMessage(uint8, Sample)> publish) {
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
         for (size_t channel = 0; channel < getNumInputChannels(); ++channel) {
             const Sample current = getInput()->getWrapper().getSample(channel, sample);
