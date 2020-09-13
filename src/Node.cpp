@@ -175,22 +175,27 @@ void dsp::Node::disconnectAll() {
 
 void dsp::Node::process() {
     lock();
-    for (const auto &input : inputs) {
-        input->lock();
-        input->processNoLock();
-    }
-    for (const auto &output : outputs) {
-        output->lock();
-        output->processNoLock();
+    bool noChildren = children.size() == 0;
+    if (noChildren) {
+        for (const auto &input : inputs) {
+            input->lock();
+            input->processNoLock();
+        }
+        for (const auto &output : outputs) {
+            output->lock();
+            output->processNoLock();
+        }
     }
     if (active) {
         processNoLock();
     }
-    for (const auto &output : outputs) {
-        output->unlock();
-    }
-    for (const auto &input : inputs) {
-        input->unlock();
+    if (noChildren) {
+        for (const auto &output : outputs) {
+            output->unlock();
+        }
+        for (const auto &input : inputs) {
+            input->unlock();
+        }
     }
     unlock();
 }

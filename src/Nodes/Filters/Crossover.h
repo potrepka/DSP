@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../Core/Consumer.h"
 #include "../Math/PassThrough.h"
 #include "Biquad.h"
 
@@ -24,10 +23,10 @@ protected:
 private:
     const std::shared_ptr<PassThrough> input;
     const std::shared_ptr<PassThrough> frequency;
-    const std::shared_ptr<Biquad> lowOne;
-    const std::shared_ptr<Biquad> lowTwo;
-    const std::shared_ptr<Biquad> highOne;
-    const std::shared_ptr<Biquad> highTwo;
+    const std::shared_ptr<Biquad> lp1;
+    const std::shared_ptr<Biquad> lp2;
+    const std::shared_ptr<Biquad> hp1;
+    const std::shared_ptr<Biquad> hp2;
 };
 
 } // namespace dsp
