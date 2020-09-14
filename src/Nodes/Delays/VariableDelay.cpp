@@ -96,17 +96,19 @@ void dsp::VariableDelay::processNoLock() {
                 bufferChannel[writeIndex] = inputChannel[sample];
                 // CLIP DELAY TIME
                 delayTimeClipped[channel] = clip(delayTimeChannel[sample], 0.0, maxDelayTime);
-                if (delayTimeClipped[channel] < getOneOverSampleRate()) {
-                    delayTimeClipped[channel] = 0.0;
-                }
                 // READ
-                Sample readIndex = writeIndex - delayTimeClipped[channel] * getSampleRate();
-                if (readIndex < 0.0) {
-                    readIndex += buffer->getNumSamples();
-                }
-                outputChannel[sample] = hermite(bufferChannel, buffer->getNumSamples(), readIndex);
-                if (std::isinf(outputChannel[sample]) || std::isnan(outputChannel[sample])) {
-                    outputChannel[sample] = 0.0;
+                if (delayTimeClipped[channel] == 0) {
+                    outputChannel[sample] = bufferChannel[writeIndex];
+                } else {
+                    Sample readIndex = writeIndex - delayTimeClipped[channel] * getSampleRate();
+                    if (readIndex < 0.0) {
+                        readIndex += buffer->getNumSamples();
+                    }
+                    if (delayTimeClipped[channel] < getOneOverSampleRate()) {
+                        outputChannel[sample] = linear(bufferChannel, buffer->getNumSamples(), readIndex);
+                    } else {
+                        outputChannel[sample] = hermite(bufferChannel, buffer->getNumSamples(), readIndex);
+                    }
                 }
                 *feedbackSourceChannel = outputChannel[sample];
             }
