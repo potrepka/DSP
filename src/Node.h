@@ -45,6 +45,10 @@ public:
     void process();
 
 protected:
+    std::vector<std::shared_ptr<Input>> inputs;
+    std::vector<std::shared_ptr<Output>> outputs;
+    std::vector<std::shared_ptr<Node>> children;
+
     virtual void setNumInputChannelsNoLock(size_t numInputChannels);
     virtual void setNumOutputChannelsNoLock(size_t numOutputChannels);
     virtual void setNumSamplesNoLock(size_t numSamples);
@@ -59,9 +63,6 @@ private:
     double sampleRate;
     double oneOverNumSamples;
     double oneOverSampleRate;
-    std::vector<std::shared_ptr<Input>> inputs;
-    std::vector<std::shared_ptr<Output>> outputs;
-    std::vector<std::shared_ptr<Node>> children;
 };
 
 } // namespace dsp
