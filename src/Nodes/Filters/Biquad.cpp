@@ -68,9 +68,6 @@ void dsp::Biquad::processNoLock() {
             outputChannel[sample] = (b0 * inputChannel[sample] + b1 * x1[channel] + b2 * x2[channel] -
                                      a1 * y1[channel] - a2 * y2[channel]) /
                                     a0;
-            if (isinf(outputChannel[sample]) || isnan(outputChannel[sample])) {
-                outputChannel[sample] = 0.0;
-            }
             x2[channel] = x1[channel];
             x1[channel] = inputChannel[sample];
             y2[channel] = y1[channel];
