@@ -31,8 +31,8 @@ private:
     Sample recordingTime;
     Sample recordingNumSamples;
     Array writeIndex;
-    std::shared_ptr<Buffer> primary;
-    std::shared_ptr<Buffer> secondary;
+    const std::shared_ptr<Buffer> primary;
+    const std::shared_ptr<Buffer> secondary;
     const std::shared_ptr<Input> resetTrigger;
     const std::shared_ptr<Input> gate;
 

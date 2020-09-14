@@ -47,8 +47,8 @@ public:
 
 private:
     AudioBuffer<Sample> audioBuffer;
-    std::shared_ptr<NodeProcessor> nodeProcessor;
-    std::shared_ptr<MidiProcessor> midiProcessor;
+    const std::shared_ptr<NodeProcessor> nodeProcessor;
+    const std::shared_ptr<MidiProcessor> midiProcessor;
 #ifdef DSP_USE_RTAUDIO
     RtAudio dac;
 #endif

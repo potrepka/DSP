@@ -42,7 +42,7 @@ protected:
     void processNoLock();
 
 private:
-    std::shared_ptr<MidiBuffer> outputMessages;
+    const std::shared_ptr<MidiBuffer> outputMessages;
     std::function<void()> processFunction;
     Sample previous;
 };

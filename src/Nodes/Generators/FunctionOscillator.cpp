@@ -6,7 +6,7 @@ dsp::FunctionOscillator::FunctionOscillator(Type type)
     getInputs().push_back(phase);
 }
 
-std::function<dsp::Sample(dsp::Sample)> dsp::FunctionOscillator::getFunction() {
+std::function<dsp::Sample(dsp::Sample)> dsp::FunctionOscillator::getFunction() const {
     return function;
 }
 
@@ -14,7 +14,7 @@ void dsp::FunctionOscillator::setFunction(std::function<Sample(Sample)> function
     this->function = function;
 }
 
-std::shared_ptr<dsp::Input> dsp::FunctionOscillator::getPhase() {
+std::shared_ptr<dsp::Input> dsp::FunctionOscillator::getPhase() const {
     return phase;
 }
 

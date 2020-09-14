@@ -2,13 +2,12 @@
 
 dsp::Engine::Engine()
         : audioBuffer(0, 0)
+        , nodeProcessor(std::make_shared<NodeProcessor>(0, 0, 0, 0))
+        , midiProcessor(std::make_shared<MidiProcessor>())
         , numInputChannels(0)
         , numOutputChannels(0)
         , numSamples(0)
-        , sampleRate(0.0) {
-    nodeProcessor = std::make_shared<NodeProcessor>(0, 0, 0, 0);
-    midiProcessor = std::make_shared<MidiProcessor>();
-}
+        , sampleRate(0.0) {}
 
 dsp::Engine::~Engine() {
     lock();

@@ -10,10 +10,9 @@ public:
     Producer(Type type, Space space = Space::TIME);
 
     std::shared_ptr<Output> getOutput() const;
-    void setOutput(std::shared_ptr<Output> output);
 
 private:
-    std::shared_ptr<Output> output;
+    const std::shared_ptr<Output> output;
 };
 
 } // namespace dsp

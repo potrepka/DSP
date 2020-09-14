@@ -39,18 +39,18 @@ public:
     void process(AudioBuffer<T> &audioBuffer, MidiBuffer &midiBuffer);
 
 private:
-    std::shared_ptr<Output> audioInput;
-    std::shared_ptr<Input> audioOutput;
-    std::shared_ptr<Output> audioInputClipping;
-    std::shared_ptr<Output> audioOutputClipping;
+    const std::shared_ptr<Output> audioInput;
+    const std::shared_ptr<Input> audioOutput;
+    const std::shared_ptr<Output> audioInputClipping;
+    const std::shared_ptr<Output> audioOutputClipping;
     size_t numInputChannels;
     size_t numOutputChannels;
     size_t numSamples;
     double sampleRate;
 
     std::vector<std::shared_ptr<Node>> nodes;
-    std::shared_ptr<MidiBuffer> inputMessages;
-    std::shared_ptr<MidiBuffer> outputMessages;
+    const std::shared_ptr<MidiBuffer> inputMessages;
+    const std::shared_ptr<MidiBuffer> outputMessages;
 
     void processClipping(Wrapper &audioWrapper, Wrapper &audioClippingWrapper);
 };

@@ -29,19 +29,19 @@ dsp::Crossover::Crossover()
     hp1->getOutput() >> hp2->getInput();
 }
 
-std::shared_ptr<dsp::Input> dsp::Crossover::getInput() {
+std::shared_ptr<dsp::Input> dsp::Crossover::getInput() const {
     return input->getInput();
 }
 
-std::shared_ptr<dsp::Input> dsp::Crossover::getFrequency() {
+std::shared_ptr<dsp::Input> dsp::Crossover::getFrequency() const {
     return frequency->getInput();
 }
 
-std::shared_ptr<dsp::Output> dsp::Crossover::getLow() {
+std::shared_ptr<dsp::Output> dsp::Crossover::getLow() const {
     return lp2->getOutput();
 }
 
-std::shared_ptr<dsp::Output> dsp::Crossover::getHigh() {
+std::shared_ptr<dsp::Output> dsp::Crossover::getHigh() const {
     return hp2->getOutput();
 }
 

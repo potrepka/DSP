@@ -10,10 +10,10 @@ class Crossover : public Node {
 public:
     Crossover();
 
-    std::shared_ptr<Input> getInput();
-    std::shared_ptr<Input> getFrequency();
-    std::shared_ptr<Output> getLow();
-    std::shared_ptr<Output> getHigh();
+    std::shared_ptr<Input> getInput() const;
+    std::shared_ptr<Input> getFrequency() const;
+    std::shared_ptr<Output> getLow() const;
+    std::shared_ptr<Output> getHigh() const;
 
 protected:
     void setNumInputChannelsNoLock(size_t numChannels) override;

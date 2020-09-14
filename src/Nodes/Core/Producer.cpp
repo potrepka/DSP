@@ -8,9 +8,3 @@ dsp::Producer::Producer(Type type, Space space)
 std::shared_ptr<dsp::Output> dsp::Producer::getOutput() const {
     return output;
 }
-
-void dsp::Producer::setOutput(std::shared_ptr<Output> output) {
-    lock();
-    std::replace(getOutputs().begin(), getOutputs().end(), this->output, this->output = output);
-    unlock();
-}

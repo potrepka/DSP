@@ -9,10 +9,10 @@ class FunctionOscillator : public Producer {
 public:
     FunctionOscillator(Type type);
 
-    std::function<Sample(Sample)> getFunction();
+    std::function<Sample(Sample)> getFunction() const;
     void setFunction(std::function<Sample(Sample)> function);
 
-    std::shared_ptr<Input> getPhase();
+    std::shared_ptr<Input> getPhase() const;
 
 protected:
     void processNoLock() override;

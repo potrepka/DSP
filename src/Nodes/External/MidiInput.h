@@ -38,7 +38,7 @@ protected:
     void processNoLock();
 
 private:
-    std::shared_ptr<MidiBuffer> inputMessages;
+    const std::shared_ptr<MidiBuffer> inputMessages;
     std::function<void()> processFunction;
     Sample previous;
 };
