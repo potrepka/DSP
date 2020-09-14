@@ -12,6 +12,8 @@
 
 #include "Nodes/Analyzers/Recorder.h"
 
+#include "Nodes/Channel/ChannelMerger.h"
+#include "Nodes/Channel/ChannelSplitter.h"
 #include "Nodes/Channel/MidSide.h"
 #include "Nodes/Channel/StereoPanner.h"
 
