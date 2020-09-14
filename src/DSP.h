@@ -58,6 +58,7 @@
 
 #include "Nodes/Trigger/Counter.h"
 #include "Nodes/Trigger/OnOff.h"
+#include "Nodes/Trigger/ResetTrigger.h"
 #include "Nodes/Trigger/SampleAndHold.h"
 #include "Nodes/Trigger/Sequencer.h"
 #include "Nodes/Trigger/Trigger.h"
