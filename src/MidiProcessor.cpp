@@ -3,7 +3,7 @@
 void dsp::MidiProcessor::Input::callback(double delta, std::vector<unsigned char> *bytesPointer, void *data) {
     Input *input = reinterpret_cast<Input *>(data);
     input->lock();
-    input->messages.insert({input->messageTime += delta, MidiMessage(*bytesPointer)});
+    input->messages.insert({input->messageTime += delta, MidiMessage(bytesPointer->data(), bytesPointer->size())});
     input->unlock();
 }
 
@@ -224,9 +224,15 @@ void dsp::MidiProcessor::processOutputs() {
     lock();
     for (const auto &output : outputs) {
         output->lock();
-        for (const auto &meta : midiBuffer) {
+        for (const auto meta : midiBuffer) {
             MidiMessage message = meta.getMessage();
-            output->sendMessageWithDelay(message.getBytes(), meta.samplePosition * oneOverSampleRate);
+            auto data = message.getRawData();
+            auto size = message.getRawDataSize();
+            std::vector<uint8_t> bytes(size);
+            for (size_t i = 0; i < size; ++i) {
+                bytes.push_back(data[i]);
+            }
+            output->sendMessageWithDelay(bytes, meta.samplePosition * oneOverSampleRate);
         }
         output->unlock();
     }

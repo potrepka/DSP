@@ -16,12 +16,14 @@ void dsp::ChannelMerger::setNumOutputChannelsNoLock(size_t numChannels) {
     } else {
         inputs.reserve(numChannels);
         for (size_t channel = numChannels; channel < getNumOutputChannels(); ++channel) {
-            inputs.push_back(std::make_shared<Input>(getOutput()->getType(), getOutput()->getSpace(), getOutput()->getDefaultValue(), 1, getOutput()->getNumSamples()));
+            inputs.push_back(std::make_shared<Input>(getOutput()->getType(),
+                                                     getOutput()->getSpace(),
+                                                     getOutput()->getDefaultValue(),
+                                                     1,
+                                                     getOutput()->getNumSamples()));
         }
     }
     Node::setNumOutputChannelsNoLock(numChannels);
 }
 
-void dsp::ChannelMerger::processNoLock() {
-
-}
+void dsp::ChannelMerger::processNoLock() {}

@@ -1,6 +1,6 @@
 #pragma once
 
-#ifndef DSP_NO_ENGINE
+#if !defined(DSP_NO_ENGINE) && !defined(DSP_USE_JUCE)
 #define DSP_USE_ENGINE
 #endif
 

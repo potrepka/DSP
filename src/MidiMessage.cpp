@@ -18,8 +18,12 @@ dsp::MidiMessage::MidiMessage(uint8_t byte0, uint8_t byte1, uint8_t byte2) {
     bytes[2] = byte2;
 }
 
-dsp::MidiMessage::MidiMessage(std::vector<unsigned char> bytes)
-        : bytes(bytes) {}
+dsp::MidiMessage::MidiMessage(uint8_t *data, size_t size) {
+    bytes.reserve(size);
+    for (size_t i = 0; i < size; ++i) {
+        bytes.push_back(data[i]);
+    }
+}
 
 bool dsp::MidiMessage::isNote() const {
     return (bytes[0] & 0xf0) == 0x80 || (bytes[0] & 0xf0) == 0x90;
@@ -199,9 +203,17 @@ std::vector<uint8_t> &dsp::MidiMessage::getBytes() {
     return bytes;
 }
 
+const uint8_t *dsp::MidiMessage::getRawData() const {
+    return bytes.data();
+}
+
+size_t dsp::MidiMessage::getRawDataSize() const {
+    return bytes.size();
+}
+
 dsp::TimedMidiMessage::TimedMidiMessage(MidiMessage midiMessage, size_t samplePosition)
-        : midiMessage(midiMessage)
-        , samplePosition(samplePosition) {}
+        : samplePosition(samplePosition)
+        , midiMessage(midiMessage) {}
 
 dsp::MidiMessage dsp::TimedMidiMessage::getMessage() const {
     return midiMessage;

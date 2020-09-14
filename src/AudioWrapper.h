@@ -1,6 +1,10 @@
 #pragma once
 
+#ifdef DSP_USE_JUCE
+#include <JuceHeader.h>
+#else
 #include "AudioBuffer.h"
+#endif
 
 #include <type_traits>
 
@@ -15,6 +19,11 @@
 #endif
 
 namespace dsp {
+
+#ifdef DSP_USE_JUCE
+template <typename T>
+using AudioBuffer = juce::AudioBuffer<T>;
+#endif
 
 template <typename T>
 class AudioWrapper {

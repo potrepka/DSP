@@ -4,7 +4,7 @@
 #include "MidiBuffer.h"
 #include <thread>
 
-#ifndef DSP_NO_RTMIDI
+#if !defined(DSP_NO_RTMIDI) && !defined(DSP_USE_JUCE)
 #define DSP_USE_RTMIDI
 #endif
 

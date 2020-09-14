@@ -3,11 +3,20 @@
 #include "AudioWrapper.h"
 #include "MidiBuffer.h"
 
+#ifdef DSP_USE_JUCE
+#define DSP_ASSERT jassert
+#else
 #define DSP_ASSERT assert
+#endif
 
 namespace dsp {
 
+#ifdef DSP_USE_JUCE
+typedef juce::uint8 uint8;
+#else
 typedef uint8_t uint8;
+#endif
+
 typedef double Sample;
 typedef std::vector<Sample> Array;
 

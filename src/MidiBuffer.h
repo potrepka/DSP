@@ -1,11 +1,19 @@
 #pragma once
 
+#ifdef DSP_USE_JUCE
+#include <JuceHeader.h>
+#else
 #include "MidiMessage.h"
+#endif
 
 #include <map>
 
 namespace dsp {
 
+#ifdef DSP_USE_JUCE
+typedef juce::MidiMessage MidiMessage;
+typedef juce::MidiBuffer MidiBuffer;
+#else
 class MidiBuffer {
 
 public:
@@ -34,5 +42,6 @@ public:
 private:
     std::multimap<size_t, TimedMidiMessage> events;
 };
+#endif
 
 } // namespace dsp

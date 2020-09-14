@@ -14,7 +14,11 @@ void dsp::ChannelSplitter::setNumInputChannelsNoLock(size_t numChannels) {
     } else {
         outputs.reserve(numChannels);
         for (size_t channel = numChannels; channel < getNumInputChannels(); ++channel) {
-            outputs.push_back(std::make_shared<Output>(getInput()->getType(), getInput()->getSpace(), getInput()->getDefaultValue(), 1, getInput()->getNumSamples()));
+            outputs.push_back(std::make_shared<Output>(getInput()->getType(),
+                                                       getInput()->getSpace(),
+                                                       getInput()->getDefaultValue(),
+                                                       1,
+                                                       getInput()->getNumSamples()));
         }
     }
     Node::setNumInputChannelsNoLock(numChannels);
@@ -22,6 +26,4 @@ void dsp::ChannelSplitter::setNumInputChannelsNoLock(size_t numChannels) {
 
 void dsp::ChannelSplitter::setNumOutputChannelsNoLock(size_t numChannels) {}
 
-void dsp::ChannelSplitter::processNoLock() {
-
-}
+void dsp::ChannelSplitter::processNoLock() {}

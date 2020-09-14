@@ -3,7 +3,7 @@
 #include "MidiProcessor.h"
 #include "NodeProcessor.h"
 
-#ifndef DSP_NO_RTAUDIO
+#if !defined(DSP_NO_RTAUDIO) && !defined(DSP_USE_JUCE)
 #define DSP_USE_RTAUDIO
 #endif
 

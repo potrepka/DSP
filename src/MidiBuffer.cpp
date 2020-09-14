@@ -1,5 +1,6 @@
 #include "MidiBuffer.h"
 
+#ifndef DSP_USE_JUCE
 dsp::MidiBuffer::Iterator::Iterator(std::multimap<size_t, TimedMidiMessage>::const_iterator it)
         : it(it) {}
 
@@ -49,3 +50,4 @@ void dsp::MidiBuffer::addEvents(const MidiBuffer &midiData,
 void dsp::MidiBuffer::clear() {
     events.clear();
 }
+#endif
