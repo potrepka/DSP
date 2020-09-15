@@ -4,14 +4,18 @@ dsp::ResetTrigger::ResetTrigger()
         : Producer(Type::INTEGER) {}
 
 void dsp::ResetTrigger::reset() {
+    lock();
     for (size_t channel = 0; channel < getNumOutputChannels(); ++channel) {
         state[channel] = true;
     }
+    unlock();
 }
 
 void dsp::ResetTrigger::reset(size_t channel) {
+    lock();
     DSP_ASSERT(channel < getNumChannels());
     state[channel] = true;
+    unlock();
 }
 
 void dsp::ResetTrigger::setNumOutputChannelsNoLock(size_t numChannels) {
