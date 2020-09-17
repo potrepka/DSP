@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef DSP_USE_JUCE
-#include <JuceHeader.h>
+#include "Constants.h"
 #else
 #include "AudioBuffer.h"
 #endif
@@ -73,5 +73,8 @@ private:
     AudioWrapper(T *const *data, size_t numChannels, size_t numSamples);
     AudioWrapper(T *const *data, size_t numChannels, size_t startSample, size_t numSamples);
 };
+
+typedef AudioBuffer<Sample> Data;
+typedef AudioWrapper<Sample> Wrapper;
 
 } // namespace dsp

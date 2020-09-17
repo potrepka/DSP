@@ -21,7 +21,7 @@ dsp::Sample dsp::VariableDelay::getMaxDelayTime() const {
 }
 
 void dsp::VariableDelay::setMaxDelayTime(Sample seconds) {
-    assert(seconds > 0.0);
+    DSP_ASSERT(seconds > 0.0);
     lock();
     maxDelayTime = seconds;
     indexState = 0;

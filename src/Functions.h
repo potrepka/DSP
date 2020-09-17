@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Constants.h"
+#include "AudioWrapper.h"
+#include "MidiBuffer.h"
 
 #include "../lib/FFTConvolver/AudioFFT.h"
 

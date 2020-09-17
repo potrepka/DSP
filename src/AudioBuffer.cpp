@@ -36,20 +36,20 @@ void dsp::AudioBuffer<T>::clear() {
 
 template <typename T>
 const T *dsp::AudioBuffer<T>::getReadPointer(size_t channel) const {
-    assert(channel < numChannels);
+    DSP_ASSERT(channel < numChannels);
     return data[channel].data();
 }
 
 template <typename T>
 T *dsp::AudioBuffer<T>::getWritePointer(size_t channel) {
-    assert(channel < numChannels);
+    DSP_ASSERT(channel < numChannels);
     return data[channel].data();
 }
 
 template <typename T>
 T dsp::AudioBuffer<T>::getMagnitude(size_t channel, size_t startSample, size_t numSamples) const {
-    assert(channel < numChannels);
-    assert(startSample + numSamples <= this->numSamples);
+    DSP_ASSERT(channel < numChannels);
+    DSP_ASSERT(startSample + numSamples <= this->numSamples);
     if (numSamples == 0) {
         return 0.0;
     }
@@ -61,8 +61,8 @@ T dsp::AudioBuffer<T>::getMagnitude(size_t channel, size_t startSample, size_t n
 
 template <typename T>
 T dsp::AudioBuffer<T>::getRMSLevel(size_t channel, size_t startSample, size_t numSamples) const {
-    assert(channel < numChannels);
-    assert(startSample + numSamples <= this->numSamples);
+    DSP_ASSERT(channel < numChannels);
+    DSP_ASSERT(startSample + numSamples <= this->numSamples);
     if (numSamples == 0) {
         return 0.0;
     }

@@ -1,9 +1,7 @@
 #pragma once
 
-#include "AudioWrapper.h"
-#include "MidiBuffer.h"
-
 #ifdef DSP_USE_JUCE
+#include <JuceHeader.h>
 #define DSP_ASSERT jassert
 #else
 #define DSP_ASSERT assert
@@ -19,9 +17,6 @@ typedef uint8_t uint8;
 
 typedef double Sample;
 typedef std::vector<Sample> Array;
-
-typedef AudioBuffer<Sample> Data;
-typedef AudioWrapper<Sample> Wrapper;
 
 const Sample PI = 3.141592653589793;
 const Sample TAU = 6.283185307179586;

@@ -86,92 +86,92 @@ uint8_t dsp::MidiMessage::getChannel() const {
 }
 
 uint8_t dsp::MidiMessage::getNoteNumber() const {
-    assert(isNote() || isAftertouch());
+    DSP_ASSERT(isNote() || isAftertouch());
     return bytes[1];
 }
 
 uint8_t dsp::MidiMessage::getVelocity() const {
-    assert(isNote());
+    DSP_ASSERT(isNote());
     return bytes[2];
 }
 
 uint8_t dsp::MidiMessage::getAfterTouchValue() const {
-    assert(isAftertouch());
+    DSP_ASSERT(isAftertouch());
     return bytes[2];
 }
 
 uint8_t dsp::MidiMessage::getControllerNumber() const {
-    assert(isController());
+    DSP_ASSERT(isController());
     return bytes[1];
 }
 
 uint8_t dsp::MidiMessage::getControllerValue() const {
-    assert(isController());
+    DSP_ASSERT(isController());
     return bytes[2];
 }
 
 uint8_t dsp::MidiMessage::getProgramChangeNumber() const {
-    assert(isProgramChange());
+    DSP_ASSERT(isProgramChange());
     return bytes[1];
 }
 
 uint8_t dsp::MidiMessage::getChannelPressureValue() const {
-    assert(isChannelPressure());
+    DSP_ASSERT(isChannelPressure());
     return bytes[1];
 }
 
 int dsp::MidiMessage::getPitchWheelValue() const {
-    assert(isPitchWheel());
+    DSP_ASSERT(isPitchWheel());
     return bytes[1] | (bytes[2] << 7);
 }
 
 int dsp::MidiMessage::getSongPositionPointerMidiBeat() const {
-    assert(isSongPositionPointer());
+    DSP_ASSERT(isSongPositionPointer());
     return bytes[1] | (bytes[2] << 7);
 }
 
 dsp::MidiMessage dsp::MidiMessage::noteOff(uint8_t channel, uint8_t noteNumber, uint8_t velocity) {
-    assert(channel >= 1 && channel <= 16);
-    assert(noteNumber < 128);
-    assert(velocity < 128);
+    DSP_ASSERT(channel >= 1 && channel <= 16);
+    DSP_ASSERT(noteNumber < 128);
+    DSP_ASSERT(velocity < 128);
     return MidiMessage(0x80 | (channel - 1), noteNumber, velocity);
 }
 
 dsp::MidiMessage dsp::MidiMessage::noteOn(uint8_t channel, uint8_t noteNumber, uint8_t velocity) {
-    assert(channel >= 1 && channel <= 16);
-    assert(noteNumber < 128);
-    assert(velocity < 128);
+    DSP_ASSERT(channel >= 1 && channel <= 16);
+    DSP_ASSERT(noteNumber < 128);
+    DSP_ASSERT(velocity < 128);
     return MidiMessage(0x90 | (channel - 1), noteNumber, velocity);
 }
 
 dsp::MidiMessage dsp::MidiMessage::aftertouchChange(uint8_t channel, uint8_t noteNumber, uint8_t aftertouchValue) {
-    assert(channel >= 1 && channel <= 16);
-    assert(noteNumber < 128);
-    assert(aftertouchValue < 128);
+    DSP_ASSERT(channel >= 1 && channel <= 16);
+    DSP_ASSERT(noteNumber < 128);
+    DSP_ASSERT(aftertouchValue < 128);
     return MidiMessage(0xa0 | (channel - 1), noteNumber, aftertouchValue);
 }
 
 dsp::MidiMessage dsp::MidiMessage::controllerEvent(uint8_t channel, uint8_t controllerNumber, uint8_t controllerValue) {
-    assert(channel >= 1 && channel <= 16);
-    assert(controllerNumber < 128);
-    assert(controllerValue < 128);
+    DSP_ASSERT(channel >= 1 && channel <= 16);
+    DSP_ASSERT(controllerNumber < 128);
+    DSP_ASSERT(controllerValue < 128);
     return MidiMessage(0xb0 | (channel - 1), controllerNumber, controllerValue);
 }
 
 dsp::MidiMessage dsp::MidiMessage::programChange(uint8_t channel, uint8_t programNumber) {
-    assert(channel >= 1 && channel <= 16);
-    assert(programNumber < 128);
+    DSP_ASSERT(channel >= 1 && channel <= 16);
+    DSP_ASSERT(programNumber < 128);
     return MidiMessage(0xc0 | (channel - 1), programNumber);
 }
 
 dsp::MidiMessage dsp::MidiMessage::channelPressureChange(uint8_t channel, uint8_t channelPressureValue) {
-    assert(channel >= 1 && channel <= 16);
-    assert(channelPressureValue < 128);
+    DSP_ASSERT(channel >= 1 && channel <= 16);
+    DSP_ASSERT(channelPressureValue < 128);
     return MidiMessage(0xd0 | (channel - 1), channelPressureValue);
 }
 
 dsp::MidiMessage dsp::MidiMessage::pitchWheel(uint8_t channel, int pitchWheelValue) {
-    assert(channel >= 1 && channel <= 16);
+    DSP_ASSERT(channel >= 1 && channel <= 16);
     return MidiMessage(0xe0 | (channel - 1), pitchWheelValue & 127, (pitchWheelValue >> 7) & 127);
 }
 

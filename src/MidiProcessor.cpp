@@ -176,7 +176,7 @@ double dsp::MidiProcessor::getSampleRate() const {
 }
 
 void dsp::MidiProcessor::setSampleRate(double sampleRate) {
-    assert(sampleRate >= 0.0);
+    DSP_ASSERT(sampleRate >= 0.0);
     lock();
     this->sampleRate = sampleRate;
     oneOverSampleRate = 1.0 / sampleRate;

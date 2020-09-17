@@ -33,7 +33,7 @@ dsp::Sample dsp::Recorder::getRecordingTime() const {
 }
 
 void dsp::Recorder::setRecordingTime(Sample seconds) {
-    assert(recordingTime >= 0.0);
+    DSP_ASSERT(recordingTime >= 0.0);
     lock();
     setRecordingTimeNoLock(seconds);
     unlock();

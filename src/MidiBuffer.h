@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef DSP_USE_JUCE
-#include <JuceHeader.h>
+#include "Constants.h"
 #else
 #include "MidiMessage.h"
 #endif

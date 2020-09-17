@@ -1,6 +1,8 @@
 #pragma once
 
-#include <cassert>
+#include "Constants.h"
+
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
