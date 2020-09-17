@@ -1,6 +1,6 @@
-#include "Trigger.h"
+#include "BeatTrigger.h"
 
-dsp::Trigger::Trigger()
+dsp::BeatTrigger::BeatTrigger()
         : Producer(Type::INTEGER)
         , resetTrigger(std::make_shared<Input>(Type::INTEGER))
         , intervalDuration(std::make_shared<Input>(Type::SECONDS))
@@ -12,28 +12,28 @@ dsp::Trigger::Trigger()
     getOutputs().push_back(currentTime);
 }
 
-std::shared_ptr<dsp::Input> dsp::Trigger::getResetTrigger() const {
+std::shared_ptr<dsp::Input> dsp::BeatTrigger::getResetTrigger() const {
     return resetTrigger;
 }
 
-std::shared_ptr<dsp::Input> dsp::Trigger::getIntervalDuration() const {
+std::shared_ptr<dsp::Input> dsp::BeatTrigger::getIntervalDuration() const {
     return intervalDuration;
 }
 
-std::shared_ptr<dsp::Input> dsp::Trigger::getDelayTime() const {
+std::shared_ptr<dsp::Input> dsp::BeatTrigger::getDelayTime() const {
     return delayTime;
 }
 
-std::shared_ptr<dsp::Output> dsp::Trigger::getCurrentTime() const {
+std::shared_ptr<dsp::Output> dsp::BeatTrigger::getCurrentTime() const {
     return currentTime;
 }
 
-void dsp::Trigger::setNumOutputChannelsNoLock(size_t numChannels) {
+void dsp::BeatTrigger::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     index.resize(numChannels, 0.0);
 }
 
-void dsp::Trigger::processNoLock() {
+void dsp::BeatTrigger::processNoLock() {
     for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
         Sample *intervalDurationChannel = getIntervalDuration()->getWrapper().getChannelPointer(channel);

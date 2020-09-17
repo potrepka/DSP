@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class Trigger : public Producer {
+class BeatTrigger : public Producer {
 
 public:
-    Trigger();
+    BeatTrigger();
 
     std::shared_ptr<Input> getResetTrigger() const;
     std::shared_ptr<Input> getIntervalDuration() const;

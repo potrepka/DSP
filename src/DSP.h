@@ -61,7 +61,7 @@
 #include "Nodes/Trigger/ResetTrigger.h"
 #include "Nodes/Trigger/SampleAndHold.h"
 #include "Nodes/Trigger/Sequencer.h"
-#include "Nodes/Trigger/Trigger.h"
+#include "Nodes/Trigger/BeatTrigger.h"
 
 #include "Nodes/Variables/BufferDuration.h"
 #include "Nodes/Variables/BufferRate.h"
