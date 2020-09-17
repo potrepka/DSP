@@ -431,8 +431,8 @@ template <typename T>
 dsp::AudioWrapper<T>::AudioWrapper(T *const *data, size_t numChannels, size_t startSample, size_t numSamples)
         : data(data)
         , numChannels(numChannels)
-        , startSample(startSample)
-        , numSamples(numSamples) {}
+        , numSamples(numSamples)
+        , startSample(startSample) {}
 
 template class dsp::AudioWrapper<float>;
 template class dsp::AudioWrapper<double>;
