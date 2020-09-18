@@ -56,12 +56,12 @@
 #include "Nodes/Math/OneOver.h"
 #include "Nodes/Math/PassThrough.h"
 
+#include "Nodes/Trigger/BeatTrigger.h"
 #include "Nodes/Trigger/Counter.h"
 #include "Nodes/Trigger/OnOff.h"
 #include "Nodes/Trigger/ResetTrigger.h"
 #include "Nodes/Trigger/SampleAndHold.h"
 #include "Nodes/Trigger/Sequencer.h"
-#include "Nodes/Trigger/BeatTrigger.h"
 
 #include "Nodes/Variables/BufferDuration.h"
 #include "Nodes/Variables/BufferRate.h"

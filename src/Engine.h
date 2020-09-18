@@ -66,9 +66,7 @@ private:
                     RtAudioStreamStatus status,
                     void *pointer);
 #endif
-    static void process(Sample *inputBuffer,
-                        Sample *outputBuffer,
-                        Engine *engine);
+    static void process(Sample *inputBuffer, Sample *outputBuffer, Engine *engine);
     unsigned int getDeviceCount();
     std::vector<unsigned int> getInputSampleRates(unsigned int inputDevice);
     std::vector<unsigned int> getOutputSampleRates(unsigned int outputDevice);

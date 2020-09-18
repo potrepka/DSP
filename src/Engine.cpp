@@ -342,17 +342,13 @@ int dsp::Engine::tick(void *outputBuffer,
                       void *pointer) {
     Engine *engine = reinterpret_cast<Engine *>(pointer);
     engine->lock();
-    process(reinterpret_cast<Sample *>(inputBuffer),
-            reinterpret_cast<Sample *>(outputBuffer),
-            engine);
+    process(reinterpret_cast<Sample *>(inputBuffer), reinterpret_cast<Sample *>(outputBuffer), engine);
     engine->unlock();
     return 0;
 }
 #endif
 
-void dsp::Engine::process(Sample *inputBuffer,
-                          Sample *outputBuffer,
-                          Engine *engine) {
+void dsp::Engine::process(Sample *inputBuffer, Sample *outputBuffer, Engine *engine) {
     engine->getMidiProcessor()->processInputs();
     engine->processAudioBufferNoLock(inputBuffer, outputBuffer);
     engine->getMidiProcessor()->processOutputs();
