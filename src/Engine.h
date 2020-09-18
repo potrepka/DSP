@@ -68,9 +68,6 @@ private:
 #endif
     static void process(Sample *inputBuffer,
                         Sample *outputBuffer,
-                        size_t numInputChannels,
-                        size_t numOutputChannels,
-                        size_t numSamples,
                         Engine *engine);
     unsigned int getDeviceCount();
     std::vector<unsigned int> getInputSampleRates(unsigned int inputDevice);

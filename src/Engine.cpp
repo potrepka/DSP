@@ -7,7 +7,7 @@ dsp::Engine::Engine()
         , numInputChannels(0)
         , numOutputChannels(0)
         , numSamples(0)
-        , sampleRate(0.0) {}
+        , sampleRate(0) {}
 
 dsp::Engine::~Engine() {
     lock();
@@ -344,9 +344,6 @@ int dsp::Engine::tick(void *outputBuffer,
     engine->lock();
     process(reinterpret_cast<Sample *>(inputBuffer),
             reinterpret_cast<Sample *>(outputBuffer),
-            engine->getNumInputChannels(),
-            engine->getNumOutputChannels(),
-            nBufferFrames,
             engine);
     engine->unlock();
     return 0;
@@ -355,9 +352,6 @@ int dsp::Engine::tick(void *outputBuffer,
 
 void dsp::Engine::process(Sample *inputBuffer,
                           Sample *outputBuffer,
-                          size_t numInputChannels,
-                          size_t numOutputChannels,
-                          size_t numSamples,
                           Engine *engine) {
     engine->getMidiProcessor()->processInputs();
     engine->processAudioBufferNoLock(inputBuffer, outputBuffer);
