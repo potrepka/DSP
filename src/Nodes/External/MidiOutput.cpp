@@ -20,11 +20,11 @@ void dsp::MidiOutput::setProcessFunction(std::function<void()> processFunction) 
     unlock();
 }
 
-std::function<void()> dsp::MidiOutput::processNote(size_t channel) {
+std::function<void()> dsp::MidiOutput::processNote(uint8 channel) {
     return [this, channel]() {
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-            for (size_t channel = 0; channel < getNumInputChannels(); ++channel) {
-                Sample current = getInput()->getWrapper().getSample(channel, sample);
+            for (size_t i = 0; i < getNumInputChannels(); ++i) {
+                Sample current = getInput()->getWrapper().getSample(i, sample);
                 if (previous != current) {
                     uint8 previousNote = static_cast<uint8>(previous);
                     uint8 currentNote = static_cast<uint8>(current);
@@ -37,29 +37,29 @@ std::function<void()> dsp::MidiOutput::processNote(size_t channel) {
     };
 }
 
-std::function<void()> dsp::MidiOutput::processNoteOn(size_t channel, std::unordered_set<uint8> noteSet) {
+std::function<void()> dsp::MidiOutput::processNoteOn(uint8 channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
-        processImpulse(noteSet, [channel](size_t note, Sample current) {
+        processImpulse(noteSet, [channel](uint8 note, Sample current) {
             return MidiMessage::noteOn(channel, note, static_cast<uint8>(unipolarToByte(current)));
         });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processNoteOff(size_t channel, std::unordered_set<uint8> noteSet) {
+std::function<void()> dsp::MidiOutput::processNoteOff(uint8 channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
-        processImpulse(noteSet, [channel](size_t note) { return MidiMessage::noteOff(channel, note, uint8(0)); });
+        processImpulse(noteSet, [channel](uint8 note) { return MidiMessage::noteOff(channel, note, uint8(0)); });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processNotePressure(size_t channel, std::unordered_set<uint8> noteSet) {
+std::function<void()> dsp::MidiOutput::processNotePressure(uint8 channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
-        processContinuous(noteSet, [channel](size_t note, Sample current) {
+        processContinuous(noteSet, [channel](uint8 note, Sample current) {
             return MidiMessage::aftertouchChange(channel, note, static_cast<uint8>(unipolarToByte(current)));
         });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processControl(size_t channel) {
+std::function<void()> dsp::MidiOutput::processControl(uint8 channel) {
     return [this, channel]() {
         processContinuous([channel](Sample current) {
             return MidiMessage::controllerEvent(channel, static_cast<uint8>(current), uint8(0));
@@ -67,22 +67,22 @@ std::function<void()> dsp::MidiOutput::processControl(size_t channel) {
     };
 }
 
-std::function<void()> dsp::MidiOutput::processControlValue(size_t channel, std::unordered_set<uint8> controlSet) {
+std::function<void()> dsp::MidiOutput::processControlValue(uint8 channel, std::unordered_set<uint8> controlSet) {
     return [this, channel, controlSet]() {
-        processContinuous(controlSet, [channel](size_t control, Sample current) {
+        processContinuous(controlSet, [channel](uint8 control, Sample current) {
             return MidiMessage::controllerEvent(channel, control, static_cast<uint8>(unipolarToByte(current)));
         });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processProgram(size_t channel) {
+std::function<void()> dsp::MidiOutput::processProgram(uint8 channel) {
     return [this, channel]() {
         processContinuous(
                 [channel](Sample current) { return MidiMessage::programChange(channel, static_cast<uint8>(current)); });
     };
 }
 
-std::function<void()> dsp::MidiOutput::processChannelPressure(size_t channel) {
+std::function<void()> dsp::MidiOutput::processChannelPressure(uint8 channel) {
     return [this, channel]() {
         processContinuous([channel](Sample current) {
             return MidiMessage::channelPressureChange(channel, static_cast<uint8>(unipolarToByte(current)));
@@ -90,7 +90,7 @@ std::function<void()> dsp::MidiOutput::processChannelPressure(size_t channel) {
     };
 }
 
-std::function<void()> dsp::MidiOutput::processPitchBend(size_t channel) {
+std::function<void()> dsp::MidiOutput::processPitchBend(uint8 channel) {
     return [this, channel]() {
         processContinuous([channel](Sample current) {
             return MidiMessage::channelPressureChange(channel, static_cast<uint8>(bipolarToShort(current)));
@@ -98,7 +98,7 @@ std::function<void()> dsp::MidiOutput::processPitchBend(size_t channel) {
     };
 }
 
-std::function<void()> dsp::MidiOutput::processAllNotesOff(size_t channel) {
+std::function<void()> dsp::MidiOutput::processAllNotesOff(uint8 channel) {
     return [this, channel]() { processImpulse([channel]() { return MidiMessage::allNotesOff(channel); }); };
 }
 

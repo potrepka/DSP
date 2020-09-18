@@ -20,7 +20,7 @@ void dsp::MidiInput::setProcessFunction(std::function<void()> processFunction) {
     unlock();
 }
 
-std::function<void()> dsp::MidiInput::processNote(size_t channel, std::unordered_set<uint8> noteSet) {
+std::function<void()> dsp::MidiInput::processNote(uint8 channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
         processContinuous(
                 [channel, noteSet](MidiMessage message) {
@@ -31,7 +31,7 @@ std::function<void()> dsp::MidiInput::processNote(size_t channel, std::unordered
     };
 }
 
-std::function<void()> dsp::MidiInput::processNoteOn(size_t channel, std::unordered_set<uint8> noteSet) {
+std::function<void()> dsp::MidiInput::processNoteOn(uint8 channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
         processImpulse(
                 [channel, noteSet](MidiMessage message) {
@@ -42,7 +42,7 @@ std::function<void()> dsp::MidiInput::processNoteOn(size_t channel, std::unorder
     };
 }
 
-std::function<void()> dsp::MidiInput::processNoteOff(size_t channel, std::unordered_set<uint8> noteSet) {
+std::function<void()> dsp::MidiInput::processNoteOff(uint8 channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
         processImpulse(
                 [channel, noteSet](MidiMessage message) {
@@ -53,7 +53,7 @@ std::function<void()> dsp::MidiInput::processNoteOff(size_t channel, std::unorde
     };
 }
 
-std::function<void()> dsp::MidiInput::processNotePressure(size_t channel, std::unordered_set<uint8> noteSet) {
+std::function<void()> dsp::MidiInput::processNotePressure(uint8 channel, std::unordered_set<uint8> noteSet) {
     return [this, channel, noteSet]() {
         processContinuous(
                 [channel, noteSet](MidiMessage message) {
@@ -68,7 +68,7 @@ std::function<void()> dsp::MidiInput::processNotePressure(size_t channel, std::u
     };
 }
 
-std::function<void()> dsp::MidiInput::processControl(size_t channel, std::unordered_set<uint8> controlSet) {
+std::function<void()> dsp::MidiInput::processControl(uint8 channel, std::unordered_set<uint8> controlSet) {
     return [this, channel, controlSet]() {
         processContinuous(
                 [channel, controlSet](MidiMessage message) {
@@ -79,7 +79,7 @@ std::function<void()> dsp::MidiInput::processControl(size_t channel, std::unorde
     };
 }
 
-std::function<void()> dsp::MidiInput::processControlValue(size_t channel, std::unordered_set<uint8> controlSet) {
+std::function<void()> dsp::MidiInput::processControlValue(uint8 channel, std::unordered_set<uint8> controlSet) {
     return [this, channel, controlSet]() {
         processContinuous(
                 [channel, controlSet](MidiMessage message) {
@@ -90,7 +90,7 @@ std::function<void()> dsp::MidiInput::processControlValue(size_t channel, std::u
     };
 }
 
-std::function<void()> dsp::MidiInput::processProgram(size_t channel) {
+std::function<void()> dsp::MidiInput::processProgram(uint8 channel) {
     return [this, channel]() {
         processContinuous(
                 [channel](MidiMessage message) {
@@ -100,7 +100,7 @@ std::function<void()> dsp::MidiInput::processProgram(size_t channel) {
     };
 }
 
-std::function<void()> dsp::MidiInput::processChannelPressure(size_t channel) {
+std::function<void()> dsp::MidiInput::processChannelPressure(uint8 channel) {
     return [this, channel]() {
         processContinuous(
                 [channel](MidiMessage message) {
@@ -110,7 +110,7 @@ std::function<void()> dsp::MidiInput::processChannelPressure(size_t channel) {
     };
 }
 
-std::function<void()> dsp::MidiInput::processPitchBend(size_t channel) {
+std::function<void()> dsp::MidiInput::processPitchBend(uint8 channel) {
     return [this, channel]() {
         processContinuous(
                 [channel](MidiMessage message) {
@@ -120,7 +120,7 @@ std::function<void()> dsp::MidiInput::processPitchBend(size_t channel) {
     };
 }
 
-std::function<void()> dsp::MidiInput::processAllNotesOff(size_t channel) {
+std::function<void()> dsp::MidiInput::processAllNotesOff(uint8 channel) {
     return [this, channel]() {
         processImpulse(
                 [channel](MidiMessage message) {

@@ -16,16 +16,16 @@ public:
     std::function<void()> getProcessFunction() const;
     void setProcessFunction(std::function<void()> processFunction);
 
-    std::function<void()> processNote(size_t channel);
-    std::function<void()> processNoteOn(size_t channel, std::unordered_set<uint8> noteSet);
-    std::function<void()> processNoteOff(size_t channel, std::unordered_set<uint8> noteSet);
-    std::function<void()> processNotePressure(size_t channel, std::unordered_set<uint8> noteSet);
-    std::function<void()> processControl(size_t channel);
-    std::function<void()> processControlValue(size_t channel, std::unordered_set<uint8> controlSet);
-    std::function<void()> processProgram(size_t channel);
-    std::function<void()> processChannelPressure(size_t channel);
-    std::function<void()> processPitchBend(size_t channel);
-    std::function<void()> processAllNotesOff(size_t channel);
+    std::function<void()> processNote(uint8 channel);
+    std::function<void()> processNoteOn(uint8 channel, std::unordered_set<uint8> noteSet);
+    std::function<void()> processNoteOff(uint8 channel, std::unordered_set<uint8> noteSet);
+    std::function<void()> processNotePressure(uint8 channel, std::unordered_set<uint8> noteSet);
+    std::function<void()> processControl(uint8 channel);
+    std::function<void()> processControlValue(uint8 channel, std::unordered_set<uint8> controlSet);
+    std::function<void()> processProgram(uint8 channel);
+    std::function<void()> processChannelPressure(uint8 channel);
+    std::function<void()> processPitchBend(uint8 channel);
+    std::function<void()> processAllNotesOff(uint8 channel);
     std::function<void()> processSongPositionInQuarterNotes();
     std::function<void()> processClock();
     std::function<void()> processStart();
