@@ -8,7 +8,13 @@ dsp::Biquad::Biquad()
         , resetTrigger(std::make_shared<Input>(Type::INTEGER))
         , frequency(std::make_shared<Input>(Type::HERTZ))
         , resonance(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
-        , gain(std::make_shared<Input>(Type::LOGARITHMIC)) {
+        , gain(std::make_shared<Input>(Type::LOGARITHMIC))
+        , a0(0.0)
+        , a1(0.0)
+        , a2(0.0)
+        , b0(0.0)
+        , b1(0.0)
+        , b2(0.0) {
     getInputs().push_back(resetTrigger);
     getInputs().push_back(frequency);
     getInputs().push_back(resonance);

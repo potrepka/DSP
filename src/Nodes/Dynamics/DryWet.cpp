@@ -29,10 +29,11 @@ void dsp::DryWet::processNoLock() {
         Sample *mixAmountChannel = getMixAmount()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-            Sample dry = dryChannel[sample];
-            Sample wet = wetChannel[sample];
-            Sample mixAmount = mixAmountChannel[sample];
-            outputChannel[sample] = dry + mixAmount * (wet - dry);
+            Sample &dry = dryChannel[sample];
+            Sample &wet = wetChannel[sample];
+            Sample &mixAmount = mixAmountChannel[sample];
+            Sample &output = outputChannel[sample];
+            output = dry + mixAmount * (wet - dry);
         }
     }
 }
