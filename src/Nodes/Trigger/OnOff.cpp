@@ -1,9 +1,9 @@
 #include "OnOff.h"
 
 dsp::OnOff::OnOff()
-        : Producer(Type::INTEGER)
-        , onTrigger(std::make_shared<Input>(Type::INTEGER))
-        , offTrigger(std::make_shared<Input>(Type::INTEGER)) {
+        : Producer(Type::BINARY)
+        , onTrigger(std::make_shared<Input>(Type::BINARY))
+        , offTrigger(std::make_shared<Input>(Type::BINARY)) {
     getInputs().push_back(onTrigger);
     getInputs().push_back(offTrigger);
 }

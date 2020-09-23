@@ -5,6 +5,11 @@ dsp::Transformer::Transformer(Type inType, Type outType, Space space)
         , Consumer(inType, space)
         , Producer(outType, space) {}
 
+dsp::Transformer::Transformer(Type inType, Type outType, Space inSpace, Space outSpace)
+        : Node()
+        , Consumer(inType, inSpace)
+        , Producer(outType, outSpace) {}
+
 void dsp::Transformer::transform(std::function<Sample(Sample)> transform) {
     for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);

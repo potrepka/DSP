@@ -48,7 +48,6 @@
 #include "Nodes/Math/ForwardFFT.h"
 #include "Nodes/Math/InverseFFT.h"
 #include "Nodes/Math/Log2.h"
-#include "Nodes/Math/LogarithmicToRatio.h"
 #include "Nodes/Math/Modulo.h"
 #include "Nodes/Math/Multiply.h"
 #include "Nodes/Math/MultiplyHertzSeconds.h"

@@ -5,7 +5,7 @@
 dsp::Biquad::Biquad()
         : Transformer(Type::RATIO, Type::RATIO)
         , mode(Mode::LOW_PASS)
-        , resetTrigger(std::make_shared<Input>(Type::INTEGER))
+        , resetTrigger(std::make_shared<Input>(Type::BINARY))
         , frequency(std::make_shared<Input>(Type::HERTZ))
         , resonance(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
         , gain(std::make_shared<Input>(Type::LOGARITHMIC))

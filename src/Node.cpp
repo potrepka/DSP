@@ -179,11 +179,12 @@ void dsp::Node::process() {
     if (noChildren) {
         for (const auto &input : inputs) {
             input->lock();
+            input->prepareNoLock();
             input->processNoLock();
         }
         for (const auto &output : outputs) {
             output->lock();
-            output->processNoLock();
+            output->prepareNoLock();
         }
     }
     if (active) {
@@ -191,6 +192,7 @@ void dsp::Node::process() {
     }
     if (noChildren) {
         for (const auto &output : outputs) {
+            output->processNoLock();
             output->unlock();
         }
         for (const auto &input : inputs) {

@@ -1,8 +1,8 @@
 #include "BeatTrigger.h"
 
 dsp::BeatTrigger::BeatTrigger()
-        : Producer(Type::INTEGER)
-        , resetTrigger(std::make_shared<Input>(Type::INTEGER))
+        : Producer(Type::BINARY)
+        , resetTrigger(std::make_shared<Input>(Type::BINARY))
         , intervalDuration(std::make_shared<Input>(Type::SECONDS))
         , delayTime(std::make_shared<Input>(Type::SECONDS))
         , currentTime(std::make_shared<Output>(Type::SECONDS)) {

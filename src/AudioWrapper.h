@@ -42,6 +42,7 @@ public:
 
     AudioWrapper &clear();
     AudioWrapper &fill(T value);
+    AudioWrapper &apply(std::function<T(T)> f);
 
     AudioWrapper &copyFrom(const AudioWrapper<T> &src);
 

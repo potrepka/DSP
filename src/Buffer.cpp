@@ -190,7 +190,7 @@ void dsp::Input::disconnectAll() {
     unlock();
 }
 
-void dsp::Input::processNoLock() {
+void dsp::Input::prepareNoLock() {
     if (connections.size() == 0) {
         fillChannels();
     } else {
@@ -200,12 +200,18 @@ void dsp::Input::processNoLock() {
             case Mode::MAXIMUM: wrapper.fill(-std::numeric_limits<Sample>::infinity()); break;
         }
     }
+}
+
+void dsp::Input::processNoLock() {
     for (const auto &output : connections) {
         switch (mode) {
             case Mode::SUM: wrapper.add(output->getWrapper()); break;
             case Mode::MINIMUM: wrapper.replaceWithMinOf(wrapper, output->getWrapper()); break;
             case Mode::MAXIMUM: wrapper.replaceWithMaxOf(wrapper, output->getWrapper()); break;
         }
+    }
+    if (type == Type::BINARY && mode == Mode::SUM) {
+        wrapper.apply([](Sample x) { return fmod(x, 2.0); });
     }
 }
 
@@ -271,8 +277,15 @@ void dsp::Output::disconnectAll() {
     unlock();
 }
 
-void dsp::Output::processNoLock() {
+void dsp::Output::prepareNoLock() {
     fillChannels();
+}
+
+void dsp::Output::processNoLock() {
+    switch (type) {
+        case Type::INTEGER: wrapper.apply([](Sample x) { return floor(x); }); break;
+        case Type::BINARY: wrapper.apply([](Sample x) { return x ? 1.0 : 0.0; }); break;
+    }
 }
 
 void dsp::Output::addConnection(std::shared_ptr<Input> input) {

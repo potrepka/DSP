@@ -1,8 +1,8 @@
 #include "Multiply.h"
 
 dsp::Multiply::Multiply(Type type, Space space)
-        : Transformer(type, type == Type::INTEGER ? Type::LOGARITHMIC : type, space)
-        , factor(std::make_shared<Input>(type, space, 1.0)) {
+        : Transformer(type, type, space)
+        , factor(std::make_shared<Input>(Type::RATIO, space, 1.0)) {
     getInputs().push_back(factor);
 }
 

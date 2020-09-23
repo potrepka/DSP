@@ -57,6 +57,18 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::fill(T value) {
 }
 
 template <typename T>
+dsp::AudioWrapper<T>& dsp::AudioWrapper<T>::apply(std::function<T(T)> f) {
+    for (size_t channel = 0; channel < numChannels; ++channel) {
+        auto a = data[channel] + startSample;
+        for (size_t sample = 0; sample < numSamples; ++sample) {
+            *a = f(*a);
+            ++a;
+        }
+    }
+    return *this;
+}
+
+template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::copyFrom(const AudioWrapper<T> &src) {
     DSP_ASSERT(numChannels == src.numChannels);
     DSP_ASSERT(numSamples == src.numSamples);

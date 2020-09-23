@@ -3,8 +3,8 @@
 dsp::MidSide::MidSide(Type type, Space space)
         : Consumer(type, space)
         , mixAmount(std::make_shared<Input>(Type::RATIO, space))
-        , mid(std::make_shared<Output>(type == Type::INTEGER ? Type::LOGARITHMIC : type, space))
-        , side(std::make_shared<Output>(type == Type::INTEGER ? Type::LOGARITHMIC : type, space))
+        , mid(std::make_shared<Output>(type, space))
+        , side(std::make_shared<Output>(type, space))
         , data(0, 0)
         , wrapper(data) {
     getInputs().push_back(mixAmount);
@@ -44,11 +44,13 @@ void dsp::MidSide::processNoLock() {
             Sample *sideChannel = getSide()->getWrapper().getChannelPointer(channel);
             Sample *wrapperChannel = wrapper.getChannelPointer(0);
             for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-                Sample signal = inputChannel[sample];
+                Sample &input = inputChannel[sample];
+                Sample &mixed = wrapperChannel[sample];
+                Sample &mid = midChannel[sample];
+                Sample &side = sideChannel[sample];
                 Sample amount = clip(mixAmountChannel[sample], 0.0, 1.0);
-                Sample together = wrapperChannel[sample];
-                midChannel[sample] = signal + amount * (together - signal);
-                sideChannel[sample] = amount * (signal - together);
+                mid = input + amount * (mixed - input);
+                side = amount * (input - mixed);
             }
         }
     }

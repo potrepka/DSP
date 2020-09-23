@@ -1,7 +1,7 @@
 #include "DryWet.h"
 
 dsp::DryWet::DryWet(Type type, Space space)
-        : Producer(type == Type::INTEGER ? Type::LOGARITHMIC : type, space)
+        : Producer(type, space)
         , dry(std::make_shared<Input>(type, space))
         , wet(std::make_shared<Input>(type, space))
         , mixAmount(std::make_shared<Input>(Type::RATIO, space)) {
@@ -31,9 +31,9 @@ void dsp::DryWet::processNoLock() {
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             Sample &dry = dryChannel[sample];
             Sample &wet = wetChannel[sample];
-            Sample &mixAmount = mixAmountChannel[sample];
             Sample &output = outputChannel[sample];
-            output = dry + mixAmount * (wet - dry);
+            Sample amount = clip(mixAmountChannel[sample], 0.0, 1.0);
+            output = dry + amount * (wet - dry);
         }
     }
 }

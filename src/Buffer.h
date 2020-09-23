@@ -78,6 +78,7 @@ public:
     void connect(std::shared_ptr<Output> output);
     void disconnect(std::shared_ptr<Output> output);
     void disconnectAll();
+    void prepareNoLock();
     void processNoLock();
 
 private:
@@ -103,6 +104,7 @@ public:
     void connect(std::shared_ptr<Input> input);
     void disconnect(std::shared_ptr<Input> input);
     void disconnectAll();
+    void prepareNoLock();
     void processNoLock();
 
 private:

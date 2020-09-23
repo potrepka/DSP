@@ -1,7 +1,7 @@
 #include "OnePole.h"
 
 dsp::OnePole::OnePole(Type type)
-        : Transformer(type, type == Type::INTEGER ? Type::LOGARITHMIC : type)
+        : Transformer(type, type)
         , mode(Mode::LOW_PASS)
         , frequency(std::make_shared<Input>(Type::HERTZ)) {
     getInputs().push_back(frequency);

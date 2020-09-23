@@ -1,7 +1,7 @@
 #include "AbsoluteValue.h"
 
-dsp::AbsoluteValue::AbsoluteValue(Space space)
-        : Transformer(Type::RATIO, Type::RATIO, space) {}
+dsp::AbsoluteValue::AbsoluteValue(Type type, Space space)
+        : Transformer(type, type, space) {}
 
 void dsp::AbsoluteValue::processNoLock() {
     getOutput()->getWrapper().replaceWithAbsoluteValueOf(getInput()->getWrapper());

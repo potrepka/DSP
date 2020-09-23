@@ -9,6 +9,7 @@ class Transformer : public Consumer, public Producer {
 
 public:
     Transformer(Type inType, Type outType, Space space = Space::TIME);
+    Transformer(Type inType, Type outType, Space inSpace, Space outSpace);
 
 protected:
     void transform(std::function<Sample(Sample)> transform);

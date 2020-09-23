@@ -7,8 +7,8 @@ dsp::Recorder::Recorder(Type type, Space space, Sample defaultValue)
         , recordingNumSamples(0.0)
         , primary(std::make_shared<Buffer>(type, space, 0, 0, defaultValue))
         , secondary(std::make_shared<Buffer>(type, space, 0, 0, defaultValue))
-        , resetTrigger(std::make_shared<Input>(Type::INTEGER))
-        , gate(std::make_shared<Input>(Type::INTEGER)) {
+        , resetTrigger(std::make_shared<Input>(Type::BINARY))
+        , gate(std::make_shared<Input>(Type::BINARY)) {
     getInputs().push_back(resetTrigger);
     getInputs().push_back(gate);
 }
