@@ -130,10 +130,6 @@ template <typename T>
 void dsp::NodeProcessor::process(AudioBuffer<T> &audioBuffer, MidiBuffer &midiBuffer) {
     lock();
 
-    audioInput->lock();
-    audioInput->processNoLock();
-    audioInput->unlock();
-
     for (size_t channel = 0; channel < audioInput->getNumChannels(); ++channel) {
         auto *bufferChannel = audioBuffer.getReadPointer(channel);
         auto *inputChannel = audioInput->getWrapper().getChannelPointer(channel);
@@ -153,6 +149,7 @@ void dsp::NodeProcessor::process(AudioBuffer<T> &audioBuffer, MidiBuffer &midiBu
     midiBuffer.addEvents(*outputMessages, 0, audioBuffer.getNumSamples(), 0);
 
     audioOutput->lock();
+    audioOutput->prepareNoLock();
     audioOutput->processNoLock();
     audioOutput->unlock();
 
