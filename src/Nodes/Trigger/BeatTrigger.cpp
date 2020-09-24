@@ -41,17 +41,23 @@ void dsp::BeatTrigger::processNoLock() {
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample *currentTimeChannel = getCurrentTime()->getWrapper().getChannelPointer(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-            if (resetTriggerChannel[sample] || intervalDurationChannel[sample] == 0.0) {
+            if (resetTriggerChannel[sample]) {
                 index[channel] = 0.0;
-            } else {
-                Sample interval = abs(intervalDurationChannel[sample] * getSampleRate());
-                Sample delayed = index[channel] - delayTimeChannel[sample] * getSampleRate();
-                if (delayed >= interval) {
-                    index[channel] -= floor(delayed / interval) * interval;
+            }
+            Sample interval = abs(intervalDurationChannel[sample] * getSampleRate());
+            Sample delay = delayTimeChannel[sample] * getSampleRate();
+            Sample adjusted = index[channel] - delay;
+            if (adjusted >= interval) {
+                if (interval) {
+                    index[channel] -= floor(adjusted / interval) * interval;
+                    adjusted = index[channel] - delay;
+                } else {
+                    index[channel] = delay;
+                    adjusted = 0.0;
                 }
             }
-            outputChannel[sample] = index[channel] < 1.0 ? 1.0 : 0.0;
-            currentTimeChannel[sample] = index[channel] * getOneOverSampleRate();
+            outputChannel[sample] = adjusted < 1.0;
+            currentTimeChannel[sample] = adjusted * getOneOverSampleRate();
             index[channel] += 1.0;
         }
     }
