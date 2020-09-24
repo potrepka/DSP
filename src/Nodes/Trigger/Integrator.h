@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class SampleAndHold : public Transformer {
+class Integrator : public Transformer {
 
 public:
-    SampleAndHold(Type type);
+    Integrator(Type type);
 
     std::shared_ptr<Input> getResetTrigger() const;
     std::shared_ptr<Input> getGate() const;

@@ -1,17 +1,16 @@
 #pragma once
 
-#include "../Core/Producer.h"
+#include "../Core/Transformer.h"
 
 namespace dsp {
 
-class Counter : public Producer {
+class Differentiator : public Transformer {
 
 public:
-    Counter();
+    Differentiator(Type type);
 
     std::shared_ptr<Input> getResetTrigger() const;
-    std::shared_ptr<Input> getTrigger() const;
-    std::shared_ptr<Input> getSpeed() const;
+    std::shared_ptr<Input> getGate() const;
 
 protected:
     void setNumOutputChannelsNoLock(size_t numChannels) override;
@@ -19,10 +18,9 @@ protected:
 
 private:
     const std::shared_ptr<Input> resetTrigger;
-    const std::shared_ptr<Input> trigger;
-    const std::shared_ptr<Input> speed;
+    const std::shared_ptr<Input> gate;
+    Array state;
     Array memory;
-    Array index;
 };
 
 } // namespace dsp

@@ -56,7 +56,8 @@
 #include "Nodes/Math/PassThrough.h"
 
 #include "Nodes/Trigger/BeatTrigger.h"
-#include "Nodes/Trigger/Counter.h"
+#include "Nodes/Trigger/Differentiator.h"
+#include "Nodes/Trigger/Integrator.h"
 #include "Nodes/Trigger/OnOff.h"
 #include "Nodes/Trigger/ResetTrigger.h"
 #include "Nodes/Trigger/SampleAndHold.h"
