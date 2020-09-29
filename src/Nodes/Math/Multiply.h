@@ -9,13 +9,16 @@ class Multiply : public Transformer {
 public:
     Multiply(Type type, Space space = Space::TIME);
 
-    std::shared_ptr<Input> getFactor() const;
+    size_t getNumFactors() const;
+    void setNumFactors(size_t numFactors);
+
+    std::vector<std::shared_ptr<Input>> &getFactors();
 
 protected:
     void processNoLock() override;
 
 private:
-    const std::shared_ptr<Input> factor;
+    std::vector<std::shared_ptr<Input>> factors;
 };
 
 } // namespace dsp
