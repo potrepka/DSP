@@ -4,10 +4,15 @@
 
 namespace dsp {
 
-class Distortion : public Transformer {
+class Shaper : public Transformer {
 
 public:
-    Distortion(Space space = Space::TIME);
+    enum class Mode { POLYNOMIAL, HYPERBOLIC };
+
+    Shaper(Space space = Space::TIME);
+
+    Mode getMode() const;
+    void setMode(Mode mode);
 
     std::shared_ptr<Input> getDrive() const;
 
@@ -15,6 +20,7 @@ protected:
     void processNoLock() override;
 
 private:
+    Mode mode;
     const std::shared_ptr<Input> drive;
 };
 
