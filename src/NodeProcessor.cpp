@@ -4,10 +4,10 @@ dsp::NodeProcessor::NodeProcessor(size_t numInputChannels,
                                   size_t numOutputChannels,
                                   size_t numSamples,
                                   double sampleRate)
-        : audioInput(std::make_shared<Output>(Type::RATIO, Space::TIME, numInputChannels, numSamples))
-        , audioOutput(std::make_shared<Input>(Type::RATIO, Space::TIME, numOutputChannels, numSamples))
-        , audioInputClipping(std::make_shared<Output>(Type::RATIO, Space::TIME, numInputChannels, numSamples))
-        , audioOutputClipping(std::make_shared<Output>(Type::RATIO, Space::TIME, numOutputChannels, numSamples))
+        : audioInput(std::make_shared<Output>(Type::RATIO, Space::TIME, 0.0, numInputChannels, numSamples))
+        , audioOutput(std::make_shared<Input>(Type::RATIO, Space::TIME, 0.0, numOutputChannels, numSamples))
+        , audioInputClipping(std::make_shared<Output>(Type::RATIO, Space::TIME, 0.0, numInputChannels, numSamples))
+        , audioOutputClipping(std::make_shared<Output>(Type::RATIO, Space::TIME, 0.0, numOutputChannels, numSamples))
         , numInputChannels(numInputChannels)
         , numOutputChannels(numOutputChannels)
         , numSamples(numSamples)
@@ -129,6 +129,10 @@ std::shared_ptr<dsp::MidiBuffer> dsp::NodeProcessor::getOutputMessages() const {
 template <typename T>
 void dsp::NodeProcessor::process(AudioBuffer<T> &audioBuffer, MidiBuffer &midiBuffer) {
     lock();
+
+    audioInput->lock();
+    audioInput->prepareNoLock();
+    audioInput->unlock();
 
     for (size_t channel = 0; channel < audioInput->getNumChannels(); ++channel) {
         auto *bufferChannel = audioBuffer.getReadPointer(channel);
