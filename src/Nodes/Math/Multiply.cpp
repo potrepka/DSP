@@ -15,8 +15,11 @@ void dsp::Multiply::setNumFactors(size_t numFactors) {
         factors.reserve(numFactors);
         getInputs().reserve(numFactors + 1);
         for (size_t i = getNumFactors(); i < numFactors; ++i) {
-            std::shared_ptr<dsp::Input> factor = std::make_shared<Input>(
-                    Type::RATIO, getInput()->getSpace(), 1, getInput()->getNumChannels(), getInput()->getNumSamples());
+            std::shared_ptr<dsp::Input> factor = std::make_shared<Input>(Type::RATIO,
+                                                                         getInput()->getSpace(),
+                                                                         1.0,
+                                                                         getInput()->getNumChannels(),
+                                                                         getInput()->getNumSamples());
             factors.push_back(factor);
             getInputs().push_back(factor);
         }
