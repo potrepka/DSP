@@ -3,7 +3,9 @@
 dsp::Spread::Spread(Type type, Space space)
         : Transformer(type, type, space)
         , mode(Mode::UNIPOLAR)
-        , spread(std::make_shared<Input>(type, space)) {}
+        , spread(std::make_shared<Input>(type, space)) {
+    getInputs().push_back(spread);
+}
 
 dsp::Spread::Mode dsp::Spread::getMode() const {
     return mode;
