@@ -15,6 +15,7 @@
 #include "Nodes/Channel/ChannelMerger.h"
 #include "Nodes/Channel/ChannelSplitter.h"
 #include "Nodes/Channel/MidSide.h"
+#include "Nodes/Channel/Spread.h"
 #include "Nodes/Channel/StereoPanner.h"
 
 #include "Nodes/Delays/Convolver.h"
