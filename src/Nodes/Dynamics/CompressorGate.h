@@ -18,7 +18,13 @@ public:
     std::shared_ptr<Input> getRelease() const;
     std::shared_ptr<Output> getGainDelta() const;
 
-    Sample getGainDelta(Sample &gain, Sample &threshold, Sample &compressionRatio, Sample &gateRatio, Sample &halfKnee);
+    Sample getGainDelta(size_t channel, Sample gain) const;
+
+    static Sample getGainDelta(const Sample &gain,
+                               const Sample &threshold,
+                               const Sample &compressionRatio,
+                               const Sample &gateRatio,
+                               const Sample &halfKnee);
 
 protected:
     void setNumOutputChannelsNoLock(size_t numChannels) override;

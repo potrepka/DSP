@@ -58,7 +58,6 @@ void dsp::CompressorGate::setNumOutputChannelsNoLock(size_t numChannels) {
 }
 
 void dsp::CompressorGate::processNoLock() {
-    getHalfKnee()->getWrapper().replaceWithAbsoluteValueOf(getHalfKnee()->getWrapper());
     for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
         Sample *controlChannel = getControl()->getWrapper().getChannelPointer(channel);
@@ -91,13 +90,27 @@ void dsp::CompressorGate::processNoLock() {
     }
 }
 
-dsp::Sample dsp::CompressorGate::getGainDelta(
-        Sample &gain, Sample &threshold, Sample &compressionRatio, Sample &gateRatio, Sample &halfKnee) {
+dsp::Sample dsp::CompressorGate::getGainDelta(size_t channel, Sample gain) const {
+    DSP_ASSERT(channel < getNumChannels());
+    size_t lastSample = getNumSamples() - 1;
+    return getGainDelta(gain,
+                        getThreshold()->getWrapper().getSample(channel, lastSample),
+                        getCompressionRatio()->getWrapper().getSample(channel, lastSample),
+                        getGateRatio()->getWrapper().getSample(channel, lastSample),
+                        getHalfKnee()->getWrapper().getSample(channel, lastSample));
+}
+
+dsp::Sample dsp::CompressorGate::getGainDelta(const Sample &gain,
+                                              const Sample &threshold,
+                                              const Sample &compressionRatio,
+                                              const Sample &gateRatio,
+                                              const Sample &halfKnee) {
     Sample gainMinusThreshold = gain - threshold;
     if (isinf(gainMinusThreshold)) {
         return 0.0;
     }
-    if (gainMinusThreshold > -halfKnee && gainMinusThreshold < halfKnee) {
+    Sample posHalfKnee = abs(halfKnee);
+    if (gainMinusThreshold > -posHalfKnee && gainMinusThreshold < posHalfKnee) {
         if (compressionRatio == 0.0) {
             return std::numeric_limits<double>::infinity();
         }
@@ -105,13 +118,13 @@ dsp::Sample dsp::CompressorGate::getGainDelta(
             return -gateRatio;
         }
         Sample ratioDifference = 1.0 / compressionRatio - gateRatio;
-        if (isinf(halfKnee) && ratioDifference != 0.0) {
+        if (isinf(posHalfKnee) && ratioDifference != 0.0) {
             return ratioDifference * std::numeric_limits<double>::infinity();
         }
-        Sample knee = 2.0 * halfKnee;
+        Sample knee = 2.0 * posHalfKnee;
         Sample kneeTimesGR = knee * gateRatio;
         Sample t = gainMinusThreshold / knee + 0.5;
-        return t * (t * halfKnee * ratioDifference + kneeTimesGR) - 0.5 * kneeTimesGR - gainMinusThreshold;
+        return t * (t * posHalfKnee * ratioDifference + kneeTimesGR) - 0.5 * kneeTimesGR - gainMinusThreshold;
     } else {
         return gainMinusThreshold * (gainMinusThreshold > 0.0 ? 1.0 / compressionRatio - 1.0 : gateRatio - 1.0);
     }
