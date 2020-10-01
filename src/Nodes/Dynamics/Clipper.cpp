@@ -1,7 +1,8 @@
 #include "Clipper.h"
 
 dsp::Clipper::Clipper(Space space)
-        : Transformer(Type::RATIO, Type::RATIO, space) {}
+        : Transformer(Type::RATIO, Type::RATIO, space)
+        , mode(Mode::CLIP) {}
 
 dsp::Clipper::Mode dsp::Clipper::getMode() const {
     return mode;

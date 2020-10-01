@@ -20,11 +20,11 @@
 #include "Nodes/Delays/Convolver.h"
 #include "Nodes/Delays/VariableDelay.h"
 
+#include "Nodes/Dynamics/Clipper.h"
 #include "Nodes/Dynamics/CompressorGate.h"
-#include "Nodes/Dynamics/Distortion.h"
 #include "Nodes/Dynamics/DryWet.h"
 #include "Nodes/Dynamics/Envelope.h"
-#include "Nodes/Dynamics/HardClip.h"
+#include "Nodes/Dynamics/Shaper.h"
 
 #include "Nodes/External/MidiInput.h"
 #include "Nodes/External/MidiOutput.h"

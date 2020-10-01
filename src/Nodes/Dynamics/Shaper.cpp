@@ -2,6 +2,7 @@
 
 dsp::Shaper::Shaper(Space space)
         : Transformer(Type::RATIO, Type::RATIO, space)
+        , mode(Mode::POLYNOMIAL)
         , drive(std::make_shared<Input>(Type::RATIO, space, 1.0)) {
     getInputs().push_back(drive);
 }

@@ -9,10 +9,10 @@ class Clipper : public Transformer {
 public:
     enum class Mode { CLIP, WRAP, MIRROR };
 
+    Clipper(Space space = Space::TIME);
+
     Mode getMode() const;
     void setMode(Mode mode);
-
-    Clipper(Space space = Space::TIME);
 
 protected:
     void processNoLock() override;
