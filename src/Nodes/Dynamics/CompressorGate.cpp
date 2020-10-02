@@ -52,6 +52,16 @@ std::shared_ptr<dsp::Output> dsp::CompressorGate::getGainDelta() const {
     return gainDelta;
 }
 
+dsp::Sample dsp::CompressorGate::getGainDelta(size_t channel, Sample gain) const {
+    DSP_ASSERT(channel < getNumChannels());
+    size_t lastSample = getNumSamples() - 1;
+    return getGainDelta(gain,
+                        getThreshold()->getWrapper().getSample(channel, lastSample),
+                        getCompressionRatio()->getWrapper().getSample(channel, lastSample),
+                        getGateRatio()->getWrapper().getSample(channel, lastSample),
+                        getHalfKnee()->getWrapper().getSample(channel, lastSample));
+}
+
 void dsp::CompressorGate::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     gainState.resize(numChannels, 0.0);
@@ -88,16 +98,6 @@ void dsp::CompressorGate::processNoLock() {
             output = input * exp2(gainDelta);
         }
     }
-}
-
-dsp::Sample dsp::CompressorGate::getGainDelta(size_t channel, Sample gain) const {
-    DSP_ASSERT(channel < getNumChannels());
-    size_t lastSample = getNumSamples() - 1;
-    return getGainDelta(gain,
-                        getThreshold()->getWrapper().getSample(channel, lastSample),
-                        getCompressionRatio()->getWrapper().getSample(channel, lastSample),
-                        getGateRatio()->getWrapper().getSample(channel, lastSample),
-                        getHalfKnee()->getWrapper().getSample(channel, lastSample));
 }
 
 dsp::Sample dsp::CompressorGate::getGainDelta(const Sample &gain,

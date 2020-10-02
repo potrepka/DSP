@@ -20,12 +20,6 @@ public:
 
     Sample getGainDelta(size_t channel, Sample gain) const;
 
-    static Sample getGainDelta(const Sample &gain,
-                               const Sample &threshold,
-                               const Sample &compressionRatio,
-                               const Sample &gateRatio,
-                               const Sample &halfKnee);
-
 protected:
     void setNumOutputChannelsNoLock(size_t numChannels) override;
     void processNoLock() override;
@@ -40,6 +34,12 @@ private:
     const std::shared_ptr<Input> release;
     const std::shared_ptr<Output> gainDelta;
     Array gainState;
+
+    static Sample getGainDelta(const Sample &gain,
+                            const Sample &threshold,
+                            const Sample &compressionRatio,
+                            const Sample &gateRatio,
+                            const Sample &halfKnee);
 };
 
 } // namespace dsp
