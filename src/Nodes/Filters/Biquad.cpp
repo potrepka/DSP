@@ -8,13 +8,7 @@ dsp::Biquad::Biquad()
         , resetTrigger(std::make_shared<Input>(Type::BINARY))
         , frequency(std::make_shared<Input>(Type::HERTZ))
         , resonance(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
-        , gain(std::make_shared<Input>(Type::LOGARITHMIC))
-        , a0(0.0)
-        , a1(0.0)
-        , a2(0.0)
-        , b0(0.0)
-        , b1(0.0)
-        , b2(0.0) {
+        , gain(std::make_shared<Input>(Type::LOGARITHMIC)) {
     getInputs().push_back(resetTrigger);
     getInputs().push_back(frequency);
     getInputs().push_back(resonance);
@@ -47,12 +41,47 @@ std::shared_ptr<dsp::Input> dsp::Biquad::getGain() const {
     return gain;
 }
 
+void dsp::Biquad::getMagnitudeAndPhaseResponse(size_t channel,
+                                               Sample frequency,
+                                               Sample &magnitude,
+                                               Sample &phase) const {
+    DSP_ASSERT(channel < getNumChannels());
+    const Sample omega = TAU * frequency * getOneOverSampleRate();
+    Sample a0 = aa0[channel];
+    Sample a1 = aa1[channel];
+    Sample a2 = aa2[channel];
+    Sample b0 = bb0[channel];
+    Sample b1 = bb1[channel];
+    Sample b2 = bb2[channel];
+    const Sample sinW = sin(omega);
+    const Sample cosW = cos(omega);
+    const Sample sin2W = sin(2.0 * omega);
+    const Sample cos2W = cos(2.0 * omega);
+    Sample a = b0 + b1 * cosW + b2 * cos2W;
+    Sample b = -b1 * sinW - b2 * sin2W;
+    DSP_ASSERT(channel < getNumChannels());
+    Sample c = a0 + a1 * cosW + a2 * cos2W;
+    Sample d = -a1 * sinW - a2 * sin2W;
+    Sample denominator = c * c + d * d;
+    Sample real = (a * c + b * d) / denominator;
+    Sample imaginary = (b * c - a * d) / denominator;
+    magnitude = sqrt(real * real + imaginary * imaginary);
+    Sample bipolar = ONE_OVER_TAU * atan2(imaginary, real);
+    phase = bipolar < 0.0 ? bipolar + 1.0 : bipolar;
+}
+
 void dsp::Biquad::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
-    x1.resize(numChannels, 0.0);
-    x2.resize(numChannels, 0.0);
-    y1.resize(numChannels, 0.0);
-    y2.resize(numChannels, 0.0);
+    xx1.resize(numChannels, 0.0);
+    xx2.resize(numChannels, 0.0);
+    yy1.resize(numChannels, 0.0);
+    yy2.resize(numChannels, 0.0);
+    aa0.resize(numChannels, 0.0);
+    aa1.resize(numChannels, 0.0);
+    aa2.resize(numChannels, 0.0);
+    bb0.resize(numChannels, 0.0);
+    bb1.resize(numChannels, 0.0);
+    bb2.resize(numChannels, 0.0);
 }
 
 void dsp::Biquad::processNoLock() {
@@ -63,26 +92,43 @@ void dsp::Biquad::processNoLock() {
         Sample *resonanceChannel = getResonance()->getWrapper().getChannelPointer(channel);
         Sample *gainChannel = getGain()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
+        Sample &x1 = xx1[channel];
+        Sample &x2 = xx2[channel];
+        Sample &y1 = yy1[channel];
+        Sample &y2 = yy2[channel];
+        Sample &a0 = aa0[channel];
+        Sample &a1 = aa1[channel];
+        Sample &a2 = aa2[channel];
+        Sample &b0 = bb0[channel];
+        Sample &b1 = bb1[channel];
+        Sample &b2 = bb2[channel];
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             if (resetTriggerChannel[sample]) {
-                x1[channel] = 0.0;
-                x2[channel] = 0.0;
-                y1[channel] = 0.0;
-                y2[channel] = 0.0;
+                x1 = 0.0;
+                x2 = 0.0;
+                y1 = 0.0;
+                y2 = 0.0;
             }
-            calculateCoefficients(frequencyChannel[sample], resonanceChannel[sample], gainChannel[sample]);
-            outputChannel[sample] = (b0 * inputChannel[sample] + b1 * x1[channel] + b2 * x2[channel] -
-                                     a1 * y1[channel] - a2 * y2[channel]) /
-                                    a0;
-            x2[channel] = x1[channel];
-            x1[channel] = inputChannel[sample];
-            y2[channel] = y1[channel];
-            y1[channel] = outputChannel[sample];
+            calculateCoefficients(
+                    frequencyChannel[sample], resonanceChannel[sample], gainChannel[sample], a0, a1, a2, b0, b1, b2);
+            outputChannel[sample] = (b0 * inputChannel[sample] + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2) / a0;
+            x2 = x1;
+            x1 = inputChannel[sample];
+            y2 = y1;
+            y1 = outputChannel[sample];
         }
     }
 }
 
-void dsp::Biquad::calculateCoefficients(const Sample &frequency, const Sample &resonance, const Sample &gain) {
+void dsp::Biquad::calculateCoefficients(const Sample &frequency,
+                                        const Sample &resonance,
+                                        const Sample &gain,
+                                        Sample &a0,
+                                        Sample &a1,
+                                        Sample &a2,
+                                        Sample &b0,
+                                        Sample &b1,
+                                        Sample &b2) const {
     const Sample omega = TAU * frequency * getOneOverSampleRate();
     const Sample sinW = sin(omega);
     const Sample cosW = cos(omega);
