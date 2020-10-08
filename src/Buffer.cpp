@@ -210,7 +210,7 @@ void dsp::Input::processNoLock() {
             case Mode::MAXIMUM: wrapper.replaceWithMaxOf(wrapper, output->getWrapper()); break;
         }
     }
-    if (type == Type::BINARY && mode == Mode::SUM) {
+    if (type == Type::BOOLEAN && mode == Mode::SUM) {
         wrapper.apply([](Sample x) { return fmod(x, 2.0); });
     }
 }
@@ -284,7 +284,7 @@ void dsp::Output::prepareNoLock() {
 void dsp::Output::processNoLock() {
     switch (type) {
         case Type::INTEGER: wrapper.apply([](Sample x) { return floor(x); }); break;
-        case Type::BINARY: wrapper.apply([](Sample x) { return x ? 1.0 : 0.0; }); break;
+        case Type::BOOLEAN: wrapper.apply([](Sample x) { return x ? 1.0 : 0.0; }); break;
     }
 }
 

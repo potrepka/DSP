@@ -1,7 +1,7 @@
 #include "ResetTrigger.h"
 
 dsp::ResetTrigger::ResetTrigger()
-        : Producer(Type::BINARY) {}
+        : Producer(Type::BOOLEAN) {}
 
 void dsp::ResetTrigger::reset() {
     lock();

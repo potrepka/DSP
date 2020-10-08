@@ -1,7 +1,7 @@
 #include "Comparison.h"
 
 dsp::Comparison::Comparison(Type type, Space space)
-        : Transformer(type, Type::BINARY, space)
+        : Transformer(type, Type::BOOLEAN, space)
         , mode(Mode::EQUAL_TO)
         , threshold(std::make_shared<Input>(type, space)) {
     getInputs().push_back(threshold);

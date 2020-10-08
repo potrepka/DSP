@@ -3,7 +3,7 @@
 dsp::Phasor::Phasor()
         : Producer(Type::RATIO)
         , mode(Mode::UNBOUNDED)
-        , resetTrigger(std::make_shared<Input>(Type::BINARY))
+        , resetTrigger(std::make_shared<Input>(Type::BOOLEAN))
         , frequency(std::make_shared<Input>(Type::HERTZ)) {
     getInputs().push_back(resetTrigger);
     getInputs().push_back(frequency);

@@ -2,8 +2,8 @@
 
 dsp::Integrator::Integrator(Type type)
         : Transformer(type, type)
-        , resetTrigger(std::make_shared<Input>(Type::BINARY))
-        , gate(std::make_shared<Input>(Type::BINARY)) {
+        , resetTrigger(std::make_shared<Input>(Type::BOOLEAN))
+        , gate(std::make_shared<Input>(Type::BOOLEAN)) {
     getInputs().push_back(resetTrigger);
     getInputs().push_back(gate);
 }
