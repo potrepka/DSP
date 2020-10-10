@@ -14,10 +14,10 @@ public:
     Mode getMode() const;
     void setMode(Mode mode);
 
-    std::shared_ptr<Input> getResetTrigger() const;
     std::shared_ptr<Input> getFrequency() const;
     std::shared_ptr<Input> getResonance() const;
     std::shared_ptr<Input> getGain() const;
+    std::shared_ptr<Input> getReset() const;
 
     void getMagnitudeAndPhaseResponse(size_t channel, Sample frequency, Sample &magnitude, Sample &phase) const;
 
@@ -27,10 +27,10 @@ protected:
 
 private:
     Mode mode;
-    const std::shared_ptr<Input> resetTrigger;
     const std::shared_ptr<Input> frequency;
     const std::shared_ptr<Input> resonance;
     const std::shared_ptr<Input> gain;
+    const std::shared_ptr<Input> reset;
     Array xx1;
     Array xx2;
     Array yy1;

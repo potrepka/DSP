@@ -11,9 +11,9 @@ public:
 
     std::shared_ptr<Input> getControl() const;
     std::shared_ptr<Input> getThreshold() const;
+    std::shared_ptr<Input> getHalfKnee() const;
     std::shared_ptr<Input> getCompressionRatio() const;
     std::shared_ptr<Input> getGateRatio() const;
-    std::shared_ptr<Input> getHalfKnee() const;
     std::shared_ptr<Input> getAttack() const;
     std::shared_ptr<Input> getRelease() const;
     std::shared_ptr<Output> getGainDelta() const;
@@ -27,19 +27,19 @@ protected:
 private:
     const std::shared_ptr<Input> control;
     const std::shared_ptr<Input> threshold;
+    const std::shared_ptr<Input> halfKnee;
     const std::shared_ptr<Input> compressionRatio;
     const std::shared_ptr<Input> gateRatio;
-    const std::shared_ptr<Input> halfKnee;
     const std::shared_ptr<Input> attack;
     const std::shared_ptr<Input> release;
     const std::shared_ptr<Output> gainDelta;
     Array gainState;
 
     static Sample getGainDelta(const Sample &gain,
-                            const Sample &threshold,
-                            const Sample &compressionRatio,
-                            const Sample &gateRatio,
-                            const Sample &halfKnee);
+                               const Sample &threshold,
+                               const Sample &halfKnee,
+                               const Sample &compressionRatio,
+                               const Sample &gateRatio);
 };
 
 } // namespace dsp

@@ -4,15 +4,15 @@ dsp::Envelope::Envelope()
         : Producer(Type::RATIO)
         , attackMode(Mode::LINEAR)
         , releaseMode(Mode::LINEAR)
-        , resetTrigger(std::make_shared<Input>(Type::BOOLEAN))
-        , gate(std::make_shared<Input>(Type::BOOLEAN))
         , attack(std::make_shared<Input>(Type::SECONDS))
         , release(std::make_shared<Input>(Type::SECONDS))
+        , gate(std::make_shared<Input>(Type::BOOLEAN))
+        , reset(std::make_shared<Input>(Type::BOOLEAN))
         , currentTime(std::make_shared<Output>(Type::SECONDS)) {
-    getInputs().push_back(resetTrigger);
-    getInputs().push_back(gate);
     getInputs().push_back(attack);
     getInputs().push_back(release);
+    getInputs().push_back(gate);
+    getInputs().push_back(reset);
     getOutputs().push_back(currentTime);
 }
 
@@ -32,20 +32,20 @@ void dsp::Envelope::getReleaseMode(Mode mode) {
     releaseMode = mode;
 }
 
-std::shared_ptr<dsp::Input> dsp::Envelope::getResetTrigger() const {
-    return resetTrigger;
-}
-
-std::shared_ptr<dsp::Input> dsp::Envelope::getGate() const {
-    return gate;
-}
-
 std::shared_ptr<dsp::Input> dsp::Envelope::getAttack() const {
     return attack;
 }
 
 std::shared_ptr<dsp::Input> dsp::Envelope::getRelease() const {
     return release;
+}
+
+std::shared_ptr<dsp::Input> dsp::Envelope::getGate() const {
+    return gate;
+}
+
+std::shared_ptr<dsp::Input> dsp::Envelope::getReset() const {
+    return reset;
 }
 
 std::shared_ptr<dsp::Output> dsp::Envelope::getCurrentTime() const {
@@ -61,15 +61,15 @@ void dsp::Envelope::setNumOutputChannelsNoLock(size_t numChannels) {
 
 void dsp::Envelope::processNoLock() {
     for (size_t channel = 0; channel < getNumChannels(); ++channel) {
-        Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
-        Sample *gateChannel = getGate()->getWrapper().getChannelPointer(channel);
         Sample *attackChannel = getAttack()->getWrapper().getChannelPointer(channel);
         Sample *releaseChannel = getRelease()->getWrapper().getChannelPointer(channel);
+        Sample *gateChannel = getGate()->getWrapper().getChannelPointer(channel);
+        Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample *currentTimeChannel = getCurrentTime()->getWrapper().getChannelPointer(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             if (gateChannel[sample]) {
-                if (resetTriggerChannel[sample]) {
+                if (resetChannel[sample]) {
                     attackIndex[channel] = 0;
                     value[channel] = 0.0;
                 }
@@ -89,7 +89,7 @@ void dsp::Envelope::processNoLock() {
                 ++attackIndex[channel];
                 releaseIndex[channel] = 0;
             } else {
-                if (resetTriggerChannel[sample]) {
+                if (resetChannel[sample]) {
                     releaseIndex[channel] = 0;
                     value[channel] = 1.0;
                 }

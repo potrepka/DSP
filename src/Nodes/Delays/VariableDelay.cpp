@@ -4,16 +4,16 @@ dsp::VariableDelay::VariableDelay(Type type)
         : Transformer(type, type)
         , maxDelayTime(0.0)
         , buffer(std::make_shared<Buffer>(type))
-        , resetTrigger(std::make_shared<Input>(Type::BOOLEAN))
         , delayTime(std::make_shared<Input>(Type::SECONDS))
         , decayTime(std::make_shared<Input>(Type::SECONDS))
+        , reset(std::make_shared<Input>(Type::BOOLEAN))
         , feedbackSource(std::make_shared<Output>(type))
         , feedbackSink(std::make_shared<Input>(type))
         , feedbackProcessor(std::make_shared<Node>())
         , indexState(0) {
-    getInputs().push_back(resetTrigger);
     getInputs().push_back(delayTime);
     getInputs().push_back(decayTime);
+    getInputs().push_back(reset);
 }
 
 dsp::Sample dsp::VariableDelay::getMaxDelayTime() const {
@@ -29,12 +29,12 @@ void dsp::VariableDelay::setMaxDelayTime(Sample seconds) {
     unlock();
 }
 
-std::shared_ptr<dsp::Input> dsp::VariableDelay::getResetTrigger() const {
-    return resetTrigger;
-}
-
 std::shared_ptr<dsp::Input> dsp::VariableDelay::getDelayTime() const {
     return delayTime;
+}
+
+std::shared_ptr<dsp::Input> dsp::VariableDelay::getReset() const {
+    return reset;
 }
 
 std::shared_ptr<dsp::Input> dsp::VariableDelay::getDecayTime() const {
@@ -84,12 +84,12 @@ void dsp::VariableDelay::processNoLock() {
             for (size_t channel = 0; channel < getNumChannels(); ++channel) {
                 Sample *bufferChannel = buffer->getWrapper().getChannelPointer(channel);
                 Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
-                Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
                 Sample *delayTimeChannel = getDelayTime()->getWrapper().getChannelPointer(channel);
+                Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
                 Sample *feedbackSourceChannel = getFeedbackSource()->getWrapper().getChannelPointer(channel);
                 Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
                 // RESET
-                if (resetTriggerChannel[sample]) {
+                if (resetChannel[sample]) {
                     buffer->getWrapper().getSingleChannel(channel).clear();
                 }
                 // WRITE

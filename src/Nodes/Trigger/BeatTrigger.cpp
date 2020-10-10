@@ -2,18 +2,14 @@
 
 dsp::BeatTrigger::BeatTrigger()
         : Producer(Type::BOOLEAN)
-        , resetTrigger(std::make_shared<Input>(Type::BOOLEAN))
         , intervalDuration(std::make_shared<Input>(Type::SECONDS))
         , delayTime(std::make_shared<Input>(Type::SECONDS))
+        , reset(std::make_shared<Input>(Type::BOOLEAN))
         , currentTime(std::make_shared<Output>(Type::SECONDS)) {
-    getInputs().push_back(resetTrigger);
     getInputs().push_back(intervalDuration);
     getInputs().push_back(delayTime);
+    getInputs().push_back(reset);
     getOutputs().push_back(currentTime);
-}
-
-std::shared_ptr<dsp::Input> dsp::BeatTrigger::getResetTrigger() const {
-    return resetTrigger;
 }
 
 std::shared_ptr<dsp::Input> dsp::BeatTrigger::getIntervalDuration() const {
@@ -22,6 +18,10 @@ std::shared_ptr<dsp::Input> dsp::BeatTrigger::getIntervalDuration() const {
 
 std::shared_ptr<dsp::Input> dsp::BeatTrigger::getDelayTime() const {
     return delayTime;
+}
+
+std::shared_ptr<dsp::Input> dsp::BeatTrigger::getReset() const {
+    return reset;
 }
 
 std::shared_ptr<dsp::Output> dsp::BeatTrigger::getCurrentTime() const {
@@ -35,13 +35,13 @@ void dsp::BeatTrigger::setNumOutputChannelsNoLock(size_t numChannels) {
 
 void dsp::BeatTrigger::processNoLock() {
     for (size_t channel = 0; channel < getNumChannels(); ++channel) {
-        Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
         Sample *intervalDurationChannel = getIntervalDuration()->getWrapper().getChannelPointer(channel);
         Sample *delayTimeChannel = getDelayTime()->getWrapper().getChannelPointer(channel);
+        Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample *currentTimeChannel = getCurrentTime()->getWrapper().getChannelPointer(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-            if (resetTriggerChannel[sample]) {
+            if (resetChannel[sample]) {
                 index[channel] = 0.0;
             }
             Sample interval = abs(intervalDurationChannel[sample] * getSampleRate());

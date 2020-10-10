@@ -4,17 +4,17 @@ dsp::CompressorGate::CompressorGate()
         : Transformer(Type::RATIO, Type::RATIO)
         , control(std::make_shared<Input>(Type::RATIO))
         , threshold(std::make_shared<Input>(Type::LOGARITHMIC))
+        , halfKnee(std::make_shared<Input>(Type::LOGARITHMIC))
         , compressionRatio(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
         , gateRatio(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
-        , halfKnee(std::make_shared<Input>(Type::LOGARITHMIC))
         , attack(std::make_shared<Input>(Type::SECONDS))
         , release(std::make_shared<Input>(Type::SECONDS))
         , gainDelta(std::make_shared<Output>(Type::LOGARITHMIC)) {
     getInputs().push_back(control);
     getInputs().push_back(threshold);
+    getInputs().push_back(halfKnee);
     getInputs().push_back(compressionRatio);
     getInputs().push_back(gateRatio);
-    getInputs().push_back(halfKnee);
     getInputs().push_back(attack);
     getInputs().push_back(release);
     getOutputs().push_back(gainDelta);
@@ -28,16 +28,16 @@ std::shared_ptr<dsp::Input> dsp::CompressorGate::getThreshold() const {
     return threshold;
 }
 
+std::shared_ptr<dsp::Input> dsp::CompressorGate::getHalfKnee() const {
+    return halfKnee;
+}
+
 std::shared_ptr<dsp::Input> dsp::CompressorGate::getCompressionRatio() const {
     return compressionRatio;
 }
 
 std::shared_ptr<dsp::Input> dsp::CompressorGate::getGateRatio() const {
     return gateRatio;
-}
-
-std::shared_ptr<dsp::Input> dsp::CompressorGate::getHalfKnee() const {
-    return halfKnee;
 }
 
 std::shared_ptr<dsp::Input> dsp::CompressorGate::getAttack() const {
@@ -72,9 +72,9 @@ void dsp::CompressorGate::processNoLock() {
         Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
         Sample *controlChannel = getControl()->getWrapper().getChannelPointer(channel);
         Sample *thresholdChannel = getThreshold()->getWrapper().getChannelPointer(channel);
+        Sample *halfKneeChannel = getHalfKnee()->getWrapper().getChannelPointer(channel);
         Sample *compressionRatioChannel = getCompressionRatio()->getWrapper().getChannelPointer(channel);
         Sample *gateRatioChannel = getGateRatio()->getWrapper().getChannelPointer(channel);
-        Sample *halfKneeChannel = getHalfKnee()->getWrapper().getChannelPointer(channel);
         Sample *attackChannel = getAttack()->getWrapper().getChannelPointer(channel);
         Sample *releaseChannel = getRelease()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
@@ -83,15 +83,15 @@ void dsp::CompressorGate::processNoLock() {
             Sample &input = inputChannel[sample];
             Sample &control = controlChannel[sample];
             Sample &threshold = thresholdChannel[sample];
+            Sample &halfKnee = halfKneeChannel[sample];
             Sample &compressionRatio = compressionRatioChannel[sample];
             Sample &gateRatio = gateRatioChannel[sample];
-            Sample &halfKnee = halfKneeChannel[sample];
             Sample &attack = attackChannel[sample];
             Sample &release = releaseChannel[sample];
             Sample &output = outputChannel[sample];
             Sample &gainDelta = gainDeltaChannel[sample];
             Sample gain = log2(abs(control));
-            Sample gainDeltaStatic = getGainDelta(gain, threshold, compressionRatio, gateRatio, halfKnee);
+            Sample gainDeltaStatic = getGainDelta(gain, threshold, halfKnee, compressionRatio, gateRatio);
             Sample decay = (abs(gainDeltaStatic) > abs(gainState[channel]) ? attack : release) * getSampleRate();
             gainState[channel] = gainDeltaStatic + pow(0.001, 1.0 / decay) * (gainState[channel] - gainDeltaStatic);
             gainDelta = gainState[channel];
@@ -102,9 +102,9 @@ void dsp::CompressorGate::processNoLock() {
 
 dsp::Sample dsp::CompressorGate::getGainDelta(const Sample &gain,
                                               const Sample &threshold,
+                                              const Sample &halfKnee,
                                               const Sample &compressionRatio,
-                                              const Sample &gateRatio,
-                                              const Sample &halfKnee) {
+                                              const Sample &gateRatio) {
     Sample gainMinusThreshold = gain - threshold;
     if (isinf(gainMinusThreshold)) {
         return 0.0;

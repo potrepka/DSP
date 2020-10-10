@@ -5,14 +5,14 @@
 dsp::Biquad::Biquad()
         : Transformer(Type::RATIO, Type::RATIO)
         , mode(Mode::LOW_PASS)
-        , resetTrigger(std::make_shared<Input>(Type::BOOLEAN))
         , frequency(std::make_shared<Input>(Type::HERTZ))
         , resonance(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
-        , gain(std::make_shared<Input>(Type::LOGARITHMIC)) {
-    getInputs().push_back(resetTrigger);
+        , gain(std::make_shared<Input>(Type::LOGARITHMIC))
+        , reset(std::make_shared<Input>(Type::BOOLEAN)) {
     getInputs().push_back(frequency);
     getInputs().push_back(resonance);
     getInputs().push_back(gain);
+    getInputs().push_back(reset);
 }
 
 dsp::Biquad::Mode dsp::Biquad::getMode() const {
@@ -25,10 +25,6 @@ void dsp::Biquad::setMode(Mode mode) {
     unlock();
 }
 
-std::shared_ptr<dsp::Input> dsp::Biquad::getResetTrigger() const {
-    return resetTrigger;
-}
-
 std::shared_ptr<dsp::Input> dsp::Biquad::getFrequency() const {
     return frequency;
 }
@@ -39,6 +35,10 @@ std::shared_ptr<dsp::Input> dsp::Biquad::getResonance() const {
 
 std::shared_ptr<dsp::Input> dsp::Biquad::getGain() const {
     return gain;
+}
+
+std::shared_ptr<dsp::Input> dsp::Biquad::getReset() const {
+    return reset;
 }
 
 void dsp::Biquad::getMagnitudeAndPhaseResponse(size_t channel,
@@ -87,10 +87,10 @@ void dsp::Biquad::setNumOutputChannelsNoLock(size_t numChannels) {
 void dsp::Biquad::processNoLock() {
     for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
-        Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
         Sample *frequencyChannel = getFrequency()->getWrapper().getChannelPointer(channel);
         Sample *resonanceChannel = getResonance()->getWrapper().getChannelPointer(channel);
         Sample *gainChannel = getGain()->getWrapper().getChannelPointer(channel);
+        Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample &x1 = xx1[channel];
         Sample &x2 = xx2[channel];
@@ -103,7 +103,7 @@ void dsp::Biquad::processNoLock() {
         Sample &b1 = bb1[channel];
         Sample &b2 = bb2[channel];
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-            if (resetTriggerChannel[sample]) {
+            if (resetChannel[sample]) {
                 x1 = 0.0;
                 x2 = 0.0;
                 y1 = 0.0;
