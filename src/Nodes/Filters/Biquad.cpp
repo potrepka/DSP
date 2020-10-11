@@ -7,11 +7,11 @@ dsp::Biquad::Biquad()
         , mode(Mode::LOW_PASS)
         , frequency(std::make_shared<Input>(Type::HERTZ))
         , resonance(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
-        , gain(std::make_shared<Input>(Type::LOGARITHMIC))
+        , amplitude(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
         , reset(std::make_shared<Input>(Type::BOOLEAN)) {
     getInputs().push_back(frequency);
     getInputs().push_back(resonance);
-    getInputs().push_back(gain);
+    getInputs().push_back(amplitude);
     getInputs().push_back(reset);
 }
 
@@ -33,8 +33,8 @@ std::shared_ptr<dsp::Input> dsp::Biquad::getResonance() const {
     return resonance;
 }
 
-std::shared_ptr<dsp::Input> dsp::Biquad::getGain() const {
-    return gain;
+std::shared_ptr<dsp::Input> dsp::Biquad::getAmplitude() const {
+    return amplitude;
 }
 
 std::shared_ptr<dsp::Input> dsp::Biquad::getReset() const {
@@ -89,7 +89,7 @@ void dsp::Biquad::processNoLock() {
         Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
         Sample *frequencyChannel = getFrequency()->getWrapper().getChannelPointer(channel);
         Sample *resonanceChannel = getResonance()->getWrapper().getChannelPointer(channel);
-        Sample *gainChannel = getGain()->getWrapper().getChannelPointer(channel);
+        Sample *amplitudeChannel = getAmplitude()->getWrapper().getChannelPointer(channel);
         Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample &x1 = xx1[channel];
@@ -109,8 +109,15 @@ void dsp::Biquad::processNoLock() {
                 y1 = 0.0;
                 y2 = 0.0;
             }
-            calculateCoefficients(
-                    frequencyChannel[sample], resonanceChannel[sample], gainChannel[sample], a0, a1, a2, b0, b1, b2);
+            calculateCoefficients(frequencyChannel[sample],
+                                  resonanceChannel[sample],
+                                  amplitudeChannel[sample],
+                                  a0,
+                                  a1,
+                                  a2,
+                                  b0,
+                                  b1,
+                                  b2);
             outputChannel[sample] = (b0 * inputChannel[sample] + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2) / a0;
             x2 = x1;
             x1 = inputChannel[sample];
@@ -122,7 +129,7 @@ void dsp::Biquad::processNoLock() {
 
 void dsp::Biquad::calculateCoefficients(const Sample &frequency,
                                         const Sample &resonance,
-                                        const Sample &gain,
+                                        const Sample &amplitude,
                                         Sample &a0,
                                         Sample &a1,
                                         Sample &a2,
@@ -164,7 +171,7 @@ void dsp::Biquad::calculateCoefficients(const Sample &frequency,
             b1 = a1;
             break;
         case Mode::LOW_SHELF: {
-            const Sample amp = exp2(0.5 * gain);
+            const Sample amp = sqrt(amplitude);
             const Sample ampPlus = amp + 1.0;
             const Sample ampMinus = amp - 1.0;
             const Sample ampPlusTimesCosW = ampPlus * cosW;
@@ -178,7 +185,7 @@ void dsp::Biquad::calculateCoefficients(const Sample &frequency,
             b2 = amp * (ampPlus - ampMinusTimesCosW - alphaScaled);
         } break;
         case Mode::HIGH_SHELF: {
-            const Sample amp = exp2(0.5 * gain);
+            const Sample amp = sqrt(amplitude);
             const Sample ampPlus = amp + 1.0;
             const Sample ampMinus = amp - 1.0;
             const Sample ampPlusTimesCosW = ampPlus * cosW;
@@ -192,7 +199,7 @@ void dsp::Biquad::calculateCoefficients(const Sample &frequency,
             b2 = amp * (ampPlus + ampMinusTimesCosW - alphaScaled);
         } break;
         case Mode::PEAK: {
-            const Sample amp = exp2(0.5 * gain);
+            const Sample amp = sqrt(amplitude);
             const Sample alphaMore = alpha * amp;
             const Sample alphaLess = alpha / amp;
             a0 = 1.0 + alphaLess;

@@ -16,7 +16,7 @@ public:
 
     std::shared_ptr<Input> getFrequency() const;
     std::shared_ptr<Input> getResonance() const;
-    std::shared_ptr<Input> getGain() const;
+    std::shared_ptr<Input> getAmplitude() const;
     std::shared_ptr<Input> getReset() const;
 
     void getMagnitudeAndPhaseResponse(size_t channel, Sample frequency, Sample &magnitude, Sample &phase) const;
@@ -29,7 +29,7 @@ private:
     Mode mode;
     const std::shared_ptr<Input> frequency;
     const std::shared_ptr<Input> resonance;
-    const std::shared_ptr<Input> gain;
+    const std::shared_ptr<Input> amplitude;
     const std::shared_ptr<Input> reset;
     Array xx1;
     Array xx2;
@@ -44,7 +44,7 @@ private:
 
     void calculateCoefficients(const Sample &frequency,
                                const Sample &resonance,
-                               const Sample &gain,
+                               const Sample &amplitude,
                                Sample &a0,
                                Sample &a1,
                                Sample &a2,
