@@ -7,7 +7,7 @@ namespace dsp {
 class Consumer : virtual public Node {
 
 public:
-    Consumer(Type type, Space space = Space::TIME);
+    Consumer(Type type = Type::RATIO, Space space = Space::TIME);
 
     std::shared_ptr<Input> getInput() const;
 

@@ -7,7 +7,7 @@ namespace dsp {
 class SampleAndHold : public Transformer {
 
 public:
-    SampleAndHold(Type type);
+    SampleAndHold(Type type = Type::RATIO);
 
     std::shared_ptr<Input> getGate() const;
     std::shared_ptr<Input> getReset() const;

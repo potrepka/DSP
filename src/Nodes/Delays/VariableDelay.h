@@ -7,7 +7,7 @@ namespace dsp {
 class VariableDelay : public Transformer {
 
 public:
-    VariableDelay(Type type);
+    VariableDelay(Type type = Type::RATIO);
 
     Sample getMaxDelayTime() const;
     void setMaxDelayTime(Sample seconds);

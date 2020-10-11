@@ -9,7 +9,7 @@ class Spread : public Transformer {
 public:
     enum class Mode { UNIPOLAR, BIPOLAR };
 
-    Spread(Type type, Space space = Space::TIME);
+    Spread(Type type = Type::RATIO, Space space = Space::TIME);
 
     Mode getMode() const;
     void setMode(Mode mode);

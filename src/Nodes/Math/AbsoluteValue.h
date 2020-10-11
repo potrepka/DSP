@@ -7,7 +7,7 @@ namespace dsp {
 class AbsoluteValue : public Transformer {
 
 public:
-    AbsoluteValue(Type type, Space space = Space::TIME);
+    AbsoluteValue(Type type = Type::RATIO, Space space = Space::TIME);
 
 protected:
     void processNoLock() override;

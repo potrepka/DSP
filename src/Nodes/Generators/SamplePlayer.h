@@ -7,7 +7,7 @@ namespace dsp {
 class SamplePlayer : public Producer {
 
 public:
-    SamplePlayer(Type type);
+    SamplePlayer(Type type = Type::RATIO);
 
     Interpolation getInterpolation() const;
     void setInterpolation(Interpolation interpolation);

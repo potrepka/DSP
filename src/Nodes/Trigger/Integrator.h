@@ -7,7 +7,7 @@ namespace dsp {
 class Integrator : public Transformer {
 
 public:
-    Integrator(Type type);
+    Integrator(Type type = Type::RATIO);
 
     std::shared_ptr<Input> getGate() const;
     std::shared_ptr<Input> getReset() const;

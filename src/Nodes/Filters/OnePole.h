@@ -9,7 +9,7 @@ class OnePole : public Transformer {
 public:
     enum class Mode { LOW_PASS, HIGH_PASS };
 
-    OnePole(Type type);
+    OnePole(Type type = Type::RATIO);
 
     Mode getMode() const;
     void setMode(Mode mode);

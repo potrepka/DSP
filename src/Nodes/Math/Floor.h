@@ -7,7 +7,7 @@ namespace dsp {
 class Floor : public Transformer {
 
 public:
-    Floor(Type type, Space space = Space::TIME);
+    Floor(Type type = Type::RATIO, Space space = Space::TIME);
 
     std::shared_ptr<Input> getDivisor() const;
 

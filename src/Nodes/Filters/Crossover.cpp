@@ -1,8 +1,8 @@
 #include "Crossover.h"
 
 dsp::Crossover::Crossover()
-        : input(std::make_shared<PassThrough>(Type::RATIO))
-        , frequency(std::make_shared<PassThrough>(Type::HERTZ))
+        : input(std::make_shared<Identity>(Type::RATIO))
+        , frequency(std::make_shared<Identity>(Type::HERTZ))
         , lp1(std::make_shared<Biquad>())
         , lp2(std::make_shared<Biquad>())
         , hp1(std::make_shared<Biquad>())

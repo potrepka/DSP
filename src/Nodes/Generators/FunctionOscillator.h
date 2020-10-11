@@ -7,7 +7,7 @@ namespace dsp {
 class FunctionOscillator : public Producer {
 
 public:
-    FunctionOscillator(Type type);
+    FunctionOscillator(Type type = Type::RATIO);
 
     std::function<Sample(Sample)> getFunction() const;
     void setFunction(std::function<Sample(Sample)> function);

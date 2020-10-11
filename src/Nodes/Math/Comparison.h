@@ -9,7 +9,7 @@ class Comparison : public Transformer {
 public:
     enum class Mode { EQUAL_TO, GREATER_THAN, LESS_THAN };
 
-    Comparison(Type type, Space space = Space::TIME);
+    Comparison(Type type = Type::RATIO, Space space = Space::TIME);
 
     Mode getMode() const;
     void setMode(Mode mode);

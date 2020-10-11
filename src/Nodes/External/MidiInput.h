@@ -9,7 +9,7 @@ namespace dsp {
 class MidiInput : public Producer {
 
 public:
-    MidiInput(Type type, std::shared_ptr<MidiBuffer> inputMessages);
+    MidiInput(std::shared_ptr<MidiBuffer> inputMessages, Type type = Type::RATIO);
 
     std::shared_ptr<MidiBuffer> getInputMessages() const;
 

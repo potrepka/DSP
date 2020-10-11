@@ -7,7 +7,7 @@ namespace dsp {
 class Sequencer : public Producer {
 
 public:
-    Sequencer(Type type, Space space = Space::TIME);
+    Sequencer(Type type = Type::RATIO, Space space = Space::TIME);
 
     std::vector<std::shared_ptr<Buffer>> &getSequences();
 
