@@ -46,7 +46,6 @@ int main() {
 
 The following are possible directions for future development:
 - Additional filters
-- Frequency response calculation
 - Pitch detection
 - Pitch shifting
 - Saving state
