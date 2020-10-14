@@ -4,13 +4,13 @@ dsp::MoorerOscillator::MoorerOscillator()
         : Producer(Type::RATIO)
         , mode(Mode::ONE_SIDED)
         , phase(std::make_shared<Input>(Type::RATIO))
-        , modulationIndex(std::make_shared<Input>(Type::RATIO))
         , intensity(std::make_shared<Input>(Type::RATIO))
-        , overtones(std::make_shared<Input>(Type::INTEGER)) {
+        , modulationIndex(std::make_shared<Input>(Type::RATIO))
+        , harmonics(std::make_shared<Input>(Type::INTEGER)) {
     getInputs().push_back(phase);
-    getInputs().push_back(modulationIndex);
     getInputs().push_back(intensity);
-    getInputs().push_back(overtones);
+    getInputs().push_back(modulationIndex);
+    getInputs().push_back(harmonics);
 }
 
 dsp::MoorerOscillator::Mode dsp::MoorerOscillator::getMode() const {
@@ -27,33 +27,33 @@ std::shared_ptr<dsp::Input> dsp::MoorerOscillator::getPhase() const {
     return phase;
 }
 
-std::shared_ptr<dsp::Input> dsp::MoorerOscillator::getModulationIndex() const {
-    return modulationIndex;
-}
-
 std::shared_ptr<dsp::Input> dsp::MoorerOscillator::getIntensity() const {
     return intensity;
 }
 
-std::shared_ptr<dsp::Input> dsp::MoorerOscillator::getOvertones() const {
-    return overtones;
+std::shared_ptr<dsp::Input> dsp::MoorerOscillator::getModulationIndex() const {
+    return modulationIndex;
+}
+
+std::shared_ptr<dsp::Input> dsp::MoorerOscillator::getHarmonics() const {
+    return harmonics;
 }
 
 void dsp::MoorerOscillator::processNoLock() {
     for (int channel = 0; channel < getNumChannels(); ++channel) {
         Sample *phaseChannel = getPhase()->getWrapper().getChannelPointer(channel);
-        Sample *modulationIndexChannel = getModulationIndex()->getWrapper().getChannelPointer(channel);
         Sample *intensityChannel = getIntensity()->getWrapper().getChannelPointer(channel);
-        Sample *overtonesChannel = getOvertones()->getWrapper().getChannelPointer(channel);
+        Sample *modulationIndexChannel = getModulationIndex()->getWrapper().getChannelPointer(channel);
+        Sample *harmonicsChannel = getHarmonics()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
             Sample a = clip(intensityChannel[sample], 0.0, 1.0);
-            if (a == 1.0) {
+            Sample n = harmonicsChannel[sample] - 1.0;
+            if (a == 1.0 || n < 0.0) {
                 outputChannel[sample] = 0.0;
             } else {
                 Sample t = TAU * phaseChannel[sample];
                 Sample s = modulationIndexChannel[sample] * t;
-                Sample n = overtonesChannel[sample] >= 0.0 ? overtonesChannel[sample] : 0.0;
                 size_t nFloor = static_cast<size_t>(n);
                 Sample aa = a * a;
                 Sample a1 = a;

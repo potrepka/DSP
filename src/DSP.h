@@ -36,11 +36,10 @@
 
 #include "Nodes/Generators/FunctionOscillator.h"
 #include "Nodes/Generators/MoorerOscillator.h"
+#include "Nodes/Generators/Noise.h"
 #include "Nodes/Generators/Phasor.h"
-#include "Nodes/Generators/PinkNoise.h"
 #include "Nodes/Generators/SamplePlayer.h"
 #include "Nodes/Generators/TableOscillator.h"
-#include "Nodes/Generators/WhiteNoise.h"
 
 #include "Nodes/Math/AbsoluteValue.h"
 #include "Nodes/Math/BooleanMask.h"
@@ -59,7 +58,7 @@
 #include "Nodes/Math/NotGate.h"
 #include "Nodes/Math/Reciprocal.h"
 
-#include "Nodes/Trigger/BeatTrigger.h"
+#include "Nodes/Trigger/ClockTrigger.h"
 #include "Nodes/Trigger/Differentiator.h"
 #include "Nodes/Trigger/Integrator.h"
 #include "Nodes/Trigger/OnOff.h"

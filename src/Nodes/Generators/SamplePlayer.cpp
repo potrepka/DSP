@@ -3,15 +3,15 @@
 dsp::SamplePlayer::SamplePlayer(Type type)
         : Producer(type)
         , interpolation(Interpolation::HERMITE)
-        , sampleIndex(std::make_shared<Input>(Type::INTEGER))
         , speed(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
-        , offsetTime(std::make_shared<Input>(Type::SECONDS))
+        , startTime(std::make_shared<Input>(Type::SECONDS))
+        , sampleIndex(std::make_shared<Input>(Type::INTEGER))
         , gate(std::make_shared<Input>(Type::BOOLEAN))
         , reset(std::make_shared<Input>(Type::BOOLEAN))
         , currentTime(std::make_shared<Output>(Type::SECONDS)) {
-    getInputs().push_back(sampleIndex);
     getInputs().push_back(speed);
-    getInputs().push_back(offsetTime);
+    getInputs().push_back(startTime);
+    getInputs().push_back(sampleIndex);
     getInputs().push_back(gate);
     getInputs().push_back(reset);
     getOutputs().push_back(currentTime);
@@ -31,16 +31,16 @@ std::vector<std::shared_ptr<dsp::Buffer>> &dsp::SamplePlayer::getSamples() {
     return samples;
 }
 
-std::shared_ptr<dsp::Input> dsp::SamplePlayer::getSampleIndex() const {
-    return sampleIndex;
-}
-
 std::shared_ptr<dsp::Input> dsp::SamplePlayer::getSpeed() const {
     return speed;
 }
 
-std::shared_ptr<dsp::Input> dsp::SamplePlayer::getOffsetTime() const {
-    return offsetTime;
+std::shared_ptr<dsp::Input> dsp::SamplePlayer::getStartTime() const {
+    return startTime;
+}
+
+std::shared_ptr<dsp::Input> dsp::SamplePlayer::getSampleIndex() const {
+    return sampleIndex;
 }
 
 std::shared_ptr<dsp::Input> dsp::SamplePlayer::getGate() const {
@@ -68,9 +68,9 @@ void dsp::SamplePlayer::processNoLock() {
             }
         }
         for (size_t channel = 0; channel < getNumChannels(); ++channel) {
-            Sample *sampleIndexChannel = getSampleIndex()->getWrapper().getChannelPointer(channel);
             Sample *speedChannel = getSpeed()->getWrapper().getChannelPointer(channel);
-            Sample *offsetTimeChannel = getOffsetTime()->getWrapper().getChannelPointer(channel);
+            Sample *startTimeChannel = getStartTime()->getWrapper().getChannelPointer(channel);
+            Sample *sampleIndexChannel = getSampleIndex()->getWrapper().getChannelPointer(channel);
             Sample *gateChannel = getGate()->getWrapper().getChannelPointer(channel);
             Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
             Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
@@ -86,7 +86,7 @@ void dsp::SamplePlayer::processNoLock() {
                     if (numChannels > 0 && numSamples > 0) {
                         Sample *sampleChannel = samples[p]->getWrapper().getChannelPointer(channel % numChannels);
                         if (gateChannel[sample]) {
-                            Sample offset = offsetTimeChannel[sample] * getSampleRate();
+                            Sample offset = startTimeChannel[sample] * getSampleRate();
                             Sample index = clip(readIndex[channel] + offset, 0.0, numSamples);
                             Array points;
                             switch (interpolation) {

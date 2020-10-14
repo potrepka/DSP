@@ -9,7 +9,7 @@ dsp::CompressorGate::CompressorGate()
         , gateRatio(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
         , attack(std::make_shared<Input>(Type::SECONDS))
         , release(std::make_shared<Input>(Type::SECONDS))
-        , gainDelta(std::make_shared<Output>(Type::LOGARITHMIC)) {
+        , gainResponse(std::make_shared<Output>(Type::LOGARITHMIC)) {
     getInputs().push_back(control);
     getInputs().push_back(threshold);
     getInputs().push_back(halfKnee);
@@ -17,7 +17,7 @@ dsp::CompressorGate::CompressorGate()
     getInputs().push_back(gateRatio);
     getInputs().push_back(attack);
     getInputs().push_back(release);
-    getOutputs().push_back(gainDelta);
+    getOutputs().push_back(gainResponse);
 }
 
 std::shared_ptr<dsp::Input> dsp::CompressorGate::getControl() const {
@@ -48,23 +48,23 @@ std::shared_ptr<dsp::Input> dsp::CompressorGate::getRelease() const {
     return release;
 }
 
-std::shared_ptr<dsp::Output> dsp::CompressorGate::getGainDelta() const {
-    return gainDelta;
+std::shared_ptr<dsp::Output> dsp::CompressorGate::getGainResponse() const {
+    return gainResponse;
 }
 
-dsp::Sample dsp::CompressorGate::getGainDelta(size_t channel, Sample gain) const {
+dsp::Sample dsp::CompressorGate::getGainResponse(size_t channel, Sample gain) const {
     DSP_ASSERT(channel < getNumChannels());
     size_t lastSample = getNumSamples() - 1;
-    return getGainDelta(gain,
-                        getThreshold()->getWrapper().getSample(channel, lastSample),
-                        getCompressionRatio()->getWrapper().getSample(channel, lastSample),
-                        getGateRatio()->getWrapper().getSample(channel, lastSample),
-                        getHalfKnee()->getWrapper().getSample(channel, lastSample));
+    return getGainResponse(gain,
+                           getThreshold()->getWrapper().getSample(channel, lastSample),
+                           getCompressionRatio()->getWrapper().getSample(channel, lastSample),
+                           getGateRatio()->getWrapper().getSample(channel, lastSample),
+                           getHalfKnee()->getWrapper().getSample(channel, lastSample));
 }
 
 void dsp::CompressorGate::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
-    gainState.resize(numChannels, 0.0);
+    state.resize(numChannels, 0.0);
 }
 
 void dsp::CompressorGate::processNoLock() {
@@ -78,7 +78,7 @@ void dsp::CompressorGate::processNoLock() {
         Sample *attackChannel = getAttack()->getWrapper().getChannelPointer(channel);
         Sample *releaseChannel = getRelease()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
-        Sample *gainDeltaChannel = getGainDelta()->getWrapper().getChannelPointer(channel);
+        Sample *gainResponseChannel = getGainResponse()->getWrapper().getChannelPointer(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             Sample &input = inputChannel[sample];
             Sample &control = controlChannel[sample];
@@ -89,22 +89,22 @@ void dsp::CompressorGate::processNoLock() {
             Sample &attack = attackChannel[sample];
             Sample &release = releaseChannel[sample];
             Sample &output = outputChannel[sample];
-            Sample &gainDelta = gainDeltaChannel[sample];
+            Sample &gainResponse = gainResponseChannel[sample];
             Sample gain = log2(abs(control));
-            Sample gainDeltaStatic = getGainDelta(gain, threshold, halfKnee, compressionRatio, gateRatio);
-            Sample decay = (abs(gainDeltaStatic) > abs(gainState[channel]) ? attack : release) * getSampleRate();
-            gainState[channel] = gainDeltaStatic + pow(0.001, 1.0 / decay) * (gainState[channel] - gainDeltaStatic);
-            gainDelta = gainState[channel];
-            output = input * exp2(gainDelta);
+            Sample gainResponseTarget = getGainResponse(gain, threshold, halfKnee, compressionRatio, gateRatio);
+            Sample decay = (abs(gainResponseTarget) > abs(state[channel]) ? attack : release) * getSampleRate();
+            state[channel] = gainResponseTarget + pow(0.001, 1.0 / decay) * (state[channel] - gainResponseTarget);
+            gainResponse = state[channel];
+            output = input * exp2(gainResponse);
         }
     }
 }
 
-dsp::Sample dsp::CompressorGate::getGainDelta(const Sample &gain,
-                                              const Sample &threshold,
-                                              const Sample &halfKnee,
-                                              const Sample &compressionRatio,
-                                              const Sample &gateRatio) {
+dsp::Sample dsp::CompressorGate::getGainResponse(const Sample &gain,
+                                                 const Sample &threshold,
+                                                 const Sample &halfKnee,
+                                                 const Sample &compressionRatio,
+                                                 const Sample &gateRatio) {
     Sample gainMinusThreshold = gain - threshold;
     if (isinf(gainMinusThreshold)) {
         return 0.0;

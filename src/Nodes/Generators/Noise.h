@@ -4,10 +4,15 @@
 
 namespace dsp {
 
-class PinkNoise : public Producer {
+class Noise : public Producer {
 
 public:
-    PinkNoise();
+    enum class Mode { WHITE, PINK };
+
+    Noise();
+
+    Mode getMode() const;
+    void setMode(Mode mode);
 
 protected:
     void setNumOutputChannelsNoLock(size_t numChannels) override;
@@ -21,6 +26,7 @@ private:
     static Wrapper noiseCoefficients;
     static const Sample delayedNoiseCoefficient;
 
+    Mode mode;
     std::vector<int> seed;
     Data whiteData;
     Data memoryData;

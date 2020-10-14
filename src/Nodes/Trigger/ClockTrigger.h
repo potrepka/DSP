@@ -4,12 +4,12 @@
 
 namespace dsp {
 
-class BeatTrigger : public Producer {
+class ClockTrigger : public Producer {
 
 public:
-    BeatTrigger();
+    ClockTrigger();
 
-    std::shared_ptr<Input> getIntervalTime() const;
+    std::shared_ptr<Input> getInterval() const;
     std::shared_ptr<Input> getDelayTime() const;
     std::shared_ptr<Input> getReset() const;
     std::shared_ptr<Output> getCurrentTime() const;
@@ -19,7 +19,7 @@ protected:
     void processNoLock() override;
 
 private:
-    const std::shared_ptr<Input> intervalTime;
+    const std::shared_ptr<Input> interval;
     const std::shared_ptr<Input> delayTime;
     const std::shared_ptr<Input> reset;
     const std::shared_ptr<Output> currentTime;

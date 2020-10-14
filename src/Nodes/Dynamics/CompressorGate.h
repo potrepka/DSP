@@ -16,9 +16,9 @@ public:
     std::shared_ptr<Input> getGateRatio() const;
     std::shared_ptr<Input> getAttack() const;
     std::shared_ptr<Input> getRelease() const;
-    std::shared_ptr<Output> getGainDelta() const;
+    std::shared_ptr<Output> getGainResponse() const;
 
-    Sample getGainDelta(size_t channel, Sample gain) const;
+    Sample getGainResponse(size_t channel, Sample gain) const;
 
 protected:
     void setNumOutputChannelsNoLock(size_t numChannels) override;
@@ -32,14 +32,14 @@ private:
     const std::shared_ptr<Input> gateRatio;
     const std::shared_ptr<Input> attack;
     const std::shared_ptr<Input> release;
-    const std::shared_ptr<Output> gainDelta;
-    Array gainState;
+    const std::shared_ptr<Output> gainResponse;
+    Array state;
 
-    static Sample getGainDelta(const Sample &gain,
-                               const Sample &threshold,
-                               const Sample &halfKnee,
-                               const Sample &compressionRatio,
-                               const Sample &gateRatio);
+    static Sample getGainResponse(const Sample &gain,
+                                  const Sample &threshold,
+                                  const Sample &halfKnee,
+                                  const Sample &compressionRatio,
+                                  const Sample &gateRatio);
 };
 
 } // namespace dsp
