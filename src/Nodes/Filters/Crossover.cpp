@@ -58,9 +58,3 @@ void dsp::Crossover::setNumOutputChannelsNoLock(size_t numChannels) {
         child->setNumOutputChannels(numChannels);
     }
 }
-
-void dsp::Crossover::processNoLock() {
-    for (const auto &child : getChildren()) {
-        child->process();
-    }
-}

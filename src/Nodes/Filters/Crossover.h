@@ -18,7 +18,6 @@ public:
 protected:
     void setNumInputChannelsNoLock(size_t numChannels) override;
     void setNumOutputChannelsNoLock(size_t numChannels) override;
-    void processNoLock() override;
 
 private:
     const std::shared_ptr<Identity> input;

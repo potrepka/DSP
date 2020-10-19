@@ -95,6 +95,25 @@ std::vector<std::shared_ptr<dsp::Node>> &dsp::Node::getChildren() {
     return children;
 }
 
+void dsp::Node::addChild(std::shared_ptr<Node> node) {
+    DSP_ASSERT(node != nullptr);
+    lock();
+    node->setNumSamples(numSamples);
+    node->setSampleRate(sampleRate);
+    children.push_back(node);
+    unlock();
+}
+
+void dsp::Node::removeChild(std::shared_ptr<Node> node) {
+    DSP_ASSERT(node != nullptr);
+    lock();
+    auto it = std::find(children.rbegin(), children.rend(), node);
+    if (it != children.rend()) {
+        children.erase(--it.base());
+    }
+    unlock();
+}
+
 void dsp::Node::sortChildren() {
     lock();
     if (children.size() > 0) {
@@ -235,5 +254,11 @@ void dsp::Node::setSampleRateNoLock(double sampleRate) {
     oneOverSampleRate = 1.0 / sampleRate;
     for (const auto &child : children) {
         child->setSampleRate(sampleRate);
+    }
+}
+
+void dsp::Node::processNoLock() {
+    for (const auto &child : getChildren()) {
+        child->process();
     }
 }
