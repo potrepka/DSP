@@ -3,7 +3,10 @@
 dsp::InverseFFT::InverseFFT()
         : Producer(Type::RATIO)
         , magnitude(std::make_shared<Input>(Type::RATIO, Space::FREQUENCY))
-        , phase(std::make_shared<Input>(Type::RATIO, Space::FREQUENCY)) {}
+        , phase(std::make_shared<Input>(Type::RATIO, Space::FREQUENCY)) {
+    getInputs().push_back(magnitude);
+    getInputs().push_back(phase);
+}
 
 std::shared_ptr<dsp::Input> dsp::InverseFFT::getMagnitude() const {
     return magnitude;
