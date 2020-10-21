@@ -28,6 +28,7 @@ void dsp::Differentiator::processNoLock() {
         Sample *gateChannel = getGate()->getWrapper().getChannelPointer(channel);
         Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
+        Sample channelValue = getOutput()->getChannelValue(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             if (resetChannel[sample]) {
                 state[channel] = std::numeric_limits<Sample>::quiet_NaN();
@@ -39,8 +40,7 @@ void dsp::Differentiator::processNoLock() {
             if (resetChannel[sample] || gateChannel[sample]) {
                 memory[channel] = inputChannel[sample];
             }
-            outputChannel[sample] =
-                    std::isnan(state[channel]) ? getOutput()->getChannelValues()[channel] : state[channel];
+            outputChannel[sample] = std::isnan(state[channel]) ? channelValue : state[channel];
         }
     }
 }
