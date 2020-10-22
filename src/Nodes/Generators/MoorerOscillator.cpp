@@ -60,7 +60,7 @@ void dsp::MoorerOscillator::processNoLock() {
                 for (size_t j = 0; j < nFloor / 2; ++j) {
                     a1 *= aa;
                 }
-                a1 *= nFloor % 2 ? a : 1;
+                a1 *= nFloor & 1 ? a : 1;
                 Sample scale;
                 Sample numerator;
                 switch (mode) {

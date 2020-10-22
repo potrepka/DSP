@@ -82,7 +82,7 @@ void dsp::Envelope::processNoLock() {
                         }
                         break;
                     case Mode::EXPONENTIAL:
-                        value[channel] = 1.0 + pow(0.001, 1.0 / attackPosition) * (value[channel] - 1.0);
+                        value[channel] = 1.0 - pow(0.001, 1.0 / attackPosition) * (1.0 - value[channel]);
                         break;
                 }
                 currentTimeChannel[sample] = attackIndex[channel] * getOneOverSampleRate();

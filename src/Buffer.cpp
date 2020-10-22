@@ -211,7 +211,7 @@ void dsp::Input::processNoLock() {
         }
     }
     if (type == Type::BOOLEAN && mode == Mode::SUM) {
-        wrapper.apply([](Sample x) { return fmod(x, 2.0); });
+        wrapper.apply([](Sample x) { return static_cast<uint32_t>(x) & 1; });
     }
 }
 
