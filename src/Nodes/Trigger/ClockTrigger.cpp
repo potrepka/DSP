@@ -48,15 +48,10 @@ void dsp::ClockTrigger::processNoLock() {
             Sample delayTime = delayTimeChannel[sample] * getSampleRate();
             Sample adjusted = index[channel] - delayTime;
             if (adjusted >= interval) {
-                if (interval) {
-                    index[channel] -= floor(adjusted / interval) * interval;
-                    adjusted = index[channel] - delayTime;
-                } else {
-                    index[channel] = delayTime;
-                    adjusted = 0.0;
-                }
+                index[channel] = interval ? index[channel] - floor(adjusted / interval) * interval : delayTime;
+                adjusted = interval ? index[channel] - delayTime : 0.0;
             }
-            outputChannel[sample] = adjusted < 1.0;
+            outputChannel[sample] = adjusted >= 0.0 && adjusted < 1.0;
             currentTimeChannel[sample] = adjusted * getOneOverSampleRate();
             index[channel] += 1.0;
         }
