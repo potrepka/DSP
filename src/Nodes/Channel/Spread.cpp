@@ -12,7 +12,9 @@ dsp::Spread::Mode dsp::Spread::getMode() const {
 }
 
 void dsp::Spread::setMode(Mode mode) {
+    lock();
     this->mode = mode;
+    unlock();
 }
 
 std::shared_ptr<dsp::Input> dsp::Spread::getSpread() const {

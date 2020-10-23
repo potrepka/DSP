@@ -12,7 +12,9 @@ dsp::Shaper::Mode dsp::Shaper::getMode() const {
 }
 
 void dsp::Shaper::setMode(Mode mode) {
+    lock();
     this->mode = mode;
+    unlock();
 }
 
 std::shared_ptr<dsp::Input> dsp::Shaper::getDrive() const {
@@ -20,7 +22,7 @@ std::shared_ptr<dsp::Input> dsp::Shaper::getDrive() const {
 }
 
 void dsp::Shaper::processNoLock() {
-    transform(getDrive(), [this](Sample x, Sample y) {
+    getOutput()->getWrapper().replaceWithApplicationOf([this](Sample x, Sample y) {
         if (y == 0.0) {
             return 0.0;
         }
@@ -41,5 +43,5 @@ void dsp::Shaper::processNoLock() {
                                : (y - y / (1.0 + yMinusOne * x)) / yMinusOne;
             }
         }
-    });
+    }, getInput()->getWrapper(), getDrive()->getWrapper());
 }

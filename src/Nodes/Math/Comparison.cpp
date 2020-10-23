@@ -22,9 +22,14 @@ std::shared_ptr<dsp::Input> dsp::Comparison::getThreshold() const {
 }
 
 void dsp::Comparison::processNoLock() {
-    switch (mode) {
-        case Mode::EQUAL_TO: transform(getThreshold(), [](Sample x, Sample y) { return x == y; }); break;
-        case Mode::GREATER_THAN: transform(getThreshold(), [](Sample x, Sample y) { return x > y; }); break;
-        case Mode::LESS_THAN: transform(getThreshold(), [](Sample x, Sample y) { return x < y; }); break;
-    }
+    getOutput()->getWrapper().replaceWithApplicationOf(
+            [this](Sample x, Sample y) {
+                switch (mode) {
+                    case Mode::EQUAL_TO: return x == y;
+                    case Mode::GREATER_THAN: return x > y;
+                    case Mode::LESS_THAN: return x < y;
+                }
+            },
+            getInput()->getWrapper(),
+            getThreshold()->getWrapper());
 }

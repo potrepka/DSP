@@ -6,5 +6,5 @@ dsp::Reciprocal::Reciprocal(Type type, Space space)
                       space) {}
 
 void dsp::Reciprocal::processNoLock() {
-    transform([](Sample x) { return 1.0 / x; });
+    getOutput()->getWrapper().replaceWithApplicationOf([](Sample x) { return 1.0 / x; }, getInput()->getWrapper());
 }

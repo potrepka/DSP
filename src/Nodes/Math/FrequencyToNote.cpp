@@ -11,5 +11,10 @@ std::shared_ptr<dsp::Input> dsp::FrequencyToNote::getTuningFrequency() const {
 }
 
 void dsp::FrequencyToNote::processNoLock() {
-    transform(getTuningFrequency(), [](Sample x, Sample y) { return y == 0.0 ? 0.0 : 12.0 * log2(x / y) + 69.0; });
+    getOutput()->getWrapper().replaceWithApplicationOf(
+            [](Sample x, Sample y) { return y == 0.0 ? 0.0 : log2(x / y); },
+            getInput()->getWrapper(),
+            getTuningFrequency()->getWrapper());
+    getOutput()->getWrapper().multiplyBy(12.0);
+    getOutput()->getWrapper().add(69.0);
 }
