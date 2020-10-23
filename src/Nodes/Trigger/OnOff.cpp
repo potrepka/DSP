@@ -18,7 +18,7 @@ std::shared_ptr<dsp::Input> dsp::OnOff::getOffTrigger() const {
 
 void dsp::OnOff::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
-    state.resize(numChannels, false);
+    state.resize(numChannels, 0);
 }
 
 void dsp::OnOff::processNoLock() {
@@ -28,10 +28,10 @@ void dsp::OnOff::processNoLock() {
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             if (onTriggerChannel[sample]) {
-                state[channel] = true;
+                state[channel] = 1;
             }
             if (offTriggerChannel[sample]) {
-                state[channel] = false;
+                state[channel] = 0;
             }
             outputChannel[sample] = state[channel];
         }
