@@ -39,6 +39,8 @@ public:
     std::vector<std::shared_ptr<Output>> &getOutputs();
     std::vector<std::shared_ptr<Node>> &getChildren();
 
+    void addChild(std::shared_ptr<Node> node);
+    void removeChild(std::shared_ptr<Node> node);
     void sortChildren();
 
     void disconnectAll();
@@ -53,7 +55,7 @@ protected:
     virtual void setNumOutputChannelsNoLock(size_t numOutputChannels);
     virtual void setNumSamplesNoLock(size_t numSamples);
     virtual void setSampleRateNoLock(double sampleRate);
-    virtual void processNoLock() {}
+    virtual void processNoLock();
 
 private:
     bool active;

@@ -15,7 +15,7 @@ void dsp::ChannelMerger::setNumOutputChannelsNoLock(size_t numChannels) {
         inputs.resize(numChannels);
     } else {
         inputs.reserve(numChannels);
-        for (size_t channel = numChannels; channel < getNumOutputChannels(); ++channel) {
+        for (size_t channel = getNumOutputChannels(); channel < numChannels; ++channel) {
             inputs.push_back(std::make_shared<Input>(getOutput()->getType(),
                                                      getOutput()->getSpace(),
                                                      getOutput()->getDefaultValue(),

@@ -7,7 +7,7 @@ namespace dsp {
 class Producer : virtual public Node {
 
 public:
-    Producer(Type type, Space space = Space::TIME);
+    Producer(Type type = Type::RATIO, Space space = Space::TIME);
 
     std::shared_ptr<Output> getOutput() const;
 

@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class MultiplyHertzSeconds : public Producer {
+class MultiplyFrequencyTime : public Producer {
 
 public:
-    MultiplyHertzSeconds(Space space = Space::TIME);
+    MultiplyFrequencyTime(Space space = Space::TIME);
 
     std::shared_ptr<Input> getFrequency() const;
     std::shared_ptr<Input> getTime() const;

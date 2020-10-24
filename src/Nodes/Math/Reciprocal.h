@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class OneOver : public Transformer {
+class Reciprocal : public Transformer {
 
 public:
-    OneOver(Type type, Space space = Space::TIME);
+    Reciprocal(Type type = Type::RATIO, Space space = Space::TIME);
 
 protected:
     void processNoLock() override;

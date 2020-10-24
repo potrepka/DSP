@@ -11,5 +11,5 @@ std::shared_ptr<dsp::Input> dsp::Modulo::getDivisor() const {
 }
 
 void dsp::Modulo::processNoLock() {
-    transform(getDivisor(), wrap);
+    getOutput()->getWrapper().replaceWithApplicationOf(wrap, getInput()->getWrapper(), getDivisor()->getWrapper());
 }

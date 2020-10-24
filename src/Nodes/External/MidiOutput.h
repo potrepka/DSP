@@ -9,7 +9,7 @@ namespace dsp {
 class MidiOutput : public Consumer {
 
 public:
-    MidiOutput(Type type, std::shared_ptr<MidiBuffer> outputMessages);
+    MidiOutput(std::shared_ptr<MidiBuffer> outputMessages, Type type = Type::RATIO);
 
     std::shared_ptr<MidiBuffer> getOutputMessages() const;
 

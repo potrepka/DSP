@@ -7,10 +7,10 @@ dsp::Recorder::Recorder(Type type, Space space, Sample defaultValue)
         , recordingNumSamples(0.0)
         , primary(std::make_shared<Buffer>(type, space, 0, 0, defaultValue))
         , secondary(std::make_shared<Buffer>(type, space, 0, 0, defaultValue))
-        , resetTrigger(std::make_shared<Input>(Type::BINARY))
-        , gate(std::make_shared<Input>(Type::BINARY)) {
-    getInputs().push_back(resetTrigger);
+        , gate(std::make_shared<Input>(Type::BOOLEAN))
+        , reset(std::make_shared<Input>(Type::BOOLEAN)) {
     getInputs().push_back(gate);
+    getInputs().push_back(reset);
 }
 
 dsp::Recorder::Mode dsp::Recorder::getMode() const {
@@ -43,12 +43,12 @@ std::shared_ptr<dsp::Buffer> dsp::Recorder::getRecordingBuffer() const {
     return primary;
 }
 
-std::shared_ptr<dsp::Input> dsp::Recorder::getResetTrigger() const {
-    return resetTrigger;
-}
-
 std::shared_ptr<dsp::Input> dsp::Recorder::getGate() const {
     return gate;
+}
+
+std::shared_ptr<dsp::Input> dsp::Recorder::getReset() const {
+    return reset;
 }
 
 void dsp::Recorder::setNumInputChannelsNoLock(size_t numChannels) {
@@ -73,10 +73,10 @@ void dsp::Recorder::processNoLock() {
     if (recordingNumSamples > 0.0) {
         for (size_t channel = 0; channel < getNumChannels(); ++channel) {
             Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
-            Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
             Sample *gateChannel = getGate()->getWrapper().getChannelPointer(channel);
+            Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
             for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-                if (resetTriggerChannel[sample]) {
+                if (resetChannel[sample]) {
                     writeIndex[channel] = 0.0;
                 }
                 if (gateChannel[sample]) {

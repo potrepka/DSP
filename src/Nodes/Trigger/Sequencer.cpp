@@ -3,9 +3,9 @@
 dsp::Sequencer::Sequencer(Type type, Space space)
         : Producer(type, space)
         , sequenceIndex(std::make_shared<Input>(Type::INTEGER))
-        , index(std::make_shared<Input>(Type::INTEGER)) {
+        , positionIndex(std::make_shared<Input>(Type::INTEGER)) {
     getInputs().push_back(sequenceIndex);
-    getInputs().push_back(index);
+    getInputs().push_back(positionIndex);
 }
 
 std::vector<std::shared_ptr<dsp::Buffer>> &dsp::Sequencer::getSequences() {
@@ -16,8 +16,8 @@ std::shared_ptr<dsp::Input> dsp::Sequencer::getSequenceIndex() const {
     return sequenceIndex;
 }
 
-std::shared_ptr<dsp::Input> dsp::Sequencer::getIndex() const {
-    return index;
+std::shared_ptr<dsp::Input> dsp::Sequencer::getPositionIndex() const {
+    return positionIndex;
 }
 
 void dsp::Sequencer::processNoLock() {
@@ -29,7 +29,7 @@ void dsp::Sequencer::processNoLock() {
         }
         for (size_t channel = 0; channel < getNumChannels(); ++channel) {
             Sample *sequenceIndexChannel = getSequenceIndex()->getWrapper().getChannelPointer(channel);
-            Sample *indexChannel = getIndex()->getWrapper().getChannelPointer(channel);
+            Sample *positionIndexChannel = getPositionIndex()->getWrapper().getChannelPointer(channel);
             Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
             for (size_t sample = 0; sample < getNumSamples(); ++sample) {
                 size_t p = static_cast<size_t>(sequenceIndexChannel[sample]);
@@ -38,7 +38,7 @@ void dsp::Sequencer::processNoLock() {
                     size_t numSamples = sequences[p]->getNumSamples();
                     if (numChannels > 0 && numSamples > 0) {
                         Sample *sequenceChannel = sequences[p]->getWrapper().getChannelPointer(channel % numChannels);
-                        size_t index = static_cast<size_t>(indexChannel[sample]) % numSamples;
+                        size_t index = static_cast<size_t>(positionIndexChannel[sample]) % numSamples;
                         outputChannel[sample] = sequenceChannel[index + (index < 0) * numSamples];
                     } else {
                         outputChannel[sample] = sequences[p]->getDefaultValue();

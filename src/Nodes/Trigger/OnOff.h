@@ -19,7 +19,7 @@ protected:
 private:
     const std::shared_ptr<Input> onTrigger;
     const std::shared_ptr<Input> offTrigger;
-    std::vector<bool> state;
+    std::vector<int> state;
 };
 
 } // namespace dsp

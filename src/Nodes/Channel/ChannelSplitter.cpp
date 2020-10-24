@@ -13,7 +13,7 @@ void dsp::ChannelSplitter::setNumInputChannelsNoLock(size_t numChannels) {
         outputs.resize(numChannels);
     } else {
         outputs.reserve(numChannels);
-        for (size_t channel = numChannels; channel < getNumInputChannels(); ++channel) {
+        for (size_t channel = getNumInputChannels(); channel < numChannels; ++channel) {
             outputs.push_back(std::make_shared<Output>(getInput()->getType(),
                                                        getInput()->getSpace(),
                                                        getInput()->getDefaultValue(),

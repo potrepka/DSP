@@ -1,6 +1,6 @@
 #include "MidiOutput.h"
 
-dsp::MidiOutput::MidiOutput(Type type, std::shared_ptr<MidiBuffer> outputMessages)
+dsp::MidiOutput::MidiOutput(std::shared_ptr<MidiBuffer> outputMessages, Type type)
         : Consumer(type)
         , outputMessages(outputMessages)
         , previous(0.0) {}

@@ -7,7 +7,7 @@ namespace dsp {
 class TableOscillator : public Producer {
 
 public:
-    TableOscillator(Type type);
+    TableOscillator(Type type = Type::RATIO);
 
     Interpolation getPositionInterpolation() const;
     void setPositionInterpolation(Interpolation interpolation);

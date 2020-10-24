@@ -1,14 +1,12 @@
 #include "Crossover.h"
 
 dsp::Crossover::Crossover()
-        : input(std::make_shared<PassThrough>(Type::RATIO))
-        , frequency(std::make_shared<PassThrough>(Type::HERTZ))
+        : input(std::make_shared<Identity>(Type::RATIO))
+        , frequency(std::make_shared<Identity>(Type::HERTZ))
         , lp1(std::make_shared<Biquad>())
         , lp2(std::make_shared<Biquad>())
         , hp1(std::make_shared<Biquad>())
         , hp2(std::make_shared<Biquad>()) {
-    hp1->setMode(Biquad::Mode::HIGH_PASS);
-    hp2->setMode(Biquad::Mode::HIGH_PASS);
     getInputs().push_back(input->getInput());
     getInputs().push_back(frequency->getInput());
     getOutputs().push_back(lp2->getOutput());
@@ -27,6 +25,8 @@ dsp::Crossover::Crossover()
     frequency->getOutput() >> hp2->getFrequency();
     lp1->getOutput() >> lp2->getInput();
     hp1->getOutput() >> hp2->getInput();
+    Biquad::Mode::HIGH_PASS >> hp1->getMode();
+    Biquad::Mode::HIGH_PASS >> hp2->getMode();
 }
 
 std::shared_ptr<dsp::Input> dsp::Crossover::getInput() const {
@@ -56,11 +56,5 @@ void dsp::Crossover::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     for (const auto &child : getChildren()) {
         child->setNumOutputChannels(numChannels);
-    }
-}
-
-void dsp::Crossover::processNoLock() {
-    for (const auto &child : getChildren()) {
-        child->process();
     }
 }

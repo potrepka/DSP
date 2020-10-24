@@ -2,18 +2,18 @@
 
 dsp::SampleAndHold::SampleAndHold(Type type)
         : Transformer(type, type)
-        , resetTrigger(std::make_shared<Input>(Type::BINARY))
-        , gate(std::make_shared<Input>(Type::BINARY)) {
-    getInputs().push_back(resetTrigger);
+        , gate(std::make_shared<Input>(Type::BOOLEAN))
+        , reset(std::make_shared<Input>(Type::BOOLEAN)) {
     getInputs().push_back(gate);
-}
-
-std::shared_ptr<dsp::Input> dsp::SampleAndHold::getResetTrigger() const {
-    return resetTrigger;
+    getInputs().push_back(reset);
 }
 
 std::shared_ptr<dsp::Input> dsp::SampleAndHold::getGate() const {
     return gate;
+}
+
+std::shared_ptr<dsp::Input> dsp::SampleAndHold::getReset() const {
+    return reset;
 }
 
 void dsp::SampleAndHold::setNumOutputChannelsNoLock(size_t numChannels) {
@@ -24,18 +24,18 @@ void dsp::SampleAndHold::setNumOutputChannelsNoLock(size_t numChannels) {
 void dsp::SampleAndHold::processNoLock() {
     for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
-        Sample *resetTriggerChannel = getResetTrigger()->getWrapper().getChannelPointer(channel);
         Sample *gateChannel = getGate()->getWrapper().getChannelPointer(channel);
+        Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
+        Sample channelValue = getOutput()->getChannelValue(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-            if (resetTriggerChannel[sample]) {
+            if (resetChannel[sample]) {
                 state[channel] = std::numeric_limits<Sample>::quiet_NaN();
             }
             if (gateChannel[sample]) {
                 state[channel] = inputChannel[sample];
             }
-            outputChannel[sample] =
-                    std::isnan(state[channel]) ? getOutput()->getChannelValues()[channel] : state[channel];
+            outputChannel[sample] = std::isnan(state[channel]) ? channelValue : state[channel];
         }
     }
 }

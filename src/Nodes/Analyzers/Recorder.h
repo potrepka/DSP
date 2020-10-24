@@ -7,9 +7,9 @@ namespace dsp {
 class Recorder : public Consumer {
 
 public:
-    enum Mode { FIXED_SINGLE, FIXED_DOUBLE, VARIABLE };
+    enum class Mode { FIXED_SINGLE, FIXED_DOUBLE, VARIABLE };
 
-    Recorder(Type type, Space space = Space::TIME, Sample defaultValue = 0.0);
+    Recorder(Type type = Type::RATIO, Space space = Space::TIME, Sample defaultValue = 0.0);
 
     Mode getMode() const;
     void setMode(Mode mode);
@@ -18,8 +18,8 @@ public:
     void setRecordingTime(Sample seconds);
     std::shared_ptr<Buffer> getRecordingBuffer() const;
 
-    std::shared_ptr<Input> getResetTrigger() const;
     std::shared_ptr<Input> getGate() const;
+    std::shared_ptr<Input> getReset() const;
 
 protected:
     void setNumInputChannelsNoLock(size_t numChannels) override;
@@ -33,8 +33,8 @@ private:
     Array writeIndex;
     const std::shared_ptr<Buffer> primary;
     const std::shared_ptr<Buffer> secondary;
-    const std::shared_ptr<Input> resetTrigger;
     const std::shared_ptr<Input> gate;
+    const std::shared_ptr<Input> reset;
 
     void setRecordingTimeNoLock(Sample seconds);
 };

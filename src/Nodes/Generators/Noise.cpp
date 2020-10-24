@@ -1,8 +1,8 @@
-#include "PinkNoise.h"
+#include "Noise.h"
 
-dsp::Data dsp::PinkNoise::memoryCoefficientsData = dsp::Data(1, 8);
-dsp::Data dsp::PinkNoise::noiseCoefficientsData = dsp::Data(1, 8);
-dsp::Wrapper dsp::PinkNoise::memoryCoefficients = []() {
+dsp::Data dsp::Noise::memoryCoefficientsData = dsp::Data(1, 8);
+dsp::Data dsp::Noise::noiseCoefficientsData = dsp::Data(1, 8);
+dsp::Wrapper dsp::Noise::memoryCoefficients = []() {
     dsp::Sample *pointer = memoryCoefficientsData.getWritePointer(0);
     pointer[0] = 0.99886;
     pointer[1] = 0.99332;
@@ -14,7 +14,7 @@ dsp::Wrapper dsp::PinkNoise::memoryCoefficients = []() {
     pointer[7] = 1.0;
     return dsp::Wrapper(memoryCoefficientsData);
 }();
-dsp::Wrapper dsp::PinkNoise::noiseCoefficients = []() {
+dsp::Wrapper dsp::Noise::noiseCoefficients = []() {
     dsp::Sample *pointer = noiseCoefficientsData.getWritePointer(0);
     pointer[0] = 0.0555179;
     pointer[1] = 0.0750759;
@@ -26,16 +26,23 @@ dsp::Wrapper dsp::PinkNoise::noiseCoefficients = []() {
     pointer[7] = 0.0;
     return dsp::Wrapper(noiseCoefficientsData);
 }();
-const dsp::Sample dsp::PinkNoise::delayedNoiseCoefficient = 0.115926;
+const dsp::Sample dsp::Noise::delayedNoiseCoefficient = 0.115926;
 
-dsp::PinkNoise::PinkNoise()
+dsp::Noise::Noise()
         : Producer(Type::RATIO)
+        , mode(std::make_shared<Input>(Type::INTEGER))
         , whiteData(0, 0)
         , memoryData(0, 8)
         , white(whiteData)
-        , memory(memoryData) {}
+        , memory(memoryData) {
+    getInputs().push_back(mode);
+}
 
-void dsp::PinkNoise::setNumOutputChannelsNoLock(size_t numChannels) {
+std::shared_ptr<dsp::Input> dsp::Noise::getMode() const {
+    return mode;
+}
+
+void dsp::Noise::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     seed.resize(numChannels);
     std::generate(seed.begin(), seed.end(), []() {
@@ -49,13 +56,13 @@ void dsp::PinkNoise::setNumOutputChannelsNoLock(size_t numChannels) {
     memory = Wrapper(memoryData);
 }
 
-void dsp::PinkNoise::setNumSamplesNoLock(size_t numSamples) {
+void dsp::Noise::setNumSamplesNoLock(size_t numSamples) {
     Node::setNumSamplesNoLock(numSamples);
     whiteData.setSize(getNumOutputChannels(), numSamples);
     white = Wrapper(whiteData);
 }
 
-void dsp::PinkNoise::processNoLock() {
+void dsp::Noise::processNoLock() {
     for (size_t channel = 0; channel < getNumOutputChannels(); ++channel) {
         Sample *whiteChannel = white.getChannelPointer(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
@@ -64,19 +71,29 @@ void dsp::PinkNoise::processNoLock() {
     }
     white.multiplyBy(4.656612873077392578125e-10);
     for (size_t channel = 0; channel < getNumOutputChannels(); ++channel) {
+        Sample *modeChannel = getMode()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample *whiteChannel = white.getChannelPointer(channel);
         Wrapper memoryWrapper = memory.getSingleChannel(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-            memoryWrapper.multiplyBy(memoryCoefficients);
-            memoryWrapper.addProductOf(noiseCoefficients, whiteChannel[sample]);
-            Sample *memoryChannel = memoryWrapper.getChannelPointer(0);
-            Sample sum = 0.0;
-            for (unsigned int i = 0; i < 8; ++i) {
-                sum += memoryChannel[i];
+            Sample &mode = modeChannel[sample];
+            Sample &output = outputChannel[sample];
+            Sample &white = whiteChannel[sample];
+            const Sample modeClipped = clip(mode, Mode::MIN, Mode::MAX);
+            switch (static_cast<int>(modeClipped)) {
+                case Mode::WHITE: output = white; break;
+                case Mode::PINK: {
+                    memoryWrapper.multiplyBy(memoryCoefficients);
+                    memoryWrapper.addProductOf(noiseCoefficients, white);
+                    Sample *memoryChannel = memoryWrapper.getChannelPointer(0);
+                    Sample sum = 0.0;
+                    for (unsigned int i = 0; i < 8; ++i) {
+                        sum += memoryChannel[i];
+                    }
+                    output = 0.125 * sum;
+                    memoryWrapper.setSample(0, 7, white * delayedNoiseCoefficient);
+                } break;
             }
-            outputChannel[sample] = 0.125 * sum;
-            memoryWrapper.setSample(0, 7, whiteChannel[sample] * delayedNoiseCoefficient);
         }
     }
 }

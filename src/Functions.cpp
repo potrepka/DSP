@@ -100,15 +100,19 @@ void dsp::ScaledFFT::toMagnitudePhase(Sample *timeChannel, Sample *magnitudeChan
         time[k] = timeChannel[k] * oneOverSize;
     }
     audioFFT.fft(time.data(), real.data(), imaginary.data());
-    for (size_t k = 0; k < size; ++k) {
+    for (size_t k = 0; k < getComplexSize(); ++k) {
         magnitudeChannel[k] = sqrt(real[k] * real[k] + imaginary[k] * imaginary[k]);
         Sample bipolar = ONE_OVER_TAU * atan2(imaginary[k], real[k]);
         phaseChannel[k] = bipolar < 0.0 ? bipolar + 1.0 : bipolar;
     }
+    for (size_t k = getComplexSize(); k < size; ++k) {
+        magnitudeChannel[k] = 0.0;
+        phaseChannel[k] = 0.0;
+    }
 }
 
 void dsp::ScaledFFT::fromMagnitudePhase(Sample *magnitudeChannel, Sample *phaseChannel, Sample *timeChannel) {
-    for (size_t k = 0; k < size; ++k) {
+    for (size_t k = 0; k < getComplexSize(); ++k) {
         real[k] = magnitudeChannel[k] * cos(TAU * phaseChannel[k]);
         imaginary[k] = magnitudeChannel[k] * sin(TAU * phaseChannel[k]);
     }

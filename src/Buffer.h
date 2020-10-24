@@ -9,7 +9,7 @@ namespace dsp {
 class Buffer : public Lockable {
 
 public:
-    Buffer(Type type,
+    Buffer(Type type = Type::RATIO,
            Space space = Space::TIME,
            Sample defaultValue = 0.0,
            size_t numChannels = 0,
@@ -64,7 +64,7 @@ class Input : public Buffer, public std::enable_shared_from_this<Input> {
 public:
     enum class Mode { SUM, MINIMUM, MAXIMUM };
 
-    Input(Type type,
+    Input(Type type = Type::RATIO,
           Space space = Space::TIME,
           Sample defaultValue = 0.0,
           size_t numChannels = 0,
@@ -93,7 +93,7 @@ class Output : public Buffer, public std::enable_shared_from_this<Output> {
     friend class Input;
 
 public:
-    Output(Type type,
+    Output(Type type = Type::RATIO,
            Space space = Space::TIME,
            Sample defaultValue = 0.0,
            size_t numChannels = 0,

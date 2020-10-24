@@ -11,5 +11,8 @@ std::shared_ptr<dsp::Input> dsp::Floor::getDivisor() const {
 }
 
 void dsp::Floor::processNoLock() {
-    transform(getDivisor(), [](Sample x, Sample y) { return y == 0.0 ? x : floor(x / y) * y; });
+    getOutput()->getWrapper().replaceWithApplicationOf(
+            [](Sample x, Sample y) { return y == 0.0 ? x : floor(x / y) * y; },
+            getInput()->getWrapper(),
+            getDivisor()->getWrapper());
 }

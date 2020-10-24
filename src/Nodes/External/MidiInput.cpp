@@ -1,6 +1,6 @@
 #include "MidiInput.h"
 
-dsp::MidiInput::MidiInput(Type type, std::shared_ptr<MidiBuffer> inputMessages)
+dsp::MidiInput::MidiInput(std::shared_ptr<MidiBuffer> inputMessages, Type type)
         : Producer(type)
         , inputMessages(inputMessages)
         , previous(0.0) {}

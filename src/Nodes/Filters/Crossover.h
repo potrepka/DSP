@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Math/PassThrough.h"
+#include "../Math/Identity.h"
 #include "Biquad.h"
 
 namespace dsp {
@@ -18,11 +18,10 @@ public:
 protected:
     void setNumInputChannelsNoLock(size_t numChannels) override;
     void setNumOutputChannelsNoLock(size_t numChannels) override;
-    void processNoLock() override;
 
 private:
-    const std::shared_ptr<PassThrough> input;
-    const std::shared_ptr<PassThrough> frequency;
+    const std::shared_ptr<Identity> input;
+    const std::shared_ptr<Identity> frequency;
     const std::shared_ptr<Biquad> lp1;
     const std::shared_ptr<Biquad> lp2;
     const std::shared_ptr<Biquad> hp1;
