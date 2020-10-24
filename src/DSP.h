@@ -44,6 +44,7 @@
 #include "Nodes/Math/AbsoluteValue.h"
 #include "Nodes/Math/BooleanMask.h"
 #include "Nodes/Math/Comparison.h"
+#include "Nodes/Math/Cosine.h"
 #include "Nodes/Math/Exp2.h"
 #include "Nodes/Math/Floor.h"
 #include "Nodes/Math/ForwardFFT.h"
@@ -57,6 +58,7 @@
 #include "Nodes/Math/NotGate.h"
 #include "Nodes/Math/NoteToFrequency.h"
 #include "Nodes/Math/Reciprocal.h"
+#include "Nodes/Math/Sine.h"
 
 #include "Nodes/Trigger/ClockTrigger.h"
 #include "Nodes/Trigger/Differentiator.h"
