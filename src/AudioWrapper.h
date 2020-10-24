@@ -46,6 +46,10 @@ public:
 
     AudioWrapper &replaceWithApplicationOf(std::function<T(T)> f, AudioWrapper<T> src);
     AudioWrapper &replaceWithApplicationOf(std::function<T(T, T)> f, AudioWrapper<T> src1, AudioWrapper<T> src2);
+    AudioWrapper &replaceWithApplicationOf(std::function<T(T, T, T)> f,
+                                           AudioWrapper<T> src1,
+                                           AudioWrapper<T> src2,
+                                           AudioWrapper<T> src3);
 
     AudioWrapper &copyFrom(const AudioWrapper<T> &src);
 

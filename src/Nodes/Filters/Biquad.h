@@ -7,29 +7,38 @@ namespace dsp {
 class Biquad : public Transformer {
 
 public:
-    enum class Mode { LOW_PASS, HIGH_PASS, BAND_PASS, BAND_STOP, LOW_SHELF, HIGH_SHELF, PEAK, ALL_PASS };
+    struct Mode {
+        static const int MIN = 0;
+        static const int MAX = 7;
+        static const int LOW_PASS = 0;
+        static const int HIGH_PASS = 1;
+        static const int BAND_PASS = 2;
+        static const int BAND_STOP = 3;
+        static const int LOW_SHELF = 4;
+        static const int HIGH_SHELF = 5;
+        static const int PEAK = 6;
+        static const int ALL_PASS = 7;
+    };
 
     Biquad();
-
-    Mode getMode() const;
-    void setMode(Mode mode);
 
     std::shared_ptr<Input> getFrequency() const;
     std::shared_ptr<Input> getResonance() const;
     std::shared_ptr<Input> getAmplitude() const;
+    std::shared_ptr<Input> getMode() const;
     std::shared_ptr<Input> getReset() const;
 
-    void getMagnitudeAndPhaseResponse(size_t channel, Sample frequency, Sample &magnitude, Sample &phase) const;
+    void getMagnitudeAndPhaseResponse(size_t channel, Sample frequency, Sample &magnitude, Sample &phase);
 
 protected:
     void setNumOutputChannelsNoLock(size_t numChannels) override;
     void processNoLock() override;
 
 private:
-    Mode mode;
     const std::shared_ptr<Input> frequency;
     const std::shared_ptr<Input> resonance;
     const std::shared_ptr<Input> amplitude;
+    const std::shared_ptr<Input> mode;
     const std::shared_ptr<Input> reset;
     Array xx1;
     Array xx2;
@@ -45,6 +54,7 @@ private:
     void calculateCoefficients(const Sample &frequency,
                                const Sample &resonance,
                                const Sample &amplitude,
+                               const Sample &mode,
                                Sample &a0,
                                Sample &a1,
                                Sample &a2,

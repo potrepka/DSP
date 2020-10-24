@@ -104,6 +104,29 @@ dsp::AudioWrapper<T>::replaceWithApplicationOf(std::function<T(T, T)> f, AudioWr
 }
 
 template <typename T>
+dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithApplicationOf(std::function<T(T, T, T)> f,
+                                                                     AudioWrapper<T> src1,
+                                                                     AudioWrapper<T> src2,
+                                                                     AudioWrapper<T> src3) {
+    DSP_ASSERT(numChannels == src1.numChannels && numChannels == src2.numChannels && numChannels == src3.numChannels);
+    DSP_ASSERT(numSamples == src1.numSamples && numSamples == src2.numSamples && numSamples == src3.numSamples);
+    for (size_t channel = 0; channel < numChannels; ++channel) {
+        auto a = data[channel] + startSample;
+        auto b = src1.data[channel] + src1.startSample;
+        auto c = src2.data[channel] + src2.startSample;
+        auto d = src3.data[channel] + src3.startSample;
+        for (size_t sample = 0; sample < numSamples; ++sample) {
+            *a = f(*b, *c, *d);
+            ++a;
+            ++b;
+            ++c;
+            ++d;
+        }
+    }
+    return *this;
+}
+
+template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::copyFrom(const AudioWrapper<T> &src) {
     DSP_ASSERT(numChannels == src.numChannels);
     DSP_ASSERT(numSamples == src.numSamples);

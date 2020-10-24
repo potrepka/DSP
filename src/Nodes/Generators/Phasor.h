@@ -7,14 +7,17 @@ namespace dsp {
 class Phasor : public Producer {
 
 public:
-    enum class Mode { UNBOUNDED, WRAPPED };
+    struct Mode {
+        static const int MIN = 0;
+        static const int MAX = 1;
+        static const int UNBOUNDED = 0;
+        static const int WRAPPED = 1;
+    };
 
     Phasor();
 
-    Mode getMode() const;
-    void setMode(Mode mode);
-
     std::shared_ptr<Input> getFrequency() const;
+    std::shared_ptr<Input> getMode() const;
     std::shared_ptr<Input> getReset() const;
 
 protected:
@@ -22,8 +25,8 @@ protected:
     void processNoLock() override;
 
 private:
-    Mode mode;
     const std::shared_ptr<Input> frequency;
+    const std::shared_ptr<Input> mode;
     const std::shared_ptr<Input> reset;
     Array phase;
 };

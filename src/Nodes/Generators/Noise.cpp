@@ -30,21 +30,16 @@ const dsp::Sample dsp::Noise::delayedNoiseCoefficient = 0.115926;
 
 dsp::Noise::Noise()
         : Producer(Type::RATIO)
-        , mode(Mode::WHITE)
+        , mode(std::make_shared<Input>(Type::INTEGER))
         , whiteData(0, 0)
         , memoryData(0, 8)
         , white(whiteData)
-        , memory(memoryData) {}
-
-dsp::Noise::Mode dsp::Noise::getMode() const {
-    return mode;
+        , memory(memoryData) {
+    getInputs().push_back(mode);
 }
 
-void dsp::Noise::setMode(Mode mode) {
-    lock();
-    this->mode = mode;
-    memory.clear();
-    unlock();
+std::shared_ptr<dsp::Input> dsp::Noise::getMode() const {
+    return mode;
 }
 
 void dsp::Noise::setNumOutputChannelsNoLock(size_t numChannels) {
@@ -75,25 +70,30 @@ void dsp::Noise::processNoLock() {
         }
     }
     white.multiplyBy(4.656612873077392578125e-10);
-    switch (mode) {
-        case Mode::WHITE: getOutput()->getWrapper().copyFrom(white); break;
-        case Mode::PINK:
-            for (size_t channel = 0; channel < getNumOutputChannels(); ++channel) {
-                Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
-                Sample *whiteChannel = white.getChannelPointer(channel);
-                Wrapper memoryWrapper = memory.getSingleChannel(channel);
-                for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+    for (size_t channel = 0; channel < getNumOutputChannels(); ++channel) {
+        Sample *modeChannel = getMode()->getWrapper().getChannelPointer(channel);
+        Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
+        Sample *whiteChannel = white.getChannelPointer(channel);
+        Wrapper memoryWrapper = memory.getSingleChannel(channel);
+        for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+            Sample &mode = modeChannel[sample];
+            Sample &output = outputChannel[sample];
+            Sample &white = whiteChannel[sample];
+            const Sample modeClipped = clip(mode, Mode::MIN, Mode::MAX);
+            switch (static_cast<int>(modeClipped)) {
+                case Mode::WHITE: output = white; break;
+                case Mode::PINK: {
                     memoryWrapper.multiplyBy(memoryCoefficients);
-                    memoryWrapper.addProductOf(noiseCoefficients, whiteChannel[sample]);
+                    memoryWrapper.addProductOf(noiseCoefficients, white);
                     Sample *memoryChannel = memoryWrapper.getChannelPointer(0);
                     Sample sum = 0.0;
                     for (unsigned int i = 0; i < 8; ++i) {
                         sum += memoryChannel[i];
                     }
-                    outputChannel[sample] = 0.125 * sum;
-                    memoryWrapper.setSample(0, 7, whiteChannel[sample] * delayedNoiseCoefficient);
-                }
+                    output = 0.125 * sum;
+                    memoryWrapper.setSample(0, 7, white * delayedNoiseCoefficient);
+                } break;
             }
-            break;
+        }
     }
 }

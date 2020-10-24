@@ -7,21 +7,24 @@ namespace dsp {
 class Spread : public Transformer {
 
 public:
-    enum class Mode { UNIPOLAR, BIPOLAR };
+    struct Mode {
+        static const int MIN = 0;
+        static const int MAX = 1;
+        static const int UNIPOLAR = 0;
+        static const int BIPOLAR = 1;
+    };
 
     Spread(Type type = Type::RATIO, Space space = Space::TIME);
 
-    Mode getMode() const;
-    void setMode(Mode mode);
-
     std::shared_ptr<Input> getSpread() const;
+    std::shared_ptr<Input> getMode() const;
 
 protected:
     void processNoLock() override;
 
 private:
-    Mode mode;
     const std::shared_ptr<Input> spread;
+    const std::shared_ptr<Input> mode;
 };
 
 } // namespace dsp

@@ -7,8 +7,6 @@ dsp::Crossover::Crossover()
         , lp2(std::make_shared<Biquad>())
         , hp1(std::make_shared<Biquad>())
         , hp2(std::make_shared<Biquad>()) {
-    hp1->setMode(Biquad::Mode::HIGH_PASS);
-    hp2->setMode(Biquad::Mode::HIGH_PASS);
     getInputs().push_back(input->getInput());
     getInputs().push_back(frequency->getInput());
     getOutputs().push_back(lp2->getOutput());
@@ -27,6 +25,8 @@ dsp::Crossover::Crossover()
     frequency->getOutput() >> hp2->getFrequency();
     lp1->getOutput() >> lp2->getInput();
     hp1->getOutput() >> hp2->getInput();
+    Biquad::Mode::HIGH_PASS >> hp1->getMode();
+    Biquad::Mode::HIGH_PASS >> hp2->getMode();
 }
 
 std::shared_ptr<dsp::Input> dsp::Crossover::getInput() const {

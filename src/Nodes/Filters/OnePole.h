@@ -7,22 +7,25 @@ namespace dsp {
 class OnePole : public Transformer {
 
 public:
-    enum class Mode { LOW_PASS, HIGH_PASS };
+    struct Mode {
+        static const int MIN = 0;
+        static const int MAX = 1;
+        static const int LOW_PASS = 0;
+        static const int HIGH_PASS = 1;
+    };
 
     OnePole(Type type = Type::RATIO);
 
-    Mode getMode() const;
-    void setMode(Mode mode);
-
     std::shared_ptr<Input> getFrequency() const;
+    std::shared_ptr<Input> getMode() const;
 
 protected:
     void setNumOutputChannelsNoLock(size_t numChannels) override;
     void processNoLock() override;
 
 private:
-    Mode mode;
     const std::shared_ptr<Input> frequency;
+    const std::shared_ptr<Input> mode;
     Array state;
 };
 

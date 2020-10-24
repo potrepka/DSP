@@ -2,46 +2,52 @@
 
 dsp::Shaper::Shaper(Space space)
         : Transformer(Type::RATIO, Type::RATIO, space)
-        , mode(Mode::POLYNOMIAL)
-        , drive(std::make_shared<Input>(Type::RATIO, space, 1.0)) {
+        , drive(std::make_shared<Input>(Type::RATIO, space, 1.0))
+        , mode(std::make_shared<Input>(Type::INTEGER, space)) {
     getInputs().push_back(drive);
-}
-
-dsp::Shaper::Mode dsp::Shaper::getMode() const {
-    return mode;
-}
-
-void dsp::Shaper::setMode(Mode mode) {
-    lock();
-    this->mode = mode;
-    unlock();
+    getInputs().push_back(mode);
 }
 
 std::shared_ptr<dsp::Input> dsp::Shaper::getDrive() const {
     return drive;
 }
 
+std::shared_ptr<dsp::Input> dsp::Shaper::getMode() const {
+    return mode;
+}
+
 void dsp::Shaper::processNoLock() {
-    getOutput()->getWrapper().replaceWithApplicationOf([this](Sample x, Sample y) {
-        if (y == 0.0) {
-            return 0.0;
-        }
-        if (y == 1.0) {
-            return x;
-        }
-        switch (mode) {
-            case Mode::POLYNOMIAL: {
-                Sample onePlusX = 1.0 + x;
-                Sample oneMinusX = 1.0 - x;
-                Sample yMinusOne = y - 1.0;
-                return x < 0.0 ? onePlusX * pow(abs(onePlusX), yMinusOne) - 1.0
-                               : 1.0 - oneMinusX * pow(oneMinusX, yMinusOne);
+    for (size_t channel = 0; channel < getNumChannels(); ++channel) {
+        Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
+        Sample *driveChannel = getDrive()->getWrapper().getChannelPointer(channel);
+        Sample *modeChannel = getMode()->getWrapper().getChannelPointer(channel);
+        Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
+        for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+            Sample &input = inputChannel[sample];
+            Sample &drive = driveChannel[sample];
+            Sample &mode = modeChannel[sample];
+            Sample &output = outputChannel[sample];
+            if (drive == 0.0) {
+                output = 0.0;
+            } else if (drive == 1.0) {
+                output = input;
+            } else {
+                const Sample modeClipped = clip(mode, Mode::MIN, Mode::MAX);
+                switch (static_cast<int>(modeClipped)) {
+                    case Mode::POLYNOMIAL: {
+                        Sample onePlusInput = 1.0 + input;
+                        Sample oneMinusInput = 1.0 - input;
+                        Sample driveMinusOne = drive - 1.0;
+                        output = input < 0.0 ? onePlusInput * pow(abs(onePlusInput), driveMinusOne) - 1.0
+                                             : 1.0 - oneMinusInput * pow(oneMinusInput, driveMinusOne);
+                    } break;
+                    case Mode::HYPERBOLIC: {
+                        Sample driveMinusOne = drive - 1.0;
+                        output = input < 0.0 ? (drive / (1.0 - driveMinusOne * input) - drive) / driveMinusOne
+                                             : (drive - drive / (1.0 + driveMinusOne * input)) / driveMinusOne;
+                    } break;
+                }
             }
-            case Mode::HYPERBOLIC: {
-                Sample yMinusOne = y - 1.0;
-                return x < 0.0 ? (y / (1.0 - yMinusOne * x) - y) / yMinusOne
-                               : (y - y / (1.0 + yMinusOne * x)) / yMinusOne;
-            }
         }
-    }, getInput()->getWrapper(), getDrive()->getWrapper());
+    }
 }

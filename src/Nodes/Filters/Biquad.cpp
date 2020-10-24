@@ -4,25 +4,16 @@
 
 dsp::Biquad::Biquad()
         : Transformer(Type::RATIO, Type::RATIO)
-        , mode(Mode::LOW_PASS)
         , frequency(std::make_shared<Input>(Type::HERTZ))
         , resonance(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
         , amplitude(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
+        , mode(std::make_shared<Input>(Type::INTEGER, Space::TIME))
         , reset(std::make_shared<Input>(Type::BOOLEAN)) {
     getInputs().push_back(frequency);
     getInputs().push_back(resonance);
     getInputs().push_back(amplitude);
+    getInputs().push_back(mode);
     getInputs().push_back(reset);
-}
-
-dsp::Biquad::Mode dsp::Biquad::getMode() const {
-    return mode;
-}
-
-void dsp::Biquad::setMode(Mode mode) {
-    lock();
-    this->mode = mode;
-    unlock();
 }
 
 std::shared_ptr<dsp::Input> dsp::Biquad::getFrequency() const {
@@ -37,6 +28,10 @@ std::shared_ptr<dsp::Input> dsp::Biquad::getAmplitude() const {
     return amplitude;
 }
 
+std::shared_ptr<dsp::Input> dsp::Biquad::getMode() const {
+    return mode;
+}
+
 std::shared_ptr<dsp::Input> dsp::Biquad::getReset() const {
     return reset;
 }
@@ -44,7 +39,8 @@ std::shared_ptr<dsp::Input> dsp::Biquad::getReset() const {
 void dsp::Biquad::getMagnitudeAndPhaseResponse(size_t channel,
                                                Sample frequency,
                                                Sample &magnitude,
-                                               Sample &phase) const {
+                                               Sample &phase) {
+    lock();
     DSP_ASSERT(channel < getNumChannels());
     const Sample omega = TAU * frequency * getOneOverSampleRate();
     Sample a0 = aa0[channel];
@@ -53,20 +49,20 @@ void dsp::Biquad::getMagnitudeAndPhaseResponse(size_t channel,
     Sample b0 = bb0[channel];
     Sample b1 = bb1[channel];
     Sample b2 = bb2[channel];
+    unlock();
     const Sample sinW = sin(omega);
     const Sample cosW = cos(omega);
     const Sample sin2W = sin(2.0 * omega);
     const Sample cos2W = cos(2.0 * omega);
-    Sample a = b0 + b1 * cosW + b2 * cos2W;
-    Sample b = -b1 * sinW - b2 * sin2W;
-    DSP_ASSERT(channel < getNumChannels());
-    Sample c = a0 + a1 * cosW + a2 * cos2W;
-    Sample d = -a1 * sinW - a2 * sin2W;
-    Sample denominator = c * c + d * d;
-    Sample real = (a * c + b * d) / denominator;
-    Sample imaginary = (b * c - a * d) / denominator;
+    const Sample a = b0 + b1 * cosW + b2 * cos2W;
+    const Sample b = -b1 * sinW - b2 * sin2W;
+    const Sample c = a0 + a1 * cosW + a2 * cos2W;
+    const Sample d = -a1 * sinW - a2 * sin2W;
+    const Sample denominator = c * c + d * d;
+    const Sample real = (a * c + b * d) / denominator;
+    const Sample imaginary = (b * c - a * d) / denominator;
     magnitude = sqrt(real * real + imaginary * imaginary);
-    Sample bipolar = ONE_OVER_TAU * atan2(imaginary, real);
+    const Sample bipolar = ONE_OVER_TAU * atan2(imaginary, real);
     phase = bipolar < 0.0 ? bipolar + 1.0 : bipolar;
 }
 
@@ -90,6 +86,7 @@ void dsp::Biquad::processNoLock() {
         Sample *frequencyChannel = getFrequency()->getWrapper().getChannelPointer(channel);
         Sample *resonanceChannel = getResonance()->getWrapper().getChannelPointer(channel);
         Sample *amplitudeChannel = getAmplitude()->getWrapper().getChannelPointer(channel);
+        Sample *modeChannel = getMode()->getWrapper().getChannelPointer(channel);
         Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample &x1 = xx1[channel];
@@ -112,6 +109,7 @@ void dsp::Biquad::processNoLock() {
             calculateCoefficients(frequencyChannel[sample],
                                   resonanceChannel[sample],
                                   amplitudeChannel[sample],
+                                  modeChannel[sample],
                                   a0,
                                   a1,
                                   a2,
@@ -130,6 +128,7 @@ void dsp::Biquad::processNoLock() {
 void dsp::Biquad::calculateCoefficients(const Sample &frequency,
                                         const Sample &resonance,
                                         const Sample &amplitude,
+                                        const Sample &mode,
                                         Sample &a0,
                                         Sample &a1,
                                         Sample &a2,
@@ -140,7 +139,8 @@ void dsp::Biquad::calculateCoefficients(const Sample &frequency,
     const Sample sinW = sin(omega);
     const Sample cosW = cos(omega);
     const Sample alpha = sinW / (SQRT2 * resonance);
-    switch (mode) {
+    const Sample modeClipped = clip(mode, Mode::MIN, Mode::MAX);
+    switch (static_cast<int>(modeClipped)) {
         case Mode::LOW_PASS:
             a0 = 1.0 + alpha;
             a1 = -2.0 * cosW;
