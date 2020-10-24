@@ -210,8 +210,9 @@ void dsp::Input::processNoLock() {
             case Mode::MAXIMUM: wrapper.replaceWithMaxOf(wrapper, output->getWrapper()); break;
         }
     }
-    if (type == Type::BOOLEAN && mode == Mode::SUM) {
-        wrapper.apply([](Sample x) { return static_cast<uint32_t>(x) & 1; });
+    switch (type) {
+        case Type::INTEGER: wrapper.apply([](Sample x) { return floor(x); }); break;
+        case Type::BOOLEAN: wrapper.apply([](Sample x) { return static_cast<int>(floor(x)) & 1; }); break;
     }
 }
 
