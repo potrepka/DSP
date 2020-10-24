@@ -23,6 +23,7 @@ public:
 protected:
     void setNumInputChannelsNoLock(size_t numChannels) override;
     void setNumOutputChannelsNoLock(size_t numChannels) override;
+    void setNumSamplesNoLock(size_t numSamples) override;
     void setSampleRateNoLock(double sampleRate) override;
     void processNoLock() override;
 
@@ -35,8 +36,9 @@ private:
     const std::shared_ptr<Output> feedbackSource;
     const std::shared_ptr<Input> feedbackSink;
     const std::shared_ptr<Node> feedbackProcessor;
-    size_t indexState;
+    size_t writeIndex;
 
+    const std::shared_ptr<Buffer> getBuffer() const;
     size_t getDelayBufferSize();
 };
 
