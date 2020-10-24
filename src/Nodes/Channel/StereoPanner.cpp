@@ -30,8 +30,8 @@ void dsp::StereoPanner::processNoLock() {
         Sample *rightChannel = getRight()->getWrapper().getChannelPointer(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             Sample direction = clip(directionChannel[sample], -1.0, 1.0);
-            leftChannel[sample] = SQRT2 * cos(PI_OVER_TWO * (0.5 * direction + 0.5)) * inputChannel[sample];
-            rightChannel[sample] = SQRT2 * cos(PI_OVER_TWO * (-0.5 * direction - 0.5)) * inputChannel[sample];
+            leftChannel[sample] = SQRT_OF_TWO * cos(PI_OVER_TWO * (0.5 * direction + 0.5)) * inputChannel[sample];
+            rightChannel[sample] = SQRT_OF_TWO * cos(PI_OVER_TWO * (-0.5 * direction - 0.5)) * inputChannel[sample];
         }
     }
 }
