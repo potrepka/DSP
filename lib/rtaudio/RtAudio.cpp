@@ -78,7 +78,7 @@ inline std::string convertCharPointerToStdString(const wchar_t *text) {
     return s;
 }
 
-#elif defined(__LINUX_ALSA__) || defined(__LINUX_PULSE__) || defined(__UNIX_JACK__) || defined(__LINUX_OSS__) ||       \
+#elif defined(__LINUX_ALSA__) || defined(__LINUX_PULSE__) || defined(__UNIX_JACK__) || defined(__LINUX_OSS__) || \
         defined(__MACOSX_CORE__)
 // pthread API
 #define MUTEX_INITIALIZE(A) pthread_mutex_init(A, NULL)
@@ -3894,10 +3894,10 @@ static const char *getAsioErrorString(ASIOError result) {
 
 //=============================================================================
 
-#define SAFE_RELEASE(objectPtr)                                                                                        \
-    if (objectPtr) {                                                                                                   \
-        objectPtr->Release();                                                                                          \
-        objectPtr = NULL;                                                                                              \
+#define SAFE_RELEASE(objectPtr) \
+    if (objectPtr) {            \
+        objectPtr->Release();   \
+        objectPtr = NULL;       \
     }
 
 typedef HANDLE(__stdcall *TAvSetMmThreadCharacteristicsPtr)(LPCWSTR TaskName, LPDWORD TaskIndex);

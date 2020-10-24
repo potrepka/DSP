@@ -648,7 +648,7 @@ protected:
 typedef uintptr_t ThreadHandle;
 typedef CRITICAL_SECTION StreamMutex;
 
-#elif defined(__LINUX_ALSA__) || defined(__LINUX_PULSE__) || defined(__UNIX_JACK__) || defined(__LINUX_OSS__) ||       \
+#elif defined(__LINUX_ALSA__) || defined(__LINUX_PULSE__) || defined(__UNIX_JACK__) || defined(__LINUX_OSS__) || \
         defined(__MACOSX_CORE__)
 // Using pthread library for various flavors of unix.
 #include <pthread.h>
