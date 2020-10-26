@@ -56,6 +56,7 @@
 #include "Nodes/Math/Multiplication.h"
 #include "Nodes/Math/NotGate.h"
 #include "Nodes/Math/NoteToFrequency.h"
+#include "Nodes/Math/Power.h"
 #include "Nodes/Math/Reciprocal.h"
 #include "Nodes/Math/Trigonometric.h"
 
