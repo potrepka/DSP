@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class Multiply : public Transformer {
+class Multiplication : public Transformer {
 
 public:
-    Multiply(Type type = Type::RATIO, Space space = Space::TIME);
+    Multiplication(Type type = Type::RATIO, Space space = Space::TIME);
 
     std::shared_ptr<Input> getFactor() const;
 

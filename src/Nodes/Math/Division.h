@@ -4,10 +4,10 @@
 
 namespace dsp {
 
-class Divide : public Transformer {
+class Division : public Transformer {
 
 public:
-    Divide(Type type = Type::RATIO, Space space = Space::TIME);
+    Division(Type type = Type::RATIO, Space space = Space::TIME);
 
     std::shared_ptr<Input> getDivisor() const;
 
