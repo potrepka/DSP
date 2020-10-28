@@ -132,84 +132,98 @@ void dsp::Biquad::calculateCoefficients(const Sample &frequency,
                                         Sample &b0,
                                         Sample &b1,
                                         Sample &b2) const {
-    const Sample omega = TAU * frequency * getOneOverSampleRate();
-    const Sample sinW = sin(omega);
-    const Sample cosW = cos(omega);
-    const Sample alpha = sinW / (SQRT_OF_TWO * resonance);
-    const Sample modeClipped = clip(mode, Mode::MIN, Mode::MAX);
-    switch (static_cast<int>(modeClipped)) {
-        case Mode::LOW_PASS:
-            a0 = 1.0 + alpha;
-            a1 = -2.0 * cosW;
-            a2 = 1.0 - alpha;
-            b1 = 1.0 - cosW;
-            b0 = b2 = 0.5 * b1;
-            break;
-        case Mode::HIGH_PASS:
-            a0 = 1.0 + alpha;
-            a1 = -2.0 * cosW;
-            a2 = 1.0 - alpha;
-            b1 = -1.0 - cosW;
-            b0 = b2 = -0.5 * b1;
-            break;
-        case Mode::BAND_PASS:
-            a0 = 1.0 + alpha;
-            a1 = -2.0 * cosW;
-            a2 = 1.0 - alpha;
-            b0 = alpha;
-            b1 = 0.0;
-            b2 = -alpha;
-            break;
-        case Mode::BAND_STOP:
-            a0 = 1.0 + alpha;
-            a1 = -2.0 * cosW;
-            a2 = 1.0 - alpha;
-            b0 = b2 = 1.0;
-            b1 = a1;
-            break;
-        case Mode::LOW_SHELF: {
-            const Sample amp = sqrt(amplitude);
-            const Sample ampPlusOne = amp + 1.0;
-            const Sample ampMinusOne = amp - 1.0;
-            const Sample ampPlusOneTimesCosW = ampPlusOne * cosW;
-            const Sample ampMinusOneTimesCosW = ampMinusOne * cosW;
-            const Sample alphaTimesTwoRootAmp = 2.0 * sqrt(amp) * alpha;
-            a0 = ampPlusOne + ampMinusOneTimesCosW + alphaTimesTwoRootAmp;
-            a1 = 2.0 * (ampMinusOne + ampPlusOneTimesCosW);
-            a2 = ampPlusOne + ampMinusOneTimesCosW - alphaTimesTwoRootAmp;
-            b0 = amp * (ampPlusOne - ampMinusOneTimesCosW + alphaTimesTwoRootAmp);
-            b1 = -2.0 * amp * (ampMinusOne - ampPlusOneTimesCosW);
-            b2 = amp * (ampPlusOne - ampMinusOneTimesCosW - alphaTimesTwoRootAmp);
-        } break;
-        case Mode::HIGH_SHELF: {
-            const Sample amp = sqrt(amplitude);
-            const Sample ampPlusOne = amp + 1.0;
-            const Sample ampMinusOne = amp - 1.0;
-            const Sample ampPlusOneTimesCosW = ampPlusOne * cosW;
-            const Sample ampMinusOneTimesCosW = ampMinusOne * cosW;
-            const Sample alphaTimesTwoRootAmp = 2.0 * sqrt(amp) * alpha;
-            a0 = ampPlusOne - ampMinusOneTimesCosW + alphaTimesTwoRootAmp;
-            a1 = 2.0 * (ampMinusOne - ampPlusOneTimesCosW);
-            a2 = ampPlusOne - ampMinusOneTimesCosW - alphaTimesTwoRootAmp;
-            b0 = amp * (ampPlusOne + ampMinusOneTimesCosW + alphaTimesTwoRootAmp);
-            b1 = -2.0 * amp * (ampMinusOne + ampPlusOneTimesCosW);
-            b2 = amp * (ampPlusOne + ampMinusOneTimesCosW - alphaTimesTwoRootAmp);
-        } break;
-        case Mode::PEAK: {
-            const Sample amp = sqrt(amplitude);
-            const Sample alphaTimesAmp = alpha * amp;
-            const Sample alphaOverAmp = alpha / amp;
-            a0 = 1.0 + alphaOverAmp;
-            a1 = -2.0 * cosW;
-            a2 = 1.0 - alphaOverAmp;
-            b0 = 1.0 + alphaTimesAmp;
-            b1 = a1;
-            b2 = 1.0 - alphaTimesAmp;
-        } break;
-        case Mode::ALL_PASS:
-            a0 = b2 = 1.0 + alpha;
-            a1 = b1 = -2.0 * cosW;
-            a2 = b0 = 1.0 - alpha;
-            break;
+    const Sample posResonance = abs(resonance);
+    const Sample posAmplitude = abs(amplitude);
+    if (posResonance == 0.0 || posAmplitude == 0.0) {
+        a0 = 1.0;
+        a1 = 0.0;
+        a2 = 0.0;
+        b0 = 0.0;
+        b1 = 0.0;
+        b2 = 0.0;
+    } else {
+        const Sample omega = TAU * frequency * getOneOverSampleRate();
+        const Sample sinW = sin(omega);
+        const Sample cosW = cos(omega);
+        const Sample alpha = sinW / (SQRT_OF_TWO * posResonance);
+        const Sample modeClipped = clip(mode, Mode::MIN, Mode::MAX);
+        switch (static_cast<int>(modeClipped)) {
+            case Mode::LOW_PASS:
+                a0 = 1.0 + alpha;
+                a1 = -2.0 * cosW;
+                a2 = 1.0 - alpha;
+                b1 = 1.0 - cosW;
+                b0 = b2 = 0.5 * b1;
+                break;
+            case Mode::HIGH_PASS:
+                a0 = 1.0 + alpha;
+                a1 = -2.0 * cosW;
+                a2 = 1.0 - alpha;
+                b1 = -1.0 - cosW;
+                b0 = b2 = -0.5 * b1;
+                break;
+            case Mode::BAND_PASS:
+                a0 = 1.0 + alpha;
+                a1 = -2.0 * cosW;
+                a2 = 1.0 - alpha;
+                b0 = alpha;
+                b1 = 0.0;
+                b2 = -alpha;
+                break;
+            case Mode::BAND_STOP:
+                a0 = 1.0 + alpha;
+                a1 = -2.0 * cosW;
+                a2 = 1.0 - alpha;
+                b0 = b2 = 1.0;
+                b1 = a1;
+                break;
+            case Mode::LOW_SHELF: {
+                const Sample a = sqrt(posAmplitude);
+                const Sample aPlusOne = a + 1.0;
+                const Sample aMinusOne = a - 1.0;
+                const Sample aPlusOneTimesCosW = aPlusOne * cosW;
+                const Sample aMinusOneTimesCosW = aMinusOne * cosW;
+                const Sample alphaTimesTwoRootA = 2.0 * sqrt(a) * alpha;
+                a0 = aPlusOne + aMinusOneTimesCosW + alphaTimesTwoRootA;
+                a1 = -2.0 * (aMinusOne + aPlusOneTimesCosW);
+                a2 = aPlusOne + aMinusOneTimesCosW - alphaTimesTwoRootA;
+                b0 = a * (aPlusOne - aMinusOneTimesCosW + alphaTimesTwoRootA);
+                b1 = 2.0 * a * (aMinusOne - aPlusOneTimesCosW);
+                b2 = a * (aPlusOne - aMinusOneTimesCosW - alphaTimesTwoRootA);
+            } break;
+            case Mode::HIGH_SHELF: {
+                const Sample a = sqrt(posAmplitude);
+                const Sample aPlusOne = a + 1.0;
+                const Sample aMinusOne = a - 1.0;
+                const Sample aPlusOneTimesCosW = aPlusOne * cosW;
+                const Sample aMinusOneTimesCosW = aMinusOne * cosW;
+                const Sample alphaTimesTwoRootA = 2.0 * sqrt(a) * alpha;
+                a0 = aPlusOne - aMinusOneTimesCosW + alphaTimesTwoRootA;
+                a1 = 2.0 * (aMinusOne - aPlusOneTimesCosW);
+                a2 = aPlusOne - aMinusOneTimesCosW - alphaTimesTwoRootA;
+                b0 = a * (aPlusOne + aMinusOneTimesCosW + alphaTimesTwoRootA);
+                b1 = -2.0 * a * (aMinusOne + aPlusOneTimesCosW);
+                b2 = a * (aPlusOne + aMinusOneTimesCosW - alphaTimesTwoRootA);
+            } break;
+            case Mode::PEAK: {
+                const Sample a = sqrt(posAmplitude);
+                const Sample alphaTimesAmp = alpha * a;
+                const Sample alphaOverAmp = alpha / a;
+                a0 = 1.0 + alphaOverAmp;
+                a1 = -2.0 * cosW;
+                a2 = 1.0 - alphaOverAmp;
+                b0 = 1.0 + alphaTimesAmp;
+                b1 = a1;
+                b2 = 1.0 - alphaTimesAmp;
+            } break;
+            case Mode::ALL_PASS:
+                a0 = 1.0 + alpha;
+                a1 = -2.0 * cosW;
+                a2 = 1.0 - alpha;
+                b0 = a2;
+                b1 = a1;
+                b2 = a0;
+                break;
+        }
     }
 }
