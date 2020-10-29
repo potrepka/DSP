@@ -7,7 +7,7 @@ namespace dsp {
 class Power : public Transformer {
 
 public:
-    Power(Type type = Type::RATIO, Space space = Space::TIME);
+    Power(Space space = Space::TIME);
 
     std::shared_ptr<Input> getExponent() const;
 

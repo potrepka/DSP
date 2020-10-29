@@ -1,7 +1,7 @@
 #include "Power.h"
 
-dsp::Power::Power(Type type, Space space)
-        : Transformer(type, type, space)
+dsp::Power::Power(Space space)
+        : Transformer(Type::RATIO, Type::RATIO, space)
         , exponent(std::make_shared<Input>(Type::RATIO, space)) {
     getInputs().push_back(exponent);
 }
@@ -11,5 +11,6 @@ std::shared_ptr<dsp::Input> dsp::Power::getExponent() const {
 }
 
 void dsp::Power::processNoLock() {
-    getOutput()->getWrapper().replaceWithProductOf(getInput()->getWrapper(), getExponent()->getWrapper());
+    getOutput()->getWrapper().replaceWithApplicationOf(
+            [](Sample x, Sample y) { return pow(x, y); }, getInput()->getWrapper(), getExponent()->getWrapper());
 }
