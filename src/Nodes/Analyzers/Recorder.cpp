@@ -5,8 +5,8 @@ dsp::Recorder::Recorder(Type type, Space space, Sample defaultValue)
         , mode(Mode::FIXED_SINGLE)
         , recordingTime(0.0)
         , recordingNumSamples(0.0)
-        , primary(std::make_shared<Buffer>(type, space, 0, 0, defaultValue))
-        , secondary(std::make_shared<Buffer>(type, space, 0, 0, defaultValue))
+        , primary(std::make_shared<Buffer>(type, space, defaultValue, 0.0, 0, 0))
+        , secondary(std::make_shared<Buffer>(type, space, defaultValue, 0.0, 0, 0))
         , gate(std::make_shared<Input>(Type::BOOLEAN))
         , reset(std::make_shared<Input>(Type::BOOLEAN)) {
     getInputs().push_back(gate);

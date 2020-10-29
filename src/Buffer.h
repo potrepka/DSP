@@ -12,6 +12,7 @@ public:
     Buffer(Type type = Type::RATIO,
            Space space = Space::TIME,
            Sample defaultValue = 0.0,
+           Sample modulus = 0.0,
            size_t numChannels = 0,
            size_t numSamples = 0);
 
@@ -23,6 +24,9 @@ public:
 
     Sample getDefaultValue() const;
     void setDefaultValue(Sample defaultValue);
+
+    Sample getModulus() const;
+    void setModulus(Sample modulus);
 
     size_t getNumChannels() const;
     void setNumChannels(size_t numChannels);
@@ -48,6 +52,7 @@ protected:
     Type type;
     Space space;
     Sample defaultValue;
+    Sample modulus;
     Data data;
     Wrapper wrapper;
     Array channelValues;
@@ -67,6 +72,7 @@ public:
     Input(Type type = Type::RATIO,
           Space space = Space::TIME,
           Sample defaultValue = 0.0,
+          Sample modulus = 0.0,
           size_t numChannels = 0,
           size_t numSamples = 0);
     ~Input();
@@ -96,6 +102,7 @@ public:
     Output(Type type = Type::RATIO,
            Space space = Space::TIME,
            Sample defaultValue = 0.0,
+           Sample modulus = 0.0,
            size_t numChannels = 0,
            size_t numSamples = 0);
     ~Output();

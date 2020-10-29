@@ -1,9 +1,10 @@
 #include "Buffer.h"
 
-dsp::Buffer::Buffer(Type type, Space space, Sample defaultValue, size_t numChannels, size_t numSamples)
+dsp::Buffer::Buffer(Type type, Space space, Sample defaultValue, Sample modulus, size_t numChannels, size_t numSamples)
         : type(type)
         , space(space)
         , defaultValue(defaultValue)
+        , modulus(modulus)
         , data(numChannels, numSamples)
         , wrapper(data)
         , channelValues(numChannels, defaultValue) {}
@@ -35,6 +36,16 @@ dsp::Sample dsp::Buffer::getDefaultValue() const {
 void dsp::Buffer::setDefaultValue(Sample defaultValue) {
     lock();
     this->defaultValue = defaultValue;
+    unlock();
+}
+
+dsp::Sample dsp::Buffer::getModulus() const {
+    return modulus;
+}
+
+void dsp::Buffer::setModulus(Sample modulus) {
+    lock();
+    this->modulus = modulus;
     unlock();
 }
 
@@ -127,8 +138,8 @@ void dsp::Buffer::fillChannels() {
     }
 }
 
-dsp::Input::Input(Type type, Space space, Sample defaultValue, size_t numChannels, size_t numSamples)
-        : Buffer(type, space, defaultValue, numChannels, numSamples)
+dsp::Input::Input(Type type, Space space, Sample defaultValue, Sample modulus, size_t numChannels, size_t numSamples)
+        : Buffer(type, space, defaultValue, modulus, numChannels, numSamples)
         , mode(Mode::SUM) {}
 
 dsp::Input::~Input() {
@@ -226,8 +237,8 @@ void dsp::Input::removeConnection(std::shared_ptr<Output> output) {
     connections.erase(std::remove(connections.begin(), connections.end(), output), connections.end());
 }
 
-dsp::Output::Output(Type type, Space space, Sample defaultValue, size_t numChannels, size_t numSamples)
-        : Buffer(type, space, defaultValue, numChannels, numSamples) {}
+dsp::Output::Output(Type type, Space space, Sample defaultValue, Sample modulus, size_t numChannels, size_t numSamples)
+        : Buffer(type, space, defaultValue, modulus, numChannels, numSamples) {}
 
 dsp::Output::~Output() {
     disconnectAll();

@@ -17,6 +17,7 @@ void dsp::ChannelSplitter::setNumInputChannelsNoLock(size_t numChannels) {
             outputs.push_back(std::make_shared<Output>(getInput()->getType(),
                                                        getInput()->getSpace(),
                                                        getInput()->getDefaultValue(),
+                                                       getInput()->getModulus(),
                                                        1,
                                                        getInput()->getNumSamples()));
         }

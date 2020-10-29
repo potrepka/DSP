@@ -4,10 +4,12 @@ dsp::NodeProcessor::NodeProcessor(size_t numInputChannels,
                                   size_t numOutputChannels,
                                   size_t numSamples,
                                   double sampleRate)
-        : audioInput(std::make_shared<Output>(Type::RATIO, Space::TIME, 0.0, numInputChannels, numSamples))
-        , audioOutput(std::make_shared<Input>(Type::RATIO, Space::TIME, 0.0, numOutputChannels, numSamples))
-        , audioInputClipping(std::make_shared<Output>(Type::BOOLEAN, Space::TIME, 0.0, numInputChannels, numSamples))
-        , audioOutputClipping(std::make_shared<Output>(Type::BOOLEAN, Space::TIME, 0.0, numOutputChannels, numSamples))
+        : audioInput(std::make_shared<Output>(Type::RATIO, Space::TIME, 0.0, 0.0, numInputChannels, numSamples))
+        , audioOutput(std::make_shared<Input>(Type::RATIO, Space::TIME, 0.0, 0.0, numOutputChannels, numSamples))
+        , audioInputClipping(
+                  std::make_shared<Output>(Type::BOOLEAN, Space::TIME, 0.0, 0.0, numInputChannels, numSamples))
+        , audioOutputClipping(
+                  std::make_shared<Output>(Type::BOOLEAN, Space::TIME, 0.0, 0.0, numOutputChannels, numSamples))
         , numInputChannels(numInputChannels)
         , numOutputChannels(numOutputChannels)
         , numSamples(numSamples)
