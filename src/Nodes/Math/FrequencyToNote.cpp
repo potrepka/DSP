@@ -2,7 +2,7 @@
 
 dsp::FrequencyToNote::FrequencyToNote(Space space)
         : Transformer(Type::HERTZ, Type::LOGARITHMIC, space)
-        , tuningFrequency(std::make_shared<Input>(Type::HERTZ, space, 440.0)) {
+        , tuningFrequency(std::make_shared<Input>(Type::HERTZ, space)) {
     getInputs().push_back(tuningFrequency);
 }
 
