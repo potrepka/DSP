@@ -18,7 +18,7 @@ public:
     std::shared_ptr<Input> getRelease() const;
     std::shared_ptr<Output> getGainResponse() const;
 
-    Sample getGainResponse(size_t channel, Sample gain) const;
+    Sample getGainResponse(size_t channel, Sample gain);
 
 protected:
     void setNumOutputChannelsNoLock(size_t numChannels) override;

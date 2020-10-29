@@ -39,28 +39,52 @@ std::shared_ptr<dsp::Input> dsp::Biquad::getReset() const {
 void dsp::Biquad::getMagnitudeAndPhaseResponse(size_t channel, Sample frequency, Sample &magnitude, Sample &phase) {
     lock();
     DSP_ASSERT(channel < getNumChannels());
-    const Sample omega = TAU * frequency * getOneOverSampleRate();
-    Sample a0 = aa0[channel];
-    Sample a1 = aa1[channel];
-    Sample a2 = aa2[channel];
-    Sample b0 = bb0[channel];
-    Sample b1 = bb1[channel];
-    Sample b2 = bb2[channel];
-    unlock();
-    const Sample sinW = sin(omega);
-    const Sample cosW = cos(omega);
-    const Sample sin2W = sin(2.0 * omega);
-    const Sample cos2W = cos(2.0 * omega);
-    const Sample a = b0 + b1 * cosW + b2 * cos2W;
-    const Sample b = -b1 * sinW - b2 * sin2W;
-    const Sample c = a0 + a1 * cosW + a2 * cos2W;
-    const Sample d = -a1 * sinW - a2 * sin2W;
-    const Sample denominator = c * c + d * d;
-    const Sample real = (a * c + b * d) / denominator;
-    const Sample imaginary = (b * c - a * d) / denominator;
-    magnitude = sqrt(real * real + imaginary * imaginary);
-    const Sample bipolar = ONE_OVER_TAU * atan2(imaginary, real);
-    phase = bipolar < 0.0 ? bipolar + 1.0 : bipolar;
+    if (getNumSamples() > 0) {
+        const Sample sampleRate = getSampleRate();
+        const Sample oneOverSampleRate = getOneOverSampleRate();
+        const Sample f = getFrequency()->getWrapper().getSample(channel, 0);
+        const Sample resonance = getResonance()->getWrapper().getSample(channel, 0);
+        const Sample amplitude = getAmplitude()->getWrapper().getSample(channel, 0);
+        const Sample mode = getMode()->getWrapper().getSample(channel, 0);
+        unlock();
+        Sample a0;
+        Sample a1;
+        Sample a2;
+        Sample b0;
+        Sample b1;
+        Sample b2;
+        calculateCoefficients(sampleRate,
+                              oneOverSampleRate,
+                              f,
+                              resonance,
+                              amplitude,
+                              mode,
+                              a0,
+                              a1,
+                              a2,
+                              b0,
+                              b1,
+                              b2);
+        const Sample omega = TAU * frequency * oneOverSampleRate;
+        const Sample sinW = sin(omega);
+        const Sample cosW = cos(omega);
+        const Sample sin2W = sin(2.0 * omega);
+        const Sample cos2W = cos(2.0 * omega);
+        const Sample a = b0 + b1 * cosW + b2 * cos2W;
+        const Sample b = -b1 * sinW - b2 * sin2W;
+        const Sample c = a0 + a1 * cosW + a2 * cos2W;
+        const Sample d = -a1 * sinW - a2 * sin2W;
+        const Sample denominator = c * c + d * d;
+        const Sample real = (a * c + b * d) / denominator;
+        const Sample imaginary = (b * c - a * d) / denominator;
+        magnitude = sqrt(real * real + imaginary * imaginary);
+        const Sample bipolar = ONE_OVER_TAU * atan2(imaginary, real);
+        phase = bipolar < 0.0 ? bipolar + 1.0 : bipolar;
+    } else {
+        unlock();
+        magnitude = 1.0;
+        phase = 0.0;
+    }
 }
 
 void dsp::Biquad::setNumOutputChannelsNoLock(size_t numChannels) {
@@ -103,7 +127,9 @@ void dsp::Biquad::processNoLock() {
                 y1 = 0.0;
                 y2 = 0.0;
             }
-            calculateCoefficients(frequencyChannel[sample],
+            calculateCoefficients(getSampleRate(),
+                                  getOneOverSampleRate(),
+                                  frequencyChannel[sample],
                                   resonanceChannel[sample],
                                   amplitudeChannel[sample],
                                   modeChannel[sample],
@@ -122,7 +148,9 @@ void dsp::Biquad::processNoLock() {
     }
 }
 
-void dsp::Biquad::calculateCoefficients(const Sample &frequency,
+void dsp::Biquad::calculateCoefficients(const Sample sampleRate,
+                                        const Sample oneOverSampleRate,
+                                        const Sample &frequency,
                                         const Sample &resonance,
                                         const Sample &amplitude,
                                         const Sample &mode,
@@ -131,7 +159,7 @@ void dsp::Biquad::calculateCoefficients(const Sample &frequency,
                                         Sample &a2,
                                         Sample &b0,
                                         Sample &b1,
-                                        Sample &b2) const {
+                                        Sample &b2) {
     const Sample posResonance = abs(resonance);
     const Sample posAmplitude = abs(amplitude);
     if (posResonance == 0.0 || posAmplitude == 0.0) {
@@ -142,7 +170,7 @@ void dsp::Biquad::calculateCoefficients(const Sample &frequency,
         b1 = 0.0;
         b2 = 0.0;
     } else {
-        const Sample omega = TAU * frequency * getOneOverSampleRate();
+        const Sample omega = TAU * clip(frequency, 0.0, 0.5 * sampleRate) * oneOverSampleRate;
         const Sample sinW = sin(omega);
         const Sample cosW = cos(omega);
         const Sample alpha = sinW / (SQRT_OF_TWO * posResonance);

@@ -52,14 +52,20 @@ std::shared_ptr<dsp::Output> dsp::CompressorGate::getGainResponse() const {
     return gainResponse;
 }
 
-dsp::Sample dsp::CompressorGate::getGainResponse(size_t channel, Sample gain) const {
+dsp::Sample dsp::CompressorGate::getGainResponse(size_t channel, Sample gain) {
+    lock();
     DSP_ASSERT(channel < getNumChannels());
-    const size_t lastSample = getNumSamples() - 1;
-    return getGainResponse(gain,
-                           getThreshold()->getWrapper().getSample(channel, lastSample),
-                           getCompressionRatio()->getWrapper().getSample(channel, lastSample),
-                           getGateRatio()->getWrapper().getSample(channel, lastSample),
-                           getHalfKnee()->getWrapper().getSample(channel, lastSample));
+    if (getNumSamples() > 0) {
+        const Sample threshold = getThreshold()->getWrapper().getSample(channel, 0);
+        const Sample compressionRatio = getCompressionRatio()->getWrapper().getSample(channel, 0);
+        const Sample gateRatio = getGateRatio()->getWrapper().getSample(channel, 0);
+        const Sample halfKnee = getHalfKnee()->getWrapper().getSample(channel, 0);
+        unlock();
+        return getGainResponse(gain, threshold, compressionRatio, gateRatio, halfKnee);
+    } else {
+        unlock();
+        return gain;
+    }
 }
 
 void dsp::CompressorGate::setNumOutputChannelsNoLock(size_t numChannels) {
