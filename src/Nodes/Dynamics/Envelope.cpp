@@ -73,16 +73,16 @@ void dsp::Envelope::processNoLock() {
                     attackIndex[channel] = 0;
                     value[channel] = 0.0;
                 }
-                Sample attackPosition = attackChannel[sample] * getSampleRate();
+                Sample attackSamples = attackChannel[sample] * getSampleRate();
                 switch (attackMode) {
                     case Mode::LINEAR:
-                        value[channel] += 1.0 / attackPosition;
+                        value[channel] += 1.0 / attackSamples;
                         if (value[channel] > 1.0) {
                             value[channel] = 1.0;
                         }
                         break;
                     case Mode::EXPONENTIAL:
-                        value[channel] = 1.0 - pow(0.001, 1.0 / attackPosition) * (1.0 - value[channel]);
+                        value[channel] = 1.0 + pow(0.001, 1.0 / attackSamples) * (value[channel] - 1.0);
                         break;
                 }
                 currentTimeChannel[sample] = attackIndex[channel] * getOneOverSampleRate();
@@ -93,15 +93,15 @@ void dsp::Envelope::processNoLock() {
                     releaseIndex[channel] = 0;
                     value[channel] = 1.0;
                 }
-                Sample releasePosition = releaseChannel[sample] * getSampleRate();
+                Sample releaseSamples = releaseChannel[sample] * getSampleRate();
                 switch (releaseMode) {
                     case Mode::LINEAR:
-                        value[channel] -= 1.0 / releasePosition;
+                        value[channel] -= 1.0 / releaseSamples;
                         if (value[channel] < 0.0) {
                             value[channel] = 0.0;
                         }
                         break;
-                    case Mode::EXPONENTIAL: value[channel] *= pow(0.001, 1.0 / releasePosition); break;
+                    case Mode::EXPONENTIAL: value[channel] *= pow(0.001, 1.0 / releaseSamples); break;
                 }
                 currentTimeChannel[sample] = releaseIndex[channel] * getOneOverSampleRate();
                 ++releaseIndex[channel];
