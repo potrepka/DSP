@@ -2,7 +2,7 @@
 
 dsp::StereoPanner::StereoPanner(Type type, Space space)
         : Consumer(type, space)
-        , direction(std::make_shared<Input>(Type::RATIO, space))
+        , direction(std::make_shared<Input>(Type::RATIO, space, 0.5))
         , left(std::make_shared<Output>(type, space))
         , right(std::make_shared<Output>(type, space)) {
     getInputs().push_back(direction);
@@ -29,9 +29,9 @@ void dsp::StereoPanner::processNoLock() {
         Sample *leftChannel = getLeft()->getWrapper().getChannelPointer(channel);
         Sample *rightChannel = getRight()->getWrapper().getChannelPointer(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-            Sample direction = clip(directionChannel[sample], -1.0, 1.0);
-            leftChannel[sample] = SQRT_OF_TWO * cos(PI_OVER_TWO * (0.5 * direction + 0.5)) * inputChannel[sample];
-            rightChannel[sample] = SQRT_OF_TWO * cos(PI_OVER_TWO * (-0.5 * direction - 0.5)) * inputChannel[sample];
+            Sample direction = clip(directionChannel[sample], 0.0, 1.0);
+            leftChannel[sample] = SQRT_OF_TWO * cos(PI_OVER_TWO * direction) * inputChannel[sample];
+            rightChannel[sample] = SQRT_OF_TWO * cos(PI_OVER_TWO * (1.0 - direction)) * inputChannel[sample];
         }
     }
 }
