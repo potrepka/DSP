@@ -23,7 +23,7 @@
 
 #include "Nodes/Dynamics/Clipper.h"
 #include "Nodes/Dynamics/CompressorGate.h"
-#include "Nodes/Dynamics/DryWet.h"
+#include "Nodes/Dynamics/Crossfader.h"
 #include "Nodes/Dynamics/Envelope.h"
 #include "Nodes/Dynamics/Lag.h"
 #include "Nodes/Dynamics/Shaper.h"
