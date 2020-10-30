@@ -18,6 +18,7 @@ public:
 
     std::shared_ptr<Input> getFrequency() const;
     std::shared_ptr<Input> getMode() const;
+    std::shared_ptr<Input> getReset() const;
 
 protected:
     void setNumOutputChannelsNoLock(size_t numChannels) override;
@@ -26,6 +27,7 @@ protected:
 private:
     const std::shared_ptr<Input> frequency;
     const std::shared_ptr<Input> mode;
+    const std::shared_ptr<Input> reset;
     Array state;
 };
 
