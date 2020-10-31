@@ -3,11 +3,9 @@
 dsp::OnePole::OnePole(Type type)
         : Transformer(type, type)
         , frequency(std::make_shared<Input>(Type::HERTZ))
-        , mode(std::make_shared<Input>(Type::INTEGER))
-        , reset(std::make_shared<Input>(Type::BOOLEAN)) {
+        , mode(std::make_shared<Input>(Type::INTEGER)) {
     getInputs().push_back(frequency);
     getInputs().push_back(mode);
-    getInputs().push_back(reset);
 }
 
 std::shared_ptr<dsp::Input> dsp::OnePole::getFrequency() const {
@@ -16,10 +14,6 @@ std::shared_ptr<dsp::Input> dsp::OnePole::getFrequency() const {
 
 std::shared_ptr<dsp::Input> dsp::OnePole::getMode() const {
     return mode;
-}
-
-std::shared_ptr<dsp::Input> dsp::OnePole::getReset() const {
-    return reset;
 }
 
 void dsp::OnePole::setNumOutputChannelsNoLock(size_t numChannels) {
@@ -32,15 +26,13 @@ void dsp::OnePole::processNoLock() {
         Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
         Sample *frequencyChannel = getFrequency()->getWrapper().getChannelPointer(channel);
         Sample *modeChannel = getMode()->getWrapper().getChannelPointer(channel);
-        Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             Sample &input = inputChannel[sample];
             Sample &frequency = frequencyChannel[sample];
             Sample &mode = modeChannel[sample];
-            Sample &reset = resetChannel[sample];
             Sample &output = outputChannel[sample];
-            if (reset) {
+            if (isnan(state[channel])) {
                 state[channel] = 0.0;
             }
             const Sample radians = PI * frequency * getOneOverSampleRate();

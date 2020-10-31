@@ -36,7 +36,7 @@ private:
     const std::shared_ptr<Output> currentTime;
     std::vector<int> attackIndex;
     std::vector<int> releaseIndex;
-    Array value;
+    Array state;
 };
 
 } // namespace dsp

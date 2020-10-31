@@ -96,6 +96,9 @@ void dsp::CompressorGate::processNoLock() {
             Sample &release = releaseChannel[sample];
             Sample &output = outputChannel[sample];
             Sample &gainResponse = gainResponseChannel[sample];
+            if (isnan(state[channel])) {
+                state[channel] = 0.0;
+            }
             const Sample gain = log2(abs(control));
             const Sample gainResponseTarget = getGainResponse(gain, threshold, halfKnee, compressionRatio, gateRatio);
             const Sample decay = (abs(gainResponseTarget) > abs(state[channel]) ? attack : release) * getSampleRate();
@@ -116,16 +119,10 @@ dsp::Sample dsp::CompressorGate::getGainResponse(const Sample &gain,
         return 0.0;
     }
     const Sample posHalfKnee = abs(halfKnee);
-    if (gainMinusThreshold > -posHalfKnee && gainMinusThreshold < posHalfKnee) {
-        if (compressionRatio == 0.0) {
-            return std::numeric_limits<double>::infinity();
-        }
-        if (isinf(gateRatio)) {
-            return -gateRatio;
-        }
-        const Sample ratioDifference = 1.0 / compressionRatio - gateRatio;
-        if (isinf(posHalfKnee) && ratioDifference != 0.0) {
-            return ratioDifference * std::numeric_limits<double>::infinity();
+    const Sample ratioDifference = 1.0 / compressionRatio - gateRatio;
+    if (gainMinusThreshold > -posHalfKnee && gainMinusThreshold < posHalfKnee && ratioDifference != 0.0) {
+        if (compressionRatio == 0.0 || isinf(gateRatio) || isinf(posHalfKnee)) {
+            return -std::numeric_limits<double>::infinity();
         }
         const Sample knee = 2.0 * posHalfKnee;
         const Sample kneeTimesGR = knee * gateRatio;

@@ -10,7 +10,6 @@ public:
     Lag(Type type = Type::RATIO);
 
     std::shared_ptr<Input> getLagTime() const;
-    std::shared_ptr<Input> getReset() const;
 
 protected:
     void setNumOutputChannelsNoLock(size_t numChannels) override;
@@ -18,8 +17,7 @@ protected:
 
 private:
     const std::shared_ptr<Input> lagTime;
-    const std::shared_ptr<Input> reset;
-    Array value;
+    Array state;
 };
 
 } // namespace dsp

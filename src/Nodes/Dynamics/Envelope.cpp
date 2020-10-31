@@ -56,7 +56,7 @@ void dsp::Envelope::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
     attackIndex.resize(numChannels, 0);
     releaseIndex.resize(numChannels, 0);
-    value.resize(numChannels, 0.0);
+    state.resize(numChannels, 0.0);
 }
 
 void dsp::Envelope::processNoLock() {
@@ -71,18 +71,18 @@ void dsp::Envelope::processNoLock() {
             if (gateChannel[sample]) {
                 if (resetChannel[sample]) {
                     attackIndex[channel] = 0;
-                    value[channel] = 0.0;
+                    state[channel] = 0.0;
                 }
                 Sample attackSamples = attackChannel[sample] * getSampleRate();
                 switch (attackMode) {
                     case Mode::LINEAR:
-                        value[channel] += 1.0 / attackSamples;
-                        if (value[channel] > 1.0) {
-                            value[channel] = 1.0;
+                        state[channel] += 1.0 / attackSamples;
+                        if (state[channel] > 1.0) {
+                            state[channel] = 1.0;
                         }
                         break;
                     case Mode::EXPONENTIAL:
-                        value[channel] = 1.0 + pow(0.001, 1.0 / attackSamples) * (value[channel] - 1.0);
+                        state[channel] = 1.0 + pow(0.001, 1.0 / attackSamples) * (state[channel] - 1.0);
                         break;
                 }
                 currentTimeChannel[sample] = attackIndex[channel] * getOneOverSampleRate();
@@ -91,23 +91,23 @@ void dsp::Envelope::processNoLock() {
             } else {
                 if (resetChannel[sample]) {
                     releaseIndex[channel] = 0;
-                    value[channel] = 1.0;
+                    state[channel] = 1.0;
                 }
                 Sample releaseSamples = releaseChannel[sample] * getSampleRate();
                 switch (releaseMode) {
                     case Mode::LINEAR:
-                        value[channel] -= 1.0 / releaseSamples;
-                        if (value[channel] < 0.0) {
-                            value[channel] = 0.0;
+                        state[channel] -= 1.0 / releaseSamples;
+                        if (state[channel] < 0.0) {
+                            state[channel] = 0.0;
                         }
                         break;
-                    case Mode::EXPONENTIAL: value[channel] *= pow(0.001, 1.0 / releaseSamples); break;
+                    case Mode::EXPONENTIAL: state[channel] *= pow(0.001, 1.0 / releaseSamples); break;
                 }
                 currentTimeChannel[sample] = releaseIndex[channel] * getOneOverSampleRate();
                 ++releaseIndex[channel];
                 attackIndex[channel] = 0;
             }
-            outputChannel[sample] = value[channel];
+            outputChannel[sample] = state[channel];
         }
     }
 }

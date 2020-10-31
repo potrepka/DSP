@@ -7,13 +7,11 @@ dsp::Biquad::Biquad()
         , frequency(std::make_shared<Input>(Type::HERTZ))
         , resonance(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
         , amplitude(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
-        , mode(std::make_shared<Input>(Type::INTEGER, Space::TIME))
-        , reset(std::make_shared<Input>(Type::BOOLEAN)) {
+        , mode(std::make_shared<Input>(Type::INTEGER, Space::TIME)) {
     getInputs().push_back(frequency);
     getInputs().push_back(resonance);
     getInputs().push_back(amplitude);
     getInputs().push_back(mode);
-    getInputs().push_back(reset);
 }
 
 std::shared_ptr<dsp::Input> dsp::Biquad::getFrequency() const {
@@ -30,10 +28,6 @@ std::shared_ptr<dsp::Input> dsp::Biquad::getAmplitude() const {
 
 std::shared_ptr<dsp::Input> dsp::Biquad::getMode() const {
     return mode;
-}
-
-std::shared_ptr<dsp::Input> dsp::Biquad::getReset() const {
-    return reset;
 }
 
 void dsp::Biquad::getMagnitudeAndPhaseResponse(size_t channel, Sample frequency, Sample &magnitude, Sample &phase) {
@@ -108,7 +102,6 @@ void dsp::Biquad::processNoLock() {
         Sample *resonanceChannel = getResonance()->getWrapper().getChannelPointer(channel);
         Sample *amplitudeChannel = getAmplitude()->getWrapper().getChannelPointer(channel);
         Sample *modeChannel = getMode()->getWrapper().getChannelPointer(channel);
-        Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample &x1 = xx1[channel];
         Sample &x2 = xx2[channel];
@@ -121,7 +114,7 @@ void dsp::Biquad::processNoLock() {
         Sample &b1 = bb1[channel];
         Sample &b2 = bb2[channel];
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-            if (resetChannel[sample]) {
+            if (isnan(x1) || isnan(x2) || isnan(y1) || isnan(y2)) {
                 x1 = 0.0;
                 x2 = 0.0;
                 y1 = 0.0;
