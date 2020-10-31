@@ -17,7 +17,7 @@ protected:
     void processNoLock() override;
 
 private:
-    std::vector<bool> state;
+    std::vector<int> state;
 };
 
 } // namespace dsp
