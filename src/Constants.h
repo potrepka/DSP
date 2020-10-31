@@ -34,6 +34,19 @@ enum class Type { RATIO, INTEGER, BOOLEAN, HERTZ, SECONDS };
 
 enum class Space { TIME, FREQUENCY };
 
-enum class Interpolation { NONE, LINEAR, HERMITE };
+struct Shape {
+    static const int MIN = 0;
+    static const int MAX = 1;
+    static const int LINEAR = 0;
+    static const int EXPONENTIAL = 1;
+};
+
+struct Interpolation {
+    static const int MIN = 0;
+    static const int MAX = 2;
+    static const int NONE = 0;
+    static const int LINEAR = 1;
+    static const int HERMITE = 2;
+};
 
 } // namespace dsp

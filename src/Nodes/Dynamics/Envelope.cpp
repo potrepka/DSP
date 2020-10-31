@@ -2,34 +2,20 @@
 
 dsp::Envelope::Envelope()
         : Producer(Type::RATIO)
-        , attackMode(Mode::LINEAR)
-        , releaseMode(Mode::LINEAR)
         , attack(std::make_shared<Input>(Type::SECONDS))
         , release(std::make_shared<Input>(Type::SECONDS))
+        , attackShape(std::make_shared<Input>(Type::INTEGER, Space::TIME, Shape::MAX))
+        , releaseShape(std::make_shared<Input>(Type::INTEGER, Space::TIME, Shape::MAX))
         , gate(std::make_shared<Input>(Type::BOOLEAN))
         , reset(std::make_shared<Input>(Type::BOOLEAN))
         , currentTime(std::make_shared<Output>(Type::SECONDS)) {
     getInputs().push_back(attack);
     getInputs().push_back(release);
+    getInputs().push_back(attackShape);
+    getInputs().push_back(releaseShape);
     getInputs().push_back(gate);
     getInputs().push_back(reset);
     getOutputs().push_back(currentTime);
-}
-
-dsp::Envelope::Mode dsp::Envelope::getAttackMode() const {
-    return attackMode;
-}
-
-void dsp::Envelope::setAttackMode(Mode mode) {
-    attackMode = mode;
-}
-
-dsp::Envelope::Mode dsp::Envelope::getReleaseMode() const {
-    return releaseMode;
-}
-
-void dsp::Envelope::getReleaseMode(Mode mode) {
-    releaseMode = mode;
 }
 
 std::shared_ptr<dsp::Input> dsp::Envelope::getAttack() const {
@@ -38,6 +24,14 @@ std::shared_ptr<dsp::Input> dsp::Envelope::getAttack() const {
 
 std::shared_ptr<dsp::Input> dsp::Envelope::getRelease() const {
     return release;
+}
+
+std::shared_ptr<dsp::Input> dsp::Envelope::getAttackShape() const {
+    return attackShape;
+}
+
+std::shared_ptr<dsp::Input> dsp::Envelope::getReleaseShape() const {
+    return releaseShape;
 }
 
 std::shared_ptr<dsp::Input> dsp::Envelope::getGate() const {
@@ -63,51 +57,61 @@ void dsp::Envelope::processNoLock() {
     for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         Sample *attackChannel = getAttack()->getWrapper().getChannelPointer(channel);
         Sample *releaseChannel = getRelease()->getWrapper().getChannelPointer(channel);
+        Sample *attackShapeChannel = getAttackShape()->getWrapper().getChannelPointer(channel);
+        Sample *releaseShapeChannel = getReleaseShape()->getWrapper().getChannelPointer(channel);
         Sample *gateChannel = getGate()->getWrapper().getChannelPointer(channel);
         Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         Sample *currentTimeChannel = getCurrentTime()->getWrapper().getChannelPointer(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-            if (gateChannel[sample]) {
-                if (resetChannel[sample]) {
+            Sample &gate = gateChannel[sample];
+            Sample &reset = resetChannel[sample];
+            Sample &output = outputChannel[sample];
+            Sample &currentTime = currentTimeChannel[sample];
+            if (gate) {
+                Sample &attack = attackChannel[sample];
+                Sample &attackShape = attackShapeChannel[sample];
+                if (reset) {
                     attackIndex[channel] = 0;
                     state[channel] = 0.0;
                 }
-                Sample attackSamples = attackChannel[sample] * getSampleRate();
-                switch (attackMode) {
-                    case Mode::LINEAR:
+                Sample attackSamples = attack * getSampleRate();
+                switch (static_cast<int>(attackShape)) {
+                    case Shape::LINEAR:
                         state[channel] += 1.0 / attackSamples;
                         if (state[channel] > 1.0) {
                             state[channel] = 1.0;
                         }
                         break;
-                    case Mode::EXPONENTIAL:
+                    case Shape::EXPONENTIAL:
                         state[channel] = 1.0 + pow(0.001, 1.0 / attackSamples) * (state[channel] - 1.0);
                         break;
                 }
-                currentTimeChannel[sample] = attackIndex[channel] * getOneOverSampleRate();
+                currentTime = attackIndex[channel] * getOneOverSampleRate();
                 ++attackIndex[channel];
                 releaseIndex[channel] = 0;
             } else {
-                if (resetChannel[sample]) {
+                Sample &release = releaseChannel[sample];
+                Sample &releaseShape = releaseShapeChannel[sample];
+                if (reset) {
                     releaseIndex[channel] = 0;
                     state[channel] = 1.0;
                 }
-                Sample releaseSamples = releaseChannel[sample] * getSampleRate();
-                switch (releaseMode) {
-                    case Mode::LINEAR:
+                Sample releaseSamples = release * getSampleRate();
+                switch (static_cast<int>(releaseShape)) {
+                    case Shape::LINEAR:
                         state[channel] -= 1.0 / releaseSamples;
                         if (state[channel] < 0.0) {
                             state[channel] = 0.0;
                         }
                         break;
-                    case Mode::EXPONENTIAL: state[channel] *= pow(0.001, 1.0 / releaseSamples); break;
+                    case Shape::EXPONENTIAL: state[channel] *= pow(0.001, 1.0 / releaseSamples); break;
                 }
-                currentTimeChannel[sample] = releaseIndex[channel] * getOneOverSampleRate();
+                currentTime = releaseIndex[channel] * getOneOverSampleRate();
                 ++releaseIndex[channel];
                 attackIndex[channel] = 0;
             }
-            outputChannel[sample] = state[channel];
+            output = state[channel];
         }
     }
 }

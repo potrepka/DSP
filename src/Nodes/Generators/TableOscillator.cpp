@@ -2,32 +2,16 @@
 
 dsp::TableOscillator::TableOscillator(Type type)
         : Producer(type)
-        , phaseInterpolation(Interpolation::LINEAR)
-        , positionInterpolation(Interpolation::LINEAR)
         , phase(std::make_shared<Input>(Type::RATIO))
-        , position(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0)) {
+        , position(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
+        , phaseInterpolation(
+                  std::make_shared<Input>(Type::INTEGER, Space::TIME, Interpolation::MAX, Interpolation::LINEAR))
+        , positionInterpolation(
+                  std::make_shared<Input>(Type::INTEGER, Space::TIME, Interpolation::MAX, Interpolation::LINEAR)) {
     getInputs().push_back(phase);
     getInputs().push_back(position);
-}
-
-dsp::Interpolation dsp::TableOscillator::getPhaseInterpolation() const {
-    return phaseInterpolation;
-}
-
-void dsp::TableOscillator::setPhaseInterpolation(Interpolation interpolation) {
-    lock();
-    phaseInterpolation = interpolation;
-    unlock();
-}
-
-dsp::Interpolation dsp::TableOscillator::getPositionInterpolation() const {
-    return positionInterpolation;
-}
-
-void dsp::TableOscillator::setPositionInterpolation(Interpolation interpolation) {
-    lock();
-    positionInterpolation = interpolation;
-    unlock();
+    getInputs().push_back(phaseInterpolation);
+    getInputs().push_back(positionInterpolation);
 }
 
 std::vector<std::shared_ptr<dsp::Buffer>> &dsp::TableOscillator::getTables() {
@@ -42,6 +26,14 @@ std::shared_ptr<dsp::Input> dsp::TableOscillator::getPosition() const {
     return position;
 }
 
+std::shared_ptr<dsp::Input> dsp::TableOscillator::getPhaseInterpolation() const {
+    return phaseInterpolation;
+}
+
+std::shared_ptr<dsp::Input> dsp::TableOscillator::getPositionInterpolation() const {
+    return positionInterpolation;
+}
+
 void dsp::TableOscillator::processNoLock() {
     if (tables.size() > 0) {
         for (const auto &table : tables) {
@@ -49,18 +41,22 @@ void dsp::TableOscillator::processNoLock() {
                 table->lock();
             }
         }
-        unsigned int numPoints;
-        switch (positionInterpolation) {
-            case Interpolation::NONE: numPoints = 1; break;
-            case Interpolation::LINEAR: numPoints = 2; break;
-            case Interpolation::HERMITE: numPoints = 4; break;
-        }
-        Array samples(numPoints);
         for (size_t channel = 0; channel < getNumChannels(); ++channel) {
             Sample *phaseChannel = getPhase()->getWrapper().getChannelPointer(channel);
             Sample *positionChannel = getPosition()->getWrapper().getChannelPointer(channel);
+            Sample *phaseInterpolationChannel = getPhaseInterpolation()->getWrapper().getChannelPointer(channel);
+            Sample *positionInterpolationChannel = getPositionInterpolation()->getWrapper().getChannelPointer(channel);
             Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
             for (int sample = 0; sample < getNumSamples(); ++sample) {
+                int phaseInterpolation = static_cast<int>(phaseInterpolationChannel[sample]);
+                int positionInterpolation = static_cast<int>(positionInterpolationChannel[sample]);
+                unsigned int numPoints;
+                switch (positionInterpolation) {
+                    case Interpolation::NONE: numPoints = 1; break;
+                    case Interpolation::LINEAR: numPoints = 2; break;
+                    case Interpolation::HERMITE: numPoints = 4; break;
+                }
+                Array samples(numPoints);
                 const Sample positionIndex = positionChannel[sample] *
                                              (tables.size() - (positionInterpolation == Interpolation::NONE ? 0 : 1));
                 const Sample indexBefore =
