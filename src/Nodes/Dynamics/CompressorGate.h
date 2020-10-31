@@ -11,12 +11,12 @@ public:
 
     std::shared_ptr<Input> getControl() const;
     std::shared_ptr<Input> getThreshold() const;
-    std::shared_ptr<Input> getHalfKnee() const;
+    std::shared_ptr<Input> getHardness() const;
     std::shared_ptr<Input> getCompressionRatio() const;
     std::shared_ptr<Input> getGateRatio() const;
     std::shared_ptr<Input> getAttack() const;
     std::shared_ptr<Input> getRelease() const;
-    std::shared_ptr<Output> getGainResponse() const;
+    std::shared_ptr<Output> getGain() const;
 
     Sample getGainResponse(size_t channel, Sample gain);
 
@@ -27,17 +27,17 @@ protected:
 private:
     const std::shared_ptr<Input> control;
     const std::shared_ptr<Input> threshold;
-    const std::shared_ptr<Input> halfKnee;
+    const std::shared_ptr<Input> hardness;
     const std::shared_ptr<Input> compressionRatio;
     const std::shared_ptr<Input> gateRatio;
     const std::shared_ptr<Input> attack;
     const std::shared_ptr<Input> release;
-    const std::shared_ptr<Output> gainResponse;
+    const std::shared_ptr<Output> gain;
     Array state;
 
     static Sample getGainResponse(const Sample &gain,
                                   const Sample &threshold,
-                                  const Sample &halfKnee,
+                                  const Sample &hardness,
                                   const Sample &compressionRatio,
                                   const Sample &gateRatio);
 };
