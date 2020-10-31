@@ -143,6 +143,7 @@ void dsp::NodeProcessor::process(AudioBuffer<T> &audioBuffer, MidiBuffer &midiBu
             inputChannel[sample] = static_cast<Sample>(bufferChannel[sample]);
         }
     }
+
     processClipping(audioInput->getWrapper(), audioInputClipping->getWrapper());
 
     inputMessages->clear();
@@ -159,14 +160,15 @@ void dsp::NodeProcessor::process(AudioBuffer<T> &audioBuffer, MidiBuffer &midiBu
     audioOutput->processNoLock();
     audioOutput->unlock();
 
+    processClipping(audioOutput->getWrapper(), audioOutputClipping->getWrapper());
+
     for (size_t channel = 0; channel < audioOutput->getNumChannels(); ++channel) {
         auto *outputChannel = audioOutput->getWrapper().getChannelPointer(channel);
         auto *bufferChannel = audioBuffer.getWritePointer(channel);
         for (auto sample = 0; sample < audioOutput->getNumSamples(); ++sample) {
-            bufferChannel[sample] = static_cast<T>(outputChannel[sample]);
+            bufferChannel[sample] = static_cast<T>(clip(outputChannel[sample], -1.0, 1.0));
         }
     }
-    processClipping(audioOutput->getWrapper(), audioOutputClipping->getWrapper());
 
     unlock();
 }
