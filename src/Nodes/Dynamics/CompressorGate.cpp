@@ -56,10 +56,11 @@ dsp::Sample dsp::CompressorGate::getGainResponse(size_t channel, Sample control)
     lock();
     DSP_ASSERT(channel < getNumChannels());
     if (getNumSamples() > 0) {
-        const Sample threshold = getThreshold()->getWrapper().getSample(channel, 0);
-        const Sample hardness = getHardness()->getWrapper().getSample(channel, 0);
-        const Sample compressionRatio = getCompressionRatio()->getWrapper().getSample(channel, 0);
-        const Sample gateRatio = getGateRatio()->getWrapper().getSample(channel, 0);
+        const size_t lastSample = getNumSamples() - 1;
+        const Sample threshold = getThreshold()->getWrapper().getSample(channel, lastSample);
+        const Sample hardness = getHardness()->getWrapper().getSample(channel, lastSample);
+        const Sample compressionRatio = getCompressionRatio()->getWrapper().getSample(channel, lastSample);
+        const Sample gateRatio = getGateRatio()->getWrapper().getSample(channel, lastSample);
         unlock();
         return control * getGainResponse(control, threshold, hardness, compressionRatio, gateRatio);
     } else {

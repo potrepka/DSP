@@ -34,12 +34,13 @@ void dsp::Biquad::getMagnitudeAndPhaseResponse(size_t channel, Sample frequency,
     lock();
     DSP_ASSERT(channel < getNumChannels());
     if (getNumSamples() > 0) {
+        const size_t lastSample = getNumSamples() - 1;
         const Sample sampleRate = getSampleRate();
         const Sample oneOverSampleRate = getOneOverSampleRate();
-        const Sample f = getFrequency()->getWrapper().getSample(channel, 0);
-        const Sample resonance = getResonance()->getWrapper().getSample(channel, 0);
-        const Sample amplitude = getAmplitude()->getWrapper().getSample(channel, 0);
-        const Sample mode = getMode()->getWrapper().getSample(channel, 0);
+        const Sample f = getFrequency()->getWrapper().getSample(channel, lastSample);
+        const Sample resonance = getResonance()->getWrapper().getSample(channel, lastSample);
+        const Sample amplitude = getAmplitude()->getWrapper().getSample(channel, lastSample);
+        const Sample mode = getMode()->getWrapper().getSample(channel, lastSample);
         unlock();
         Sample a0;
         Sample a1;
