@@ -16,6 +16,7 @@ void dsp::Trigonometric::processNoLock() {
                 switch (static_cast<int>(y)) {
                     case Mode::SINE: return sin(x); break;
                     case Mode::COSINE: return cos(x); break;
+                    case Mode::TANGENT: return tan(x); break;
                 }
             },
             getInput()->getWrapper(),

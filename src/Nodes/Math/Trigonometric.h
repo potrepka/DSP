@@ -9,9 +9,10 @@ class Trigonometric : public Transformer {
 public:
     struct Mode {
         static const int MIN = 0;
-        static const int MAX = 1;
+        static const int MAX = 2;
         static const int SINE = 0;
         static const int COSINE = 1;
+        static const int TANGENT = 2;
     };
 
     Trigonometric(Space space = Space::TIME);
