@@ -2,22 +2,12 @@
 
 dsp::TableOscillator::TableOscillator(Type type)
         : Producer(type)
-        , positionInterpolation(Interpolation::LINEAR)
         , phaseInterpolation(Interpolation::LINEAR)
-        , position(std::make_shared<Input>(Type::RATIO))
-        , phase(std::make_shared<Input>(Type::RATIO)) {
-    getInputs().push_back(position);
+        , positionInterpolation(Interpolation::LINEAR)
+        , phase(std::make_shared<Input>(Type::RATIO))
+        , position(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0)) {
     getInputs().push_back(phase);
-}
-
-dsp::Interpolation dsp::TableOscillator::getPositionInterpolation() const {
-    return positionInterpolation;
-}
-
-void dsp::TableOscillator::setPositionInterpolation(Interpolation interpolation) {
-    lock();
-    positionInterpolation = interpolation;
-    unlock();
+    getInputs().push_back(position);
 }
 
 dsp::Interpolation dsp::TableOscillator::getPhaseInterpolation() const {
@@ -30,16 +20,26 @@ void dsp::TableOscillator::setPhaseInterpolation(Interpolation interpolation) {
     unlock();
 }
 
+dsp::Interpolation dsp::TableOscillator::getPositionInterpolation() const {
+    return positionInterpolation;
+}
+
+void dsp::TableOscillator::setPositionInterpolation(Interpolation interpolation) {
+    lock();
+    positionInterpolation = interpolation;
+    unlock();
+}
+
 std::vector<std::shared_ptr<dsp::Buffer>> &dsp::TableOscillator::getTables() {
     return tables;
 }
 
-std::shared_ptr<dsp::Input> dsp::TableOscillator::getPosition() const {
-    return position;
-}
-
 std::shared_ptr<dsp::Input> dsp::TableOscillator::getPhase() const {
     return phase;
+}
+
+std::shared_ptr<dsp::Input> dsp::TableOscillator::getPosition() const {
+    return position;
 }
 
 void dsp::TableOscillator::processNoLock() {
@@ -61,7 +61,7 @@ void dsp::TableOscillator::processNoLock() {
             Sample *positionChannel = getPosition()->getWrapper().getChannelPointer(channel);
             Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
             for (int sample = 0; sample < getNumSamples(); ++sample) {
-                const Sample positionIndex = clip(positionChannel[sample], 0.0, 1.0) *
+                const Sample positionIndex = positionChannel[sample] *
                                              (tables.size() - (positionInterpolation == Interpolation::NONE ? 0 : 1));
                 const Sample indexBefore =
                         floor(positionIndex) - (positionInterpolation == Interpolation::HERMITE ? 1.0 : 0.0);

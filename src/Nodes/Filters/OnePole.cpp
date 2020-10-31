@@ -38,8 +38,7 @@ void dsp::OnePole::processNoLock() {
             const Sample radians = PI * frequency * getOneOverSampleRate();
             const Sample delta = tan(radians / (1.0 + radians)) * (input - state[channel]);
             state[channel] += delta;
-            const Sample modeClipped = clip(mode, Mode::MIN, Mode::MAX);
-            switch (static_cast<int>(modeClipped)) {
+            switch (static_cast<int>(mode)) {
                 case Mode::LOW_PASS: output = state[channel]; break;
                 case Mode::HIGH_PASS: output = input - state[channel]; break;
             }

@@ -35,8 +35,7 @@ void dsp::Clipper::processNoLock() {
             Sample &maximum = maximumChannel[sample];
             Sample &mode = modeChannel[sample];
             Sample &output = outputChannel[sample];
-            const Sample modeClipped = clip(mode, Mode::MIN, Mode::MAX);
-            switch (static_cast<int>(modeClipped)) {
+            switch (static_cast<int>(mode)) {
                 case Mode::CLIP: output = clip(input, minimum, maximum); break;
                 case Mode::WRAP: output = wrap(input - minimum, maximum - minimum) + minimum; break;
                 case Mode::MIRROR: {

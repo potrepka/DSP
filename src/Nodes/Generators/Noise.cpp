@@ -79,8 +79,7 @@ void dsp::Noise::processNoLock() {
             Sample &mode = modeChannel[sample];
             Sample &output = outputChannel[sample];
             Sample &white = whiteChannel[sample];
-            const Sample modeClipped = clip(mode, Mode::MIN, Mode::MAX);
-            switch (static_cast<int>(modeClipped)) {
+            switch (static_cast<int>(mode)) {
                 case Mode::WHITE: output = white; break;
                 case Mode::PINK: {
                     memoryWrapper.multiplyBy(memoryCoefficients);

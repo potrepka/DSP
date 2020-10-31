@@ -13,8 +13,7 @@ std::shared_ptr<dsp::Input> dsp::Trigonometric::getMode() const {
 void dsp::Trigonometric::processNoLock() {
     getOutput()->getWrapper().replaceWithApplicationOf(
             [](Sample x, Sample y) {
-                const Sample modeClipped = clip(y, Mode::MIN, Mode::MAX);
-                switch (static_cast<int>(modeClipped)) {
+                switch (static_cast<int>(y)) {
                     case Mode::SINE: return sin(x); break;
                     case Mode::COSINE: return cos(x); break;
                 }

@@ -32,8 +32,7 @@ void dsp::Shaper::processNoLock() {
             } else if (drive == 1.0) {
                 output = input;
             } else {
-                const Sample modeClipped = clip(mode, Mode::MIN, Mode::MAX);
-                switch (static_cast<int>(modeClipped)) {
+                switch (static_cast<int>(mode)) {
                     case Mode::POLYNOMIAL: {
                         Sample onePlusInput = 1.0 + input;
                         Sample oneMinusInput = 1.0 - input;

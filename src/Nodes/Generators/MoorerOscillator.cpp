@@ -3,7 +3,7 @@
 dsp::MoorerOscillator::MoorerOscillator()
         : Producer(Type::RATIO)
         , phase(std::make_shared<Input>(Type::RATIO))
-        , intensity(std::make_shared<Input>(Type::RATIO))
+        , intensity(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
         , modulationIndex(std::make_shared<Input>(Type::RATIO))
         , harmonics(std::make_shared<Input>(Type::INTEGER))
         , mode(std::make_shared<Input>(Type::INTEGER, Space::TIME, Mode::MAX)) {
@@ -43,11 +43,12 @@ void dsp::MoorerOscillator::processNoLock() {
         Sample *modeChannel = getMode()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
         for (int sample = 0; sample < getNumSamples(); ++sample) {
-            const Sample a = clip(intensityChannel[sample], 0.0, 1.0);
+            const Sample a = intensityChannel[sample];
             const Sample n = harmonicsChannel[sample] - 1.0;
             if (a == 1.0 || n < 0.0) {
                 outputChannel[sample] = 0.0;
             } else {
+                Sample &mode = modeChannel[sample];
                 const Sample t = TAU * phaseChannel[sample];
                 const Sample s = modulationIndexChannel[sample] * t;
                 const size_t nFloor = static_cast<size_t>(n);
@@ -59,8 +60,7 @@ void dsp::MoorerOscillator::processNoLock() {
                 a1 *= nFloor & 1 ? a : 1;
                 Sample scale;
                 Sample numerator;
-                const Sample modeClipped = clip(modeChannel[sample], Mode::MIN, Mode::MAX);
-                switch (static_cast<int>(modeClipped)) {
+                switch (static_cast<int>(mode)) {
                     case Mode::ONE_SIDED:
                         scale = (a - 1.0) / (a1 - 1.0);
                         numerator = sin(t) - a * sin(t - s) - a1 * (sin(t + (n + 1.0) * s) - a * sin(t + n * s));

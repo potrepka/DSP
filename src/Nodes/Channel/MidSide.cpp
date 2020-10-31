@@ -45,12 +45,12 @@ void dsp::MidSide::processNoLock() {
             Sample *wrapperChannel = wrapper.getChannelPointer(0);
             for (size_t sample = 0; sample < getNumSamples(); ++sample) {
                 Sample &input = inputChannel[sample];
-                Sample &mixed = wrapperChannel[sample];
+                Sample &mixAmount = mixAmountChannel[sample];
                 Sample &mid = midChannel[sample];
                 Sample &side = sideChannel[sample];
-                Sample amount = clip(mixAmountChannel[sample], 0.0, 1.0);
-                mid = input + amount * (mixed - input);
-                side = amount * (input - mixed);
+                Sample &mixed = wrapperChannel[sample];
+                mid = input + mixAmount * (mixed - input);
+                side = mixAmount * (input - mixed);
             }
         }
     }

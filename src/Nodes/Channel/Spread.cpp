@@ -29,8 +29,7 @@ void dsp::Spread::processNoLock() {
             Sample &spread = spreadChannel[sample];
             Sample &mode = modeChannel[sample];
             Sample &output = outputChannel[sample];
-            Sample modeClipped = clip(modeChannel[sample], Mode::MIN, Mode::MAX);
-            output = input + spread * (numChannelsMinusOne > 0 ? amount - 0.5 * modeClipped : amount);
+            output = input + spread * (numChannelsMinusOne > 0 ? amount - 0.5 * mode : amount);
         }
     }
 }

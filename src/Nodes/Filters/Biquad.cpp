@@ -167,8 +167,7 @@ void dsp::Biquad::calculateCoefficients(const Sample sampleRate,
         const Sample sinW = sin(omega);
         const Sample cosW = cos(omega);
         const Sample alpha = sinW / (SQRT_OF_TWO * posResonance);
-        const Sample modeClipped = clip(mode, Mode::MIN, Mode::MAX);
-        switch (static_cast<int>(modeClipped)) {
+        switch (static_cast<int>(mode)) {
             case Mode::LOW_PASS:
                 a0 = 1.0 + alpha;
                 a1 = -2.0 * cosW;

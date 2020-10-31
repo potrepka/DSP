@@ -320,7 +320,7 @@ void dsp::Engine::processAudioBufferNoLock(Sample *inputBuffer, Sample *outputBu
     for (unsigned int channel = 0; channel < numOutputChannels; ++channel) {
         const Sample *audioOutputChannel = audioBuffer.getReadPointer(channel);
         for (unsigned int k = 0, sample = channel; k < numSamples; ++k, sample += numOutputChannels) {
-            outputBuffer[sample] = clip(audioOutputChannel[k], -1.0, 1.0);
+            outputBuffer[sample] = audioOutputChannel[k];
         }
     }
 }
