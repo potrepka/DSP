@@ -18,7 +18,7 @@ std::shared_ptr<dsp::Input> dsp::Differentiator::getGate() const {
 
 void dsp::Differentiator::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
-    state.resize(numChannels, std::numeric_limits<Sample>::quiet_NaN());
+    state.resize(numChannels, 0.0);
     memory.resize(numChannels, 0.0);
 }
 
@@ -31,16 +31,19 @@ void dsp::Differentiator::processNoLock() {
         Sample channelValue = getOutput()->getChannelValue(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             if (resetChannel[sample]) {
-                state[channel] = std::numeric_limits<Sample>::quiet_NaN();
+                state[channel] = 0.0;
                 memory[channel] = 0.0;
             }
             if (gateChannel[sample]) {
+                if (isnan(memory[channel])) {
+                    memory[channel] = 0.0;
+                }
                 state[channel] = inputChannel[sample] - memory[channel];
             }
             if (resetChannel[sample] || gateChannel[sample]) {
                 memory[channel] = inputChannel[sample];
             }
-            outputChannel[sample] = std::isnan(state[channel]) ? channelValue : state[channel];
+            outputChannel[sample] = state[channel];
         }
     }
 }

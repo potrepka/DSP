@@ -30,12 +30,12 @@ void dsp::SampleAndHold::processNoLock() {
         Sample channelValue = getOutput()->getChannelValue(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             if (resetChannel[sample]) {
-                state[channel] = std::numeric_limits<Sample>::quiet_NaN();
+                state[channel] = 0.0;
             }
             if (gateChannel[sample]) {
                 state[channel] = inputChannel[sample];
             }
-            outputChannel[sample] = std::isnan(state[channel]) ? channelValue : state[channel];
+            outputChannel[sample] = state[channel];
         }
     }
 }

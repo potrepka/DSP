@@ -27,11 +27,15 @@ void dsp::Integrator::processNoLock() {
         Sample *gateChannel = getGate()->getWrapper().getChannelPointer(channel);
         Sample *resetChannel = getReset()->getWrapper().getChannelPointer(channel);
         Sample *outputChannel = getOutput()->getWrapper().getChannelPointer(channel);
+        Sample channelValue = getOutput()->getChannelValue(channel);
         for (size_t sample = 0; sample < getNumSamples(); ++sample) {
             if (resetChannel[sample]) {
                 state[channel] = 0.0;
             }
             if (gateChannel[sample]) {
+                if (isnan(state[channel])) {
+                    state[channel] = 0.0;
+                }
                 state[channel] += inputChannel[sample];
             }
             outputChannel[sample] = state[channel];
