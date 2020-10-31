@@ -2,7 +2,7 @@
 
 dsp::MidSide::MidSide(Type type, Space space)
         : Consumer(type, space)
-        , mixAmount(std::make_shared<Input>(Type::RATIO, space))
+        , mixAmount(std::make_shared<Input>(Type::RATIO, space, 1.0, 1.0))
         , mid(std::make_shared<Output>(type, space))
         , side(std::make_shared<Output>(type, space))
         , data(0, 0)

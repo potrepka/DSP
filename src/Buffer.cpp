@@ -1,10 +1,10 @@
 #include "Buffer.h"
 
-dsp::Buffer::Buffer(Type type, Space space, Sample defaultValue, Sample modulus, size_t numChannels, size_t numSamples)
+dsp::Buffer::Buffer(Type type, Space space, Sample range, Sample defaultValue, size_t numChannels, size_t numSamples)
         : type(type)
         , space(space)
+        , range(range)
         , defaultValue(defaultValue)
-        , modulus(modulus)
         , data(numChannels, numSamples)
         , wrapper(data)
         , channelValues(numChannels, defaultValue) {}
@@ -29,6 +29,16 @@ void dsp::Buffer::setSpace(Space space) {
     unlock();
 }
 
+dsp::Sample dsp::Buffer::getRange() const {
+    return range;
+}
+
+void dsp::Buffer::setRange(Sample range) {
+    lock();
+    this->range = range;
+    unlock();
+}
+
 dsp::Sample dsp::Buffer::getDefaultValue() const {
     return defaultValue;
 }
@@ -36,16 +46,6 @@ dsp::Sample dsp::Buffer::getDefaultValue() const {
 void dsp::Buffer::setDefaultValue(Sample defaultValue) {
     lock();
     this->defaultValue = defaultValue;
-    unlock();
-}
-
-dsp::Sample dsp::Buffer::getModulus() const {
-    return modulus;
-}
-
-void dsp::Buffer::setModulus(Sample modulus) {
-    lock();
-    this->modulus = modulus;
     unlock();
 }
 
@@ -138,8 +138,15 @@ void dsp::Buffer::fillChannels() {
     }
 }
 
-dsp::Input::Input(Type type, Space space, Sample defaultValue, Sample modulus, size_t numChannels, size_t numSamples)
-        : Buffer(type, space, defaultValue, modulus, numChannels, numSamples)
+void dsp::Buffer::applyRange() {
+    if (range > 0.0) {
+        wrapper.replaceWithMaxOf(wrapper, 0.0);
+        wrapper.replaceWithMinOf(wrapper, range);
+    }
+}
+
+dsp::Input::Input(Type type, Space space, Sample range, Sample defaultValue, size_t numChannels, size_t numSamples)
+        : Buffer(type, space, range, defaultValue, numChannels, numSamples)
         , mode(Mode::SUM) {}
 
 dsp::Input::~Input() {
@@ -225,6 +232,7 @@ void dsp::Input::processNoLock() {
         case Type::INTEGER: wrapper.apply([](Sample x) { return floor(x); }); break;
         case Type::BOOLEAN: wrapper.apply([](Sample x) { return static_cast<int>(floor(x)) & 1; }); break;
     }
+    applyRange();
 }
 
 void dsp::Input::addConnection(std::shared_ptr<Output> output) {
@@ -237,8 +245,8 @@ void dsp::Input::removeConnection(std::shared_ptr<Output> output) {
     connections.erase(std::remove(connections.begin(), connections.end(), output), connections.end());
 }
 
-dsp::Output::Output(Type type, Space space, Sample defaultValue, Sample modulus, size_t numChannels, size_t numSamples)
-        : Buffer(type, space, defaultValue, modulus, numChannels, numSamples) {}
+dsp::Output::Output(Type type, Space space, Sample range, Sample defaultValue, size_t numChannels, size_t numSamples)
+        : Buffer(type, space, range, defaultValue, numChannels, numSamples) {}
 
 dsp::Output::~Output() {
     disconnectAll();
@@ -298,6 +306,7 @@ void dsp::Output::processNoLock() {
         case Type::INTEGER: wrapper.apply([](Sample x) { return floor(x); }); break;
         case Type::BOOLEAN: wrapper.apply([](Sample x) { return x ? 1.0 : 0.0; }); break;
     }
+    applyRange();
 }
 
 void dsp::Output::addConnection(std::shared_ptr<Input> input) {

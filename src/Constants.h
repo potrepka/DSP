@@ -30,7 +30,7 @@ const Sample SQRT_OF_TWO = 1.414213562373095;
 const Sample PHI = 1.618033988749895;
 const Sample E = 2.718281828459045;
 
-enum class Type { RATIO, LOGARITHMIC, INTEGER, BOOLEAN, SECONDS, HERTZ };
+enum class Type { RATIO, INTEGER, BOOLEAN, HERTZ, SECONDS };
 
 enum class Space { TIME, FREQUENCY };
 

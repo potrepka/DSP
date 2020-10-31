@@ -3,7 +3,7 @@
 dsp::OnePole::OnePole(Type type)
         : Transformer(type, type)
         , frequency(std::make_shared<Input>(Type::HERTZ))
-        , mode(std::make_shared<Input>(Type::INTEGER)) {
+        , mode(std::make_shared<Input>(Type::INTEGER, Space::TIME, Mode::MAX)) {
     getInputs().push_back(frequency);
     getInputs().push_back(mode);
 }

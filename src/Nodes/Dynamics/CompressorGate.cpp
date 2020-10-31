@@ -3,13 +3,13 @@
 dsp::CompressorGate::CompressorGate()
         : Transformer(Type::RATIO, Type::RATIO)
         , control(std::make_shared<Input>(Type::RATIO))
-        , threshold(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
-        , hardness(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
-        , compressionRatio(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
-        , gateRatio(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
+        , threshold(std::make_shared<Input>(Type::RATIO, Space::TIME, 0.0, 1.0))
+        , hardness(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0, 1.0))
+        , compressionRatio(std::make_shared<Input>(Type::RATIO, Space::TIME, 0.0, 1.0))
+        , gateRatio(std::make_shared<Input>(Type::RATIO, Space::TIME, 0.0, 1.0))
         , attack(std::make_shared<Input>(Type::SECONDS))
         , release(std::make_shared<Input>(Type::SECONDS))
-        , gain(std::make_shared<Output>(Type::RATIO, Space::TIME, 1.0)) {
+        , gain(std::make_shared<Output>(Type::RATIO, Space::TIME, 0.0, 1.0)) {
     getInputs().push_back(control);
     getInputs().push_back(threshold);
     getInputs().push_back(hardness);

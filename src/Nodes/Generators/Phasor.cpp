@@ -3,7 +3,7 @@
 dsp::Phasor::Phasor()
         : Producer(Type::RATIO)
         , frequency(std::make_shared<Input>(Type::HERTZ))
-        , mode(std::make_shared<Input>(Type::INTEGER))
+        , mode(std::make_shared<Input>(Type::INTEGER, Space::TIME, Mode::MAX))
         , reset(std::make_shared<Input>(Type::BOOLEAN)) {
     getInputs().push_back(frequency);
     getInputs().push_back(mode);

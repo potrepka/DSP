@@ -6,7 +6,7 @@ dsp::MoorerOscillator::MoorerOscillator()
         , intensity(std::make_shared<Input>(Type::RATIO))
         , modulationIndex(std::make_shared<Input>(Type::RATIO))
         , harmonics(std::make_shared<Input>(Type::INTEGER))
-        , mode(std::make_shared<Input>(Type::INTEGER)) {
+        , mode(std::make_shared<Input>(Type::INTEGER, Space::TIME, Mode::MAX)) {
     getInputs().push_back(phase);
     getInputs().push_back(intensity);
     getInputs().push_back(modulationIndex);

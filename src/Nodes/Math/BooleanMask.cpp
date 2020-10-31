@@ -2,7 +2,7 @@
 
 dsp::BooleanMask::BooleanMask(Type type, Space space)
         : Transformer(type, type, space)
-        , mask(std::make_shared<Input>(Type::BOOLEAN, space, 1.0)) {
+        , mask(std::make_shared<Input>(Type::BOOLEAN)) {
     getInputs().push_back(mask);
 }
 

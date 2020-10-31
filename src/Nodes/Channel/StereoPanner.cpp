@@ -2,7 +2,7 @@
 
 dsp::StereoPanner::StereoPanner(Type type, Space space)
         : Consumer(type, space)
-        , direction(std::make_shared<Input>(Type::RATIO, space, 0.5))
+        , direction(std::make_shared<Input>(Type::RATIO, space, 1.0, 0.5))
         , left(std::make_shared<Output>(type, space))
         , right(std::make_shared<Output>(type, space)) {
     getInputs().push_back(direction);

@@ -2,7 +2,7 @@
 
 dsp::Trigonometric::Trigonometric(Space space)
         : Transformer(Type::RATIO, Type::RATIO, space)
-        , mode(std::make_shared<Input>(Type::INTEGER, space)) {
+        , mode(std::make_shared<Input>(Type::INTEGER, space, Mode::MAX)) {
     getInputs().push_back(mode);
 }
 

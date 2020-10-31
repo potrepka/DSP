@@ -2,8 +2,8 @@
 
 dsp::Shaper::Shaper(Space space)
         : Transformer(Type::RATIO, Type::RATIO, space)
-        , drive(std::make_shared<Input>(Type::RATIO, space, 1.0))
-        , mode(std::make_shared<Input>(Type::INTEGER, space)) {
+        , drive(std::make_shared<Input>(Type::RATIO, space, 0.0, 1.0))
+        , mode(std::make_shared<Input>(Type::INTEGER, space, Mode::MAX)) {
     getInputs().push_back(drive);
     getInputs().push_back(mode);
 }

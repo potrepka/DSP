@@ -2,9 +2,9 @@
 
 dsp::Clipper::Clipper(Type type, Space space)
         : Transformer(type, type, space)
-        , minimum(std::make_shared<Input>(type, space, -1.0))
-        , maximum(std::make_shared<Input>(type, space, 1.0))
-        , mode(std::make_shared<Input>(Type::INTEGER, space)) {
+        , minimum(std::make_shared<Input>(type, space, 0.0, -1.0))
+        , maximum(std::make_shared<Input>(type, space, 0.0, 1.0))
+        , mode(std::make_shared<Input>(Type::INTEGER, space, Mode::MAX)) {
     getInputs().push_back(minimum);
     getInputs().push_back(maximum);
     getInputs().push_back(mode);

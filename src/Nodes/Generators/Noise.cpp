@@ -30,7 +30,7 @@ const dsp::Sample dsp::Noise::delayedNoiseCoefficient = 0.115926;
 
 dsp::Noise::Noise()
         : Producer(Type::RATIO)
-        , mode(std::make_shared<Input>(Type::INTEGER))
+        , mode(std::make_shared<Input>(Type::INTEGER, Space::TIME, Mode::MAX))
         , whiteData(0, 0)
         , memoryData(0, 8)
         , white(whiteData)

@@ -3,7 +3,7 @@
 dsp::SamplePlayer::SamplePlayer(Type type)
         : Producer(type)
         , interpolation(Interpolation::HERMITE)
-        , speed(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
+        , speed(std::make_shared<Input>(Type::RATIO, Space::TIME, 0.0, 1.0))
         , startTime(std::make_shared<Input>(Type::SECONDS))
         , sampleIndex(std::make_shared<Input>(Type::INTEGER))
         , gate(std::make_shared<Input>(Type::BOOLEAN))

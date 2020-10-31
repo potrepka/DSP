@@ -2,7 +2,7 @@
 
 dsp::Crossfader::Crossfader(Type type, Space space)
         : Consumer(type, space)
-        , position(std::make_shared<Input>(Type::RATIO, space))
+        , position(std::make_shared<Input>(Type::RATIO, space, 1.0, 0.0))
         , a(std::make_shared<Output>(type, space))
         , b(std::make_shared<Output>(type, space)) {
     getInputs().push_back(position);

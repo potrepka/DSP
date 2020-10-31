@@ -5,9 +5,9 @@
 dsp::Biquad::Biquad()
         : Transformer(Type::RATIO, Type::RATIO)
         , frequency(std::make_shared<Input>(Type::HERTZ))
-        , resonance(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
-        , amplitude(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0))
-        , mode(std::make_shared<Input>(Type::INTEGER, Space::TIME)) {
+        , resonance(std::make_shared<Input>(Type::RATIO, Space::TIME, 0.0, 1.0))
+        , amplitude(std::make_shared<Input>(Type::RATIO, Space::TIME, 0.0, 1.0))
+        , mode(std::make_shared<Input>(Type::INTEGER, Space::TIME, Mode::MAX)) {
     getInputs().push_back(frequency);
     getInputs().push_back(resonance);
     getInputs().push_back(amplitude);

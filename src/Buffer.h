@@ -11,8 +11,8 @@ class Buffer : public Lockable {
 public:
     Buffer(Type type = Type::RATIO,
            Space space = Space::TIME,
+           Sample range = 0.0,
            Sample defaultValue = 0.0,
-           Sample modulus = 0.0,
            size_t numChannels = 0,
            size_t numSamples = 0);
 
@@ -22,11 +22,11 @@ public:
     Space getSpace() const;
     void setSpace(Space space);
 
+    Sample getRange() const;
+    void setRange(Sample range);
+
     Sample getDefaultValue() const;
     void setDefaultValue(Sample defaultValue);
-
-    Sample getModulus() const;
-    void setModulus(Sample modulus);
 
     size_t getNumChannels() const;
     void setNumChannels(size_t numChannels);
@@ -51,13 +51,14 @@ public:
 protected:
     Type type;
     Space space;
+    Sample range;
     Sample defaultValue;
-    Sample modulus;
     Data data;
     Wrapper wrapper;
     Array channelValues;
 
     void fillChannels();
+    void applyRange();
 };
 
 class Input;
@@ -71,8 +72,8 @@ public:
 
     Input(Type type = Type::RATIO,
           Space space = Space::TIME,
+          Sample range = 0.0,
           Sample defaultValue = 0.0,
-          Sample modulus = 0.0,
           size_t numChannels = 0,
           size_t numSamples = 0);
     ~Input();
@@ -101,8 +102,8 @@ class Output : public Buffer, public std::enable_shared_from_this<Output> {
 public:
     Output(Type type = Type::RATIO,
            Space space = Space::TIME,
+           Sample range = 0.0,
            Sample defaultValue = 0.0,
-           Sample modulus = 0.0,
            size_t numChannels = 0,
            size_t numSamples = 0);
     ~Output();

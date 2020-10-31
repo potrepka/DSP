@@ -1,7 +1,7 @@
 #include "FrequencyToNote.h"
 
 dsp::FrequencyToNote::FrequencyToNote(Space space)
-        : Transformer(Type::HERTZ, Type::LOGARITHMIC, space)
+        : Transformer(Type::HERTZ, Type::RATIO, space)
         , tuningFrequency(std::make_shared<Input>(Type::HERTZ, space)) {
     getInputs().push_back(tuningFrequency);
 }
