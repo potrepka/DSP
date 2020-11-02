@@ -16,6 +16,21 @@ std::shared_ptr<dsp::Input> dsp::Shaper::getMode() const {
     return mode;
 }
 
+dsp::Sample dsp::Shaper::getOutputSignal(size_t channel, Sample input) {
+    lock();
+    DSP_ASSERT(channel < getNumChannels());
+    if (getNumSamples() > 0) {
+        const size_t lastSample = getNumSamples() - 1;
+        const Sample drive = getDrive()->getWrapper().getSample(channel, lastSample);
+        const Sample mode = getMode()->getWrapper().getSample(channel, lastSample);
+        unlock();
+        return getOutputSignal(input, drive, mode);
+    } else {
+        unlock();
+        return input;
+    }
+}
+
 void dsp::Shaper::processNoLock() {
     for (size_t channel = 0; channel < getNumChannels(); ++channel) {
         Sample *inputChannel = getInput()->getWrapper().getChannelPointer(channel);
@@ -27,25 +42,45 @@ void dsp::Shaper::processNoLock() {
             Sample &drive = driveChannel[sample];
             Sample &mode = modeChannel[sample];
             Sample &output = outputChannel[sample];
-            if (drive == 0.0) {
-                output = 0.0;
-            } else if (drive == 1.0) {
-                output = input;
-            } else {
-                switch (static_cast<int>(mode)) {
-                    case Mode::POLYNOMIAL: {
-                        Sample onePlusInput = 1.0 + input;
-                        Sample oneMinusInput = 1.0 - input;
-                        Sample driveMinusOne = drive - 1.0;
-                        output = input < 0.0 ? onePlusInput * pow(abs(onePlusInput), driveMinusOne) - 1.0
-                                             : 1.0 - oneMinusInput * pow(oneMinusInput, driveMinusOne);
-                    } break;
-                    case Mode::HYPERBOLIC: {
-                        Sample driveMinusOne = drive - 1.0;
-                        output = input < 0.0 ? (drive / (1.0 - driveMinusOne * input) - drive) / driveMinusOne
-                                             : (drive - drive / (1.0 + driveMinusOne * input)) / driveMinusOne;
-                    } break;
+            output = getOutputSignal(input, drive, mode);
+        }
+    }
+}
+
+dsp::Sample dsp::Shaper::getOutputSignal(const Sample &input, const Sample &drive, const Sample &mode) {
+    bool driveIsNegative = drive < 0.0;
+    Sample clipped = clip(driveIsNegative ? -input : input, -1.0, 1.0);
+    Sample posDrive = driveIsNegative ? -drive : drive;
+    if (drive == 0.0) {
+        return 0.0;
+    } else if (drive == 1.0) {
+        return clipped;
+    } else {
+        switch (static_cast<int>(mode)) {
+            case Mode::POLYNOMIAL: {
+                if (abs(clipped) == 1.0) {
+                    return clipped;
                 }
+                Sample onePlusInput = 1.0 + clipped;
+                Sample oneMinusInput = 1.0 - clipped;
+                Sample driveMinusOne = posDrive - 1.0;
+                return clipped < 0.0 ? onePlusInput * pow(abs(onePlusInput), driveMinusOne) - 1.0
+                                     : 1.0 - oneMinusInput * pow(oneMinusInput, driveMinusOne);
+            }
+            case Mode::HYPERBOLIC: {
+                if (posDrive > 1.0) {
+                    Sample driveMinusOne = posDrive - 1.0;
+                    return tanh(clipped * driveMinusOne) / tanh(driveMinusOne);
+                } else {
+                    Sample driveMinusOne = 1.0 / posDrive - 1.0;
+                    Sample driveScaled = tanh(driveMinusOne);
+                    return atanh(clipped * driveScaled) / driveMinusOne;
+                }
+            }
+            case Mode::RATIONAL: {
+                Sample driveMinusOne = posDrive - 1.0;
+                return clipped < 0.0 ? (posDrive / (1.0 - driveMinusOne * clipped) - posDrive) / driveMinusOne
+                                     : (posDrive - posDrive / (1.0 + driveMinusOne * clipped)) / driveMinusOne;
             }
         }
     }
