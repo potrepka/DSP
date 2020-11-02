@@ -9,10 +9,9 @@ class Shaper : public Transformer {
 public:
     struct Mode {
         static const int MIN = 0;
-        static const int MAX = 2;
-        static const int POLYNOMIAL = 0;
-        static const int HYPERBOLIC = 1;
-        static const int RATIONAL = 2;
+        static const int MAX = 1;
+        static const int HYPERBOLIC = 0;
+        static const int RATIONAL = 1;
     };
 
     Shaper(Space space = Space::TIME);

@@ -50,31 +50,20 @@ void dsp::Shaper::processNoLock() {
 dsp::Sample dsp::Shaper::getOutputSignal(const Sample &input, const Sample &drive, const Sample &mode) {
     bool driveIsNegative = drive < 0.0;
     Sample clipped = clip(driveIsNegative ? -input : input, -1.0, 1.0);
-    Sample posDrive = driveIsNegative ? -drive : drive;
     if (drive == 0.0) {
         return 0.0;
     } else if (drive == 1.0) {
         return clipped;
     } else {
+        Sample posDrive = driveIsNegative ? -drive : drive;
         switch (static_cast<int>(mode)) {
-            case Mode::POLYNOMIAL: {
-                if (abs(clipped) == 1.0) {
-                    return clipped;
-                }
-                Sample onePlusInput = 1.0 + clipped;
-                Sample oneMinusInput = 1.0 - clipped;
-                Sample driveMinusOne = posDrive - 1.0;
-                return clipped < 0.0 ? onePlusInput * pow(abs(onePlusInput), driveMinusOne) - 1.0
-                                     : 1.0 - oneMinusInput * pow(oneMinusInput, driveMinusOne);
-            }
             case Mode::HYPERBOLIC: {
                 if (posDrive > 1.0) {
                     Sample driveMinusOne = posDrive - 1.0;
                     return tanh(clipped * driveMinusOne) / tanh(driveMinusOne);
                 } else {
                     Sample driveMinusOne = 1.0 / posDrive - 1.0;
-                    Sample driveScaled = tanh(driveMinusOne);
-                    return atanh(clipped * driveScaled) / driveMinusOne;
+                    return atanh(clipped * tanh(driveMinusOne)) / driveMinusOne;
                 }
             }
             case Mode::RATIONAL: {
