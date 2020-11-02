@@ -14,12 +14,9 @@ void dsp::Hyperbolic::processNoLock() {
     getOutput()->getWrapper().replaceWithApplicationOf(
             [](Sample x, Sample y) {
                 switch (static_cast<int>(y)) {
-                    case Mode::SINE: return 0.5 * (exp(x) - exp(-x));
-                    case Mode::COSINE: return 0.5 * (exp(x) + exp(-x));
-                    case Mode::TANGENT: {
-                        const Sample expSquared = exp(2.0 * x);
-                        return (expSquared - 1) / (expSquared + 1);
-                    }
+                    case Mode::SINE: return sinh(x);
+                    case Mode::COSINE: return cosh(x);
+                    case Mode::TANGENT: return tanh(x);
                 }
             },
             getInput()->getWrapper(),
