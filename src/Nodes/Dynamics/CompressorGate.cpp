@@ -126,7 +126,7 @@ dsp::Sample dsp::CompressorGate::getGainResponse(const Sample &control,
         return 1.0;
     }
     Sample logGain;
-    const Sample halfKnee = log2(abs(hardness));
+    const Sample halfKnee = abs(log2(abs(hardness)));
     const Sample ratioDifference = 1.0 / compressionRatio - gateRatio;
     if (controlMinusThreshold > -halfKnee && controlMinusThreshold < halfKnee && ratioDifference != 0.0) {
         if (compressionRatio == 0.0 || isinf(gateRatio) || isinf(halfKnee)) {
