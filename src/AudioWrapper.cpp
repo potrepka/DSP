@@ -434,9 +434,9 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMinOf(AudioWrapper<T> src
         auto b = src1.data[channel] + src1.startSample;
 #ifdef DSP_USE_VDSP
         if constexpr (std::is_same_v<T, float>) {
-            vDSP_vmin(b, 1, value, 0, a, 1, numSamples);
+            vDSP_vmin(b, 1, &value, 0, a, 1, numSamples);
         } else if constexpr (std::is_same_v<T, double>) {
-            vDSP_vminD(b, 1, value, 0, a, 1, numSamples);
+            vDSP_vminD(b, 1, &value, 0, a, 1, numSamples);
         }
 #else
         for (size_t sample = 0; sample < numSamples; ++sample) {
@@ -484,9 +484,9 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMaxOf(AudioWrapper<T> src
         auto b = src1.data[channel] + src1.startSample;
 #ifdef DSP_USE_VDSP
         if constexpr (std::is_same_v<T, float>) {
-            vDSP_vmax(b, 1, value, 0, a, 1, numSamples);
+            vDSP_vmax(b, 1, &value, 0, a, 1, numSamples);
         } else if constexpr (std::is_same_v<T, double>) {
-            vDSP_vmaxD(b, 1, value, 0, a, 1, numSamples);
+            vDSP_vmaxD(b, 1, &value, 0, a, 1, numSamples);
         }
 #else
         for (size_t sample = 0; sample < numSamples; ++sample) {
