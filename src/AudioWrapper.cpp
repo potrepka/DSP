@@ -70,8 +70,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::apply(std::function<T(T)> f) {
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithApplicationOf(std::function<T(T)> f, AudioWrapper<T> src) {
-    DSP_ASSERT(numChannels == src.numChannels);
-    DSP_ASSERT(numSamples == src.numSamples);
+    size_t numChannels = std::min({this->numChannels, src.numChannels});
+    size_t numSamples = std::min({this->numSamples, src.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
@@ -87,8 +87,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithApplicationOf(std::functi
 template <typename T>
 dsp::AudioWrapper<T> &
 dsp::AudioWrapper<T>::replaceWithApplicationOf(std::function<T(T, T)> f, AudioWrapper<T> src1, AudioWrapper<T> src2) {
-    DSP_ASSERT(numChannels == src1.numChannels && numChannels == src2.numChannels);
-    DSP_ASSERT(numSamples == src1.numSamples && numSamples == src2.numSamples);
+    size_t numChannels = std::min({this->numChannels, src1.numChannels, src2.numChannels});
+    size_t numSamples = std::min({this->numSamples, src1.numSamples, src2.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src1.data[channel] + src1.startSample;
@@ -108,8 +108,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithApplicationOf(std::functi
                                                                      AudioWrapper<T> src1,
                                                                      AudioWrapper<T> src2,
                                                                      AudioWrapper<T> src3) {
-    DSP_ASSERT(numChannels == src1.numChannels && numChannels == src2.numChannels && numChannels == src3.numChannels);
-    DSP_ASSERT(numSamples == src1.numSamples && numSamples == src2.numSamples && numSamples == src3.numSamples);
+    size_t numChannels = std::min({this->numChannels, src1.numChannels, src2.numChannels, src3.numChannels});
+    size_t numSamples = std::min({this->numSamples, src1.numSamples, src2.numSamples, src3.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src1.data[channel] + src1.startSample;
@@ -128,8 +128,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithApplicationOf(std::functi
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::copyFrom(const AudioWrapper<T> &src) {
-    DSP_ASSERT(numChannels == src.numChannels);
-    DSP_ASSERT(numSamples == src.numSamples);
+    size_t numChannels = std::min({this->numChannels, src.numChannels});
+    size_t numSamples = std::min({this->numSamples, src.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
@@ -160,8 +160,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::add(T value) {
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::add(AudioWrapper<T> src) {
-    DSP_ASSERT(numChannels == src.numChannels);
-    DSP_ASSERT(numSamples == src.numSamples);
+    size_t numChannels = std::min({this->numChannels, src.numChannels});
+    size_t numSamples = std::min({this->numSamples, src.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
@@ -204,8 +204,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::multiplyBy(T value) {
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::multiplyBy(AudioWrapper<T> src) {
-    DSP_ASSERT(numChannels == src.numChannels);
-    DSP_ASSERT(numSamples == src.numSamples);
+    size_t numChannels = std::min({this->numChannels, src.numChannels});
+    size_t numSamples = std::min({this->numSamples, src.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
@@ -228,8 +228,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::multiplyBy(AudioWrapper<T> src) {
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::addProductOf(AudioWrapper<T> src, T value) {
-    DSP_ASSERT(numChannels == src.numChannels);
-    DSP_ASSERT(numSamples == src.numSamples);
+    size_t numChannels = std::min({this->numChannels, src.numChannels});
+    size_t numSamples = std::min({this->numSamples, src.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
@@ -252,8 +252,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::addProductOf(AudioWrapper<T> src, T 
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::addProductOf(AudioWrapper<T> src1, AudioWrapper<T> src2) {
-    DSP_ASSERT(numChannels == src1.numChannels && numChannels == src2.numChannels);
-    DSP_ASSERT(numSamples == src1.numSamples && numSamples == src2.numSamples);
+    size_t numChannels = std::min({this->numChannels, src1.numChannels, src2.numChannels});
+    size_t numSamples = std::min({this->numSamples, src1.numSamples, src2.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src1.data[channel] + src1.startSample;
@@ -278,8 +278,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::addProductOf(AudioWrapper<T> src1, A
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithNegativeOf(AudioWrapper<T> src) {
-    DSP_ASSERT(numChannels == src.numChannels);
-    DSP_ASSERT(numSamples == src.numSamples);
+    size_t numChannels = std::min({this->numChannels, src.numChannels});
+    size_t numSamples = std::min({this->numSamples, src.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
@@ -302,8 +302,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithNegativeOf(AudioWrapper<T
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithAbsoluteValueOf(AudioWrapper<T> src) {
-    DSP_ASSERT(numChannels == src.numChannels);
-    DSP_ASSERT(numSamples == src.numSamples);
+    size_t numChannels = std::min({this->numChannels, src.numChannels});
+    size_t numSamples = std::min({this->numSamples, src.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
@@ -327,8 +327,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithAbsoluteValueOf(AudioWrap
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithSumOf(AudioWrapper<T> src, T value) {
-    DSP_ASSERT(numChannels == src.numChannels);
-    DSP_ASSERT(numSamples == src.numSamples);
+    size_t numChannels = std::min({this->numChannels, src.numChannels});
+    size_t numSamples = std::min({this->numSamples, src.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
@@ -351,8 +351,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithSumOf(AudioWrapper<T> src
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithSumOf(AudioWrapper<T> src1, AudioWrapper<T> src2) {
-    DSP_ASSERT(numChannels == src1.numChannels && numChannels == src2.numChannels);
-    DSP_ASSERT(numSamples == src1.numSamples && numSamples == src2.numSamples);
+    size_t numChannels = std::min({this->numChannels, src1.numChannels, src2.numChannels});
+    size_t numSamples = std::min({this->numSamples, src1.numSamples, src2.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src1.data[channel] + src1.startSample;
@@ -377,8 +377,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithSumOf(AudioWrapper<T> src
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithProductOf(AudioWrapper<T> src, T value) {
-    DSP_ASSERT(numChannels == src.numChannels);
-    DSP_ASSERT(numSamples == src.numSamples);
+    size_t numChannels = std::min({this->numChannels, src.numChannels});
+    size_t numSamples = std::min({this->numSamples, src.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src.data[channel] + src.startSample;
@@ -401,8 +401,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithProductOf(AudioWrapper<T>
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithProductOf(AudioWrapper<T> src1, AudioWrapper<T> src2) {
-    DSP_ASSERT(numChannels == src1.numChannels && numChannels == src2.numChannels);
-    DSP_ASSERT(numSamples == src1.numSamples && numSamples == src2.numSamples);
+    size_t numChannels = std::min({this->numChannels, src1.numChannels, src2.numChannels});
+    size_t numSamples = std::min({this->numSamples, src1.numSamples, src2.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src1.data[channel] + src1.startSample;
@@ -426,12 +426,12 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithProductOf(AudioWrapper<T>
 }
 
 template <typename T>
-dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMinOf(AudioWrapper<T> src1, T value) {
-    DSP_ASSERT(numChannels == src1.numChannels);
-    DSP_ASSERT(numSamples == src1.numSamples);
+dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMinOf(AudioWrapper<T> src, T value) {
+    size_t numChannels = std::min({this->numChannels, src.numChannels});
+    size_t numSamples = std::min({this->numSamples, src.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
-        auto b = src1.data[channel] + src1.startSample;
+        auto b = src.data[channel] + src.startSample;
 #ifdef DSP_USE_VDSP
         if constexpr (std::is_same_v<T, float>) {
             vDSP_vmin(b, 1, &value, 0, a, 1, numSamples);
@@ -451,8 +451,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMinOf(AudioWrapper<T> src
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMinOf(AudioWrapper<T> src1, AudioWrapper<T> src2) {
-    DSP_ASSERT(numChannels == src1.numChannels && numChannels == src2.numChannels);
-    DSP_ASSERT(numSamples == src1.numSamples && numSamples == src2.numSamples);
+    size_t numChannels = std::min({this->numChannels, src1.numChannels, src2.numChannels});
+    size_t numSamples = std::min({this->numSamples, src1.numSamples, src2.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src1.data[channel] + src1.startSample;
@@ -476,12 +476,12 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMinOf(AudioWrapper<T> src
 }
 
 template <typename T>
-dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMaxOf(AudioWrapper<T> src1, T value) {
-    DSP_ASSERT(numChannels == src1.numChannels);
-    DSP_ASSERT(numSamples == src1.numSamples);
+dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMaxOf(AudioWrapper<T> src, T value) {
+    size_t numChannels = std::min({this->numChannels, src.numChannels});
+    size_t numSamples = std::min({this->numSamples, src.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
-        auto b = src1.data[channel] + src1.startSample;
+        auto b = src.data[channel] + src.startSample;
 #ifdef DSP_USE_VDSP
         if constexpr (std::is_same_v<T, float>) {
             vDSP_vmax(b, 1, &value, 0, a, 1, numSamples);
@@ -501,8 +501,8 @@ dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMaxOf(AudioWrapper<T> src
 
 template <typename T>
 dsp::AudioWrapper<T> &dsp::AudioWrapper<T>::replaceWithMaxOf(AudioWrapper<T> src1, AudioWrapper<T> src2) {
-    DSP_ASSERT(numChannels == src1.numChannels && numChannels == src2.numChannels);
-    DSP_ASSERT(numSamples == src1.numSamples && numSamples == src2.numSamples);
+    size_t numChannels = std::min({this->numChannels, src1.numChannels, src2.numChannels});
+    size_t numSamples = std::min({this->numSamples, src1.numSamples, src2.numSamples});
     for (size_t channel = 0; channel < numChannels; ++channel) {
         auto a = data[channel] + startSample;
         auto b = src1.data[channel] + src1.startSample;

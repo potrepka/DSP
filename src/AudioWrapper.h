@@ -66,9 +66,9 @@ public:
     AudioWrapper &replaceWithSumOf(AudioWrapper<T> src1, AudioWrapper<T> src2);
     AudioWrapper &replaceWithProductOf(AudioWrapper<T> src, T value);
     AudioWrapper &replaceWithProductOf(AudioWrapper<T> src1, AudioWrapper<T> src2);
-    AudioWrapper &replaceWithMinOf(AudioWrapper<T> src1, T value);
+    AudioWrapper &replaceWithMinOf(AudioWrapper<T> src, T value);
     AudioWrapper &replaceWithMinOf(AudioWrapper<T> src1, AudioWrapper<T> src2);
-    AudioWrapper &replaceWithMaxOf(AudioWrapper<T> src1, T value);
+    AudioWrapper &replaceWithMaxOf(AudioWrapper<T> src, T value);
     AudioWrapper &replaceWithMaxOf(AudioWrapper<T> src1, AudioWrapper<T> src2);
 
     T getSample(size_t channel, size_t sampleOffset) const;
