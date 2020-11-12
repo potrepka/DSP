@@ -2,7 +2,7 @@
 
 DSP is an open-source C++ library for audio digital signal processing.
 
-This repository is a work in progress. Feedback and contributions are welcome!
+This is a work in progress. Feedback and contributions are welcome!
 
 ## Usage
 
@@ -24,19 +24,17 @@ int main() {
     engine->setup(inputDevice, outputDevice, numSamples, sampleRate);
     
     // Create units
-    std::shared_ptr<dsp::PassThrough> pass;
-
-    pass = std::make_shared<dsp::PassThrough>(dsp::Type::RATIO);
-    pass->setNumChannels(2);
-    pass->setNumSamples(engine->getNumSamples());
-    pass->setSampleRate(engine->getSampleRate());
+    std::shared_ptr<dsp::Identity> identity = std::make_shared<dsp::Identity>();
+    identity->setNumChannels(2);
+    identity->setNumSamples(engine->getNumSamples());
+    identity->setSampleRate(engine->getSampleRate());
 
     // Push units
-    engine->getNodeProcessor()->getNodes().push_back(pass);
+    engine->getNodeProcessor()->getNodes().push_back(identity);
 
     // Connect units
-    engine->getNodeProcessor()->getAudioInput() >> pass->getInput();
-    pass->getOutput() >> engine->getNodeProcessor()->getAudioOutput();
+    engine->getNodeProcessor()->getAudioInput() >> identity->getInput();
+    identity->getOutput() >> engine->getNodeProcessor()->getAudioOutput();
 
     return 0;
 }
@@ -45,7 +43,7 @@ int main() {
 ## Future Direction
 
 The following are possible directions for future development:
-- Additional filters
+- More filters
 - Pitch detection
 - Pitch shifting
 - Saving state
