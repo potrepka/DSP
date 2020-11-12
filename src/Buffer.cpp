@@ -320,10 +320,12 @@ void dsp::Output::removeConnection(std::shared_ptr<Input> input) {
 }
 
 void dsp::operator>>(Sample value, std::shared_ptr<Input> input) {
+    input->setDefaultValue(value);
     input->setAllChannelValues(value);
 }
 
 void dsp::operator>>(Sample value, std::shared_ptr<Output> output) {
+    output->setDefaultValue(value);
     output->setAllChannelValues(value);
 }
 
