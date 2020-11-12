@@ -20,12 +20,6 @@ bool dsp::Node::isActive() const {
 void dsp::Node::setActive(bool active) {
     lock();
     this->active = active;
-    for (const auto &input : inputs) {
-        input->setActive(active);
-    }
-    for (const auto &output : outputs) {
-        output->setActive(active);
-    }
     unlock();
 }
 
@@ -204,8 +198,10 @@ void dsp::Node::process() {
     if (noChildren) {
         for (const auto &input : inputs) {
             input->lock();
-            input->prepareNoLock();
-            input->processNoLock();
+            if (active) {
+                input->prepareNoLock();
+                input->processNoLock();
+            }
         }
         for (const auto &output : outputs) {
             output->lock();

@@ -10,6 +10,9 @@ public:
     NodeProcessor(size_t numInputChannels, size_t numOutputChannels, size_t numSamples, double sampleRate);
     ~NodeProcessor();
 
+    bool isActive() const;
+    void setActive(bool active);
+
     std::shared_ptr<Output> getAudioInput() const;
     std::shared_ptr<Input> getAudioOutput() const;
 
@@ -43,6 +46,7 @@ private:
     const std::shared_ptr<Input> audioOutput;
     const std::shared_ptr<Output> audioInputClipping;
     const std::shared_ptr<Output> audioOutputClipping;
+    bool active;
     size_t numInputChannels;
     size_t numOutputChannels;
     size_t numSamples;

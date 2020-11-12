@@ -10,6 +10,7 @@ dsp::NodeProcessor::NodeProcessor(size_t numInputChannels,
                   std::make_shared<Output>(Type::BOOLEAN, Space::TIME, 0.0, 0.0, numInputChannels, numSamples))
         , audioOutputClipping(
                   std::make_shared<Output>(Type::BOOLEAN, Space::TIME, 0.0, 0.0, numOutputChannels, numSamples))
+        , active(true)
         , numInputChannels(numInputChannels)
         , numOutputChannels(numOutputChannels)
         , numSamples(numSamples)
@@ -19,6 +20,16 @@ dsp::NodeProcessor::NodeProcessor(size_t numInputChannels,
 
 dsp::NodeProcessor::~NodeProcessor() {
     nodes.clear();
+}
+
+bool dsp::NodeProcessor::isActive() const {
+    return active;
+}
+
+void dsp::NodeProcessor::setActive(bool active) {
+    lock();
+    this->active = active;
+    unlock();
 }
 
 std::shared_ptr<dsp::Output> dsp::NodeProcessor::getAudioInput() const {
@@ -132,42 +143,52 @@ template <typename T>
 void dsp::NodeProcessor::process(AudioBuffer<T> &audioBuffer, MidiBuffer &midiBuffer) {
     lock();
 
-    audioInput->lock();
-    audioInput->prepareNoLock();
-    audioInput->unlock();
+    if (active) {
+        audioInput->lock();
+        audioInput->prepareNoLock();
+        audioInput->unlock();
 
-    for (size_t channel = 0; channel < audioInput->getNumChannels(); ++channel) {
-        auto *bufferChannel = audioBuffer.getReadPointer(channel);
-        auto *inputChannel = audioInput->getWrapper().getChannelPointer(channel);
-        for (auto sample = 0; sample < audioInput->getNumSamples(); ++sample) {
-            inputChannel[sample] = static_cast<Sample>(bufferChannel[sample]);
+        for (size_t channel = 0; channel < audioInput->getNumChannels(); ++channel) {
+            auto *bufferChannel = audioBuffer.getReadPointer(channel);
+            auto *inputChannel = audioInput->getWrapper().getChannelPointer(channel);
+            for (auto sample = 0; sample < audioInput->getNumSamples(); ++sample) {
+                inputChannel[sample] = static_cast<Sample>(bufferChannel[sample]);
+            }
         }
-    }
 
-    processClipping(audioInput->getWrapper(), audioInputClipping->getWrapper());
+        processClipping(audioInput->getWrapper(), audioInputClipping->getWrapper());
 
-    inputMessages->clear();
-    inputMessages->addEvents(midiBuffer, 0, audioBuffer.getNumSamples(), 0);
-    outputMessages->clear();
-    for (const auto &node : nodes) {
-        node->process();
-    }
-    midiBuffer.clear();
-    midiBuffer.addEvents(*outputMessages, 0, audioBuffer.getNumSamples(), 0);
+        inputMessages->clear();
+        inputMessages->addEvents(midiBuffer, 0, audioBuffer.getNumSamples(), 0);
+        outputMessages->clear();
 
-    audioOutput->lock();
-    audioOutput->prepareNoLock();
-    audioOutput->processNoLock();
-    audioOutput->unlock();
-
-    processClipping(audioOutput->getWrapper(), audioOutputClipping->getWrapper());
-
-    for (size_t channel = 0; channel < audioOutput->getNumChannels(); ++channel) {
-        auto *outputChannel = audioOutput->getWrapper().getChannelPointer(channel);
-        auto *bufferChannel = audioBuffer.getWritePointer(channel);
-        for (auto sample = 0; sample < audioOutput->getNumSamples(); ++sample) {
-            bufferChannel[sample] = static_cast<T>(clip(outputChannel[sample], -1.0, 1.0));
+        for (const auto &node : nodes) {
+            node->process();
         }
+
+        midiBuffer.clear();
+        midiBuffer.addEvents(*outputMessages, 0, audioBuffer.getNumSamples(), 0);
+
+        audioOutput->lock();
+        audioOutput->prepareNoLock();
+        audioOutput->processNoLock();
+        audioOutput->unlock();
+
+        processClipping(audioOutput->getWrapper(), audioOutputClipping->getWrapper());
+
+        for (size_t channel = 0; channel < audioOutput->getNumChannels(); ++channel) {
+            auto *outputChannel = audioOutput->getWrapper().getChannelPointer(channel);
+            auto *bufferChannel = audioBuffer.getWritePointer(channel);
+            for (auto sample = 0; sample < audioOutput->getNumSamples(); ++sample) {
+                bufferChannel[sample] = static_cast<T>(clip(outputChannel[sample], -1.0, 1.0));
+            }
+        }
+    } else {
+        audioInput->getWrapper().clear();
+        audioInputClipping->getWrapper().clear();
+        audioOutput->getWrapper().clear();
+        audioOutputClipping->getWrapper().clear();
+        audioBuffer.clear();
     }
 
     unlock();
