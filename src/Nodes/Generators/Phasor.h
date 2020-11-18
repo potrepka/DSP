@@ -10,8 +10,8 @@ public:
     struct Mode {
         static const int MIN = 0;
         static const int MAX = 1;
-        static const int UNBOUNDED = 0;
-        static const int WRAPPED = 1;
+        static const int WRAPPED = 0;
+        static const int UNBOUNDED = 1;
     };
 
     Phasor();
