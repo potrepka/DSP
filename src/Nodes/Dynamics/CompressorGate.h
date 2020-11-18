@@ -11,7 +11,7 @@ public:
 
     std::shared_ptr<Input> getControl() const;
     std::shared_ptr<Input> getThreshold() const;
-    std::shared_ptr<Input> getHardness() const;
+    std::shared_ptr<Input> getSoftness() const;
     std::shared_ptr<Input> getCompressionRatio() const;
     std::shared_ptr<Input> getGateRatio() const;
     std::shared_ptr<Input> getAttack() const;
@@ -27,7 +27,7 @@ protected:
 private:
     const std::shared_ptr<Input> control;
     const std::shared_ptr<Input> threshold;
-    const std::shared_ptr<Input> hardness;
+    const std::shared_ptr<Input> softness;
     const std::shared_ptr<Input> compressionRatio;
     const std::shared_ptr<Input> gateRatio;
     const std::shared_ptr<Input> attack;
@@ -37,7 +37,7 @@ private:
 
     static Sample getGainResponse(const Sample &gain,
                                   const Sample &threshold,
-                                  const Sample &hardness,
+                                  const Sample &softness,
                                   const Sample &compressionRatio,
                                   const Sample &gateRatio);
 };
