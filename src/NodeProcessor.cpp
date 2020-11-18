@@ -15,8 +15,13 @@ dsp::NodeProcessor::NodeProcessor(size_t numInputChannels,
         , numOutputChannels(numOutputChannels)
         , numSamples(numSamples)
         , sampleRate(sampleRate)
+        , defaultNode(std::make_shared<Node>())
         , inputMessages(std::make_shared<dsp::MidiBuffer>())
-        , outputMessages(std::make_shared<dsp::MidiBuffer>()) {}
+        , outputMessages(std::make_shared<dsp::MidiBuffer>()) {
+    defaultNode->setNumSamples(numSamples);
+    defaultNode->setSampleRate(sampleRate);
+    nodes.push_back(defaultNode);
+}
 
 dsp::NodeProcessor::~NodeProcessor() {
     nodes.clear();
@@ -125,6 +130,10 @@ void dsp::NodeProcessor::setOutputSize(size_t numChannels, size_t numSamples) {
         node->setNumSamples(numSamples);
     }
     unlock();
+}
+
+std::shared_ptr<dsp::Node> dsp::NodeProcessor::getDefaultNode() const {
+    return defaultNode;
 }
 
 std::vector<std::shared_ptr<dsp::Node>> &dsp::NodeProcessor::getNodes() {

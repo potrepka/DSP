@@ -34,6 +34,8 @@ public:
     void setInputSize(size_t numChannels, size_t numSamples);
     void setOutputSize(size_t numChannels, size_t numSamples);
 
+    std::shared_ptr<Node> getDefaultNode() const;
+
     std::vector<std::shared_ptr<Node>> &getNodes();
     std::shared_ptr<MidiBuffer> getInputMessages() const;
     std::shared_ptr<MidiBuffer> getOutputMessages() const;
@@ -51,6 +53,7 @@ private:
     size_t numOutputChannels;
     size_t numSamples;
     double sampleRate;
+    std::shared_ptr<Node> defaultNode;
 
     std::vector<std::shared_ptr<Node>> nodes;
     const std::shared_ptr<MidiBuffer> inputMessages;
