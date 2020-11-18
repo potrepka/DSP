@@ -7,7 +7,9 @@ dsp::Buffer::Buffer(Type type, Space space, Sample range, Sample defaultValue, s
         , defaultValue(defaultValue)
         , data(numChannels, numSamples)
         , wrapper(data)
-        , channelValues(numChannels, defaultValue) {}
+        , channelValues(numChannels, defaultValue) {
+    wrapper.fill(defaultValue);
+}
 
 dsp::Type dsp::Buffer::getType() const {
     return type;
@@ -58,6 +60,7 @@ void dsp::Buffer::setNumChannels(size_t numChannels) {
     data.setSize(numChannels, getNumSamples());
     wrapper = Wrapper(data);
     channelValues.resize(numChannels, defaultValue);
+    fillChannels();
     unlock();
 }
 
@@ -69,6 +72,7 @@ void dsp::Buffer::setNumSamples(size_t numSamples) {
     lock();
     data.setSize(getNumChannels(), numSamples);
     wrapper = Wrapper(data);
+    fillChannels();
     unlock();
 }
 
@@ -77,6 +81,7 @@ void dsp::Buffer::setSize(size_t numChannels, size_t numSamples) {
     data.setSize(numChannels, numSamples);
     wrapper = Wrapper(data);
     channelValues.resize(numChannels, defaultValue);
+    fillChannels();
     unlock();
 }
 
