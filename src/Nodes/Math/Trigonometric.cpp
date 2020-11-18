@@ -14,9 +14,9 @@ void dsp::Trigonometric::processNoLock() {
     getOutput()->getWrapper().replaceWithApplicationOf(
             [](Sample x, Sample y) {
                 switch (static_cast<int>(y)) {
-                    case Mode::SINE: return sin(x); break;
-                    case Mode::COSINE: return cos(x); break;
-                    case Mode::TANGENT: return tan(x); break;
+                    case Mode::SINE: return sin(x);
+                    case Mode::COSINE: return cos(x);
+                    case Mode::TANGENT: return tan(x);
                 }
             },
             getInput()->getWrapper(),

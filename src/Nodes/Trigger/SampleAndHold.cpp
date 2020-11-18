@@ -18,7 +18,7 @@ std::shared_ptr<dsp::Input> dsp::SampleAndHold::getReset() const {
 
 void dsp::SampleAndHold::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
-    state.resize(numChannels, std::numeric_limits<Sample>::quiet_NaN());
+    state.resize(numChannels, 0.0);
 }
 
 void dsp::SampleAndHold::processNoLock() {
