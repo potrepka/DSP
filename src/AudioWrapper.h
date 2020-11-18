@@ -6,6 +6,7 @@
 #include "AudioBuffer.h"
 #endif
 
+#include <functional>
 #include <type_traits>
 
 #ifdef __APPLE__

@@ -4,6 +4,8 @@
 #include <JuceHeader.h>
 #define DSP_ASSERT jassert
 #else
+#include <cassert>
+#include <vector>
 #define DSP_ASSERT assert
 #endif
 
