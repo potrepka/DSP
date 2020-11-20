@@ -27,4 +27,9 @@ void dsp::ChannelSplitter::setNumInputChannelsNoLock(size_t numChannels) {
 
 void dsp::ChannelSplitter::setNumOutputChannelsNoLock(size_t numChannels) {}
 
-void dsp::ChannelSplitter::processNoLock() {}
+void dsp::ChannelSplitter::processNoLock() {
+    for (size_t channel = 0; channel < getNumInputChannels(); ++channel) {
+        getOutput(channel)->getWrapper().getSingleChannel(0).copyFrom(
+                getInput()->getWrapper().getSingleChannel(channel));
+    }
+}

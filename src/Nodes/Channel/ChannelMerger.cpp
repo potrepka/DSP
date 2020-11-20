@@ -27,4 +27,9 @@ void dsp::ChannelMerger::setNumOutputChannelsNoLock(size_t numChannels) {
     Node::setNumOutputChannelsNoLock(numChannels);
 }
 
-void dsp::ChannelMerger::processNoLock() {}
+void dsp::ChannelMerger::processNoLock() {
+    for (size_t channel = 0; channel < getNumOutputChannels(); ++channel) {
+        getOutput()->getWrapper().getSingleChannel(channel).copyFrom(
+                getInput(channel)->getWrapper().getSingleChannel(0));
+    }
+}
