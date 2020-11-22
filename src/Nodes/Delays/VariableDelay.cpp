@@ -21,7 +21,7 @@ dsp::Sample dsp::VariableDelay::getMaxDelayTime() const {
 }
 
 void dsp::VariableDelay::setMaxDelayTime(Sample seconds) {
-    DSP_ASSERT(seconds > 0.0);
+    DSP_ASSERT(seconds >= 0.0);
     lock();
     maxDelayTime = seconds;
     writeIndex = 0;
@@ -34,12 +34,12 @@ std::shared_ptr<dsp::Input> dsp::VariableDelay::getDelayTime() const {
     return delayTime;
 }
 
-std::shared_ptr<dsp::Input> dsp::VariableDelay::getReset() const {
-    return reset;
-}
-
 std::shared_ptr<dsp::Input> dsp::VariableDelay::getDecayTime() const {
     return decayTime;
+}
+
+std::shared_ptr<dsp::Input> dsp::VariableDelay::getReset() const {
+    return reset;
 }
 
 std::shared_ptr<dsp::Output> dsp::VariableDelay::getFeedbackSource() const {
@@ -114,14 +114,14 @@ void dsp::VariableDelay::processNoLock() {
                 // CLIP DELAY TIME
                 delayTimeClipped[channel] = clip(delayTime[channel][sample], 0.0, maxDelayTime);
                 // READ
-                if (delayTimeClipped[channel] == 0) {
+                if (delayTimeClipped[channel] == 0.0) {
                     output[channel][sample] = buffer[channel][writeIndex];
                 } else {
                     Sample readIndex = writeIndex - delayTimeClipped[channel] * getSampleRate();
                     if (readIndex < 0.0) {
                         readIndex += getBuffer()->getNumSamples();
                     }
-                    if (delayTimeClipped[channel] < getOneOverSampleRate()) {
+                    if (delayTimeClipped[channel] <= getOneOverSampleRate()) {
                         output[channel][sample] = linear(buffer[channel], getBuffer()->getNumSamples(), readIndex);
                     } else {
                         output[channel][sample] = hermite(buffer[channel], getBuffer()->getNumSamples(), readIndex);
@@ -139,6 +139,12 @@ void dsp::VariableDelay::processNoLock() {
             // ADD FEEDBACK
             for (size_t channel = 0; channel < getNumChannels(); ++channel) {
                 Sample feedbackAmount = pow(0.001, delayTimeClipped[channel] / decayTime[channel][sample]);
+                if (isnan(feedbackAmount)) {
+                    feedbackAmount = 0.0;
+                }
+                if (feedbackAmount > 1.0) {
+                    feedbackAmount = 1.0;
+                }
                 buffer[channel][writeIndex] += feedbackSink[channel][0] * feedbackAmount;
             }
             // INCREMENT INDEX
