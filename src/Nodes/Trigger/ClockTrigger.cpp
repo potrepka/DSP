@@ -1,4 +1,4 @@
-#include "ClockTrigger.h"
+﻿#include "ClockTrigger.h"
 
 dsp::ClockTrigger::ClockTrigger()
         : Producer(Type::BOOLEAN)

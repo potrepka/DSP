@@ -1,4 +1,4 @@
-#include "MidiProcessor.h"
+﻿#include "MidiProcessor.h"
 
 void dsp::MidiProcessor::Input::callback(double delta, std::vector<unsigned char> *bytesPointer, void *data) {
     Input *input = reinterpret_cast<Input *>(data);

@@ -1,4 +1,4 @@
-#include "Noise.h"
+﻿#include "Noise.h"
 
 dsp::Data dsp::Noise::memoryCoefficientsData = dsp::Data(1, 8);
 dsp::Data dsp::Noise::noiseCoefficientsData = dsp::Data(1, 8);

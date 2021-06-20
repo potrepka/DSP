@@ -1,4 +1,4 @@
-#include "SampleDuration.h"
+﻿#include "SampleDuration.h"
 
 dsp::SampleDuration::SampleDuration()
         : Producer(Type::SECONDS) {}

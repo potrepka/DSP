@@ -1,4 +1,4 @@
-#include "AudioWrapper.h"
+﻿#include "AudioWrapper.h"
 
 template <typename T>
 dsp::AudioWrapper<T>::AudioWrapper(AudioBuffer<T> &audioBuffer)

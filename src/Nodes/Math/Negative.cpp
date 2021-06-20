@@ -1,4 +1,4 @@
-#include "Negative.h"
+﻿#include "Negative.h"
 
 dsp::Negative::Negative(Type type, Space space)
         : Transformer(type, type, space) {}

@@ -1,4 +1,4 @@
-#include "Comparison.h"
+﻿#include "Comparison.h"
 
 dsp::Comparison::Comparison(Type type, Space space)
         : Transformer(type, Type::INTEGER, space)

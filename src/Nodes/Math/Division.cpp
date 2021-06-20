@@ -1,4 +1,4 @@
-#include "Division.h"
+﻿#include "Division.h"
 
 dsp::Division::Division(Type type, Space space)
         : Transformer(type, type, space)

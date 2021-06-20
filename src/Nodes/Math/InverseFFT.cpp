@@ -1,4 +1,4 @@
-#include "InverseFFT.h"
+﻿#include "InverseFFT.h"
 
 dsp::InverseFFT::InverseFFT()
         : Producer(Type::RATIO)

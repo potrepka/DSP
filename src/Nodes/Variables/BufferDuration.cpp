@@ -1,4 +1,4 @@
-#include "BufferDuration.h"
+﻿#include "BufferDuration.h"
 
 dsp::BufferDuration::BufferDuration()
         : Producer(Type::SECONDS) {}

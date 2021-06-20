@@ -1,4 +1,4 @@
-#include "MidiInput.h"
+﻿#include "MidiInput.h"
 
 dsp::MidiInput::MidiInput(std::shared_ptr<MidiBuffer> inputMessages, Type type)
         : Producer(type)

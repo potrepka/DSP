@@ -1,4 +1,4 @@
-#include "Consumer.h"
+﻿#include "Consumer.h"
 
 dsp::Consumer::Consumer(Type type, Space space)
         : input(std::make_shared<Input>(type, space)) {

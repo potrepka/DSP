@@ -1,4 +1,4 @@
-#include "Transformer.h"
+﻿#include "Transformer.h"
 
 dsp::Transformer::Transformer(Type inType, Type outType, Space space)
         : Node()

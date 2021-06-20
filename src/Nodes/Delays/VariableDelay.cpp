@@ -1,4 +1,4 @@
-#include "VariableDelay.h"
+﻿#include "VariableDelay.h"
 
 dsp::VariableDelay::VariableDelay(Type type)
         : Transformer(type, type)

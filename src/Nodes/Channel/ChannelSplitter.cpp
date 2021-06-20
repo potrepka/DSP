@@ -1,4 +1,4 @@
-#include "ChannelSplitter.h"
+﻿#include "ChannelSplitter.h"
 
 dsp::ChannelSplitter::ChannelSplitter(Type type, Space space)
         : Consumer(type, space) {}

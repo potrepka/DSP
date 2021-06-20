@@ -1,4 +1,4 @@
-#include "Crossover.h"
+﻿#include "Crossover.h"
 
 dsp::Crossover::Crossover()
         : input(std::make_shared<Identity>(Type::RATIO))

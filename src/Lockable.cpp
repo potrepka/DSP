@@ -1,4 +1,4 @@
-#include "Lockable.h"
+﻿#include "Lockable.h"
 
 void dsp::Lockable::lock() {
     while (flag.test_and_set(std::memory_order_acquire))

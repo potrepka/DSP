@@ -1,4 +1,4 @@
-#include "NoteToFrequency.h"
+﻿#include "NoteToFrequency.h"
 
 dsp::NoteToFrequency::NoteToFrequency(Space space)
         : Transformer(Type::RATIO, Type::HERTZ, space)

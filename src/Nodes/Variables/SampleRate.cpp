@@ -1,4 +1,4 @@
-#include "SampleRate.h"
+﻿#include "SampleRate.h"
 
 dsp::SampleRate::SampleRate()
         : Producer(Type::HERTZ) {}

@@ -1,4 +1,4 @@
-#include "Functions.h"
+﻿#include "Functions.h"
 
 dsp::Sample dsp::byteToUnipolar(const int value) {
     return value == 0 ? 0.0 : (value + 1) * 0.0078125;

@@ -1,4 +1,4 @@
-#include "StereoPanner.h"
+﻿#include "StereoPanner.h"
 
 dsp::StereoPanner::StereoPanner(Type type, Space space)
         : Consumer(type, space)

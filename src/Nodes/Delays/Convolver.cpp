@@ -1,4 +1,4 @@
-#include "Convolver.h"
+﻿#include "Convolver.h"
 
 dsp::Convolver::Convolver()
         : Transformer(Type::RATIO, Type::RATIO)

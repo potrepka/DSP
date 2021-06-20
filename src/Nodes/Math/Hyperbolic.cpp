@@ -1,4 +1,4 @@
-#include "Hyperbolic.h"
+﻿#include "Hyperbolic.h"
 
 dsp::Hyperbolic::Hyperbolic(Space space)
         : Transformer(Type::RATIO, Type::RATIO, space)

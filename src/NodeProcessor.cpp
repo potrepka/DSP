@@ -1,4 +1,4 @@
-#include "NodeProcessor.h"
+﻿#include "NodeProcessor.h"
 
 dsp::NodeProcessor::NodeProcessor(size_t numInputChannels,
                                   size_t numOutputChannels,

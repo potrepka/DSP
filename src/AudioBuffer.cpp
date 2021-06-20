@@ -1,4 +1,4 @@
-#include "AudioBuffer.h"
+﻿#include "AudioBuffer.h"
 
 template <typename T>
 dsp::AudioBuffer<T>::AudioBuffer(size_t numChannels, size_t numSamples) {

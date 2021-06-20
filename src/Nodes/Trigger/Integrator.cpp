@@ -1,4 +1,4 @@
-#include "Integrator.h"
+﻿#include "Integrator.h"
 
 dsp::Integrator::Integrator(Type type)
         : Transformer(type, type)

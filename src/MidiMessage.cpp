@@ -1,4 +1,4 @@
-#include "MidiMessage.h"
+﻿#include "MidiMessage.h"
 
 dsp::MidiMessage::MidiMessage(uint8_t byte0) {
     bytes.resize(1);

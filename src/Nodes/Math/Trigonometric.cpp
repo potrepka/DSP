@@ -1,4 +1,4 @@
-#include "Trigonometric.h"
+﻿#include "Trigonometric.h"
 
 dsp::Trigonometric::Trigonometric(Space space)
         : Transformer(Type::RATIO, Type::RATIO, space)

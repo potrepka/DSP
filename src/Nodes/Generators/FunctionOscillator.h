@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../Core/Producer.h"
 
@@ -10,7 +10,7 @@ public:
     FunctionOscillator(Type type = Type::RATIO);
 
     std::shared_ptr<std::function<Sample(Sample)>> getFunction() const;
-    void setFunction(std::shared_ptr < std::function<Sample(Sample)>> function);
+    void setFunction(std::shared_ptr<std::function<Sample(Sample)>> function);
 
     std::shared_ptr<Input> getPhase() const;
 

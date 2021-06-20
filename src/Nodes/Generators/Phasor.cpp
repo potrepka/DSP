@@ -1,4 +1,4 @@
-#include "Phasor.h"
+﻿#include "Phasor.h"
 
 dsp::Phasor::Phasor()
         : Producer(Type::RATIO)

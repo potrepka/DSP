@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifdef DSP_USE_JUCE
 #include <JuceHeader.h>

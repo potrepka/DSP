@@ -1,4 +1,4 @@
-#include "Power.h"
+﻿#include "Power.h"
 
 dsp::Power::Power(Space space)
         : Transformer(Type::RATIO, Type::RATIO, space)

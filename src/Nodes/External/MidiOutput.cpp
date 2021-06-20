@@ -1,4 +1,4 @@
-#include "MidiOutput.h"
+﻿#include "MidiOutput.h"
 
 dsp::MidiOutput::MidiOutput(std::shared_ptr<MidiBuffer> outputMessages, Type type)
         : Consumer(type)

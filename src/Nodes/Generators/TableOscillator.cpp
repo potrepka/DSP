@@ -1,4 +1,4 @@
-#include "TableOscillator.h"
+﻿#include "TableOscillator.h"
 
 dsp::TableOscillator::TableOscillator(Type type)
         : Producer(type)

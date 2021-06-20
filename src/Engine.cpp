@@ -1,4 +1,4 @@
-#include "Engine.h"
+﻿#include "Engine.h"
 
 dsp::Engine::Engine()
         : audioBuffer(0, 0)

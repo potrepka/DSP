@@ -1,4 +1,4 @@
-#include "MidiBuffer.h"
+﻿#include "MidiBuffer.h"
 
 #ifndef DSP_USE_JUCE
 dsp::MidiBuffer::Iterator::Iterator(std::multimap<size_t, TimedMidiMessage>::const_iterator it)

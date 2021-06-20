@@ -1,4 +1,4 @@
-#include "OnOff.h"
+﻿#include "OnOff.h"
 
 dsp::OnOff::OnOff()
         : Producer(Type::BOOLEAN)

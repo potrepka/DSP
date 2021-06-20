@@ -1,4 +1,4 @@
-#include "Biquad.h"
+﻿#include "Biquad.h"
 
 #include "Biquad.h"
 
@@ -48,18 +48,7 @@ void dsp::Biquad::getMagnitudeAndPhaseResponse(size_t channel, Sample frequency,
         Sample b0;
         Sample b1;
         Sample b2;
-        calculateCoefficients(sampleRate,
-                              oneOverSampleRate,
-                              f,
-                              resonance,
-                              amplitude,
-                              mode,
-                              a0,
-                              a1,
-                              a2,
-                              b0,
-                              b1,
-                              b2);
+        calculateCoefficients(sampleRate, oneOverSampleRate, f, resonance, amplitude, mode, a0, a1, a2, b0, b1, b2);
         const Sample omega = TAU * frequency * oneOverSampleRate;
         const Sample sinW = sin(omega);
         const Sample cosW = cos(omega);

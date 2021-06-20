@@ -1,4 +1,4 @@
-#include "SampleAndHold.h"
+﻿#include "SampleAndHold.h"
 
 dsp::SampleAndHold::SampleAndHold(Type type)
         : Transformer(type, type)

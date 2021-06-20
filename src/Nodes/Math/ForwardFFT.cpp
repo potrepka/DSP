@@ -1,4 +1,4 @@
-#include "ForwardFFT.h"
+﻿#include "ForwardFFT.h"
 
 dsp::ForwardFFT::ForwardFFT()
         : Consumer(Type::RATIO)

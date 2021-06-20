@@ -1,4 +1,4 @@
-#include "ResetTrigger.h"
+﻿#include "ResetTrigger.h"
 
 dsp::ResetTrigger::ResetTrigger()
         : Producer(Type::BOOLEAN) {}

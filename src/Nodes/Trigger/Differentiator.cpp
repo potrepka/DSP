@@ -1,4 +1,4 @@
-#include "Differentiator.h"
+﻿#include "Differentiator.h"
 
 dsp::Differentiator::Differentiator(Type type)
         : Transformer(type, type)

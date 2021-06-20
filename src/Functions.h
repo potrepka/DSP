@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "AudioWrapper.h"
 #include "MidiBuffer.h"

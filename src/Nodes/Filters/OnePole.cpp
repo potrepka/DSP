@@ -1,4 +1,4 @@
-#include "OnePole.h"
+﻿#include "OnePole.h"
 
 dsp::OnePole::OnePole(Type type)
         : Transformer(type, type)

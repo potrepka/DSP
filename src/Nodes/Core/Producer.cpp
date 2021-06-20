@@ -1,4 +1,4 @@
-#include "Producer.h"
+﻿#include "Producer.h"
 
 dsp::Producer::Producer(Type type, Space space)
         : output(std::make_shared<Output>(type, space)) {

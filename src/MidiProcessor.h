@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Lockable.h"
 #include "MidiBuffer.h"

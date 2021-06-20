@@ -1,4 +1,4 @@
-#include "SamplePlayer.h"
+﻿#include "SamplePlayer.h"
 
 dsp::SamplePlayer::SamplePlayer(Type type)
         : Producer(type)

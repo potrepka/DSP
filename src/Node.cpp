@@ -1,4 +1,4 @@
-#include "Node.h"
+﻿#include "Node.h"
 
 dsp::Node::Node()
         : active(true)

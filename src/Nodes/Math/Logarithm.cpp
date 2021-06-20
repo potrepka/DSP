@@ -1,4 +1,4 @@
-#include "Logarithm.h"
+﻿#include "Logarithm.h"
 
 dsp::Logarithm::Logarithm(Space space)
         : Transformer(Type::RATIO, Type::RATIO, space)

@@ -1,4 +1,4 @@
-#include "FunctionOscillator.h"
+﻿#include "FunctionOscillator.h"
 
 dsp::FunctionOscillator::FunctionOscillator(Type type)
         : Producer(type)

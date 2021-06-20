@@ -1,4 +1,4 @@
-#include "MidSide.h"
+﻿#include "MidSide.h"
 
 dsp::MidSide::MidSide(Type type, Space space)
         : Consumer(type, space)

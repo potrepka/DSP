@@ -1,4 +1,4 @@
-#include "Clipper.h"
+﻿#include "Clipper.h"
 
 dsp::Clipper::Clipper(Type type, Space space)
         : Transformer(type, type, space)

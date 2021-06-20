@@ -1,4 +1,4 @@
-#include "Buffer.h"
+﻿#include "Buffer.h"
 
 dsp::Buffer::Buffer(Type type, Space space, Sample range, Sample defaultValue, size_t numChannels, size_t numSamples)
         : type(type)

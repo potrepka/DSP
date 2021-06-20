@@ -1,4 +1,4 @@
-#include "Spread.h"
+﻿#include "Spread.h"
 
 dsp::Spread::Spread(Type type, Space space)
         : Transformer(type, type, space)

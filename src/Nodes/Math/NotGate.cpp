@@ -1,4 +1,4 @@
-#include "NotGate.h"
+﻿#include "NotGate.h"
 
 dsp::NotGate::NotGate(Space space)
         : Transformer(Type::BOOLEAN, Type::BOOLEAN, space) {}

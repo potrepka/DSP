@@ -1,4 +1,4 @@
-#include "Sequencer.h"
+﻿#include "Sequencer.h"
 
 dsp::Sequencer::Sequencer(Type type, Space space)
         : Producer(type, space)

@@ -1,4 +1,4 @@
-#include "BufferRate.h"
+﻿#include "BufferRate.h"
 
 dsp::BufferRate::BufferRate()
         : Producer(Type::HERTZ) {}

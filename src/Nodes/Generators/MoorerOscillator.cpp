@@ -1,4 +1,4 @@
-#include "MoorerOscillator.h"
+﻿#include "MoorerOscillator.h"
 
 dsp::MoorerOscillator::MoorerOscillator()
         : Producer(Type::RATIO)

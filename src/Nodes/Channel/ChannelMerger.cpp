@@ -1,4 +1,4 @@
-#include "ChannelMerger.h"
+﻿#include "ChannelMerger.h"
 
 dsp::ChannelMerger::ChannelMerger(Type type, Space space)
         : Producer(type, space) {}

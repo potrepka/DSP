@@ -1,4 +1,4 @@
-#include "Shaper.h"
+﻿#include "Shaper.h"
 
 dsp::Shaper::Shaper(Space space)
         : Transformer(Type::RATIO, Type::RATIO, space)

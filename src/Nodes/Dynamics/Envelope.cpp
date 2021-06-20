@@ -1,4 +1,4 @@
-#include "Envelope.h"
+﻿#include "Envelope.h"
 
 dsp::Envelope::Envelope()
         : Producer(Type::RATIO)

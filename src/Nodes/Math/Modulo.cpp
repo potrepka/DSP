@@ -1,4 +1,4 @@
-#include "Modulo.h"
+﻿#include "Modulo.h"
 
 dsp::Modulo::Modulo(Type type, Space space)
         : Transformer(type, type, space)

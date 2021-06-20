@@ -1,4 +1,4 @@
-#include "BooleanMask.h"
+﻿#include "BooleanMask.h"
 
 dsp::BooleanMask::BooleanMask(Type type, Space space)
         : Transformer(type, type, space)

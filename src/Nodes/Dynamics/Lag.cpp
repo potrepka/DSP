@@ -1,4 +1,4 @@
-#include "Lag.h"
+﻿#include "Lag.h"
 
 dsp::Lag::Lag(Type type)
         : Transformer(type, type)

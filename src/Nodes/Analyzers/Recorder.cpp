@@ -1,4 +1,4 @@
-#include "Recorder.h"
+﻿#include "Recorder.h"
 
 dsp::Recorder::Recorder(Type type, Space space, Sample defaultValue)
         : Consumer(type, space)

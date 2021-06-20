@@ -1,4 +1,4 @@
-#include "TriggerHold.h"
+﻿#include "TriggerHold.h"
 
 dsp::TriggerHold::TriggerHold()
         : Transformer(Type::BOOLEAN, Type::BOOLEAN)

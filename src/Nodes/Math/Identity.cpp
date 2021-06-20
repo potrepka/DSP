@@ -1,4 +1,4 @@
-#include "Identity.h"
+﻿#include "Identity.h"
 
 dsp::Identity::Identity(Type type, Space space)
         : Transformer(type, type, space) {}

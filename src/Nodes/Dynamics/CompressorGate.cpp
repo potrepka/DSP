@@ -1,4 +1,4 @@
-#include "CompressorGate.h"
+﻿#include "CompressorGate.h"
 
 dsp::CompressorGate::CompressorGate()
         : Transformer(Type::RATIO, Type::RATIO)
@@ -102,8 +102,7 @@ void dsp::CompressorGate::processNoLock() {
             }
             const Sample gainTarget = getGainResponse(control, threshold, softness, compressionRatio, gateRatio);
             Sample decay;
-            if (gainTarget > 1.0 && gainTarget > state[channel] ||
-                gainTarget < 1.0 && gainTarget < state[channel]) {
+            if (gainTarget > 1.0 && gainTarget > state[channel] || gainTarget < 1.0 && gainTarget < state[channel]) {
                 decay = attack * getSampleRate();
             } else {
                 decay = release * getSampleRate();

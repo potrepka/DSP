@@ -1,4 +1,4 @@
-#include "Multiplication.h"
+﻿#include "Multiplication.h"
 
 dsp::Multiplication::Multiplication(Type type, Space space)
         : Transformer(type, type, space)

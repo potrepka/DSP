@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../Math/Identity.h"
 #include "Biquad.h"
