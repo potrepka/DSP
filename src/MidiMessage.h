@@ -12,7 +12,7 @@ public:
     MidiMessage(uint8_t byte0);
     MidiMessage(uint8_t byte0, uint8_t byte1);
     MidiMessage(uint8_t byte0, uint8_t byte1, uint8_t byte2);
-    MidiMessage(uint8_t *data, size_t size);
+    MidiMessage(const uint8_t *data, size_t size);
 
     bool isNote() const;
     bool isNoteOff() const;

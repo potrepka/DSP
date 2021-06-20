@@ -18,7 +18,7 @@ dsp::MidiMessage::MidiMessage(uint8_t byte0, uint8_t byte1, uint8_t byte2) {
     bytes[2] = byte2;
 }
 
-dsp::MidiMessage::MidiMessage(uint8_t *data, size_t size) {
+dsp::MidiMessage::MidiMessage(const uint8_t *data, size_t size) {
     bytes.reserve(size);
     for (size_t i = 0; i < size; ++i) {
         bytes.push_back(data[i]);

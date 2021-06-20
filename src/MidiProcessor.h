@@ -2,6 +2,7 @@
 
 #include "Lockable.h"
 #include "MidiBuffer.h"
+#include <string>
 #include <thread>
 
 #if !defined(DSP_NO_RTMIDI) && !defined(DSP_USE_JUCE)
