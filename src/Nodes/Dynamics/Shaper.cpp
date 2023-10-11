@@ -52,7 +52,7 @@ dsp::Sample dsp::Shaper::getOutputSignal(const Sample &input, const Sample &driv
     Sample clipped = clip(driveIsNegative ? -input : input, -1.0, 1.0);
     if (drive == 0.0) {
         return 0.0;
-    } else if (drive == 1.0) {
+    } else if (drive == 1.0 || drive == -1.0) {
         return clipped;
     } else {
         Sample posDrive = driveIsNegative ? -drive : drive;
