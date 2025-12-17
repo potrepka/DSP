@@ -71,6 +71,8 @@ dsp::Sample dsp::Shaper::getOutputSignal(const Sample &input, const Sample &driv
                 return clipped < 0.0 ? (posDrive / (1.0 - driveMinusOne * clipped) - posDrive) / driveMinusOne
                                      : (posDrive - posDrive / (1.0 + driveMinusOne * clipped)) / driveMinusOne;
             }
+            default:
+                return 0.0;
         }
     }
 }

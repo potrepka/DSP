@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Core/Producer.h"
+#include "../../Core/Producer.h"
 
 namespace dsp {
 
@@ -8,10 +8,10 @@ class Noise : public Producer {
 
 public:
     struct Mode {
-        static const int MIN = 0;
-        static const int MAX = 1;
-        static const int WHITE = 0;
-        static const int PINK = 1;
+        static constexpr int MIN = 0;
+        static constexpr int MAX = 1;
+        static constexpr int WHITE = 0;
+        static constexpr int PINK = 1;
     };
 
     Noise();

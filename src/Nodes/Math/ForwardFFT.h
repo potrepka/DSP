@@ -1,6 +1,8 @@
 ﻿#pragma once
 
-#include "../Core/Consumer.h"
+#include "../../Core/Consumer.h"
+
+#include "../../Core/NormalizedFFT.h"
 
 namespace dsp {
 
@@ -20,7 +22,7 @@ private:
     const std::shared_ptr<Output> magnitude;
     const std::shared_ptr<Output> phase;
 
-    ScaledFFT fft;
+    NormalizedFFT fft;
 };
 
 } // namespace dsp

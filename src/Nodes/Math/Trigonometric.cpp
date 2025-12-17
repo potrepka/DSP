@@ -17,6 +17,7 @@ void dsp::Trigonometric::processNoLock() {
                     case Mode::SINE: return sin(x);
                     case Mode::COSINE: return cos(x);
                     case Mode::TANGENT: return tan(x);
+                    default: return 0.0;
                 }
             },
             getInput()->getWrapper(),

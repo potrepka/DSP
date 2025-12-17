@@ -1,6 +1,8 @@
 ﻿#pragma once
 
-#include "../Core/Producer.h"
+#include "../../Core/Producer.h"
+
+#include "../../Core/NormalizedFFT.h"
 
 namespace dsp {
 
@@ -20,7 +22,7 @@ private:
     const std::shared_ptr<Input> magnitude;
     const std::shared_ptr<Input> phase;
 
-    ScaledFFT fft;
+    NormalizedFFT fft;
 };
 
 } // namespace dsp

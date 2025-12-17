@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Core/Producer.h"
+#include "../../Core/Producer.h"
 
 namespace dsp {
 
@@ -8,10 +8,10 @@ class MoorerOscillator : public Producer {
 
 public:
     struct Mode {
-        static const int MIN = 0;
-        static const int MAX = 1;
-        static const int ONE_SIDED = 0;
-        static const int TWO_SIDED = 1;
+        static constexpr int MIN = 0;
+        static constexpr int MAX = 1;
+        static constexpr int ONE_SIDED = 0;
+        static constexpr int TWO_SIDED = 1;
     };
 
     MoorerOscillator();

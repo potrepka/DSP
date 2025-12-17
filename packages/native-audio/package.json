@@ -1,0 +1,59 @@
+{
+  "name": "@potrepka/native-audio",
+  "version": "0.1.0",
+  "description": "High-performance audio DSP library for TypeScript with Web and React Native support",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "web/",
+    "ios/",
+    "android/",
+    "cpp/"
+  ],
+  "scripts": {
+    "build": "npm run build:web && npm run build:ts",
+    "build:web": "bash scripts/build-web.sh",
+    "build:ts": "tsc",
+    "clean": "rm -rf dist/ web/build/",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "keywords": [
+    "audio",
+    "dsp",
+    "web-audio",
+    "react-native",
+    "wasm",
+    "jsi",
+    "audio-processing",
+    "synthesizer",
+    "effects"
+  ],
+  "author": "Nathaniel Potrepka",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/potrepka/DSP.git",
+    "directory": "packages/native-audio"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react-native": ">=0.70.0"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    }
+  }
+}

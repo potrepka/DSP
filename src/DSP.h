@@ -5,9 +5,9 @@
 #endif
 
 #ifdef DSP_USE_ENGINE
-#include "Engine.h"
+#include "Core/Engine.h"
 #else
-#include "NodeProcessor.h"
+#include "Core/NodeProcessor.h"
 #endif
 
 #include "Nodes/Analyzers/Recorder.h"

@@ -30,7 +30,7 @@ std::shared_ptr<dsp::Input> dsp::Biquad::getMode() const {
     return mode;
 }
 
-void dsp::Biquad::getMagnitudeAndPhaseResponse(size_t channel, Sample frequency, Sample &magnitude, Sample &phase) {
+dsp::FrequencyResponse dsp::Biquad::getFrequencyResponse(size_t channel, Sample frequency) {
     lock();
     DSP_ASSERT(channel < getNumChannels());
     if (getNumSamples() > 0) {
@@ -61,13 +61,13 @@ void dsp::Biquad::getMagnitudeAndPhaseResponse(size_t channel, Sample frequency,
         const Sample denominator = c * c + d * d;
         const Sample real = (a * c + b * d) / denominator;
         const Sample imaginary = (b * c - a * d) / denominator;
-        magnitude = sqrt(real * real + imaginary * imaginary);
+        const Sample magnitude = sqrt(real * real + imaginary * imaginary);
         const Sample bipolar = ONE_OVER_TAU * atan2(imaginary, real);
-        phase = bipolar < 0.0 ? bipolar + 1.0 : bipolar;
+        const Sample phase = bipolar < 0.0 ? bipolar + 1.0 : bipolar;
+        return { magnitude, phase };
     } else {
         unlock();
-        magnitude = 1.0;
-        phase = 0.0;
+        return { 1.0, 0.0 };
     }
 }
 

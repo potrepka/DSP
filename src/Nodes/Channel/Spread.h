@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Core/Transformer.h"
+#include "../../Core/Transformer.h"
 
 namespace dsp {
 
@@ -8,10 +8,10 @@ class Spread : public Transformer {
 
 public:
     struct Mode {
-        static const int MIN = 0;
-        static const int MAX = 1;
-        static const int UNIPOLAR = 0;
-        static const int BIPOLAR = 1;
+        static constexpr int MIN = 0;
+        static constexpr int MAX = 1;
+        static constexpr int UNIPOLAR = 0;
+        static constexpr int BIPOLAR = 1;
     };
 
     Spread(Type type = Type::RATIO, Space space = Space::TIME);

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Core/Transformer.h"
+#include "../../Core/Transformer.h"
 
 namespace dsp {
 
@@ -8,10 +8,10 @@ class OnePole : public Transformer {
 
 public:
     struct Mode {
-        static const int MIN = 0;
-        static const int MAX = 1;
-        static const int LOW_PASS = 0;
-        static const int HIGH_PASS = 1;
+        static constexpr int MIN = 0;
+        static constexpr int MAX = 1;
+        static constexpr int LOW_PASS = 0;
+        static constexpr int HIGH_PASS = 1;
     };
 
     OnePole(Type type = Type::RATIO);

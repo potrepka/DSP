@@ -17,6 +17,7 @@ void dsp::Hyperbolic::processNoLock() {
                     case Mode::SINE: return sinh(x);
                     case Mode::COSINE: return cosh(x);
                     case Mode::TANGENT: return tanh(x);
+                    default: return 0.0;
                 }
             },
             getInput()->getWrapper(),

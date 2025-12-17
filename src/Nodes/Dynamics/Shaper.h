@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Core/Transformer.h"
+#include "../../Core/Transformer.h"
 
 namespace dsp {
 
@@ -8,10 +8,10 @@ class Shaper : public Transformer {
 
 public:
     struct Mode {
-        static const int MIN = 0;
-        static const int MAX = 1;
-        static const int HYPERBOLIC = 0;
-        static const int RATIONAL = 1;
+        static constexpr int MIN = 0;
+        static constexpr int MAX = 1;
+        static constexpr int HYPERBOLIC = 0;
+        static constexpr int RATIONAL = 1;
     };
 
     Shaper(Space space = Space::TIME);

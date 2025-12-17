@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Core/Transformer.h"
+#include "../../Core/Transformer.h"
 
 namespace dsp {
 
@@ -8,16 +8,16 @@ class Biquad : public Transformer {
 
 public:
     struct Mode {
-        static const int MIN = 0;
-        static const int MAX = 7;
-        static const int LOW_PASS = 0;
-        static const int HIGH_PASS = 1;
-        static const int BAND_PASS = 2;
-        static const int BAND_STOP = 3;
-        static const int LOW_SHELF = 4;
-        static const int HIGH_SHELF = 5;
-        static const int PEAK = 6;
-        static const int ALL_PASS = 7;
+        static constexpr int MIN = 0;
+        static constexpr int MAX = 7;
+        static constexpr int LOW_PASS = 0;
+        static constexpr int HIGH_PASS = 1;
+        static constexpr int BAND_PASS = 2;
+        static constexpr int BAND_STOP = 3;
+        static constexpr int LOW_SHELF = 4;
+        static constexpr int HIGH_SHELF = 5;
+        static constexpr int PEAK = 6;
+        static constexpr int ALL_PASS = 7;
     };
 
     Biquad();
@@ -27,7 +27,7 @@ public:
     std::shared_ptr<Input> getAmplitude() const;
     std::shared_ptr<Input> getMode() const;
 
-    void getMagnitudeAndPhaseResponse(size_t channel, Sample frequency, Sample &magnitude, Sample &phase);
+    FrequencyResponse getFrequencyResponse(size_t channel, Sample frequency);
 
 protected:
     void setNumOutputChannelsNoLock(size_t numChannels) override;

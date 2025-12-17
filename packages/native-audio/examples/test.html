@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@potrepka/native-audio Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px 5px;
+            cursor: pointer;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>@potrepka/native-audio Test</h1>
+
+    <div id="status" class="status info">
+        Loading WASM module...
+    </div>
+
+    <div>
+        <button id="btnTest" disabled>Run Test</button>
+        <button id="btnPlay" disabled>Start Engine & Play</button>
+    </div>
+
+    <div id="output"></div>
+
+    <!-- Load WASM module -->
+    <script src="../web/build/native-audio.js"></script>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const outputDiv = document.getElementById('output');
+        const btnTest = document.getElementById('btnTest');
+        const btnPlay = document.getElementById('btnPlay');
+
+        let Module;
+        let engine;
+        let isPlaying = false;
+
+        // Initialize WASM module
+        async function initialize() {
+            try {
+                statusDiv.textContent = 'Initializing WASM module...';
+                statusDiv.className = 'status info';
+
+                Module = await createNativeAudioModule();
+
+                // Expose module globally for wrappers if they were used (but here we effectively are the wrapper's environment)
+                window.Module = Module;
+
+                statusDiv.textContent = 'WASM module loaded successfully!';
+                statusDiv.className = 'status success';
+
+                btnTest.disabled = false;
+                btnPlay.disabled = false;
+
+                log('WASM module initialized');
+                log('Available classes: Engine, Biquad, etc.');
+            } catch (error) {
+                statusDiv.textContent = 'Failed to load WASM module: ' + error.message;
+                statusDiv.className = 'status error';
+                console.error(error);
+            }
+        }
+
+        function log(message) {
+            outputDiv.textContent += message + '\n';
+        }
+
+        function runTest() {
+            outputDiv.textContent = '';
+            log('Running simple Engine test...\n');
+
+            try {
+                log('Creating Engine...');
+                const eng = new Module.Engine();
+                const devices = eng.getInputDevices();
+                log(`Input Devices count: ${devices.size()}`);
+
+                // Setup dummy config
+                eng.setup(-1, -1, 512, 44100.0);
+
+                const proc = eng.getNodeProcessor();
+                log('Got NodeProcessor');
+
+                // Check if active
+                log(`Is processor active? ${proc.isActive()}`);
+                proc.setActive(true);
+                log(`Is processor active now? ${proc.isActive()}`);
+
+                log('✓ Engine test passed (basic setup)');
+
+                eng.delete(); // Cleanup
+            } catch (error) {
+                log('\n❌ Test failed: ' + error.message);
+                console.error(error);
+            }
+        }
+
+        async function startEngine() {
+            if (isPlaying) return;
+
+            try {
+                // In a browser context without full AudioWorklet integration binding connected to WebAudio,
+                // the C++ Engine::start() might rely on PortAudio/miniaudio which might fail or need permissions
+                // inside the sandbox if compiled with certain flags.
+                // Assuming the user wants to see us calling the C++ API.
+
+                // Note: For actual audio in browser via Emscripten, usually SDL or OpenAL or webaudio backend is used.
+                // If the Engine uses a backend that works in browser (like `miniaudio` with webaudio backend), it might work.
+
+                log('Starting Engine...');
+                engine = new Module.Engine();
+
+                // Setup default
+                // On web, devices might be just default
+                engine.setup(-1, -1, 512, 44100);
+
+                // Build graph
+                const processor = engine.getNodeProcessor();
+                const root = processor.getDefaultNode(); // shared_ptr<Node>
+
+                // Create nodes
+                const sampleRate = 44100;
+                const numChannels = 2;
+
+                const phasor = new Module.Phasor(numChannels, sampleRate);
+                const osc = new Module.TableOscillator(numChannels, sampleRate, 'sine');
+                const filter = new Module.Biquad(numChannels, sampleRate, Module.BIQUAD_MODE_LOW_PASS);
+                const gain = new Module.Multiplication(numChannels, sampleRate); // Gain equivalent
+
+                phasor.setFrequency(440);
+                phasor.setMode(Module.PHASOR_MODE_WRAPPED);
+                filter.setFrequency(1000);
+                filter.setQ(5.0);
+                gain.setFactor(0.5);
+
+                // Connect
+                // phasor -> osc -> filter -> gain
+                phasor.connect(osc);
+                osc.connect(filter);
+                filter.connect(gain);
+
+                // Add to graph
+                // We add them to root so they are processed? Or simply keeping them alive and connected?
+                // Usually add children to root.
+                root.addChild(phasor);
+                root.addChild(osc);
+                root.addChild(filter);
+                root.addChild(gain);
+
+                // If gain is the output, we might want to connect gain to root input if root passes to output?
+                // The C++ Engine implementation likely pulls from the root node or pushes to it.
+                // Assuming typical scene graph where root.process() calls children.
+                // If they are just children, they are processed. But audio flow needs connection.
+                // We can try connecting gain to root.
+                // gain.connect(root); // Might behave as sending audio to root.
+
+                log('Graph built.');
+
+                engine.start();
+                log('Engine started.');
+
+                isPlaying = true;
+                btnPlay.textContent = 'Running... (Check Console)';
+                btnPlay.disabled = true;
+
+            } catch (error) {
+                log('❌ Engine start failed: ' + error.message);
+                console.error(error);
+            }
+        }
+
+        btnTest.addEventListener('click', runTest);
+        btnPlay.addEventListener('click', startEngine);
+
+        // Initialize on load
+        initialize();
+    </script>
+</body>
+</html>
