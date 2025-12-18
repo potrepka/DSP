@@ -1,7 +1,3 @@
-/**
- * Platform detection for Web and React Native
- */
-
 import { PlatformInfo } from '../types'
 
 export const getPlatformInfo = (): PlatformInfo => {

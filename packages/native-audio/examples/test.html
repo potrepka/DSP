@@ -75,7 +75,7 @@
           statusDiv.textContent = 'Initializing WASM module...'
           statusDiv.className = 'status info'
 
-          Module = await createNativeAudioModule()
+          Module = await createAudioModule()
           window.Module = Module
 
           statusDiv.textContent = 'WASM module loaded successfully!'

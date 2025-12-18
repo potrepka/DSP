@@ -1,9 +1,4 @@
-/**
- * Type definitions for @potrepka/native-audio
- * Matches C++ type definitions and provides TypeScript-specific types
- */
-
-import type { Type, Space } from './enums'
+import type { Space, Type } from './enums'
 
 // ========== Primitive Types (matching C++ typedefs) ==========
 
@@ -108,8 +103,3 @@ export type PlatformInfo = {
   readonly isNative: boolean
   readonly name: PlatformName
 }
-
-/**
- * Module instance (WASM module on Web, native module on React Native)
- */
-export type ModuleInstance = any

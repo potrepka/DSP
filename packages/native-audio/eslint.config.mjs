@@ -3,6 +3,7 @@ import tsPlugin from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
 import perfectionist from 'eslint-plugin-perfectionist'
 import unusedImports from 'eslint-plugin-unused-imports'
+import globals from 'globals'
 
 const importRules = {
   'unused-imports/no-unused-imports': 'error',
@@ -30,10 +31,16 @@ const importRules = {
 export default [
   js.configs.recommended,
   {
-    ignores: ['dist/**/*'],
+    ignores: ['android/**/*', 'cpp/**/*', 'dist/**/*', 'ios/**/*', 'web/**/*'],
   },
   {
     files: ['**/*.js', '**/*.jsx', '**/*.mjs'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
     plugins: {
       perfectionist,
       'unused-imports': unusedImports,
@@ -45,6 +52,10 @@ export default [
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
       parser: tsParser,
       parserOptions: {
         project: './tsconfig.eslint.json',

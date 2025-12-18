@@ -57,7 +57,7 @@ emcc \
   -DDSP_NO_RTAUDIO=1 \
   -s WASM=1 \
   -s MODULARIZE=1 \
-  -s EXPORT_NAME="createNativeAudioModule" \
+  -s EXPORT_NAME="createAudioModule" \
   -s ALLOW_MEMORY_GROWTH=1 \
   -s MAXIMUM_MEMORY=2GB \
   -s EXPORTED_FUNCTIONS='["_malloc","_free"]' \
