@@ -5,12 +5,11 @@
 namespace dsp {
 
 class Negative : public Transformer {
-
 public:
-    Negative(Type type = Type::RATIO, Space space = Space::TIME);
+  Negative(Type type = Type::RATIO, Space space = Space::TIME);
 
 protected:
-    void processNoLock() override;
+  void processNoLock() override;
 };
 
 } // namespace dsp

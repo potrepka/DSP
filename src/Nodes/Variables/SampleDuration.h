@@ -5,12 +5,11 @@
 namespace dsp {
 
 class SampleDuration : public Producer {
-
 public:
-    SampleDuration();
+  SampleDuration();
 
 protected:
-    void setSampleRateNoLock(double sampleRate) override;
+  void setSampleRateNoLock(double sampleRate) override;
 };
 
 } // namespace dsp

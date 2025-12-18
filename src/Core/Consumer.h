@@ -5,14 +5,13 @@
 namespace dsp {
 
 class Consumer : public Node {
-
 public:
-    Consumer(Type type = Type::RATIO, Space space = Space::TIME);
+  Consumer(Type type = Type::RATIO, Space space = Space::TIME);
 
-    std::shared_ptr<Input> getInput() const;
+  std::shared_ptr<Input> getInput() const;
 
 private:
-    const std::shared_ptr<Input> input;
+  const std::shared_ptr<Input> input;
 };
 
 } // namespace dsp

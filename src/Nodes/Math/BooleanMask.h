@@ -5,17 +5,16 @@
 namespace dsp {
 
 class BooleanMask : public Transformer {
-
 public:
-    BooleanMask(Type type = Type::RATIO, Space space = Space::TIME);
+  BooleanMask(Type type = Type::RATIO, Space space = Space::TIME);
 
-    std::shared_ptr<Input> getMask() const;
+  std::shared_ptr<Input> getMask() const;
 
 protected:
-    void processNoLock() override;
+  void processNoLock() override;
 
 private:
-    const std::shared_ptr<Input> mask;
+  const std::shared_ptr<Input> mask;
 };
 
 } // namespace dsp

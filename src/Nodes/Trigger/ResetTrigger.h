@@ -5,19 +5,18 @@
 namespace dsp {
 
 class ResetTrigger : public Producer {
-
 public:
-    ResetTrigger();
+  ResetTrigger();
 
-    void reset();
-    void reset(size_t channel);
+  void reset();
+  void reset(size_t channel);
 
 protected:
-    void setNumOutputChannelsNoLock(size_t numChannels) override;
-    void processNoLock() override;
+  void setNumOutputChannelsNoLock(size_t numChannels) override;
+  void processNoLock() override;
 
 private:
-    std::vector<int> state;
+  std::vector<int> state;
 };
 
 } // namespace dsp

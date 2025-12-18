@@ -5,18 +5,19 @@
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is furnished
-// to do so, subject to the following conditions:
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-// FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-// COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-// IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 // ==================================================================================
 
 #ifndef _FFTCONVOLVER_UTILITIES_H
@@ -54,105 +55,92 @@ bool SSEEnabled();
 
 /**
  * @class Buffer
- * @brief Simple buffer implementation (uses 16-byte alignment if SSE optimization is enabled)
+ * @brief Simple buffer implementation (uses 16-byte alignment if SSE
+ * optimization is enabled)
  */
 template <typename T>
 class Buffer {
 public:
-    explicit Buffer(size_t initialSize = 0)
-            : _data(0)
-            , _size(0) {
-        resize(initialSize);
-    }
+  explicit Buffer(size_t initialSize = 0) : _data(0), _size(0) {
+    resize(initialSize);
+  }
 
-    virtual ~Buffer() {
-        clear();
-    }
+  virtual ~Buffer() { clear(); }
 
-    void clear() {
-        deallocate(_data);
-        _data = 0;
-        _size = 0;
-    }
+  void clear() {
+    deallocate(_data);
+    _data = 0;
+    _size = 0;
+  }
 
-    void resize(size_t size) {
-        if (_size != size) {
-            clear();
+  void resize(size_t size) {
+    if (_size != size) {
+      clear();
 
-            if (size > 0) {
-                assert(!_data && _size == 0);
-                _data = allocate(size);
-                _size = size;
-            }
-        }
-        setZero();
+      if (size > 0) {
+        assert(!_data && _size == 0);
+        _data = allocate(size);
+        _size = size;
+      }
     }
+    setZero();
+  }
 
-    size_t size() const {
-        return _size;
-    }
+  size_t size() const { return _size; }
 
-    void setZero() {
-        ::memset(_data, 0, _size * sizeof(T));
-    }
+  void setZero() { ::memset(_data, 0, _size * sizeof(T)); }
 
-    void copyFrom(const Buffer<T> &other) {
-        assert(_size == other._size);
-        if (this != &other) {
-            ::memcpy(_data, other._data, _size * sizeof(T));
-        }
+  void copyFrom(const Buffer<T>& other) {
+    assert(_size == other._size);
+    if (this != &other) {
+      ::memcpy(_data, other._data, _size * sizeof(T));
     }
+  }
 
-    T &operator[](size_t index) {
-        assert(_data && index < _size);
-        return _data[index];
-    }
+  T& operator[](size_t index) {
+    assert(_data && index < _size);
+    return _data[index];
+  }
 
-    const T &operator[](size_t index) const {
-        assert(_data && index < _size);
-        return _data[index];
-    }
+  const T& operator[](size_t index) const {
+    assert(_data && index < _size);
+    return _data[index];
+  }
 
-    operator bool() const {
-        return (_data != 0 && _size > 0);
-    }
+  operator bool() const { return (_data != 0 && _size > 0); }
 
-    T *data() {
-        return _data;
-    }
+  T* data() { return _data; }
 
-    const T *data() const {
-        return _data;
-    }
+  const T* data() const { return _data; }
 
-    static void Swap(Buffer<T> &a, Buffer<T> &b) {
-        std::swap(a._data, b._data);
-        std::swap(a._size, b._size);
-    }
+  static void Swap(Buffer<T>& a, Buffer<T>& b) {
+    std::swap(a._data, b._data);
+    std::swap(a._size, b._size);
+  }
 
 private:
-    T *allocate(size_t size) {
+  T* allocate(size_t size) {
 #if defined(FFTCONVOLVER_USE_SSE)
-        return static_cast<T *>(_mm_malloc(size * sizeof(T), 16));
+    return static_cast<T*>(_mm_malloc(size * sizeof(T), 16));
 #else
-        return new T[size];
+    return new T[size];
 #endif
-    }
+  }
 
-    void deallocate(T *ptr) {
+  void deallocate(T* ptr) {
 #if defined(FFTCONVOLVER_USE_SSE)
-        _mm_free(ptr);
+    _mm_free(ptr);
 #else
-        delete[] ptr;
+    delete[] ptr;
 #endif
-    }
+  }
 
-    T *_data;
-    size_t _size;
+  T* _data;
+  size_t _size;
 
-    // Prevent uncontrolled usage
-    Buffer(const Buffer &);
-    Buffer &operator=(const Buffer &);
+  // Prevent uncontrolled usage
+  Buffer(const Buffer&);
+  Buffer& operator=(const Buffer&);
 };
 
 /**
@@ -175,67 +163,52 @@ typedef Buffer<Sample> SampleBuffer;
  */
 class SplitComplex {
 public:
-    explicit SplitComplex(size_t initialSize = 0)
-            : _size(0)
-            , _re()
-            , _im() {
-        resize(initialSize);
-    }
+  explicit SplitComplex(size_t initialSize = 0) : _size(0), _re(), _im() {
+    resize(initialSize);
+  }
 
-    ~SplitComplex() {
-        clear();
-    }
+  ~SplitComplex() { clear(); }
 
-    void clear() {
-        _re.clear();
-        _im.clear();
-        _size = 0;
-    }
+  void clear() {
+    _re.clear();
+    _im.clear();
+    _size = 0;
+  }
 
-    void resize(size_t newSize) {
-        _re.resize(newSize);
-        _im.resize(newSize);
-        _size = newSize;
-    }
+  void resize(size_t newSize) {
+    _re.resize(newSize);
+    _im.resize(newSize);
+    _size = newSize;
+  }
 
-    void setZero() {
-        _re.setZero();
-        _im.setZero();
-    }
+  void setZero() {
+    _re.setZero();
+    _im.setZero();
+  }
 
-    void copyFrom(const SplitComplex &other) {
-        _re.copyFrom(other._re);
-        _im.copyFrom(other._im);
-    }
+  void copyFrom(const SplitComplex& other) {
+    _re.copyFrom(other._re);
+    _im.copyFrom(other._im);
+  }
 
-    Sample *re() {
-        return _re.data();
-    }
+  Sample* re() { return _re.data(); }
 
-    const Sample *re() const {
-        return _re.data();
-    }
+  const Sample* re() const { return _re.data(); }
 
-    Sample *im() {
-        return _im.data();
-    }
+  Sample* im() { return _im.data(); }
 
-    const Sample *im() const {
-        return _im.data();
-    }
+  const Sample* im() const { return _im.data(); }
 
-    size_t size() const {
-        return _size;
-    }
+  size_t size() const { return _size; }
 
 private:
-    size_t _size;
-    SampleBuffer _re;
-    SampleBuffer _im;
+  size_t _size;
+  SampleBuffer _re;
+  SampleBuffer _im;
 
-    // Prevent uncontrolled usage
-    SplitComplex(const SplitComplex &);
-    SplitComplex &operator=(const SplitComplex &);
+  // Prevent uncontrolled usage
+  SplitComplex(const SplitComplex&);
+  SplitComplex& operator=(const SplitComplex&);
 };
 
 /**
@@ -244,12 +217,12 @@ private:
  * @return The next power of 2
  */
 template <typename T>
-T NextPowerOf2(const T &val) {
-    T nextPowerOf2 = 1;
-    while (nextPowerOf2 < val) {
-        nextPowerOf2 *= 2;
-    }
-    return nextPowerOf2;
+T NextPowerOf2(const T& val) {
+  T nextPowerOf2 = 1;
+  while (nextPowerOf2 < val) {
+    nextPowerOf2 *= 2;
+  }
+  return nextPowerOf2;
 }
 
 /**
@@ -259,31 +232,33 @@ T NextPowerOf2(const T &val) {
  * @param b The 2nd array
  * @param len The length of the arrays
  */
-void Sum(Sample *FFTCONVOLVER_RESTRICT result,
-         const Sample *FFTCONVOLVER_RESTRICT a,
-         const Sample *FFTCONVOLVER_RESTRICT b,
-         size_t len);
+void Sum(Sample* FFTCONVOLVER_RESTRICT result,
+         const Sample* FFTCONVOLVER_RESTRICT a,
+         const Sample* FFTCONVOLVER_RESTRICT b, size_t len);
 
 /**
- * @brief Copies a source array into a destination buffer and pads the destination buffer with zeros
+ * @brief Copies a source array into a destination buffer and pads the
+ * destination buffer with zeros
  * @param dest The destination buffer
  * @param src The source array
  * @param srcSize The size of the source array
  */
 template <typename T>
-void CopyAndPad(Buffer<T> &dest, const T *src, size_t srcSize) {
-    assert(dest.size() >= srcSize);
-    ::memcpy(dest.data(), src, srcSize * sizeof(T));
-    ::memset(dest.data() + srcSize, 0, (dest.size() - srcSize) * sizeof(T));
+void CopyAndPad(Buffer<T>& dest, const T* src, size_t srcSize) {
+  assert(dest.size() >= srcSize);
+  ::memcpy(dest.data(), src, srcSize * sizeof(T));
+  ::memset(dest.data() + srcSize, 0, (dest.size() - srcSize) * sizeof(T));
 }
 
 /**
- * @brief Adds the complex product of two split-complex buffers to a result buffer
+ * @brief Adds the complex product of two split-complex buffers to a result
+ * buffer
  * @param result The result buffer
  * @param a The 1st factor of the complex product
  * @param b The 2nd factor of the complex product
  */
-void ComplexMultiplyAccumulate(SplitComplex &result, const SplitComplex &a, const SplitComplex &b);
+void ComplexMultiplyAccumulate(SplitComplex& result, const SplitComplex& a,
+                               const SplitComplex& b);
 
 /**
  * @brief Adds the complex product of two split-complex arrays to a result array
@@ -294,12 +269,12 @@ void ComplexMultiplyAccumulate(SplitComplex &result, const SplitComplex &a, cons
  * @param reB The real part of the 2nd factor of the complex product
  * @param imB The imaginary part of the 2nd factor of the complex product
  */
-void ComplexMultiplyAccumulate(Sample *FFTCONVOLVER_RESTRICT re,
-                               Sample *FFTCONVOLVER_RESTRICT im,
-                               const Sample *FFTCONVOLVER_RESTRICT reA,
-                               const Sample *FFTCONVOLVER_RESTRICT imA,
-                               const Sample *FFTCONVOLVER_RESTRICT reB,
-                               const Sample *FFTCONVOLVER_RESTRICT imB,
+void ComplexMultiplyAccumulate(Sample* FFTCONVOLVER_RESTRICT re,
+                               Sample* FFTCONVOLVER_RESTRICT im,
+                               const Sample* FFTCONVOLVER_RESTRICT reA,
+                               const Sample* FFTCONVOLVER_RESTRICT imA,
+                               const Sample* FFTCONVOLVER_RESTRICT reB,
+                               const Sample* FFTCONVOLVER_RESTRICT imB,
                                const size_t len);
 
 } // End of namespace fftconvolver

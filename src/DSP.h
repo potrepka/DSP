@@ -11,37 +11,30 @@
 #endif
 
 #include "Nodes/Analyzers/Recorder.h"
-
 #include "Nodes/Channel/ChannelMerger.h"
 #include "Nodes/Channel/ChannelSplitter.h"
 #include "Nodes/Channel/MidSide.h"
 #include "Nodes/Channel/Spread.h"
 #include "Nodes/Channel/StereoPanner.h"
-
 #include "Nodes/Delays/Convolver.h"
 #include "Nodes/Delays/VariableDelay.h"
-
 #include "Nodes/Dynamics/Clipper.h"
 #include "Nodes/Dynamics/CompressorGate.h"
 #include "Nodes/Dynamics/DryWet.h"
 #include "Nodes/Dynamics/Envelope.h"
 #include "Nodes/Dynamics/Lag.h"
 #include "Nodes/Dynamics/Shaper.h"
-
 #include "Nodes/External/MidiInput.h"
 #include "Nodes/External/MidiOutput.h"
-
 #include "Nodes/Filters/Biquad.h"
 #include "Nodes/Filters/Crossover.h"
 #include "Nodes/Filters/OnePole.h"
-
 #include "Nodes/Generators/FunctionOscillator.h"
 #include "Nodes/Generators/MoorerOscillator.h"
 #include "Nodes/Generators/Noise.h"
 #include "Nodes/Generators/Phasor.h"
 #include "Nodes/Generators/SamplePlayer.h"
 #include "Nodes/Generators/TableOscillator.h"
-
 #include "Nodes/Math/AbsoluteValue.h"
 #include "Nodes/Math/BooleanMask.h"
 #include "Nodes/Math/Comparison.h"
@@ -61,7 +54,6 @@
 #include "Nodes/Math/Power.h"
 #include "Nodes/Math/Reciprocal.h"
 #include "Nodes/Math/Trigonometric.h"
-
 #include "Nodes/Trigger/ClockTrigger.h"
 #include "Nodes/Trigger/Differentiator.h"
 #include "Nodes/Trigger/Integrator.h"
@@ -70,7 +62,6 @@
 #include "Nodes/Trigger/SampleAndHold.h"
 #include "Nodes/Trigger/Sequencer.h"
 #include "Nodes/Trigger/TriggerHold.h"
-
 #include "Nodes/Variables/BufferDuration.h"
 #include "Nodes/Variables/BufferRate.h"
 #include "Nodes/Variables/SampleDuration.h"

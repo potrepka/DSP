@@ -47,7 +47,7 @@ echo "🔧 Compiling..."
 
 emcc \
   -O3 \
-  -std=c++17 \
+  -std=c++20 \
   -I"$CPP_SRC" \
   -I"$CPP_LIB" \
   -lembind \

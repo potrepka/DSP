@@ -39,23 +39,23 @@ enum class Type { RATIO, INTEGER, BOOLEAN, HERTZ, SECONDS };
 enum class Space { TIME, FREQUENCY };
 
 struct Shape {
-    static constexpr int MIN = 0;
-    static constexpr int MAX = 1;
-    static constexpr int LINEAR = 0;
-    static constexpr int EXPONENTIAL = 1;
+  static constexpr int MIN = 0;
+  static constexpr int MAX = 1;
+  static constexpr int LINEAR = 0;
+  static constexpr int EXPONENTIAL = 1;
 };
 
 struct Interpolation {
-    static constexpr int MIN = 0;
-    static constexpr int MAX = 2;
-    static constexpr int NONE = 0;
-    static constexpr int LINEAR = 1;
-    static constexpr int HERMITE = 2;
+  static constexpr int MIN = 0;
+  static constexpr int MAX = 2;
+  static constexpr int NONE = 0;
+  static constexpr int LINEAR = 1;
+  static constexpr int HERMITE = 2;
 };
 
 struct FrequencyResponse {
-    Sample magnitude;
-    Sample phase;
+  Sample magnitude;
+  Sample phase;
 };
 
 } // namespace dsp

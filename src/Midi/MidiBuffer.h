@@ -15,32 +15,31 @@ typedef juce::MidiMessage MidiMessage;
 typedef juce::MidiBuffer MidiBuffer;
 #else
 class MidiBuffer {
-
 public:
-    class Iterator {
+  class Iterator {
+  public:
+    Iterator(std::multimap<size_t, TimedMidiMessage>::const_iterator it);
+    Iterator& operator++();
+    bool operator==(const Iterator& other) const;
+    bool operator!=(const Iterator& other) const;
+    TimedMidiMessage operator*() const;
 
-    public:
-        Iterator(std::multimap<size_t, TimedMidiMessage>::const_iterator it);
-        Iterator &operator++();
-        bool operator==(const Iterator &other) const;
-        bool operator!=(const Iterator &other) const;
-        TimedMidiMessage operator*() const;
+  private:
+    std::map<size_t, TimedMidiMessage>::const_iterator it;
+  };
 
-    private:
-        std::map<size_t, TimedMidiMessage>::const_iterator it;
-    };
+  MidiBuffer();
 
-    MidiBuffer();
+  Iterator begin() const;
+  Iterator end() const;
 
-    Iterator begin() const;
-    Iterator end() const;
-
-    void addEvent(const MidiMessage &midiMessage, size_t sample);
-    void addEvents(const MidiBuffer &midiBuffer, size_t startSample, size_t numSamples, size_t sampleDeltaToAdd);
-    void clear();
+  void addEvent(const MidiMessage& midiMessage, size_t sample);
+  void addEvents(const MidiBuffer& midiBuffer, size_t startSample,
+                 size_t numSamples, size_t sampleDeltaToAdd);
+  void clear();
 
 private:
-    std::multimap<size_t, TimedMidiMessage> events;
+  std::multimap<size_t, TimedMidiMessage> events;
 };
 #endif
 

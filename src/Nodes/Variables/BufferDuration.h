@@ -5,13 +5,12 @@
 namespace dsp {
 
 class BufferDuration : public Producer {
-
 public:
-    BufferDuration();
+  BufferDuration();
 
 protected:
-    void setNumSamplesNoLock(size_t numSamples) override;
-    void setSampleRateNoLock(double sampleRate) override;
+  void setNumSamplesNoLock(size_t numSamples) override;
+  void setSampleRateNoLock(double sampleRate) override;
 };
 
 } // namespace dsp

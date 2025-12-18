@@ -5,17 +5,16 @@
 namespace dsp {
 
 class Multiplication : public Transformer {
-
 public:
-    Multiplication(Type type = Type::RATIO, Space space = Space::TIME);
+  Multiplication(Type type = Type::RATIO, Space space = Space::TIME);
 
-    std::shared_ptr<Input> getFactor() const;
+  std::shared_ptr<Input> getFactor() const;
 
 protected:
-    void processNoLock() override;
+  void processNoLock() override;
 
 private:
-    const std::shared_ptr<Input> factor;
+  const std::shared_ptr<Input> factor;
 };
 
 } // namespace dsp

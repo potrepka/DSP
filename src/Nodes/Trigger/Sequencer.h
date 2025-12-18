@@ -5,22 +5,21 @@
 namespace dsp {
 
 class Sequencer : public Producer {
-
 public:
-    Sequencer(Type type = Type::RATIO, Space space = Space::TIME);
+  Sequencer(Type type = Type::RATIO, Space space = Space::TIME);
 
-    std::vector<std::shared_ptr<Buffer>> &getSequences();
+  std::vector<std::shared_ptr<Buffer>>& getSequences();
 
-    std::shared_ptr<Input> getSequenceIndex() const;
-    std::shared_ptr<Input> getPositionIndex() const;
+  std::shared_ptr<Input> getSequenceIndex() const;
+  std::shared_ptr<Input> getPositionIndex() const;
 
 protected:
-    void processNoLock() override;
+  void processNoLock() override;
 
 private:
-    std::vector<std::shared_ptr<Buffer>> sequences;
-    const std::shared_ptr<Input> sequenceIndex;
-    const std::shared_ptr<Input> positionIndex;
+  std::vector<std::shared_ptr<Buffer>> sequences;
+  const std::shared_ptr<Input> sequenceIndex;
+  const std::shared_ptr<Input> positionIndex;
 };
 
 } // namespace dsp

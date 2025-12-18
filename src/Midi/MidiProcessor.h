@@ -1,11 +1,10 @@
 ﻿#pragma once
 
-#include "../Core/Lockable.h"
-
-#include "MidiBuffer.h"
-
 #include <string>
 #include <thread>
+
+#include "../Core/Lockable.h"
+#include "MidiBuffer.h"
 
 #if !defined(DSP_NO_RTMIDI) && !defined(DSP_USE_JUCE)
 #define DSP_USE_RTMIDI
@@ -18,78 +17,77 @@
 namespace dsp {
 
 class MidiProcessor : public Lockable {
-
 public:
-    class Input : public Lockable {
+  class Input : public Lockable {
+  public:
+    static void callback(double delta, std::vector<unsigned char>* message,
+                         void* data);
 
-    public:
-        static void callback(double delta, std::vector<unsigned char> *message, void *data);
+    Input(unsigned int port);
 
-        Input(unsigned int port);
+    std::string getDeviceName() const;
+    void setPort(unsigned int port);
 
-        std::string getDeviceName() const;
-        void setPort(unsigned int port);
+    std::multimap<double, MidiMessage>& getMessages();
 
-        std::multimap<double, MidiMessage> &getMessages();
-
-    private:
+  private:
 #ifdef DSP_USE_RTMIDI
-        RtMidiIn midiIn;
+    RtMidiIn midiIn;
 #endif
-        std::string deviceName;
-        double messageTime;
-        std::multimap<double, MidiMessage> messages;
-    };
+    std::string deviceName;
+    double messageTime;
+    std::multimap<double, MidiMessage> messages;
+  };
 
-    class Output : public Lockable {
+  class Output : public Lockable {
+  public:
+    Output(unsigned int port);
 
-    public:
-        Output(unsigned int port);
+    std::string getDeviceName() const;
+    void setPort(unsigned int port);
 
-        std::string getDeviceName() const;
-        void setPort(unsigned int port);
+    void sendMessageWithDelay(std::vector<unsigned char> bytes,
+                              int64_t nanoseconds);
 
-        void sendMessageWithDelay(std::vector<unsigned char> bytes, int64_t nanoseconds);
-
-    private:
+  private:
 #ifdef DSP_USE_RTMIDI
-        RtMidiOut midiOut;
+    RtMidiOut midiOut;
 #endif
-        std::string deviceName;
-    };
+    std::string deviceName;
+  };
 
-    static unsigned int getNumMidiInputPorts();
-    static unsigned int getNumMidiOutputPorts();
-    static std::string getMidiInputName(unsigned int port);
-    static std::string getMidiOutputName(unsigned int port);
+  static unsigned int getNumMidiInputPorts();
+  static unsigned int getNumMidiOutputPorts();
+  static std::string getMidiInputName(unsigned int port);
+  static std::string getMidiOutputName(unsigned int port);
 
-    MidiProcessor();
+  MidiProcessor();
 
-    size_t getNumSamples() const;
-    void setNumSamples(size_t numSamples);
+  size_t getNumSamples() const;
+  void setNumSamples(size_t numSamples);
 
-    double getSampleRate() const;
-    void setSampleRate(double sampleRate);
+  double getSampleRate() const;
+  void setSampleRate(double sampleRate);
 
-    MidiBuffer &getMidiBuffer();
-    std::vector<std::shared_ptr<Input>> &getInputs();
-    std::vector<std::shared_ptr<Output>> &getOutputs();
+  MidiBuffer& getMidiBuffer();
+  std::vector<std::shared_ptr<Input>>& getInputs();
+  std::vector<std::shared_ptr<Output>>& getOutputs();
 
-    void processInputs();
-    void processOutputs();
+  void processInputs();
+  void processOutputs();
 
 private:
 #ifdef DSP_USE_RTMIDI
-    static RtMidiIn midiIn;
-    static RtMidiOut midiOut;
+  static RtMidiIn midiIn;
+  static RtMidiOut midiOut;
 #endif
-    size_t numSamples;
-    double sampleRate;
-    double oneOverSampleRate;
-    double messageTime;
-    MidiBuffer midiBuffer;
-    std::vector<std::shared_ptr<Input>> inputs;
-    std::vector<std::shared_ptr<Output>> outputs;
+  size_t numSamples;
+  double sampleRate;
+  double oneOverSampleRate;
+  double messageTime;
+  MidiBuffer midiBuffer;
+  std::vector<std::shared_ptr<Input>> inputs;
+  std::vector<std::shared_ptr<Output>> outputs;
 };
 
 } // namespace dsp

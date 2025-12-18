@@ -5,17 +5,16 @@
 namespace dsp {
 
 class Comparison : public Transformer {
-
 public:
-    Comparison(Type type = Type::RATIO, Space space = Space::TIME);
+  Comparison(Type type = Type::RATIO, Space space = Space::TIME);
 
-    std::shared_ptr<Input> getThreshold() const;
+  std::shared_ptr<Input> getThreshold() const;
 
 protected:
-    void processNoLock() override;
+  void processNoLock() override;
 
 private:
-    const std::shared_ptr<Input> threshold;
+  const std::shared_ptr<Input> threshold;
 };
 
 } // namespace dsp

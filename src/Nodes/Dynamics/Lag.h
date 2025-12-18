@@ -5,19 +5,18 @@
 namespace dsp {
 
 class Lag : public Transformer {
-
 public:
-    Lag(Type type = Type::RATIO);
+  Lag(Type type = Type::RATIO);
 
-    std::shared_ptr<Input> getLagTime() const;
+  std::shared_ptr<Input> getLagTime() const;
 
 protected:
-    void setNumOutputChannelsNoLock(size_t numChannels) override;
-    void processNoLock() override;
+  void setNumOutputChannelsNoLock(size_t numChannels) override;
+  void processNoLock() override;
 
 private:
-    const std::shared_ptr<Input> lagTime;
-    Array state;
+  const std::shared_ptr<Input> lagTime;
+  Array state;
 };
 
 } // namespace dsp
