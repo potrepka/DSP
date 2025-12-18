@@ -4,16 +4,16 @@
  */
 
 // Classes
-export * from './classes';
+export * from './classes'
 
 // Constants
-export * from './constants';
+export * from './constants'
 
 // Enums
-export * from './enums';
+export * from './enums'
 
 // Helpers
-export * from './helpers';
+export * from './helpers'
 
 // Types
-export * from './types';
+export * from './types'

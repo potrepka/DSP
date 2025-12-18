@@ -1,50 +1,57 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@potrepka/native-audio Test</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 10px 5px;
-            cursor: pointer;
-        }
-        #output {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 5px;
-            white-space: pre-wrap;
-            font-family: monospace;
-        }
-        .status {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .status.success { background: #d4edda; color: #155724; }
-        .status.error { background: #f8d7da; color: #721c24; }
-        .status.info { background: #d1ecf1; color: #0c5460; }
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin: 10px 5px;
+        cursor: pointer;
+      }
+      #output {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f5f5f5;
+        border-radius: 5px;
+        white-space: pre-wrap;
+        font-family: monospace;
+      }
+      .status {
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      .status.success {
+        background: #d4edda;
+        color: #155724;
+      }
+      .status.error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .status.info {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>@potrepka/native-audio Test</h1>
 
-    <div id="status" class="status info">
-        Loading WASM module...
-    </div>
+    <div id="status" class="status info">Loading WASM module...</div>
 
     <div>
-        <button id="btnTest" disabled>Run Test</button>
-        <button id="btnPlay" disabled>Start Engine & Play</button>
+      <button id="btnTest" disabled>Run Test</button>
+      <button id="btnPlay" disabled>Start Engine & Play</button>
     </div>
 
     <div id="output"></div>
@@ -53,247 +60,268 @@
     <script src="../web/build/native-audio.js"></script>
 
     <script>
-        const statusDiv = document.getElementById('status');
-        const outputDiv = document.getElementById('output');
-        const btnTest = document.getElementById('btnTest');
-        const btnPlay = document.getElementById('btnPlay');
+      const statusDiv = document.getElementById('status')
+      const outputDiv = document.getElementById('output')
+      const btnTest = document.getElementById('btnTest')
+      const btnPlay = document.getElementById('btnPlay')
 
-        let Module;
-        let engine;
-        let isPlaying = false;
+      let Module
+      let engine
+      let isPlaying = false
 
-        // Initialize WASM module
-        async function initialize() {
-            try {
-                statusDiv.textContent = 'Initializing WASM module...';
-                statusDiv.className = 'status info';
+      // Initialize WASM module
+      async function initialize() {
+        try {
+          statusDiv.textContent = 'Initializing WASM module...'
+          statusDiv.className = 'status info'
 
-                Module = await createNativeAudioModule();
-                window.Module = Module;
+          Module = await createNativeAudioModule()
+          window.Module = Module
 
-                statusDiv.textContent = 'WASM module loaded successfully!';
-                statusDiv.className = 'status success';
+          statusDiv.textContent = 'WASM module loaded successfully!'
+          statusDiv.className = 'status success'
 
-                btnTest.disabled = false;
-                btnPlay.disabled = false;
+          btnTest.disabled = false
+          btnPlay.disabled = false
 
-                log('WASM module initialized');
-                log('Available classes: Engine, Biquad, Phasor, etc.');
-            } catch (error) {
-                statusDiv.textContent = 'Failed to load WASM module: ' + error.message;
-                statusDiv.className = 'status error';
-                console.error(error);
+          log('WASM module initialized')
+          log('Available classes: Engine, Biquad, Phasor, etc.')
+        } catch (error) {
+          statusDiv.textContent = 'Failed to load WASM module: ' + error.message
+          statusDiv.className = 'status error'
+          console.error(error)
+        }
+      }
+
+      function log(message) {
+        outputDiv.textContent += message + '\n'
+      }
+
+      function setupEngine(
+        sampleRate = 44100,
+        numChannels = 2,
+        bufferSize = 512,
+      ) {
+        log(
+          `\nSetting up Engine...\nSample Rate: ${sampleRate} Hz\nChannels: ${numChannels}\nBuffer Size: ${bufferSize} samples`,
+        )
+        engine = new Module.Engine()
+        engine.setup(-1, -1, bufferSize, sampleRate)
+
+        const root = engine.getNodeProcessor().getDefaultNode()
+
+        const phasor = new Module.Phasor()
+        const osc = new Module.TableOscillator(Module.Type.RATIO)
+        const filter = new Module.Biquad()
+        const gain = new Module.Multiplication(
+          Module.Type.RATIO,
+          Module.Space.TIME,
+        )
+
+        phasor.setNumChannels(numChannels)
+        osc.setNumChannels(numChannels)
+        filter.setNumChannels(numChannels)
+        gain.setNumChannels(numChannels)
+
+        phasor.getFrequency().setAllChannelValues(440)
+        filter.getFrequency().setAllChannelValues(1000.0)
+        filter.getResonance().setAllChannelValues(1.0)
+        gain.getFactor().setAllChannelValues(0.5)
+
+        root.addChild(phasor.asNode())
+        root.addChild(osc.asNode())
+        root.addChild(filter.asNode())
+        root.addChild(gain.asNode())
+
+        phasor.connect(osc)
+        osc.connect(filter)
+        filter.connect(gain)
+        gain.connect(root)
+
+        log('Engine setup complete')
+
+        return {
+          engine,
+          phasor,
+          osc,
+          filter,
+          gain,
+        }
+      }
+
+      function runTest() {
+        outputDiv.textContent = ''
+        log('Running test...')
+
+        try {
+          const sampleRate = 44100
+          const numChannels = 2
+          const bufferSize = 512
+
+          const { engine, phasor, osc, filter, gain } = setupEngine(
+            sampleRate,
+            numChannels,
+            bufferSize,
+          )
+
+          const audioData = new Module.Data(numChannels, bufferSize)
+          const midiBuffer = new Module.MidiBuffer()
+
+          engine.getNodeProcessor().process(audioData, midiBuffer)
+
+          const leftPtr = audioData.getReadPointer(0)
+          const rightPtr = audioData.getReadPointer(1)
+
+          const leftView = new Float64Array(
+            Module.HEAPF64.buffer,
+            leftPtr,
+            bufferSize,
+          )
+          const rightView = new Float64Array(
+            Module.HEAPF64.buffer,
+            rightPtr,
+            bufferSize,
+          )
+
+          log('\nOutput analysis:')
+
+          let leftPeak = 0
+          let rightPeak = 0
+          for (let i = 0; i < bufferSize; i++) {
+            const l = Math.abs(leftView[i])
+            const r = Math.abs(rightView[i])
+            if (l > leftPeak) {
+              leftPeak = l
             }
+            if (r > rightPeak) {
+              rightPeak = r
+            }
+          }
+
+          log(`Peak amplitude (L): ${leftPeak.toFixed(4)}`)
+          log(`Peak amplitude (R): ${rightPeak.toFixed(4)}`)
+
+          const first10L = []
+          for (let i = 0; i < 10; i++) {
+            first10L.push(leftView[i].toFixed(4))
+          }
+          const first10R = []
+          for (let i = 0; i < 10; i++) {
+            first10R.push(rightView[i].toFixed(4))
+          }
+
+          log(`First 10 samples (L): ${first10L.join(', ')}`)
+          log(`First 10 samples (R): ${first10R.join(', ')}`)
+
+          engine.delete()
+          phasor.delete()
+          osc.delete()
+          filter.delete()
+          gain.delete()
+          audioData.delete()
+          midiBuffer.delete()
+
+          if (leftPeak > 0 || rightPeak > 0) {
+            log('\n✅ Test completed successfully (signal detected)')
+          } else {
+            log('\n⚠️ Test completed (silence detected)')
+          }
+        } catch (error) {
+          log('\n❌ Test failed: ' + error.message)
+          console.error(error)
+        }
+      }
+
+      async function playTest() {
+        if (isPlaying) {
+          return
         }
 
-        function log(message) {
-            outputDiv.textContent += message + '\n';
+        const AudioContext = window.AudioContext || window.webkitAudioContext
+        const ctx = new AudioContext()
+
+        if (ctx.state === 'suspended') {
+          await ctx.resume()
         }
 
-        function setupEngine(sampleRate = 44100, numChannels = 2, bufferSize = 512) {
-            log(`\nSetting up Engine...\nSample Rate: ${sampleRate} Hz\nChannels: ${numChannels}\nBuffer Size: ${bufferSize} samples`);
-            engine = new Module.Engine();
-            engine.setup(-1, -1, bufferSize, sampleRate);
+        isPlaying = true
+        btnPlay.disabled = true
+        outputDiv.textContent = ''
+        log(`Starting playback at ${ctx.sampleRate} Hz...`)
 
-            const root = engine.getNodeProcessor().getDefaultNode();
+        try {
+          const sampleRate = ctx.sampleRate
+          const numChannels = 2
+          const bufferSize = 512
 
-            const phasor = new Module.Phasor();
-            const osc = new Module.TableOscillator(Module.Type.RATIO);
-            const filter = new Module.Biquad();
-            const gain = new Module.Multiplication(Module.Type.RATIO, Module.Space.TIME);
+          const { engine, phasor, osc, filter, gain } = setupEngine(
+            sampleRate,
+            numChannels,
+            bufferSize,
+          )
 
-            phasor.setNumChannels(numChannels);
-            osc.setNumChannels(numChannels);
-            filter.setNumChannels(numChannels);
-            gain.setNumChannels(numChannels);
+          const scriptNode = ctx.createScriptProcessor(bufferSize, 0, 2)
 
-            phasor.getFrequency().setAllChannelValues(440);
-            filter.getFrequency().setAllChannelValues(1000.0);
-            filter.getResonance().setAllChannelValues(1.0);
-            gain.getFactor().setAllChannelValues(0.5);
+          const audioData = new Module.Data(numChannels, bufferSize)
+          const midiBuffer = new Module.MidiBuffer()
 
-            root.addChild(phasor.asNode());
-            root.addChild(osc.asNode());
-            root.addChild(filter.asNode());
-            root.addChild(gain.asNode());
+          scriptNode.onaudioprocess = (audioProcessingEvent) => {
+            engine.getNodeProcessor().process(audioData, midiBuffer)
 
-            phasor.connect(osc);
-            osc.connect(filter);
-            filter.connect(gain);
-            gain.connect(root);
+            const outputBuffer = audioProcessingEvent.outputBuffer
 
-            log('Engine setup complete');
+            const leftPtr = audioData.getReadPointer(0)
+            const rightPtr = audioData.getReadPointer(1)
 
-            return {
-                engine,
-                phasor,
-                osc,
-                filter,
-                gain,
-            };
+            const leftView = new Float64Array(
+              Module.HEAPF64.buffer,
+              leftPtr,
+              bufferSize,
+            )
+            const rightView = new Float64Array(
+              Module.HEAPF64.buffer,
+              rightPtr,
+              bufferSize,
+            )
+
+            outputBuffer.copyToChannel(leftView, 0)
+            outputBuffer.copyToChannel(rightView, 1)
+          }
+
+          scriptNode.connect(ctx.destination)
+
+          log('\nPlaying...')
+
+          await new Promise((resolve) => setTimeout(resolve, 2000))
+
+          log('\nStopping...')
+
+          scriptNode.disconnect()
+          scriptNode.onaudioprocess = null
+          ctx.close()
+
+          engine.delete()
+          phasor.delete()
+          osc.delete()
+          filter.delete()
+          gain.delete()
+          audioData.delete()
+          midiBuffer.delete()
+
+          log('\n✅ Playback completed')
+        } catch (error) {
+          log('\n❌ Playback failed: ' + error.message)
+          console.error(error)
+        } finally {
+          isPlaying = false
+          btnPlay.disabled = false
         }
+      }
 
-        function runTest() {
-            outputDiv.textContent = '';
-            log('Running test...');
+      btnTest.addEventListener('click', runTest)
+      btnPlay.addEventListener('click', playTest)
 
-            try {
-                const sampleRate = 44100;
-                const numChannels = 2;
-                const bufferSize = 512;
-
-                const {
-                    engine,
-                    phasor,
-                    osc,
-                    filter,
-                    gain,
-                } = setupEngine(sampleRate, numChannels, bufferSize);
-
-                const audioData = new Module.Data(numChannels, bufferSize);
-                const midiBuffer = new Module.MidiBuffer();
-
-                engine.getNodeProcessor().process(audioData, midiBuffer);
-
-                const leftPtr = audioData.getReadPointer(0);
-                const rightPtr = audioData.getReadPointer(1);
-
-                const leftView = new Float64Array(Module.HEAPF64.buffer, leftPtr, bufferSize);
-                const rightView = new Float64Array(Module.HEAPF64.buffer, rightPtr, bufferSize);
-
-                log('\nOutput analysis:');
-
-                let leftPeak = 0;
-                let rightPeak = 0;
-                for (let i = 0; i < bufferSize; i++) {
-                    const l = Math.abs(leftView[i]);
-                    const r = Math.abs(rightView[i]);
-                    if (l > leftPeak) {
-                        leftPeak = l;
-                    }
-                    if (r > rightPeak) {
-                        rightPeak = r;
-                    }
-                }
-
-                log(`Peak amplitude (L): ${leftPeak.toFixed(4)}`);
-                log(`Peak amplitude (R): ${rightPeak.toFixed(4)}`);
-
-                const first10L = [];
-                for (let i = 0; i < 10; i++) {
-                    first10L.push(leftView[i].toFixed(4));
-                }
-                const first10R = [];
-                for (let i = 0; i < 10; i++) {
-                    first10R.push(rightView[i].toFixed(4));
-                }
-
-                log(`First 10 samples (L): ${first10L.join(', ')}`);
-                log(`First 10 samples (R): ${first10R.join(', ')}`);
-
-                engine.delete();
-                phasor.delete();
-                osc.delete();
-                filter.delete();
-                gain.delete();
-                audioData.delete();
-                midiBuffer.delete();
-
-                if (leftPeak > 0 || rightPeak > 0) {
-                     log('\n✅ Test completed successfully (signal detected)');
-                } else {
-                     log('\n⚠️ Test completed (silence detected)');
-                }
-            } catch (error) {
-                log('\n❌ Test failed: ' + error.message);
-                console.error(error);
-            }
-        }
-
-        async function playTest() {
-            if (isPlaying) {
-                return;
-            }
-
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            const ctx = new AudioContext();
-
-            if (ctx.state === 'suspended') {
-                await ctx.resume();
-            }
-
-            isPlaying = true;
-            btnPlay.disabled = true;
-            outputDiv.textContent = '';
-            log(`Starting playback at ${ctx.sampleRate} Hz...`);
-
-            try {
-                const sampleRate = ctx.sampleRate
-                const numChannels = 2;
-                const bufferSize = 512;
-
-                const {
-                    engine,
-                    phasor,
-                    osc,
-                    filter,
-                    gain,
-                } = setupEngine(sampleRate, numChannels, bufferSize);
-
-                const scriptNode = ctx.createScriptProcessor(bufferSize, 0, 2);
-
-                const audioData = new Module.Data(numChannels, bufferSize);
-                const midiBuffer = new Module.MidiBuffer();
-
-                scriptNode.onaudioprocess = (audioProcessingEvent) => {
-                    engine.getNodeProcessor().process(audioData, midiBuffer);
-
-                    const outputBuffer = audioProcessingEvent.outputBuffer;
-
-                    const leftPtr = audioData.getReadPointer(0);
-                    const rightPtr = audioData.getReadPointer(1);
-
-                    const leftView = new Float64Array(Module.HEAPF64.buffer, leftPtr, bufferSize);
-                    const rightView = new Float64Array(Module.HEAPF64.buffer, rightPtr, bufferSize);
-
-                    outputBuffer.copyToChannel(leftView, 0);
-                    outputBuffer.copyToChannel(rightView, 1);
-                };
-
-                scriptNode.connect(ctx.destination);
-
-                log('\nPlaying...');
-
-                await new Promise(resolve => setTimeout(resolve, 2000));
-
-                log('\nStopping...');
-
-                scriptNode.disconnect();
-                scriptNode.onaudioprocess = null;
-                ctx.close();
-
-                engine.delete();
-                phasor.delete();
-                osc.delete();
-                filter.delete();
-                gain.delete();
-                audioData.delete();
-                midiBuffer.delete();
-
-                log('\n✅ Playback completed');
-            } catch (error) {
-                log('\n❌ Playback failed: ' + error.message);
-                console.error(error);
-            } finally {
-                isPlaying = false;
-                btnPlay.disabled = false;
-            }
-        }
-
-        btnTest.addEventListener('click', runTest);
-        btnPlay.addEventListener('click', playTest);
-
-        initialize();
+      initialize()
     </script>
-</body>
+  </body>
 </html>

@@ -13,6 +13,7 @@ This guide covers building and developing the @potrepka/native-audio package.
 ### Platform-Specific
 
 #### Web Build (WASM)
+
 - **Emscripten**: Latest stable version
   ```bash
   # Install via emsdk
@@ -24,10 +25,12 @@ This guide covers building and developing the @potrepka/native-audio package.
   ```
 
 #### iOS Build
+
 - **Xcode**: 14+ (macOS only)
 - **CocoaPods**: `gem install cocoapods`
 
 #### Android Build
+
 - **Android Studio**: Latest version
 - **Android NDK**: r23+ (installed via Android Studio)
 - **CMake**: 3.18+ (installed via Android Studio)
@@ -103,11 +106,13 @@ npm run build
 ### Web Platform
 
 1. Build the WASM module:
+
    ```bash
    npm run build:web
    ```
 
 2. Start a local HTTP server:
+
    ```bash
    # Using Python
    cd examples
@@ -162,12 +167,14 @@ npm run build
 ### 📋 TODO
 
 #### Phase 1: Complete Web Platform
+
 - [ ] Fix any WASM build issues
 - [ ] Optimize buffer transfer (consider SharedArrayBuffer)
 - [ ] Add more comprehensive tests
 - [ ] Performance benchmarking
 
 #### Phase 2: React Native Platform
+
 - [ ] Implement JSI bindings (cpp/native/jsi-bindings.cpp)
 - [ ] Create iOS CocoaPods spec
 - [ ] Create Android CMake configuration
@@ -175,6 +182,7 @@ npm run build
 - [ ] Test on Android devices
 
 #### Phase 3: Complete Node Coverage
+
 - [ ] Add remaining 57+ nodes
   - [ ] Analyzers (1 node): Recorder
   - [ ] Channels (5 nodes): ChannelMerger, ChannelSplitter, MidSide, Spread, StereoPanner
@@ -189,6 +197,7 @@ npm run build
 - [ ] Document each node's parameters
 
 #### Phase 4: Documentation & Polish
+
 - [ ] Complete API documentation
 - [ ] Add more usage examples
 - [ ] Create migration guide from C++
@@ -196,6 +205,7 @@ npm run build
 - [ ] Create video tutorials
 
 #### Phase 5: Optimization
+
 - [ ] Bundle size optimization
 - [ ] Zero-copy buffer transfer where possible
 - [ ] SIMD optimization hints
