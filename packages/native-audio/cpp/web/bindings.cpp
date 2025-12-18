@@ -1,6 +1,6 @@
 /**
  * Comprehensive Emscripten/Embind bindings for DSP library
- * Exposes all 73+ classes, global constants, functions, and enums
+ * Exposes all 78+ classes, constants, enums, and functions
  */
 
 #include <emscripten/bind.h>
