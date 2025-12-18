@@ -149,12 +149,62 @@ EMSCRIPTEN_BINDINGS(native_audio) {
         .function("getNumSamples", &Data::getNumSamples)
         .function("setSize", &Data::setSize)
         .function("clear", &Data::clear)
-        .function("getReadPointer", &Data::getReadPointer, allow_raw_pointers())
-        .function("getWritePointer", &Data::getWritePointer, allow_raw_pointers())
+        .function(
+            "getReadPointer",
+            optional_override(
+                [](const Data &data, size_t channel) {
+                    const Sample *pointer = data.getReadPointer(channel);
+                    size_t length = data.getNumSamples();
+                    return emscripten::typed_memory_view(length, const_cast<Sample *>(pointer));
+                }
+            )
+        )
+        .function(
+            "getWritePointer",
+            optional_override(
+                [](Data &data, size_t channel) {
+                    Sample *pointer = data.getWritePointer(channel);
+                    size_t length = data.getNumSamples();
+                    return emscripten::typed_memory_view(length, pointer);
+                }
+            )
+        )
         .function("getMagnitude", &Data::getMagnitude)
         .function("getRMSLevel", &Data::getRMSLevel)
-        .function("getArrayOfReadPointers", &Data::getArrayOfReadPointers, allow_raw_pointers())
-        .function("getArrayOfWritePointers", &Data::getArrayOfWritePointers, allow_raw_pointers());
+        .function(
+            "getArrayOfReadPointers",
+            optional_override(
+                [](const Data &data) {
+                    emscripten::val array = emscripten::val::array();
+                    size_t numChannels = data.getNumChannels();
+                    size_t numSamples = data.getNumSamples();
+                    const Sample *const *pointers = data.getArrayOfReadPointers();
+                    for (size_t i = 0; i < numChannels; ++i) {
+                        const Sample *pointer = pointers[i];
+                        auto view = emscripten::typed_memory_view(numSamples, const_cast<Sample *>(pointer));
+                        array.call<void>("push", view);
+                    }
+                    return array;
+                }
+            )
+        )
+        .function(
+            "getArrayOfWritePointers",
+            optional_override(
+                [](Data &data) {
+                    emscripten::val array = emscripten::val::array();
+                    size_t numChannels = data.getNumChannels();
+                    size_t numSamples = data.getNumSamples();
+                    Sample **pointers = data.getArrayOfWritePointers();
+                    for (size_t i = 0; i < numChannels; ++i) {
+                        Sample *pointer = pointers[i];
+                        auto view = emscripten::typed_memory_view(numSamples, pointer);
+                        array.call<void>("push", view);
+                    }
+                    return array;
+                }
+            )
+        );
 
     // Wrapper class
     class_<Wrapper>("Wrapper")
@@ -162,14 +212,23 @@ EMSCRIPTEN_BINDINGS(native_audio) {
         .constructor<>()
         .constructor(
             optional_override(
-                [](Data &buffer) {
-                    return new Wrapper(buffer);
+                [](Data &data) {
+                    return new Wrapper(data);
                 }
             )
         )
         .function("getNumChannels", &Wrapper::getNumChannels)
         .function("getNumSamples", &Wrapper::getNumSamples)
-        .function("getChannelPointer", &Wrapper::getChannelPointer, allow_raw_pointers())
+        .function(
+            "getChannelPointer",
+            optional_override(
+                [](const Wrapper &wrapper, size_t channel) {
+                    Sample *pointer = wrapper.getChannelPointer(channel);
+                    size_t length = wrapper.getNumSamples();
+                    return emscripten::typed_memory_view(length, pointer);
+                }
+            )
+        )
         .function("getSingleChannel", &Wrapper::getSingleChannel)
         .function("getSampleRange", &Wrapper::getSampleRange)
         .function("clear", &Wrapper::clear)
@@ -267,6 +326,13 @@ EMSCRIPTEN_BINDINGS(native_audio) {
         .function("getNodeProcessor", &Engine::getNodeProcessor)
         .function("getMidiProcessor", &Engine::getMidiProcessor);
 
+    // Lockable base class
+    class_<Lockable>("Lockable")
+        .smart_ptr<std::shared_ptr<Lockable>>("shared_ptr<Lockable>")
+        .constructor<>()
+        .function("lock", &Lockable::lock)
+        .function("unlock", &Lockable::unlock);
+
     // Node base class
     class_<Node>("Node")
         .smart_ptr<std::shared_ptr<Node>>("shared_ptr<Node>")
@@ -292,7 +358,15 @@ EMSCRIPTEN_BINDINGS(native_audio) {
         .function("removeChild", &Node::removeChild)
         .function("sortChildren", &Node::sortChildren)
         .function("disconnectAll", &Node::disconnectAll)
-        .function("process", &Node::process);
+        .function("process", &Node::process)
+        .function(
+            "asNode",
+            optional_override(
+                [](Node &node) {
+                    return node.shared_from_this();
+                }
+            )
+        );
 
     // Consumer base class (extends Node)
     class_<Consumer, base<Node>>("Consumer")
@@ -342,8 +416,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
         .function(
             "process",
             optional_override(
-                [](NodeProcessor& self, Data& audioBuffer, dsp::MidiBuffer& midiBuffer) {
-                    self.process(audioBuffer, midiBuffer);
+                [](NodeProcessor &nodeProcessor, Data &data, MidiBuffer &midiBuffer) {
+                    nodeProcessor.process(data, midiBuffer);
                 }
             )
         );
@@ -369,11 +443,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
         .class_function(
             "fromArray",
             optional_override(
-                [](const std::vector<uint8_t>& data) {
-                    return new dsp::MidiMessage(data.data(), data.size());
+                [](const std::vector<uint8_t> &data) {
+                    return std::make_shared<MidiMessage>(data.data(), data.size());
                 }
-            ),
-            allow_raw_pointers()
+            )
         )
         .class_function("noteOff", &MidiMessage::noteOff)
         .class_function("noteOn", &MidiMessage::noteOn)
@@ -413,7 +486,16 @@ EMSCRIPTEN_BINDINGS(native_audio) {
         .function("getPitchWheelValue", &MidiMessage::getPitchWheelValue)
         .function("getSongPositionPointerMidiBeat", &MidiMessage::getSongPositionPointerMidiBeat)
         .function("getBytes", &MidiMessage::getBytes)
-        .function("getRawData", &MidiMessage::getRawData, allow_raw_pointers())
+        .function(
+            "getRawData",
+            optional_override(
+                [](const MidiMessage& msg) {
+                    const uint8_t *pointer = msg.getRawData();
+                    size_t size = msg.getRawDataSize();
+                    return emscripten::typed_memory_view(size, const_cast<uint8_t*>(pointer));
+                }
+            )
+        )
         .function("getRawDataSize", &MidiMessage::getRawDataSize);
 
     // MidiProcessor
@@ -438,6 +520,15 @@ EMSCRIPTEN_BINDINGS(native_audio) {
     class_<MidiProcessor::Input, base<Lockable>>("MidiProcessorInput")
         .smart_ptr<std::shared_ptr<MidiProcessor::Input>>("shared_ptr<MidiProcessor::Input>")
         .constructor<unsigned int>()
+        .function(
+            "callback",
+            optional_override(
+                [](MidiProcessor::Input &input, double delta, const std::vector<uint8_t> &bytes) {
+                    std::vector<uint8_t> tempBytes = bytes;
+                    MidiProcessor::Input::callback(delta, &tempBytes, &input);
+                }
+            )
+        )
         .function("getDeviceName", &MidiProcessor::Input::getDeviceName)
         .function("setPort", &MidiProcessor::Input::setPort);
         // .function("getMessages", &MidiProcessor::Input::getMessages);

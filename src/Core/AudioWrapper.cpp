@@ -552,5 +552,4 @@ dsp::AudioWrapper<T>::AudioWrapper(T *const *data, size_t numChannels, size_t st
         , numSamples(numSamples)
         , startSample(startSample) {}
 
-template class dsp::AudioWrapper<float>;
-template class dsp::AudioWrapper<double>;
+template class dsp::AudioWrapper<dsp::Sample>;

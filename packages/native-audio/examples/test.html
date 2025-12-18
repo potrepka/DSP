@@ -69,8 +69,6 @@
                 statusDiv.className = 'status info';
 
                 Module = await createNativeAudioModule();
-
-                // Expose module globally for wrappers if they were used (but here we effectively are the wrapper's environment)
                 window.Module = Module;
 
                 statusDiv.textContent = 'WASM module loaded successfully!';
@@ -80,7 +78,7 @@
                 btnPlay.disabled = false;
 
                 log('WASM module initialized');
-                log('Available classes: Engine, Biquad, etc.');
+                log('Available classes: Engine, Biquad, Phasor, etc.');
             } catch (error) {
                 statusDiv.textContent = 'Failed to load WASM module: ' + error.message;
                 statusDiv.className = 'status error';
@@ -92,114 +90,209 @@
             outputDiv.textContent += message + '\n';
         }
 
+        function setupEngine(sampleRate = 44100, numChannels = 2, bufferSize = 512) {
+            log(`\nSetting up Engine...\nSample Rate: ${sampleRate} Hz\nChannels: ${numChannels}\nBuffer Size: ${bufferSize} samples`);
+            engine = new Module.Engine();
+            engine.setup(-1, -1, bufferSize, sampleRate);
+
+            const root = engine.getNodeProcessor().getDefaultNode();
+
+            const phasor = new Module.Phasor();
+            const osc = new Module.TableOscillator(Module.Type.RATIO);
+            const filter = new Module.Biquad();
+            const gain = new Module.Multiplication(Module.Type.RATIO, Module.Space.TIME);
+
+            phasor.setNumChannels(numChannels);
+            osc.setNumChannels(numChannels);
+            filter.setNumChannels(numChannels);
+            gain.setNumChannels(numChannels);
+
+            phasor.getFrequency().setAllChannelValues(440);
+            filter.getFrequency().setAllChannelValues(1000.0);
+            filter.getResonance().setAllChannelValues(1.0);
+            gain.getFactor().setAllChannelValues(0.5);
+
+            root.addChild(phasor);
+            root.addChild(osc);
+            root.addChild(filter);
+            root.addChild(gain);
+
+            phasor.connect(osc);
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(root);
+
+            log('Engine setup complete');
+
+            return {
+                engine,
+                phasor,
+                osc,
+                filter,
+                gain,
+            };
+        }
+
         function runTest() {
             outputDiv.textContent = '';
-            log('Running simple Engine test...\n');
+            log('Running test...');
 
             try {
-                log('Creating Engine...');
-                const eng = new Module.Engine();
-                const devices = eng.getInputDevices();
-                log(`Input Devices count: ${devices.size()}`);
+                const sampleRate = 44100;
+                const numChannels = 2;
+                const bufferSize = 512;
 
-                // Setup dummy config
-                eng.setup(-1, -1, 512, 44100.0);
+                const {
+                    engine,
+                    phasor,
+                    osc,
+                    filter,
+                    gain,
+                } = setupEngine(sampleRate, numChannels, bufferSize);
 
-                const proc = eng.getNodeProcessor();
-                log('Got NodeProcessor');
+                const audioData = new Module.Data(numChannels, bufferSize);
+                const midiBuffer = new Module.MidiBuffer();
 
-                // Check if active
-                log(`Is processor active? ${proc.isActive()}`);
-                proc.setActive(true);
-                log(`Is processor active now? ${proc.isActive()}`);
+                engine.getNodeProcessor().process(audioData, midiBuffer);
 
-                log('✓ Engine test passed (basic setup)');
+                const leftPtr = audioData.getReadPointer(0);
+                const rightPtr = audioData.getReadPointer(1);
 
-                eng.delete(); // Cleanup
+                const leftView = new Float32Array(Module.HEAPF32.buffer, leftPtr, bufferSize);
+                const rightView = new Float32Array(Module.HEAPF32.buffer, rightPtr, bufferSize);
+
+                log('\nOutput analysis:');
+
+                let leftPeak = 0;
+                let rightPeak = 0;
+                for (let i = 0; i < bufferSize; i++) {
+                    const l = Math.abs(leftView[i]);
+                    const r = Math.abs(rightView[i]);
+                    if (l > leftPeak) {
+                        leftPeak = l;
+                    }
+                    if (r > rightPeak) {
+                        rightPeak = r;
+                    }
+                }
+
+                log(`Peak amplitude (L): ${leftPeak.toFixed(4)}`);
+                log(`Peak amplitude (R): ${rightPeak.toFixed(4)}`);
+
+                const first10L = [];
+                for (let i = 0; i < 10; i++) {
+                    first10L.push(leftView[i].toFixed(4));
+                }
+                const first10R = [];
+                for (let i = 0; i < 10; i++) {
+                    first10R.push(rightView[i].toFixed(4));
+                }
+
+                log(`First 10 samples (L): ${first10L.join(', ')}`);
+                log(`First 10 samples (R): ${first10R.join(', ')}`);
+
+                engine.delete();
+                phasor.delete();
+                osc.delete();
+                filter.delete();
+                gain.delete();
+                audioData.delete();
+                midiBuffer.delete();
+
+                if (leftPeak > 0 || rightPeak > 0) {
+                     log('\n✅ Test completed successfully (signal detected)');
+                } else {
+                     log('\n⚠️ Test completed (silence detected)');
+                }
             } catch (error) {
                 log('\n❌ Test failed: ' + error.message);
                 console.error(error);
             }
         }
 
-        async function startEngine() {
-            if (isPlaying) return;
+        async function playTest() {
+            if (isPlaying) {
+                return;
+            }
+
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioContext();
+
+            if (ctx.state === 'suspended') {
+                await ctx.resume();
+            }
+
+            isPlaying = true;
+            btnPlay.disabled = true;
+            outputDiv.textContent = '';
+            log(`Starting playback at ${ctx.sampleRate} Hz...`);
 
             try {
-                // In a browser context without full AudioWorklet integration binding connected to WebAudio,
-                // the C++ Engine::start() might rely on PortAudio/miniaudio which might fail or need permissions
-                // inside the sandbox if compiled with certain flags.
-                // Assuming the user wants to see us calling the C++ API.
-
-                // Note: For actual audio in browser via Emscripten, usually SDL or OpenAL or webaudio backend is used.
-                // If the Engine uses a backend that works in browser (like `miniaudio` with webaudio backend), it might work.
-
-                log('Starting Engine...');
-                engine = new Module.Engine();
-
-                // Setup default
-                // On web, devices might be just default
-                engine.setup(-1, -1, 512, 44100);
-
-                // Build graph
-                const processor = engine.getNodeProcessor();
-                const root = processor.getDefaultNode(); // shared_ptr<Node>
-
-                // Create nodes
-                const sampleRate = 44100;
+                const sampleRate = ctx.sampleRate
                 const numChannels = 2;
+                const bufferSize = 512;
 
-                const phasor = new Module.Phasor(numChannels, sampleRate);
-                const osc = new Module.TableOscillator(numChannels, sampleRate, 'sine');
-                const filter = new Module.Biquad(numChannels, sampleRate, Module.BIQUAD_MODE_LOW_PASS);
-                const gain = new Module.Multiplication(numChannels, sampleRate); // Gain equivalent
+                const {
+                    engine,
+                    phasor,
+                    osc,
+                    filter,
+                    gain,
+                } = setupEngine(sampleRate, numChannels, bufferSize);
 
-                phasor.setFrequency(440);
-                phasor.setMode(Module.PHASOR_MODE_WRAPPED);
-                filter.setFrequency(1000);
-                filter.setQ(5.0);
-                gain.setFactor(0.5);
+                const scriptNode = ctx.createScriptProcessor(bufferSize, 0, 2);
 
-                // Connect
-                // phasor -> osc -> filter -> gain
-                phasor.connect(osc);
-                osc.connect(filter);
-                filter.connect(gain);
+                const audioData = new Module.Data(numChannels, bufferSize);
+                const midiBuffer = new Module.MidiBuffer();
 
-                // Add to graph
-                // We add them to root so they are processed? Or simply keeping them alive and connected?
-                // Usually add children to root.
-                root.addChild(phasor);
-                root.addChild(osc);
-                root.addChild(filter);
-                root.addChild(gain);
+                scriptNode.onaudioprocess = (audioProcessingEvent) => {
+                    engine.getNodeProcessor().process(audioData, midiBuffer);
 
-                // If gain is the output, we might want to connect gain to root input if root passes to output?
-                // The C++ Engine implementation likely pulls from the root node or pushes to it.
-                // Assuming typical scene graph where root.process() calls children.
-                // If they are just children, they are processed. But audio flow needs connection.
-                // We can try connecting gain to root.
-                // gain.connect(root); // Might behave as sending audio to root.
+                    const outputBuffer = audioProcessingEvent.outputBuffer;
 
-                log('Graph built.');
+                    const leftPtr = audioData.getReadPointer(0);
+                    const rightPtr = audioData.getReadPointer(1);
 
-                engine.start();
-                log('Engine started.');
+                    const leftView = new Float32Array(Module.HEAPF32.buffer, leftPtr, bufferSize);
+                    const rightView = new Float32Array(Module.HEAPF32.buffer, rightPtr, bufferSize);
 
-                isPlaying = true;
-                btnPlay.textContent = 'Running... (Check Console)';
-                btnPlay.disabled = true;
+                    outputBuffer.copyToChannel(leftView, 0);
+                    outputBuffer.copyToChannel(rightView, 1);
+                };
 
+                scriptNode.connect(ctx.destination);
+
+                log('\nPlaying...');
+
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                log('\nStopping...');
+
+                scriptNode.disconnect();
+                scriptNode.onaudioprocess = null;
+                ctx.close();
+
+                engine.delete();
+                phasor.delete();
+                osc.delete();
+                filter.delete();
+                gain.delete();
+                audioData.delete();
+                midiBuffer.delete();
+
+                log('\n✅ Playback completed');
             } catch (error) {
-                log('❌ Engine start failed: ' + error.message);
+                log('\n❌ Playback failed: ' + error.message);
                 console.error(error);
+            } finally {
+                isPlaying = false;
+                btnPlay.disabled = false;
             }
         }
 
         btnTest.addEventListener('click', runTest);
-        btnPlay.addEventListener('click', startEngine);
+        btnPlay.addEventListener('click', playTest);
 
-        // Initialize on load
         initialize();
     </script>
 </body>

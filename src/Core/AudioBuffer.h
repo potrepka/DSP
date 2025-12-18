@@ -29,7 +29,7 @@ public:
     T getMagnitude(size_t channel, size_t startSample, size_t numSamples) const;
     T getRMSLevel(size_t channel, size_t startSample, size_t numSamples) const;
 
-    const T **getArrayOfReadPointers() const;
+    const T *const *getArrayOfReadPointers() const;
     T **getArrayOfWritePointers();
 
 private:

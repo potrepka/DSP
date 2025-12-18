@@ -75,8 +75,8 @@ T dsp::AudioBuffer<T>::getRMSLevel(size_t channel, size_t startSample, size_t nu
 }
 
 template <typename T>
-const T **dsp::AudioBuffer<T>::getArrayOfReadPointers() const {
-    return const_cast<const T **>(pointers.data());
+const T *const *dsp::AudioBuffer<T>::getArrayOfReadPointers() const {
+    return reinterpret_cast<const T *const *>(pointers.data());
 }
 
 template <typename T>
@@ -84,5 +84,4 @@ T **dsp::AudioBuffer<T>::getArrayOfWritePointers() {
     return pointers.data();
 }
 
-template class dsp::AudioBuffer<float>;
-template class dsp::AudioBuffer<double>;
+template class dsp::AudioBuffer<dsp::Sample>;
