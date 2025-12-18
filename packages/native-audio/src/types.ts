@@ -13,17 +13,6 @@ export type Sample = number;
 /** Array of samples (C++ std::vector<Sample>) */
 export type Array = Float64Array | number[];
 
-/** MIDI byte value (C++ uint8_t) */
-export type Byte = number;
-
-// ========== Audio Buffer Types ==========
-
-/** Multi-channel audio buffer (Array of Float32Arrays) */
-export type AudioBuffer = Float32Array[];
-
-/** Single channel audio data */
-export type ChannelData = Float32Array;
-
 // ========== Configuration Types ==========
 
 /**
@@ -65,16 +54,16 @@ export type NodeProcessorConfig = {
  * FFT magnitude and phase data
  */
 export type FFTData = {
-  magnitude: Float32Array;
-  phase: Float32Array;
+  magnitude: Array;
+  phase: Array;
 };
 
 /**
  * Complex number representation
  */
 export type ComplexData = {
-  real: Float32Array;
-  imaginary: Float32Array;
+  real: Array;
+  imaginary: Array;
 };
 
 // ========== Convolver Types ==========
@@ -82,7 +71,7 @@ export type ComplexData = {
 /**
  * Impulse response mapping
  */
-export type ImpulseResponseMap = Map<string, Float32Array>;
+export type ImpulseResponseMap = Map<string, Array>;
 
 /**
  * Convolver configuration
@@ -112,10 +101,13 @@ export type MidiBufferData = {
 
 // ========== Platform Types ==========
 
-/**
- * Platform identifier
- */
-export type Platform = 'web' | 'native' | 'unknown';
+export type PlatformName = 'web' | 'ios' | 'android' | 'unknown';
+
+export type PlatformInfo = {
+  readonly isWeb: boolean;
+  readonly isNative: boolean;
+  readonly name: PlatformName;
+}
 
 /**
  * Module instance (WASM module on Web, native module on React Native)

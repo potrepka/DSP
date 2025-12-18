@@ -112,10 +112,10 @@
             filter.getResonance().setAllChannelValues(1.0);
             gain.getFactor().setAllChannelValues(0.5);
 
-            root.addChild(phasor);
-            root.addChild(osc);
-            root.addChild(filter);
-            root.addChild(gain);
+            root.addChild(phasor.asNode());
+            root.addChild(osc.asNode());
+            root.addChild(filter.asNode());
+            root.addChild(gain.asNode());
 
             phasor.connect(osc);
             osc.connect(filter);
@@ -158,8 +158,8 @@
                 const leftPtr = audioData.getReadPointer(0);
                 const rightPtr = audioData.getReadPointer(1);
 
-                const leftView = new Float32Array(Module.HEAPF32.buffer, leftPtr, bufferSize);
-                const rightView = new Float32Array(Module.HEAPF32.buffer, rightPtr, bufferSize);
+                const leftView = new Float64Array(Module.HEAPF64.buffer, leftPtr, bufferSize);
+                const rightView = new Float64Array(Module.HEAPF64.buffer, rightPtr, bufferSize);
 
                 log('\nOutput analysis:');
 
@@ -253,8 +253,8 @@
                     const leftPtr = audioData.getReadPointer(0);
                     const rightPtr = audioData.getReadPointer(1);
 
-                    const leftView = new Float32Array(Module.HEAPF32.buffer, leftPtr, bufferSize);
-                    const rightView = new Float32Array(Module.HEAPF32.buffer, rightPtr, bufferSize);
+                    const leftView = new Float64Array(Module.HEAPF64.buffer, leftPtr, bufferSize);
+                    const rightView = new Float64Array(Module.HEAPF64.buffer, rightPtr, bufferSize);
 
                     outputBuffer.copyToChannel(leftView, 0);
                     outputBuffer.copyToChannel(rightView, 1);
