@@ -281,6 +281,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
         .function("setAllChannelValues", &Buffer::setAllChannelValues)
         .function("getPeak", &Buffer::getPeak)
         .function("getRMS", &Buffer::getRMS)
+        .function("getData", &Buffer::getData)
         .function("getWrapper", &Buffer::getWrapper);
 
     // Input class (extends Buffer)
@@ -436,7 +437,6 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
     // MidiMessage
     class_<MidiMessage>("MidiMessage")
-        .smart_ptr<std::shared_ptr<MidiMessage>>("shared_ptr<MidiMessage>")
         .constructor<uint8_t>()
         .constructor<uint8_t, uint8_t>()
         .constructor<uint8_t, uint8_t, uint8_t>()
@@ -444,7 +444,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
             "fromArray",
             optional_override(
                 [](const std::vector<uint8_t> &data) {
-                    return std::make_shared<MidiMessage>(data.data(), data.size());
+                    return MidiMessage(data.data(), data.size());
                 }
             )
         )
@@ -492,7 +492,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
                 [](const MidiMessage& msg) {
                     const uint8_t *pointer = msg.getRawData();
                     size_t size = msg.getRawDataSize();
-                    return emscripten::typed_memory_view(size, const_cast<uint8_t*>(pointer));
+                    return emscripten::typed_memory_view(size, const_cast<uint8_t *>(pointer));
                 }
             )
         )

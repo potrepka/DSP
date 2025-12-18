@@ -133,6 +133,10 @@ dsp::Array dsp::Buffer::getRMS() {
     return rms;
 }
 
+dsp::Data &dsp::Buffer::getData() {
+    return data;
+}
+
 dsp::Wrapper &dsp::Buffer::getWrapper() {
     return wrapper;
 }

@@ -46,6 +46,7 @@ public:
     Array getPeak();
     Array getRMS();
 
+    Data &getData();
     Wrapper &getWrapper();
 
 protected:
