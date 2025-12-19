@@ -188,8 +188,8 @@
 
           engine.getNodeProcessor().process(audioBuffer, midiBuffer)
 
-          const left = audioBuffer.getReadPointer(0)
-          const right = audioBuffer.getReadPointer(1)
+          const left = audioBuffer.getReadChannelData(0)
+          const right = audioBuffer.getReadChannelData(1)
 
           log('\nOutput analysis:')
 
@@ -284,8 +284,8 @@
 
             const outputBuffer = audioProcessingEvent.outputBuffer
 
-            const left = audioBuffer.getReadPointer(0)
-            const right = audioBuffer.getReadPointer(1)
+            const left = audioBuffer.getReadChannelData(0)
+            const right = audioBuffer.getReadChannelData(1)
 
             outputBuffer.copyToChannel(new Float32Array(left), 0)
             outputBuffer.copyToChannel(new Float32Array(right), 1)

@@ -153,7 +153,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("setSize", &Data::setSize)
       .function("clear", &Data::clear)
       .function(
-          "getReadPointer",
+          "getReadChannelData",
           std::function<val(Data&, size_t)>([](const Data& data,
                                                size_t channel) {
             const Sample* pointer = data.getReadPointer(channel);
@@ -161,7 +161,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
             return val(typed_memory_view(length, const_cast<Sample*>(pointer)));
           }))
       .function(
-          "getWritePointer",
+          "getWriteChannelData",
           std::function<val(Data&, size_t)>([](Data& data, size_t channel) {
             Sample* pointer = data.getWritePointer(channel);
             size_t length = data.getNumSamples();
@@ -169,7 +169,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
           }))
       .function("getMagnitude", &Data::getMagnitude)
       .function("getRMSLevel", &Data::getRMSLevel)
-      .function("getArrayOfReadPointers",
+      .function("getReadData",
                 std::function<val(const Data& data)>([](const Data& data) {
                   val array = val::array();
                   size_t numChannels = data.getNumChannels();
@@ -183,8 +183,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
                   }
                   return array;
                 }))
-      .function("getArrayOfWritePointers",
-                std::function<val(Data & data)>([](Data& data) {
+      .function("getWriteData", std::function<val(Data & data)>([](Data& data) {
                   val array = val::array();
                   size_t numChannels = data.getNumChannels();
                   size_t numSamples = data.getNumSamples();
@@ -204,7 +203,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .constructor(&std::make_shared<Wrapper, Data&>)
       .function("getNumChannels", &Wrapper::getNumChannels)
       .function("getNumSamples", &Wrapper::getNumSamples)
-      .function("getChannelPointer",
+      .function("getChannelData",
                 std::function<val(const Wrapper&, size_t)>(
                     [](const Wrapper& wrapper, size_t channel) {
                       Sample* pointer = wrapper.getChannelPointer(channel);
