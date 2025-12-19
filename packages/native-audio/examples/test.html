@@ -151,7 +151,7 @@
         root.addChild(filter)
         root.addChild(gain)
 
-        phasor.getFrequency().setAllChannelValues(220)
+        phasor.getFrequency().setAllChannelValues(110)
         filter.getFrequency().setAllChannelValues(1760)
         filter.getMode().setAllChannelValues(Module.BIQUAD_MODE_LOWPASS)
         gain.getFactor().setAllChannelValues(0.5)
@@ -169,7 +169,7 @@
         for (let c = 0; c < numChannels; c++) {
           for (let s = 0; s < sawtoothBufferSize; s++) {
             const phase = s / sawtoothBufferSize
-            const value = 2 * phase - 1
+            const value = 2 * ((phase + 0.5) % 1) - 1
             wrapper.setSample(c, s, value)
           }
         }
