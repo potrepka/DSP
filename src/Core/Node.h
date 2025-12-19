@@ -8,7 +8,7 @@
 
 namespace dsp {
 
-class Node : public Lockable, public std::enable_shared_from_this<Node> {
+class Node : public Lockable {
 public:
   Node();
   virtual ~Node();

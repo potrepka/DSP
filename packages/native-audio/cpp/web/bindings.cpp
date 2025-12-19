@@ -146,8 +146,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Data class
   class_<Data>("Data")
-      .smart_ptr<std::shared_ptr<Data>>("shared_ptr<Data>")
-      .constructor<size_t, size_t>()
+      .smart_ptr<std::shared_ptr<Data>>("Data")
+      .smart_ptr_constructor<std::shared_ptr<Data>>(
+          "Data", &std::make_shared<Data, size_t, size_t>)
       .function("getNumChannels", &Data::getNumChannels)
       .function("getNumSamples", &Data::getNumSamples)
       .function("setSize", &Data::setSize)
@@ -197,10 +198,11 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Wrapper class
   class_<Wrapper>("Wrapper")
-      .smart_ptr<std::shared_ptr<Wrapper>>("shared_ptr<Wrapper>")
-      .constructor<>()
-      .constructor(
-          optional_override([](Data& data) { return new Wrapper(data); }))
+      .smart_ptr<std::shared_ptr<Wrapper>>("Wrapper")
+      .smart_ptr_constructor<std::shared_ptr<Wrapper>>(
+          "Wrapper", &std::make_shared<Wrapper>)
+      .smart_ptr_constructor<std::shared_ptr<Wrapper>>(
+          "Wrapper", &std::make_shared<Wrapper, Data&>)
       .function("getNumChannels", &Wrapper::getNumChannels)
       .function("getNumSamples", &Wrapper::getNumSamples)
       .function("getChannelPointer",
@@ -267,8 +269,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Buffer class
   class_<Buffer, base<Lockable>>("Buffer")
-      .smart_ptr<std::shared_ptr<Buffer>>("shared_ptr<Buffer>")
-      .constructor<Type, Space, Sample, Sample, size_t, size_t>()
+      .smart_ptr<std::shared_ptr<Buffer>>("Buffer")
+      .smart_ptr_constructor<std::shared_ptr<Buffer>>(
+          "Buffer", &std::make_shared<Buffer, Type, Space, Sample, Sample,
+                                      size_t, size_t>)
       .function("getType", &Buffer::getType)
       .function("setType", &Buffer::setType)
       .function("getSpace", &Buffer::getSpace)
@@ -294,8 +298,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Input class (extends Buffer)
   class_<Input, base<Buffer>>("Input")
-      .smart_ptr<std::shared_ptr<Input>>("shared_ptr<Input>")
-      .constructor<Type, Space, Sample, Sample, size_t, size_t>()
+      .smart_ptr<std::shared_ptr<Input>>("Input")
+      .smart_ptr_constructor<std::shared_ptr<Input>>(
+          "Input",
+          &std::make_shared<Input, Type, Space, Sample, Sample, size_t, size_t>)
       .function("getMode", &Input::getMode)
       .function("setMode", &Input::setMode)
       .function("getConnections", &Input::getConnections)
@@ -305,8 +311,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Output class (extends Buffer)
   class_<Output, base<Buffer>>("Output")
-      .smart_ptr<std::shared_ptr<Output>>("shared_ptr<Output>")
-      .constructor<Type, Space, Sample, Sample, size_t, size_t>()
+      .smart_ptr<std::shared_ptr<Output>>("Output")
+      .smart_ptr_constructor<std::shared_ptr<Output>>(
+          "Output", &std::make_shared<Output, Type, Space, Sample, Sample,
+                                      size_t, size_t>)
       .function("getConnections", &Output::getConnections)
       .function("connect", &Output::connect)
       .function("disconnect", &Output::disconnect)
@@ -314,8 +322,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Engine class
   class_<Engine, base<Lockable>>("Engine")
-      .smart_ptr<std::shared_ptr<Engine>>("shared_ptr<Engine>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<Engine>>("Engine")
+      .smart_ptr_constructor<std::shared_ptr<Engine>>("Engine",
+                                                      &std::make_shared<Engine>)
       .function("getInputDevices", &Engine::getInputDevices)
       .function("getOutputDevices", &Engine::getOutputDevices)
       .function("getSampleRates", &Engine::getSampleRates)
@@ -337,15 +346,17 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Lockable base class
   class_<Lockable>("Lockable")
-      .smart_ptr<std::shared_ptr<Lockable>>("shared_ptr<Lockable>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<Lockable>>("Lockable")
+      .smart_ptr_constructor<std::shared_ptr<Lockable>>(
+          "Lockable", &std::make_shared<Lockable>)
       .function("lock", &Lockable::lock)
       .function("unlock", &Lockable::unlock);
 
   // Node base class
   class_<Node>("Node")
-      .smart_ptr<std::shared_ptr<Node>>("shared_ptr<Node>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<Node>>("Node")
+      .smart_ptr_constructor<std::shared_ptr<Node>>("Node",
+                                                    &std::make_shared<Node>)
       .function("isActive", &Node::isActive)
       .function("setActive", &Node::setActive)
       .function("getNumChannels", &Node::getNumChannels)
@@ -367,36 +378,41 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("removeChild", &Node::removeChild)
       .function("sortChildren", &Node::sortChildren)
       .function("disconnectAll", &Node::disconnectAll)
-      .function("process", &Node::process)
-      .function("asNode", optional_override([](Node& node) {
-                  return node.shared_from_this();
-                }));
+      .function("process", &Node::process);
 
   // Consumer base class (extends Node)
   class_<Consumer, base<Node>>("Consumer")
-      .smart_ptr<std::shared_ptr<Consumer>>("shared_ptr<Consumer>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<Consumer>>("Consumer")
+      .smart_ptr_constructor<std::shared_ptr<Consumer>>(
+          "Consumer", &std::make_shared<Consumer, Type, Space>)
       .function("getInput", &Consumer::getInput);
 
   // Producer base class (extends Node)
   class_<Producer, base<Node>>("Producer")
-      .smart_ptr<std::shared_ptr<Producer>>("shared_ptr<Producer>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<Producer>>("Producer")
+      .smart_ptr_constructor<std::shared_ptr<Producer>>(
+          "Producer", &std::make_shared<Producer, Type, Space>)
       .function("getOutput", &Producer::getOutput);
 
   // Transformer base class (extends Node)
   class_<Transformer, base<Node>>("Transformer")
-      .smart_ptr<std::shared_ptr<Transformer>>("shared_ptr<Transformer>")
-      .constructor<Type, Space>()
-      .constructor<Type, Type, Space>()
-      .constructor<Type, Type, Space, Space>()
+      .smart_ptr<std::shared_ptr<Transformer>>("Transformer")
+      .smart_ptr_constructor<std::shared_ptr<Transformer>>(
+          "Transformer", &std::make_shared<Transformer, Type, Space>)
+      .smart_ptr_constructor<std::shared_ptr<Transformer>>(
+          "Transformer", &std::make_shared<Transformer, Type, Type, Space>)
+      .smart_ptr_constructor<std::shared_ptr<Transformer>>(
+          "Transformer",
+          &std::make_shared<Transformer, Type, Type, Space, Space>)
       .function("getInput", &Transformer::getInput)
       .function("getOutput", &Transformer::getOutput);
 
   // NodeProcessor
   class_<NodeProcessor>("NodeProcessor")
-      .smart_ptr<std::shared_ptr<NodeProcessor>>("shared_ptr<NodeProcessor>")
-      .constructor<size_t, size_t, size_t, double>()
+      .smart_ptr<std::shared_ptr<NodeProcessor>>("NodeProcessor")
+      .smart_ptr_constructor<std::shared_ptr<NodeProcessor>>(
+          "NodeProcessor",
+          &std::make_shared<NodeProcessor, size_t, size_t, size_t, double>)
       .function("isActive", &NodeProcessor::isActive)
       .function("setActive", &NodeProcessor::setActive)
       .function("getAudioInput", &NodeProcessor::getAudioInput)
@@ -428,8 +444,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // MidiBuffer
   class_<MidiBuffer>("MidiBuffer")
-      .smart_ptr<std::shared_ptr<MidiBuffer>>("shared_ptr<MidiBuffer>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<MidiBuffer>>("MidiBuffer")
+      .smart_ptr_constructor<std::shared_ptr<MidiBuffer>>(
+          "MidiBuffer", &std::make_shared<MidiBuffer>)
       .function("begin", &MidiBuffer::begin)
       .function("end", &MidiBuffer::end)
       .function("addEvent", &MidiBuffer::addEvent)
@@ -496,8 +513,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // MidiProcessor
   class_<MidiProcessor, base<Lockable>>("MidiProcessor")
-      .smart_ptr<std::shared_ptr<MidiProcessor>>("shared_ptr<MidiProcessor>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<MidiProcessor>>("MidiProcessor")
+      .smart_ptr_constructor<std::shared_ptr<MidiProcessor>>(
+          "MidiProcessor", &std::make_shared<MidiProcessor>)
       .class_function("getNumMidiInputPorts",
                       &MidiProcessor::getNumMidiInputPorts)
       .class_function("getNumMidiOutputPorts",
@@ -516,9 +534,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // MidiProcessor::Input
   class_<MidiProcessor::Input, base<Lockable>>("MidiProcessorInput")
-      .smart_ptr<std::shared_ptr<MidiProcessor::Input>>(
-          "shared_ptr<MidiProcessor::Input>")
-      .constructor<unsigned int>()
+      .smart_ptr<std::shared_ptr<MidiProcessor::Input>>("MidiProcessor::Input")
+      .smart_ptr_constructor<std::shared_ptr<MidiProcessor::Input>>(
+          "MidiProcessor::Input",
+          &std::make_shared<MidiProcessor::Input, unsigned int>)
       .function("callback",
                 optional_override([](MidiProcessor::Input& input, double delta,
                                      const std::vector<uint8_t>& bytes) {
@@ -532,8 +551,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // MidiProcessor::Output
   class_<MidiProcessor::Output, base<Lockable>>("MidiProcessorOutput")
       .smart_ptr<std::shared_ptr<MidiProcessor::Output>>(
-          "shared_ptr<MidiProcessor::Output>")
-      .constructor<unsigned int>()
+          "MidiProcessor::Output")
+      .smart_ptr_constructor<std::shared_ptr<MidiProcessor::Output>>(
+          "MidiProcessor::Output",
+          &std::make_shared<MidiProcessor::Output, unsigned int>)
       .function("getDeviceName", &MidiProcessor::Output::getDeviceName)
       .function("setPort", &MidiProcessor::Output::setPort)
       .function("sendMessageWithDelay",
@@ -543,8 +564,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Recorder
   class_<Recorder, base<Consumer>>("Recorder")
-      .smart_ptr<std::shared_ptr<Recorder>>("shared_ptr<Recorder>")
-      .constructor<Type, Space, Sample>()
+      .smart_ptr<std::shared_ptr<Recorder>>("Recorder")
+      .smart_ptr_constructor<std::shared_ptr<Recorder>>(
+          "Recorder", &std::make_shared<Recorder, Type, Space, Sample>)
       .function("getMode", &Recorder::getMode)
       .function("setMode", &Recorder::setMode)
       .function("getRecordingTime", &Recorder::getRecordingTime)
@@ -557,36 +579,40 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // ChannelMerger
   class_<ChannelMerger, base<Producer>>("ChannelMerger")
-      .smart_ptr<std::shared_ptr<ChannelMerger>>("shared_ptr<ChannelMerger>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<ChannelMerger>>("ChannelMerger")
+      .smart_ptr_constructor<std::shared_ptr<ChannelMerger>>(
+          "ChannelMerger", &std::make_shared<ChannelMerger, Type, Space>)
       .function("getInput", &ChannelMerger::getInput);
 
   // ChannelSplitter
   class_<ChannelSplitter, base<Consumer>>("ChannelSplitter")
-      .smart_ptr<std::shared_ptr<ChannelSplitter>>(
-          "shared_ptr<ChannelSplitter>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<ChannelSplitter>>("ChannelSplitter")
+      .smart_ptr_constructor<std::shared_ptr<ChannelSplitter>>(
+          "ChannelSplitter", &std::make_shared<ChannelSplitter, Type, Space>)
       .function("getOutput", &ChannelSplitter::getOutput);
 
   // MidSide
   class_<MidSide, base<Consumer>>("MidSide")
-      .smart_ptr<std::shared_ptr<MidSide>>("shared_ptr<MidSide>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<MidSide>>("MidSide")
+      .smart_ptr_constructor<std::shared_ptr<MidSide>>(
+          "MidSide", &std::make_shared<MidSide, Type, Space>)
       .function("getMixAmount", &MidSide::getMixAmount)
       .function("getMid", &MidSide::getMid)
       .function("getSide", &MidSide::getSide);
 
   // Spread
   class_<Spread, base<Transformer>>("Spread")
-      .smart_ptr<std::shared_ptr<Spread>>("shared_ptr<Spread>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<Spread>>("Spread")
+      .smart_ptr_constructor<std::shared_ptr<Spread>>(
+          "Spread", &std::make_shared<Spread, Type, Space>)
       .function("getSpread", &Spread::getSpread)
       .function("getMode", &Spread::getMode);
 
   // StereoPanner
   class_<StereoPanner, base<Consumer>>("StereoPanner")
-      .smart_ptr<std::shared_ptr<StereoPanner>>("shared_ptr<StereoPanner>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<StereoPanner>>("StereoPanner")
+      .smart_ptr_constructor<std::shared_ptr<StereoPanner>>(
+          "StereoPanner", &std::make_shared<StereoPanner, Type, Space>)
       .function("getDirection", &StereoPanner::getDirection)
       .function("getLeft", &StereoPanner::getLeft)
       .function("getRight", &StereoPanner::getRight);
@@ -595,8 +621,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Convolver
   class_<Convolver, base<Transformer>>("Convolver")
-      .smart_ptr<std::shared_ptr<Convolver>>("shared_ptr<Convolver>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<Convolver>>("Convolver")
+      .smart_ptr_constructor<std::shared_ptr<Convolver>>(
+          "Convolver", &std::make_shared<Convolver>)
       .function("getHeadSize", &Convolver::getHeadSize)
       .function("setHeadSize", &Convolver::setHeadSize)
       .function("getTailSize", &Convolver::getTailSize)
@@ -607,8 +634,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // VariableDelay
   class_<VariableDelay, base<Transformer>>("VariableDelay")
-      .smart_ptr<std::shared_ptr<VariableDelay>>("shared_ptr<VariableDelay>")
-      .constructor<Type>()
+      .smart_ptr<std::shared_ptr<VariableDelay>>("VariableDelay")
+      .smart_ptr_constructor<std::shared_ptr<VariableDelay>>(
+          "VariableDelay", &std::make_shared<VariableDelay, Type>)
       .function("getMaxDelayTime", &VariableDelay::getMaxDelayTime)
       .function("setMaxDelayTime", &VariableDelay::setMaxDelayTime)
       .function("getDelayTime", &VariableDelay::getDelayTime)
@@ -622,16 +650,18 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Clipper
   class_<Clipper, base<Transformer>>("Clipper")
-      .smart_ptr<std::shared_ptr<Clipper>>("shared_ptr<Clipper>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<Clipper>>("Clipper")
+      .smart_ptr_constructor<std::shared_ptr<Clipper>>(
+          "Clipper", &std::make_shared<Clipper, Type, Space>)
       .function("getMin", &Clipper::getMin)
       .function("getMax", &Clipper::getMax)
       .function("getMode", &Clipper::getMode);
 
   // CompressorGate
   class_<CompressorGate, base<Transformer>>("CompressorGate")
-      .smart_ptr<std::shared_ptr<CompressorGate>>("shared_ptr<CompressorGate>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<CompressorGate>>("CompressorGate")
+      .smart_ptr_constructor<std::shared_ptr<CompressorGate>>(
+          "CompressorGate", &std::make_shared<CompressorGate>)
       .function("getControl", &CompressorGate::getControl)
       .function("getThreshold", &CompressorGate::getThreshold)
       .function("getSoftness", &CompressorGate::getSoftness)
@@ -645,8 +675,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // DryWet
   class_<DryWet, base<Producer>>("DryWet")
-      .smart_ptr<std::shared_ptr<DryWet>>("shared_ptr<DryWet>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<DryWet>>("DryWet")
+      .smart_ptr_constructor<std::shared_ptr<DryWet>>(
+          "DryWet", &std::make_shared<DryWet, Type, Space>)
       .function("getDry", &DryWet::getDry)
       .function("getWet", &DryWet::getWet)
       .function("getMixAmount", &DryWet::getMixAmount)
@@ -655,8 +686,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Envelope
   class_<Envelope, base<Producer>>("Envelope")
-      .smart_ptr<std::shared_ptr<Envelope>>("shared_ptr<Envelope>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<Envelope>>("Envelope")
+      .smart_ptr_constructor<std::shared_ptr<Envelope>>(
+          "Envelope", &std::make_shared<Envelope>)
       .function("getAttack", &Envelope::getAttack)
       .function("getRelease", &Envelope::getRelease)
       .function("getAttackShape", &Envelope::getAttackShape)
@@ -667,14 +699,16 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Lag
   class_<Lag, base<Transformer>>("Lag")
-      .smart_ptr<std::shared_ptr<Lag>>("shared_ptr<Lag>")
-      .constructor<Type>()
+      .smart_ptr<std::shared_ptr<Lag>>("Lag")
+      .smart_ptr_constructor<std::shared_ptr<Lag>>("Lag",
+                                                   &std::make_shared<Lag, Type>)
       .function("getLagTime", &Lag::getLagTime);
 
   // Shaper
   class_<Shaper, base<Transformer>>("Shaper")
-      .smart_ptr<std::shared_ptr<Shaper>>("shared_ptr<Shaper>")
-      .constructor<Space>()
+      .smart_ptr<std::shared_ptr<Shaper>>("Shaper")
+      .smart_ptr_constructor<std::shared_ptr<Shaper>>(
+          "Shaper", &std::make_shared<Shaper, Space>)
       .function("getDrive", &Shaper::getDrive)
       .function("getMode", &Shaper::getMode)
       .function("getOutputSignal", select_overload<Sample(size_t, Sample)>(
@@ -684,8 +718,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // MidiInput
   class_<MidiInput, base<Producer>>("MidiInput")
-      .smart_ptr<std::shared_ptr<MidiInput>>("shared_ptr<MidiInput>")
-      .constructor<std::shared_ptr<MidiBuffer>, Type>()
+      .smart_ptr<std::shared_ptr<MidiInput>>("MidiInput")
+      .smart_ptr_constructor<std::shared_ptr<MidiInput>>(
+          "MidiInput",
+          &std::make_shared<MidiInput, std::shared_ptr<MidiBuffer>, Type>)
       .function("getInputMessages", &MidiInput::getInputMessages)
       .function("getProcessFunction", &MidiInput::getProcessFunction)
       .function("setProcessFunction", &MidiInput::setProcessFunction)
@@ -708,8 +744,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // MidiOutput
   class_<MidiOutput, base<Consumer>>("MidiOutput")
-      .smart_ptr<std::shared_ptr<MidiOutput>>("shared_ptr<MidiOutput>")
-      .constructor<std::shared_ptr<MidiBuffer>, Type>()
+      .smart_ptr<std::shared_ptr<MidiOutput>>("MidiOutput")
+      .smart_ptr_constructor<std::shared_ptr<MidiOutput>>(
+          "MidiOutput",
+          &std::make_shared<MidiOutput, std::shared_ptr<MidiBuffer>, Type>)
       .function("getOutputMessages", &MidiOutput::getOutputMessages)
       .function("getProcessFunction", &MidiInput::getProcessFunction)
       .function("setProcessFunction", &MidiInput::setProcessFunction)
@@ -734,8 +772,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Biquad
   class_<Biquad, base<Transformer>>("Biquad")
-      .smart_ptr<std::shared_ptr<Biquad>>("shared_ptr<Biquad>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<Biquad>>("Biquad")
+      .smart_ptr_constructor<std::shared_ptr<Biquad>>("Biquad",
+                                                      &std::make_shared<Biquad>)
       .function("getFrequency", &Biquad::getFrequency)
       .function("getResonance", &Biquad::getResonance)
       .function("getAmplitude", &Biquad::getAmplitude)
@@ -744,8 +783,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Crossover
   class_<Crossover, base<Node>>("Crossover")
-      .smart_ptr<std::shared_ptr<Crossover>>("shared_ptr<Crossover>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<Crossover>>("Crossover")
+      .smart_ptr_constructor<std::shared_ptr<Crossover>>(
+          "Crossover", &std::make_shared<Crossover>)
       .function("getInput", &Crossover::getInput)
       .function("getFrequency", &Crossover::getFrequency)
       .function("getLow", &Crossover::getLow)
@@ -753,8 +793,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // OnePole
   class_<OnePole, base<Transformer>>("OnePole")
-      .smart_ptr<std::shared_ptr<OnePole>>("shared_ptr<OnePole>")
-      .constructor<Type>()
+      .smart_ptr<std::shared_ptr<OnePole>>("OnePole")
+      .smart_ptr_constructor<std::shared_ptr<OnePole>>(
+          "OnePole", &std::make_shared<OnePole, Type>)
       .function("getFrequency", &OnePole::getFrequency)
       .function("getMode", &OnePole::getMode);
 
@@ -762,18 +803,18 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // FunctionOscillator
   class_<FunctionOscillator, base<Producer>>("FunctionOscillator")
-      .smart_ptr<std::shared_ptr<FunctionOscillator>>(
-          "shared_ptr<FunctionOscillator>")
-      .constructor<Type>()
+      .smart_ptr<std::shared_ptr<FunctionOscillator>>("FunctionOscillator")
+      .smart_ptr_constructor<std::shared_ptr<FunctionOscillator>>(
+          "FunctionOscillator", &std::make_shared<FunctionOscillator, Type>)
       .function("getFunction", &FunctionOscillator::getFunction)
       .function("setFunction", &FunctionOscillator::setFunction)
       .function("getPhase", &FunctionOscillator::getPhase);
 
   // MoorerOscillator
   class_<MoorerOscillator, base<Producer>>("MoorerOscillator")
-      .smart_ptr<std::shared_ptr<MoorerOscillator>>(
-          "shared_ptr<MoorerOscillator>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<MoorerOscillator>>("MoorerOscillator")
+      .smart_ptr_constructor<std::shared_ptr<MoorerOscillator>>(
+          "MoorerOscillator", &std::make_shared<MoorerOscillator>)
       .function("getPhase", &MoorerOscillator::getPhase)
       .function("getIntensity", &MoorerOscillator::getIntensity)
       .function("getModulationIndex", &MoorerOscillator::getModulationIndex)
@@ -782,22 +823,25 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Noise
   class_<Noise, base<Producer>>("Noise")
-      .smart_ptr<std::shared_ptr<Noise>>("shared_ptr<Noise>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<Noise>>("Noise")
+      .smart_ptr_constructor<std::shared_ptr<Noise>>("Noise",
+                                                     &std::make_shared<Noise>)
       .function("getMode", &Noise::getMode);
 
   // Phasor
   class_<Phasor, base<Producer>>("Phasor")
-      .smart_ptr<std::shared_ptr<Phasor>>("shared_ptr<Phasor>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<Phasor>>("Phasor")
+      .smart_ptr_constructor<std::shared_ptr<Phasor>>("Phasor",
+                                                      &std::make_shared<Phasor>)
       .function("getFrequency", &Phasor::getFrequency)
       .function("getMode", &Phasor::getMode)
       .function("getReset", &Phasor::getReset);
 
   // SamplePlayer
   class_<SamplePlayer, base<Producer>>("SamplePlayer")
-      .smart_ptr<std::shared_ptr<SamplePlayer>>("shared_ptr<SamplePlayer>")
-      .constructor<Type>()
+      .smart_ptr<std::shared_ptr<SamplePlayer>>("SamplePlayer")
+      .smart_ptr_constructor<std::shared_ptr<SamplePlayer>>(
+          "SamplePlayer", &std::make_shared<SamplePlayer, Type>)
       .function("getSamples", &SamplePlayer::getSamples)
       .function("getSpeed", &SamplePlayer::getSpeed)
       .function("getStartTime", &SamplePlayer::getStartTime)
@@ -809,9 +853,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // TableOscillator
   class_<TableOscillator, base<Producer>>("TableOscillator")
-      .smart_ptr<std::shared_ptr<TableOscillator>>(
-          "shared_ptr<TableOscillator>")
-      .constructor<Type>()
+      .smart_ptr<std::shared_ptr<TableOscillator>>("TableOscillator")
+      .smart_ptr_constructor<std::shared_ptr<TableOscillator>>(
+          "TableOscillator", &std::make_shared<TableOscillator, Type>)
       .function("getTables", &TableOscillator::getTables)
       .function("getPhase", &TableOscillator::getPhase)
       .function("getPosition", &TableOscillator::getPosition)
@@ -824,125 +868,145 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // AbsoluteValue
   class_<AbsoluteValue, base<Transformer>>("AbsoluteValue")
-      .smart_ptr<std::shared_ptr<AbsoluteValue>>("shared_ptr<AbsoluteValue>")
-      .constructor<Type, Space>();
+      .smart_ptr<std::shared_ptr<AbsoluteValue>>("AbsoluteValue")
+      .smart_ptr_constructor<std::shared_ptr<AbsoluteValue>>(
+          "AbsoluteValue", &std::make_shared<AbsoluteValue, Type, Space>);
 
   // BooleanMask
   class_<BooleanMask, base<Transformer>>("BooleanMask")
-      .smart_ptr<std::shared_ptr<BooleanMask>>("shared_ptr<BooleanMask>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<BooleanMask>>("BooleanMask")
+      .smart_ptr_constructor<std::shared_ptr<BooleanMask>>(
+          "BooleanMask", &std::make_shared<BooleanMask, Type, Space>)
       .function("getMask", &BooleanMask::getMask);
 
   // Comparison
   class_<Comparison, base<Transformer>>("Comparison")
-      .smart_ptr<std::shared_ptr<Comparison>>("shared_ptr<Comparison>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<Comparison>>("Comparison")
+      .smart_ptr_constructor<std::shared_ptr<Comparison>>(
+          "Comparison", &std::make_shared<Comparison, Type, Space>)
       .function("getThreshold", &Comparison::getThreshold);
 
   // Division
   class_<Division, base<Transformer>>("Division")
-      .smart_ptr<std::shared_ptr<Division>>("shared_ptr<Division>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<Division>>("Division")
+      .smart_ptr_constructor<std::shared_ptr<Division>>(
+          "Division", &std::make_shared<Division, Type, Space>)
       .function("getDivisor", &Division::getDivisor);
 
   // Floor
   class_<Floor, base<Transformer>>("Floor")
-      .smart_ptr<std::shared_ptr<Floor>>("shared_ptr<Floor>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<Floor>>("Floor")
+      .smart_ptr_constructor<std::shared_ptr<Floor>>(
+          "Floor", &std::make_shared<Floor, Type, Space>)
       .function("getDivisor", &Floor::getDivisor);
 
   // ForwardFFT
   class_<ForwardFFT, base<Consumer>>("ForwardFFT")
-      .smart_ptr<std::shared_ptr<ForwardFFT>>("shared_ptr<ForwardFFT>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<ForwardFFT>>("ForwardFFT")
+      .smart_ptr_constructor<std::shared_ptr<ForwardFFT>>(
+          "ForwardFFT", &std::make_shared<ForwardFFT>)
       .function("getMagnitude", &ForwardFFT::getMagnitude)
       .function("getPhase", &ForwardFFT::getPhase);
 
   // FrequencyToNote
   class_<FrequencyToNote, base<Transformer>>("FrequencyToNote")
-      .smart_ptr<std::shared_ptr<FrequencyToNote>>(
-          "shared_ptr<FrequencyToNote>")
-      .constructor<Space>()
+      .smart_ptr<std::shared_ptr<FrequencyToNote>>("FrequencyToNote")
+      .smart_ptr_constructor<std::shared_ptr<FrequencyToNote>>(
+          "FrequencyToNote", &std::make_shared<FrequencyToNote, Space>)
       .function("getTuningFrequency", &FrequencyToNote::getTuningFrequency);
 
   // Hyperbolic
   class_<Hyperbolic, base<Transformer>>("Hyperbolic")
-      .smart_ptr<std::shared_ptr<Hyperbolic>>("shared_ptr<Hyperbolic>")
-      .constructor<Space>()
+      .smart_ptr<std::shared_ptr<Hyperbolic>>("Hyperbolic")
+      .smart_ptr_constructor<std::shared_ptr<Hyperbolic>>(
+          "Hyperbolic", &std::make_shared<Hyperbolic, Space>)
       .function("getMode", &Hyperbolic::getMode);
 
   // Identity
   class_<Identity, base<Transformer>>("Identity")
-      .smart_ptr<std::shared_ptr<Identity>>("shared_ptr<Identity>")
-      .constructor<Type, Space>()
-      .constructor<Type, Type, Space>()
-      .constructor<Type, Type, Space, Space>();
+      .smart_ptr<std::shared_ptr<Identity>>("Identity")
+      .smart_ptr_constructor<std::shared_ptr<Identity>>(
+          "Identity", &std::make_shared<Identity, Type, Space>)
+      .smart_ptr_constructor<std::shared_ptr<Identity>>(
+          "Identity", &std::make_shared<Identity, Type, Type, Space>)
+      .smart_ptr_constructor<std::shared_ptr<Identity>>(
+          "Identity", &std::make_shared<Identity, Type, Type, Space, Space>);
 
   // InverseFFT
   class_<InverseFFT, base<Producer>>("InverseFFT")
-      .smart_ptr<std::shared_ptr<InverseFFT>>("shared_ptr<InverseFFT>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<InverseFFT>>("InverseFFT")
+      .smart_ptr_constructor<std::shared_ptr<InverseFFT>>(
+          "InverseFFT", &std::make_shared<InverseFFT>)
       .function("getMagnitude", &InverseFFT::getMagnitude)
       .function("getPhase", &InverseFFT::getPhase);
 
   // Logarithm
   class_<Logarithm, base<Transformer>>("Logarithm")
-      .smart_ptr<std::shared_ptr<Logarithm>>("shared_ptr<Logarithm>")
-      .constructor<Space>()
+      .smart_ptr<std::shared_ptr<Logarithm>>("Logarithm")
+      .smart_ptr_constructor<std::shared_ptr<Logarithm>>(
+          "Logarithm", &std::make_shared<Logarithm, Space>)
       .function("getBase", &Logarithm::getBase);
 
   // Modulo
   class_<Modulo, base<Transformer>>("Modulo")
-      .smart_ptr<std::shared_ptr<Modulo>>("shared_ptr<Modulo>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<Modulo>>("Modulo")
+      .smart_ptr_constructor<std::shared_ptr<Modulo>>(
+          "Modulo", &std::make_shared<Modulo, Type, Space>)
       .function("getDivisor", &Modulo::getDivisor);
 
   // Multiplication
   class_<Multiplication, base<Transformer>>("Multiplication")
-      .smart_ptr<std::shared_ptr<Multiplication>>("shared_ptr<Multiplication>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<Multiplication>>("Multiplication")
+      .smart_ptr_constructor<std::shared_ptr<Multiplication>>(
+          "Multiplication", &std::make_shared<Multiplication, Type, Space>)
       .function("getFactor", &Multiplication::getFactor);
 
   // Negative
   class_<Negative, base<Transformer>>("Negative")
-      .smart_ptr<std::shared_ptr<Negative>>("shared_ptr<Negative>")
-      .constructor<Type, Space>();
+      .smart_ptr<std::shared_ptr<Negative>>("Negative")
+      .smart_ptr_constructor<std::shared_ptr<Negative>>(
+          "Negative", &std::make_shared<Negative, Type, Space>);
 
   // NoteToFrequency
   class_<NoteToFrequency, base<Transformer>>("NoteToFrequency")
-      .smart_ptr<std::shared_ptr<NoteToFrequency>>(
-          "shared_ptr<NoteToFrequency>")
-      .constructor<Space>()
+      .smart_ptr<std::shared_ptr<NoteToFrequency>>("NoteToFrequency")
+      .smart_ptr_constructor<std::shared_ptr<NoteToFrequency>>(
+          "NoteToFrequency", &std::make_shared<NoteToFrequency, Space>)
       .function("getTuningFrequency", &NoteToFrequency::getTuningFrequency);
 
   // NotGate
   class_<NotGate, base<Transformer>>("NotGate")
-      .smart_ptr<std::shared_ptr<NotGate>>("shared_ptr<NotGate>")
-      .constructor<Space>();
+      .smart_ptr<std::shared_ptr<NotGate>>("NotGate")
+      .smart_ptr_constructor<std::shared_ptr<NotGate>>(
+          "NotGate", &std::make_shared<NotGate, Space>);
 
   // Power
   class_<Power, base<Transformer>>("Power")
-      .smart_ptr<std::shared_ptr<Power>>("shared_ptr<Power>")
-      .constructor<Space>()
+      .smart_ptr<std::shared_ptr<Power>>("Power")
+      .smart_ptr_constructor<std::shared_ptr<Power>>(
+          "Power", &std::make_shared<Power, Space>)
       .function("getExponent", &Power::getExponent);
 
   // Reciprocal
   class_<Reciprocal, base<Transformer>>("Reciprocal")
-      .smart_ptr<std::shared_ptr<Reciprocal>>("shared_ptr<Reciprocal>")
-      .constructor<Type, Space>();
+      .smart_ptr<std::shared_ptr<Reciprocal>>("Reciprocal")
+      .smart_ptr_constructor<std::shared_ptr<Reciprocal>>(
+          "Reciprocal", &std::make_shared<Reciprocal, Type, Space>);
 
   // Trigonometric
   class_<Trigonometric, base<Transformer>>("Trigonometric")
-      .smart_ptr<std::shared_ptr<Trigonometric>>("shared_ptr<Trigonometric>")
-      .constructor<Space>()
+      .smart_ptr<std::shared_ptr<Trigonometric>>("Trigonometric")
+      .smart_ptr_constructor<std::shared_ptr<Trigonometric>>(
+          "Trigonometric", &std::make_shared<Trigonometric, Space>)
       .function("getMode", &Trigonometric::getMode);
 
   // ========== Trigger Nodes ==========
 
   // ClockTrigger
   class_<ClockTrigger, base<Producer>>("ClockTrigger")
-      .smart_ptr<std::shared_ptr<ClockTrigger>>("shared_ptr<ClockTrigger>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<ClockTrigger>>("ClockTrigger")
+      .smart_ptr_constructor<std::shared_ptr<ClockTrigger>>(
+          "ClockTrigger", &std::make_shared<ClockTrigger>)
       .function("getInterval", &ClockTrigger::getInterval)
       .function("getDelayTime", &ClockTrigger::getDelayTime)
       .function("getReset", &ClockTrigger::getReset)
@@ -950,52 +1014,59 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // Differentiator
   class_<Differentiator, base<Transformer>>("Differentiator")
-      .smart_ptr<std::shared_ptr<Differentiator>>("shared_ptr<Differentiator>")
-      .constructor<Type>()
+      .smart_ptr<std::shared_ptr<Differentiator>>("Differentiator")
+      .smart_ptr_constructor<std::shared_ptr<Differentiator>>(
+          "Differentiator", &std::make_shared<Differentiator, Type>)
       .function("getGate", &Differentiator::getGate)
       .function("getReset", &Differentiator::getReset);
 
   // Integrator
   class_<Integrator, base<Transformer>>("Integrator")
-      .smart_ptr<std::shared_ptr<Integrator>>("shared_ptr<Integrator>")
-      .constructor<Type>()
+      .smart_ptr<std::shared_ptr<Integrator>>("Integrator")
+      .smart_ptr_constructor<std::shared_ptr<Integrator>>(
+          "Integrator", &std::make_shared<Integrator, Type>)
       .function("getGate", &Integrator::getGate)
       .function("getReset", &Integrator::getReset);
 
   // OnOff
   class_<OnOff, base<Producer>>("OnOff")
-      .smart_ptr<std::shared_ptr<OnOff>>("shared_ptr<OnOff>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<OnOff>>("OnOff")
+      .smart_ptr_constructor<std::shared_ptr<OnOff>>("OnOff",
+                                                     &std::make_shared<OnOff>)
       .function("getOnTrigger", &OnOff::getOnTrigger)
       .function("getOffTrigger", &OnOff::getOffTrigger);
 
   // ResetTrigger
   class_<ResetTrigger, base<Producer>>("ResetTrigger")
-      .smart_ptr<std::shared_ptr<ResetTrigger>>("shared_ptr<ResetTrigger>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<ResetTrigger>>("ResetTrigger")
+      .smart_ptr_constructor<std::shared_ptr<ResetTrigger>>(
+          "ResetTrigger", &std::make_shared<ResetTrigger>)
       .function("reset", select_overload<void()>(&ResetTrigger::reset))
       .function("resetChannel",
                 select_overload<void(size_t)>(&ResetTrigger::reset));
 
   // SampleAndHold
   class_<SampleAndHold, base<Transformer>>("SampleAndHold")
-      .smart_ptr<std::shared_ptr<SampleAndHold>>("shared_ptr<SampleAndHold>")
-      .constructor<Type>()
+      .smart_ptr<std::shared_ptr<SampleAndHold>>("SampleAndHold")
+      .smart_ptr_constructor<std::shared_ptr<SampleAndHold>>(
+          "SampleAndHold", &std::make_shared<SampleAndHold, Type>)
       .function("getGate", &SampleAndHold::getGate)
       .function("getReset", &SampleAndHold::getReset);
 
   // Sequencer
   class_<Sequencer, base<Producer>>("Sequencer")
-      .smart_ptr<std::shared_ptr<Sequencer>>("shared_ptr<Sequencer>")
-      .constructor<Type, Space>()
+      .smart_ptr<std::shared_ptr<Sequencer>>("Sequencer")
+      .smart_ptr_constructor<std::shared_ptr<Sequencer>>(
+          "Sequencer", &std::make_shared<Sequencer, Type, Space>)
       .function("getSequences", &Sequencer::getSequences)
       .function("getSequenceIndex", &Sequencer::getSequenceIndex)
       .function("getPositionIndex", &Sequencer::getPositionIndex);
 
   // TriggerHold
   class_<TriggerHold, base<Transformer>>("TriggerHold")
-      .smart_ptr<std::shared_ptr<TriggerHold>>("shared_ptr<TriggerHold>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<TriggerHold>>("TriggerHold")
+      .smart_ptr_constructor<std::shared_ptr<TriggerHold>>(
+          "TriggerHold", &std::make_shared<TriggerHold>)
       .function("getHoldTime", &TriggerHold::getHoldTime)
       .function("getCurrentTime", &TriggerHold::getCurrentTime);
 
@@ -1003,30 +1074,35 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // BufferDuration
   class_<BufferDuration, base<Producer>>("BufferDuration")
-      .smart_ptr<std::shared_ptr<BufferDuration>>("shared_ptr<BufferDuration>")
-      .constructor<>();
+      .smart_ptr<std::shared_ptr<BufferDuration>>("BufferDuration")
+      .smart_ptr_constructor<std::shared_ptr<BufferDuration>>(
+          "BufferDuration", &std::make_shared<BufferDuration>);
 
   // BufferRate
   class_<BufferRate, base<Producer>>("BufferRate")
-      .smart_ptr<std::shared_ptr<BufferRate>>("shared_ptr<BufferRate>")
-      .constructor<>();
+      .smart_ptr<std::shared_ptr<BufferRate>>("BufferRate")
+      .smart_ptr_constructor<std::shared_ptr<BufferRate>>(
+          "BufferRate", &std::make_shared<BufferRate>);
 
   // SampleDuration
   class_<SampleDuration, base<Producer>>("SampleDuration")
-      .smart_ptr<std::shared_ptr<SampleDuration>>("shared_ptr<SampleDuration>")
-      .constructor<>();
+      .smart_ptr<std::shared_ptr<SampleDuration>>("SampleDuration")
+      .smart_ptr_constructor<std::shared_ptr<SampleDuration>>(
+          "SampleDuration", &std::make_shared<SampleDuration>);
 
   // SampleRate
   class_<SampleRate, base<Producer>>("SampleRate")
-      .smart_ptr<std::shared_ptr<SampleRate>>("shared_ptr<SampleRate>")
-      .constructor<>();
+      .smart_ptr<std::shared_ptr<SampleRate>>("SampleRate")
+      .smart_ptr_constructor<std::shared_ptr<SampleRate>>(
+          "SampleRate", &std::make_shared<SampleRate>);
 
   // ========== Utility Classes ==========
 
   // NormalizedFFT
   class_<NormalizedFFT>("NormalizedFFT")
-      .smart_ptr<std::shared_ptr<NormalizedFFT>>("shared_ptr<NormalizedFFT>")
-      .constructor<>()
+      .smart_ptr<std::shared_ptr<NormalizedFFT>>("NormalizedFFT")
+      .smart_ptr_constructor<std::shared_ptr<NormalizedFFT>>(
+          "NormalizedFFT", &std::make_shared<NormalizedFFT>)
       .function("setup", &NormalizedFFT::setup)
       .function("getSize", &NormalizedFFT::getSize)
       .function("getComplexSize", &NormalizedFFT::getComplexSize)

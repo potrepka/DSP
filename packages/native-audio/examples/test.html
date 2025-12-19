@@ -128,10 +128,10 @@
         filter.getResonance().setAllChannelValues(1.0)
         gain.getFactor().setAllChannelValues(0.5)
 
-        root.addChild(phasor.asNode())
-        root.addChild(osc.asNode())
-        root.addChild(filter.asNode())
-        root.addChild(gain.asNode())
+        root.addChild(phasor)
+        root.addChild(osc)
+        root.addChild(filter)
+        root.addChild(gain)
 
         phasor.connect(osc)
         osc.connect(filter)
