@@ -110,44 +110,95 @@ filter.dispose()
 
 ```typescript
 import {
-  TableOscillator,
   Biquad,
+  Buffer,
   CompressorGate,
-  VariableDelay,
   DryWet,
-  FilterType,
+  Engine,
+  MidiBuffer,
+  Phasor,
+  Space,
+  TableOscillator,
+  Type,
+  VariableDelay,
 } from '@potrepka/native-audio'
 
-// Create nodes
-const osc = new TableOscillator(1, 44100, 'sine')
-const filter = new Biquad(1, 44100, FilterType.LOWPASS)
-const compressor = new CompressorGate(1, 44100)
-const delay = new VariableDelay(1, 44100, 0.5)
-const dryWet = new DryWet(1)
+const sampleRate = 48000
+const numChannels = 2
+const numSamples = 128
 
-// Connect nodes (chain)
-osc.connect(filter)
-filter.connect(compressor)
-compressor.connect(delay)
-delay.connect(dryWet)
+// Create engine
+const engine = new Engine(-1, -1, numSamples, sampleRate)
+
+// Create nodes
+const phasor = new Phasor()
+const osc = new TableOscillator()
+const filter = new Biquad()
+const compressor = new CompressorGate()
+const delay = new VariableDelay()
+const dryWet = new DryWet()
+
+// Configure number of channels
+phasor.setNumChannels(numChannels)
+osc.setNumChannels(numChannels)
+filter.setNumChannels(numChannels)
+compressor.setNumChannels(numChannels)
+delay.setNumChannels(numChannels)
+dryWet.setNumChannels(numChannels)
+
+// Add nodes
+const root = engine.getNodeProcessor().getDefaultNode()
+root.addChild(phasor)
+root.addChild(osc)
+root.addChild(filter)
+root.addChild(compressor)
+root.addChild(delay)
+root.addChild(dryWet)
 
 // Configure parameters
-osc.setFrequency(440)
-filter.setFrequency(2000)
-filter.setQ(1.0)
-compressor.setThreshold(-20)
+phasor.setFrequency(220)
+osc.setWaveform('square')
+filter.setFrequency(1760)
+delay.setMaxDelayTime(0.25)
+delay.setDelayTime(0.25)
+compressor.setThreshold(0.5)
 compressor.setRatio(4)
-delay.setDelay(0.25)
-dryWet.setWet(0.3)
+dryWet.setWet(0.5)
+
+// Phase
+phasor.getOutput.connect(osc.getPhase())
+
+// Effects
+osc.getOutput().connect(filter.getInput())
+filter.getOutput().connect(delay.getInput())
+delay.getOutput().connect(compressor.getInput())
+
+// Dry/Wet
+osc.getOutput().connect(dryWet.getDry())
+compressor.getOutput().connect(dryWet.getWet())
+
+// Output
+dryWet.getOutput().connect(engine.getNodeProcessor().getAudioOutput())
 
 // Process audio
-const bufferSize = 512
-const inputs = [new Float32Array(bufferSize)]
-const outputs = [new Float32Array(bufferSize)]
-dryWet.process(inputs, outputs, bufferSize)
+const buffer = new Buffer(Type.RATIO, Space.TIME, 0, 0, numChannels, numSamples)
+const audioBuffer = buffer.getData()
+const midiBuffer = new MidiBuffer()
+engine.getNodeProcessor().process(audioBuffer, midiBuffer)
+
+// Print output
+console.log(audioBuffer.getArrayOfReadPointers())
 
 // Cleanup
-;[osc, filter, compressor, delay, dryWet].forEach((node) => node.dispose())
+engine.dispose()
+buffer.dispose()
+midiBuffer.dispose()
+phasor.dispose()
+osc.dispose()
+filter.dispose()
+compressor.dispose()
+delay.dispose()
+dryWet.dispose()
 ```
 
 ## Memory Management

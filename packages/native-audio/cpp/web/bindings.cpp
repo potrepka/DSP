@@ -152,44 +152,46 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getNumSamples", &Data::getNumSamples)
       .function("setSize", &Data::setSize)
       .function("clear", &Data::clear)
-      .function("getReadPointer",
-                optional_override([](const Data& data, size_t channel) {
-                  const Sample* pointer = data.getReadPointer(channel);
-                  size_t length = data.getNumSamples();
-                  return emscripten::typed_memory_view(
-                      length, const_cast<Sample*>(pointer));
-                }))
-      .function("getWritePointer",
-                optional_override([](Data& data, size_t channel) {
-                  Sample* pointer = data.getWritePointer(channel);
-                  size_t length = data.getNumSamples();
-                  return emscripten::typed_memory_view(length, pointer);
-                }))
+      .function(
+          "getReadPointer",
+          std::function<val(Data&, size_t)>([](const Data& data,
+                                               size_t channel) {
+            const Sample* pointer = data.getReadPointer(channel);
+            size_t length = data.getNumSamples();
+            return val(typed_memory_view(length, const_cast<Sample*>(pointer)));
+          }))
+      .function(
+          "getWritePointer",
+          std::function<val(Data&, size_t)>([](Data& data, size_t channel) {
+            Sample* pointer = data.getWritePointer(channel);
+            size_t length = data.getNumSamples();
+            return val(typed_memory_view(length, pointer));
+          }))
       .function("getMagnitude", &Data::getMagnitude)
       .function("getRMSLevel", &Data::getRMSLevel)
       .function("getArrayOfReadPointers",
-                optional_override([](const Data& data) {
-                  emscripten::val array = emscripten::val::array();
+                std::function<val(const Data& data)>([](const Data& data) {
+                  val array = val::array();
                   size_t numChannels = data.getNumChannels();
                   size_t numSamples = data.getNumSamples();
                   const Sample* const* pointers = data.getArrayOfReadPointers();
                   for (size_t i = 0; i < numChannels; ++i) {
                     const Sample* pointer = pointers[i];
-                    auto view = emscripten::typed_memory_view(
-                        numSamples, const_cast<Sample*>(pointer));
+                    auto view = typed_memory_view(numSamples,
+                                                  const_cast<Sample*>(pointer));
                     array.call<void>("push", view);
                   }
                   return array;
                 }))
-      .function("getArrayOfWritePointers", optional_override([](Data& data) {
-                  emscripten::val array = emscripten::val::array();
+      .function("getArrayOfWritePointers",
+                std::function<val(Data & data)>([](Data& data) {
+                  val array = val::array();
                   size_t numChannels = data.getNumChannels();
                   size_t numSamples = data.getNumSamples();
                   Sample** pointers = data.getArrayOfWritePointers();
                   for (size_t i = 0; i < numChannels; ++i) {
                     Sample* pointer = pointers[i];
-                    auto view =
-                        emscripten::typed_memory_view(numSamples, pointer);
+                    auto view = typed_memory_view(numSamples, pointer);
                     array.call<void>("push", view);
                   }
                   return array;
@@ -203,11 +205,12 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getNumChannels", &Wrapper::getNumChannels)
       .function("getNumSamples", &Wrapper::getNumSamples)
       .function("getChannelPointer",
-                optional_override([](const Wrapper& wrapper, size_t channel) {
-                  Sample* pointer = wrapper.getChannelPointer(channel);
-                  size_t length = wrapper.getNumSamples();
-                  return emscripten::typed_memory_view(length, pointer);
-                }))
+                std::function<val(const Wrapper&, size_t)>(
+                    [](const Wrapper& wrapper, size_t channel) {
+                      Sample* pointer = wrapper.getChannelPointer(channel);
+                      size_t length = wrapper.getNumSamples();
+                      return val(typed_memory_view(length, pointer));
+                    }))
       .function("getSingleChannel", &Wrapper::getSingleChannel)
       .function("getSampleRange", &Wrapper::getSampleRange)
       .function("clear", &Wrapper::clear)
@@ -419,10 +422,11 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getInputMessages", &NodeProcessor::getInputMessages)
       .function("getOutputMessages", &NodeProcessor::getOutputMessages)
       .function("process",
-                optional_override([](NodeProcessor& nodeProcessor, Data& data,
-                                     MidiBuffer& midiBuffer) {
-                  nodeProcessor.process(data, midiBuffer);
-                }));
+                std::function<void(NodeProcessor&, Data&, MidiBuffer&)>(
+                    [](NodeProcessor& nodeProcessor, Data& data,
+                       MidiBuffer& midiBuffer) {
+                      nodeProcessor.process(data, midiBuffer);
+                    }));
 
   // ========== Midi Classes ==========
 
@@ -441,10 +445,11 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .constructor<uint8_t>()
       .constructor<uint8_t, uint8_t>()
       .constructor<uint8_t, uint8_t, uint8_t>()
-      .class_function("fromArray",
-                      optional_override([](const std::vector<uint8_t>& data) {
-                        return MidiMessage(data.data(), data.size());
-                      }))
+      .class_function(
+          "fromArray",
+          +[](const std::vector<uint8_t>& data) {
+            return MidiMessage(data.data(), data.size());
+          })
       .class_function("noteOff", &MidiMessage::noteOff)
       .class_function("noteOn", &MidiMessage::noteOn)
       .class_function("aftertouchChange", &MidiMessage::aftertouchChange)
@@ -486,12 +491,13 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getSongPositionPointerMidiBeat",
                 &MidiMessage::getSongPositionPointerMidiBeat)
       .function("getBytes", &MidiMessage::getBytes)
-      .function("getRawData", optional_override([](const MidiMessage& msg) {
-                  const uint8_t* pointer = msg.getRawData();
-                  size_t size = msg.getRawDataSize();
-                  return emscripten::typed_memory_view(
-                      size, const_cast<uint8_t*>(pointer));
-                }))
+      .function(
+          "getRawData",
+          std::function<val(const MidiMessage&)>([](const MidiMessage& msg) {
+            const uint8_t* pointer = msg.getRawData();
+            size_t size = msg.getRawDataSize();
+            return val(typed_memory_view(size, const_cast<uint8_t*>(pointer)));
+          }))
       .function("getRawDataSize", &MidiMessage::getRawDataSize);
 
   // MidiProcessor
@@ -518,12 +524,14 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<MidiProcessor::Input, base<Lockable>>("MidiProcessorInput")
       .smart_ptr<std::shared_ptr<MidiProcessor::Input>>("MidiProcessor::Input")
       .constructor(&std::make_shared<MidiProcessor::Input, unsigned int>)
-      .function("callback",
-                optional_override([](MidiProcessor::Input& input, double delta,
-                                     const std::vector<uint8_t>& bytes) {
-                  std::vector<uint8_t> tempBytes = bytes;
-                  MidiProcessor::Input::callback(delta, &tempBytes, &input);
-                }))
+      .function("callback", std::function<void(MidiProcessor::Input&, double,
+                                               const std::vector<uint8_t>&)>(
+                                [](MidiProcessor::Input& input, double delta,
+                                   const std::vector<uint8_t>& bytes) {
+                                  std::vector<uint8_t> tempBytes = bytes;
+                                  MidiProcessor::Input::callback(
+                                      delta, &tempBytes, &input);
+                                }))
       .function("getDeviceName", &MidiProcessor::Input::getDeviceName)
       .function("setPort", &MidiProcessor::Input::setPort);
   // .function("getMessages", &MidiProcessor::Input::getMessages);

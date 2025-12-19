@@ -85,7 +85,28 @@
           btnPlay.disabled = false
 
           log('WASM module initialized')
-          log('Available classes: Engine, Biquad, Phasor, etc.')
+
+          log(
+            `\n${Object.entries(Module)
+              .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+              .filter(([key, value]) => typeof value === 'boolean')
+              .map(([key, value]) => `${key} = ${value}`)
+              .join(', ')}`,
+          )
+          log(
+            `\nAvailable constants: ${Object.entries(Module)
+              .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+              .filter(([key, value]) => typeof value === 'number')
+              .map(([key]) => key)
+              .join(', ')}`,
+          )
+          log(
+            `\nAvailable functions: ${Object.entries(Module)
+              .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+              .filter(([key, value]) => typeof value === 'function')
+              .map(([key]) => key)
+              .join(', ')}`,
+          )
         } catch (error) {
           statusDiv.textContent = 'Failed to load WASM module: ' + error.message
           statusDiv.className = 'status error'
@@ -108,8 +129,6 @@
         engine = new Module.Engine()
         engine.setup(-1, -1, bufferSize, sampleRate)
 
-        const root = engine.getNodeProcessor().getDefaultNode()
-
         const phasor = new Module.Phasor()
         const osc = new Module.TableOscillator(Module.Type.RATIO)
         const filter = new Module.Biquad()
@@ -123,22 +142,22 @@
         filter.setNumChannels(numChannels)
         gain.setNumChannels(numChannels)
 
-        phasor.getFrequency().setAllChannelValues(440)
-        filter.getFrequency().setAllChannelValues(1000.0)
-        filter.getResonance().setAllChannelValues(1.0)
-        gain.getFactor().setAllChannelValues(0.5)
-
+        const root = engine.getNodeProcessor().getDefaultNode()
         root.addChild(phasor)
         root.addChild(osc)
         root.addChild(filter)
         root.addChild(gain)
 
-        phasor.connect(osc)
-        osc.connect(filter)
-        filter.connect(gain)
-        gain.connect(root)
+        phasor.getFrequency().setAllChannelValues(220)
+        filter.getFrequency().setAllChannelValues(1760)
+        gain.getFactor().setAllChannelValues(0.5)
 
-        log('Engine setup complete')
+        phasor.getOutput().connect(osc.getPhase())
+        osc.getOutput().connect(filter.getInput())
+        filter.getOutput().connect(gain.getInput())
+        gain.getOutput().connect(engine.getNodeProcessor().getAudioOutput())
+
+        log('\nEngine setup complete')
 
         return {
           engine,
@@ -154,9 +173,9 @@
         log('Running test...')
 
         try {
-          const sampleRate = 44100
+          const sampleRate = 48000
           const numChannels = 2
-          const bufferSize = 512
+          const bufferSize = 256
 
           const { engine, phasor, osc, filter, gain } = setupEngine(
             sampleRate,
@@ -164,61 +183,53 @@
             bufferSize,
           )
 
-          const audioData = new Module.Data(numChannels, bufferSize)
+          const audioBuffer = new Module.Data(numChannels, bufferSize)
           const midiBuffer = new Module.MidiBuffer()
 
-          engine.getNodeProcessor().process(audioData, midiBuffer)
+          engine.getNodeProcessor().process(audioBuffer, midiBuffer)
 
-          const leftPtr = audioData.getReadPointer(0)
-          const rightPtr = audioData.getReadPointer(1)
-
-          const leftView = new Float64Array(
-            Module.HEAPF64.buffer,
-            leftPtr,
-            bufferSize,
-          )
-          const rightView = new Float64Array(
-            Module.HEAPF64.buffer,
-            rightPtr,
-            bufferSize,
-          )
+          const left = audioBuffer.getReadPointer(0)
+          const right = audioBuffer.getReadPointer(1)
 
           log('\nOutput analysis:')
 
           let leftPeak = 0
           let rightPeak = 0
           for (let i = 0; i < bufferSize; i++) {
-            const l = Math.abs(leftView[i])
-            const r = Math.abs(rightView[i])
-            if (l > leftPeak) {
-              leftPeak = l
+            const leftAmplitude = Math.abs(left[i])
+            const rightAmplitude = Math.abs(right[i])
+            if (leftAmplitude > leftPeak) {
+              leftPeak = leftAmplitude
             }
-            if (r > rightPeak) {
-              rightPeak = r
+            if (rightAmplitude > rightPeak) {
+              rightPeak = rightAmplitude
             }
           }
 
           log(`Peak amplitude (L): ${leftPeak.toFixed(4)}`)
           log(`Peak amplitude (R): ${rightPeak.toFixed(4)}`)
 
-          const first10L = []
-          for (let i = 0; i < 10; i++) {
-            first10L.push(leftView[i].toFixed(4))
+          const arrayLength = 8
+          const precision = 4
+
+          const arrayLeft = []
+          for (let i = 0; i < arrayLength; i++) {
+            arrayLeft.push(left[i].toFixed(precision))
           }
-          const first10R = []
-          for (let i = 0; i < 10; i++) {
-            first10R.push(rightView[i].toFixed(4))
+          const arrayRight = []
+          for (let i = 0; i < arrayLength; i++) {
+            arrayRight.push(right[i].toFixed(precision))
           }
 
-          log(`First 10 samples (L): ${first10L.join(', ')}`)
-          log(`First 10 samples (R): ${first10R.join(', ')}`)
+          log(`First ${arrayLength} samples (L): ${arrayLeft.join(', ')}`)
+          log(`First ${arrayLength} samples (R): ${arrayRight.join(', ')}`)
 
           engine.delete()
           phasor.delete()
           osc.delete()
           filter.delete()
           gain.delete()
-          audioData.delete()
+          audioBuffer.delete()
           midiBuffer.delete()
 
           if (leftPeak > 0 || rightPeak > 0) {
@@ -238,21 +249,24 @@
         }
 
         const AudioContext = window.AudioContext || window.webkitAudioContext
-        const ctx = new AudioContext()
+        const ctx = new AudioContext({
+          sampleRate: 48000,
+        })
 
         if (ctx.state === 'suspended') {
           await ctx.resume()
         }
 
         isPlaying = true
+        btnTest.disabled = true
         btnPlay.disabled = true
         outputDiv.textContent = ''
-        log(`Starting playback at ${ctx.sampleRate} Hz...`)
+        log(`Testing playback at ${ctx.sampleRate} Hz...`)
 
         try {
           const sampleRate = ctx.sampleRate
           const numChannels = 2
-          const bufferSize = 512
+          const bufferSize = 256
 
           const { engine, phasor, osc, filter, gain } = setupEngine(
             sampleRate,
@@ -262,30 +276,19 @@
 
           const scriptNode = ctx.createScriptProcessor(bufferSize, 0, 2)
 
-          const audioData = new Module.Data(numChannels, bufferSize)
+          const audioBuffer = new Module.Data(numChannels, bufferSize)
           const midiBuffer = new Module.MidiBuffer()
 
           scriptNode.onaudioprocess = (audioProcessingEvent) => {
-            engine.getNodeProcessor().process(audioData, midiBuffer)
+            engine.getNodeProcessor().process(audioBuffer, midiBuffer)
 
             const outputBuffer = audioProcessingEvent.outputBuffer
 
-            const leftPtr = audioData.getReadPointer(0)
-            const rightPtr = audioData.getReadPointer(1)
+            const left = audioBuffer.getReadPointer(0)
+            const right = audioBuffer.getReadPointer(1)
 
-            const leftView = new Float64Array(
-              Module.HEAPF64.buffer,
-              leftPtr,
-              bufferSize,
-            )
-            const rightView = new Float64Array(
-              Module.HEAPF64.buffer,
-              rightPtr,
-              bufferSize,
-            )
-
-            outputBuffer.copyToChannel(leftView, 0)
-            outputBuffer.copyToChannel(rightView, 1)
+            outputBuffer.copyToChannel(new Float32Array(left), 0)
+            outputBuffer.copyToChannel(new Float32Array(right), 1)
           }
 
           scriptNode.connect(ctx.destination)
@@ -305,7 +308,7 @@
           osc.delete()
           filter.delete()
           gain.delete()
-          audioData.delete()
+          audioBuffer.delete()
           midiBuffer.delete()
 
           log('\n✅ Playback completed')
@@ -314,6 +317,7 @@
           console.error(error)
         } finally {
           isPlaying = false
+          btnTest.disabled = false
           btnPlay.disabled = false
         }
       }
