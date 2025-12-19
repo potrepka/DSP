@@ -295,8 +295,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Input class (extends Buffer)
   class_<Input, base<Buffer>>("Input")
       .smart_ptr<std::shared_ptr<Input>>("Input")
-      .smart_ptr_constructor<std::shared_ptr<Input>>(
-          "Input",
+      .constructor(
           &std::make_shared<Input, Type, Space, Sample, Sample, size_t, size_t>)
       .function("getMode", &Input::getMode)
       .function("setMode", &Input::setMode)
@@ -318,8 +317,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Engine class
   class_<Engine, base<Lockable>>("Engine")
       .smart_ptr<std::shared_ptr<Engine>>("Engine")
-      .smart_ptr_constructor<std::shared_ptr<Engine>>("Engine",
-                                                      &std::make_shared<Engine>)
+      .constructor(&std::make_shared<Engine>)
       .function("getInputDevices", &Engine::getInputDevices)
       .function("getOutputDevices", &Engine::getOutputDevices)
       .function("getSampleRates", &Engine::getSampleRates)
@@ -349,8 +347,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Node base class
   class_<Node>("Node")
       .smart_ptr<std::shared_ptr<Node>>("Node")
-      .smart_ptr_constructor<std::shared_ptr<Node>>("Node",
-                                                    &std::make_shared<Node>)
+      .constructor(&std::make_shared<Node>)
       .function("isActive", &Node::isActive)
       .function("setActive", &Node::setActive)
       .function("getNumChannels", &Node::getNumChannels)
@@ -391,17 +388,14 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .smart_ptr<std::shared_ptr<Transformer>>("Transformer")
       .constructor(&std::make_shared<Transformer, Type, Space>)
       .constructor(&std::make_shared<Transformer, Type, Type, Space>)
-      .smart_ptr_constructor<std::shared_ptr<Transformer>>(
-          "Transformer",
-          &std::make_shared<Transformer, Type, Type, Space, Space>)
+      .constructor(&std::make_shared<Transformer, Type, Type, Space, Space>)
       .function("getInput", &Transformer::getInput)
       .function("getOutput", &Transformer::getOutput);
 
   // NodeProcessor
   class_<NodeProcessor>("NodeProcessor")
       .smart_ptr<std::shared_ptr<NodeProcessor>>("NodeProcessor")
-      .smart_ptr_constructor<std::shared_ptr<NodeProcessor>>(
-          "NodeProcessor",
+      .constructor(
           &std::make_shared<NodeProcessor, size_t, size_t, size_t, double>)
       .function("isActive", &NodeProcessor::isActive)
       .function("setActive", &NodeProcessor::setActive)
@@ -523,9 +517,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // MidiProcessor::Input
   class_<MidiProcessor::Input, base<Lockable>>("MidiProcessorInput")
       .smart_ptr<std::shared_ptr<MidiProcessor::Input>>("MidiProcessor::Input")
-      .smart_ptr_constructor<std::shared_ptr<MidiProcessor::Input>>(
-          "MidiProcessor::Input",
-          &std::make_shared<MidiProcessor::Input, unsigned int>)
+      .constructor(&std::make_shared<MidiProcessor::Input, unsigned int>)
       .function("callback",
                 optional_override([](MidiProcessor::Input& input, double delta,
                                      const std::vector<uint8_t>& bytes) {
@@ -540,9 +532,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<MidiProcessor::Output, base<Lockable>>("MidiProcessorOutput")
       .smart_ptr<std::shared_ptr<MidiProcessor::Output>>(
           "MidiProcessor::Output")
-      .smart_ptr_constructor<std::shared_ptr<MidiProcessor::Output>>(
-          "MidiProcessor::Output",
-          &std::make_shared<MidiProcessor::Output, unsigned int>)
+      .constructor(&std::make_shared<MidiProcessor::Output, unsigned int>)
       .function("getDeviceName", &MidiProcessor::Output::getDeviceName)
       .function("setPort", &MidiProcessor::Output::setPort)
       .function("sendMessageWithDelay",
@@ -676,8 +666,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Lag
   class_<Lag, base<Transformer>>("Lag")
       .smart_ptr<std::shared_ptr<Lag>>("Lag")
-      .smart_ptr_constructor<std::shared_ptr<Lag>>("Lag",
-                                                   &std::make_shared<Lag, Type>)
+      .constructor(&std::make_shared<Lag, Type>)
       .function("getLagTime", &Lag::getLagTime);
 
   // Shaper
@@ -694,8 +683,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // MidiInput
   class_<MidiInput, base<Producer>>("MidiInput")
       .smart_ptr<std::shared_ptr<MidiInput>>("MidiInput")
-      .smart_ptr_constructor<std::shared_ptr<MidiInput>>(
-          "MidiInput",
+      .constructor(
           &std::make_shared<MidiInput, std::shared_ptr<MidiBuffer>, Type>)
       .function("getInputMessages", &MidiInput::getInputMessages)
       .function("getProcessFunction", &MidiInput::getProcessFunction)
@@ -720,8 +708,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // MidiOutput
   class_<MidiOutput, base<Consumer>>("MidiOutput")
       .smart_ptr<std::shared_ptr<MidiOutput>>("MidiOutput")
-      .smart_ptr_constructor<std::shared_ptr<MidiOutput>>(
-          "MidiOutput",
+      .constructor(
           &std::make_shared<MidiOutput, std::shared_ptr<MidiBuffer>, Type>)
       .function("getOutputMessages", &MidiOutput::getOutputMessages)
       .function("getProcessFunction", &MidiInput::getProcessFunction)
@@ -748,8 +735,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Biquad
   class_<Biquad, base<Transformer>>("Biquad")
       .smart_ptr<std::shared_ptr<Biquad>>("Biquad")
-      .smart_ptr_constructor<std::shared_ptr<Biquad>>("Biquad",
-                                                      &std::make_shared<Biquad>)
+      .constructor(&std::make_shared<Biquad>)
       .function("getFrequency", &Biquad::getFrequency)
       .function("getResonance", &Biquad::getResonance)
       .function("getAmplitude", &Biquad::getAmplitude)
@@ -795,15 +781,13 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Noise
   class_<Noise, base<Producer>>("Noise")
       .smart_ptr<std::shared_ptr<Noise>>("Noise")
-      .smart_ptr_constructor<std::shared_ptr<Noise>>("Noise",
-                                                     &std::make_shared<Noise>)
+      .constructor(&std::make_shared<Noise>)
       .function("getMode", &Noise::getMode);
 
   // Phasor
   class_<Phasor, base<Producer>>("Phasor")
       .smart_ptr<std::shared_ptr<Phasor>>("Phasor")
-      .smart_ptr_constructor<std::shared_ptr<Phasor>>("Phasor",
-                                                      &std::make_shared<Phasor>)
+      .constructor(&std::make_shared<Phasor>)
       .function("getFrequency", &Phasor::getFrequency)
       .function("getMode", &Phasor::getMode)
       .function("getReset", &Phasor::getReset);
@@ -976,8 +960,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // OnOff
   class_<OnOff, base<Producer>>("OnOff")
       .smart_ptr<std::shared_ptr<OnOff>>("OnOff")
-      .smart_ptr_constructor<std::shared_ptr<OnOff>>("OnOff",
-                                                     &std::make_shared<OnOff>)
+      .constructor(&std::make_shared<OnOff>)
       .function("getOnTrigger", &OnOff::getOnTrigger)
       .function("getOffTrigger", &OnOff::getOffTrigger);
 
