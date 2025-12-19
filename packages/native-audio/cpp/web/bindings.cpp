@@ -154,8 +154,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("clear", &Data::clear)
       .function(
           "getReadChannelData",
-          std::function<val(Data&, size_t)>([](const Data& data,
-                                               size_t channel) {
+          std::function<val(const Data&, size_t)>([](const Data& data,
+                                                     size_t channel) {
             const Sample* pointer = data.getReadPointer(channel);
             size_t length = data.getNumSamples();
             return val(typed_memory_view(length, const_cast<Sample*>(pointer)));
@@ -179,7 +179,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
                     const Sample* pointer = pointers[i];
                     auto view = typed_memory_view(numSamples,
                                                   const_cast<Sample*>(pointer));
-                    array.call<void>("push", view);
+                    array.set(i, view);
                   }
                   return array;
                 }))
@@ -191,7 +191,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
                   for (size_t i = 0; i < numChannels; ++i) {
                     Sample* pointer = pointers[i];
                     auto view = typed_memory_view(numSamples, pointer);
-                    array.call<void>("push", view);
+                    array.set(i, view);
                   }
                   return array;
                 }));
@@ -204,8 +204,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getNumChannels", &Wrapper::getNumChannels)
       .function("getNumSamples", &Wrapper::getNumSamples)
       .function("getChannelData",
-                std::function<val(const Wrapper&, size_t)>(
-                    [](const Wrapper& wrapper, size_t channel) {
+                std::function<val(Wrapper&, size_t)>(
+                    [](Wrapper& wrapper, size_t channel) {
                       Sample* pointer = wrapper.getChannelPointer(channel);
                       size_t length = wrapper.getNumSamples();
                       return val(typed_memory_view(length, pointer));
@@ -335,7 +335,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getNumOutputChannels", &Engine::getNumOutputChannels)
       .function("getNumSamples", &Engine::getNumSamples)
       .function("getSampleRate", &Engine::getSampleRate)
-      .function("getAudioBuffer", &Engine::getAudioBuffer)
+      .function("getAudioBuffer", &Engine::getAudioBuffer,
+                return_value_policy::reference())
       .function("getNodeProcessor", &Engine::getNodeProcessor)
       .function("getMidiProcessor", &Engine::getMidiProcessor);
 
@@ -364,9 +365,11 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("setSampleRate", &Node::setSampleRate)
       .function("getOneOverNumSamples", &Node::getOneOverNumSamples)
       .function("getOneOverSampleRate", &Node::getOneOverSampleRate)
-      .function("getInputs", &Node::getInputs)
-      .function("getOutputs", &Node::getOutputs)
-      .function("getChildren", &Node::getChildren)
+      .function("getInputs", &Node::getInputs, return_value_policy::reference())
+      .function("getOutputs", &Node::getOutputs,
+                return_value_policy::reference())
+      .function("getChildren", &Node::getChildren,
+                return_value_policy::reference())
       .function("addChild", &Node::addChild)
       .function("removeChild", &Node::removeChild)
       .function("sortChildren", &Node::sortChildren)
@@ -417,15 +420,11 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("setInputSize", &NodeProcessor::setInputSize)
       .function("setOutputSize", &NodeProcessor::setOutputSize)
       .function("getDefaultNode", &NodeProcessor::getDefaultNode)
-      .function("getNodes", &NodeProcessor::getNodes)
+      .function("getNodes", &NodeProcessor::getNodes,
+                return_value_policy::reference())
       .function("getInputMessages", &NodeProcessor::getInputMessages)
       .function("getOutputMessages", &NodeProcessor::getOutputMessages)
-      .function("process",
-                std::function<void(NodeProcessor&, Data&, MidiBuffer&)>(
-                    [](NodeProcessor& nodeProcessor, Data& data,
-                       MidiBuffer& midiBuffer) {
-                      nodeProcessor.process(data, midiBuffer);
-                    }));
+      .function("process", &NodeProcessor::process<Sample>);
 
   // ========== Midi Classes ==========
 
@@ -489,7 +488,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getPitchWheelValue", &MidiMessage::getPitchWheelValue)
       .function("getSongPositionPointerMidiBeat",
                 &MidiMessage::getSongPositionPointerMidiBeat)
-      .function("getBytes", &MidiMessage::getBytes)
+      .function("getBytes", &MidiMessage::getBytes,
+                return_value_policy::reference())
       .function(
           "getRawData",
           std::function<val(const MidiMessage&)>([](const MidiMessage& msg) {
@@ -514,8 +514,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getSampleRate", &MidiProcessor::getSampleRate)
       .function("setSampleRate", &MidiProcessor::setSampleRate)
       .function("getMidiBuffer", &MidiProcessor::getMidiBuffer)
-      .function("getInputs", &MidiProcessor::getInputs)
-      .function("getOutputs", &MidiProcessor::getOutputs)
+      .function("getInputs", &MidiProcessor::getInputs,
+                return_value_policy::reference())
+      .function("getOutputs", &MidiProcessor::getOutputs,
+                return_value_policy::reference())
       .function("processInputs", &MidiProcessor::processInputs)
       .function("processOutputs", &MidiProcessor::processOutputs);
 
@@ -803,7 +805,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<SamplePlayer, base<Producer>>("SamplePlayer")
       .smart_ptr<std::shared_ptr<SamplePlayer>>("SamplePlayer")
       .constructor(&std::make_shared<SamplePlayer, Type>)
-      .function("getSamples", &SamplePlayer::getSamples)
+      .function("getSamples", &SamplePlayer::getSamples,
+                return_value_policy::reference())
       .function("getSpeed", &SamplePlayer::getSpeed)
       .function("getStartTime", &SamplePlayer::getStartTime)
       .function("getSampleIndex", &SamplePlayer::getSampleIndex)
@@ -816,7 +819,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<TableOscillator, base<Producer>>("TableOscillator")
       .smart_ptr<std::shared_ptr<TableOscillator>>("TableOscillator")
       .constructor(&std::make_shared<TableOscillator, Type>)
-      .function("getTables", &TableOscillator::getTables)
+      .function("getTables", &TableOscillator::getTables,
+                return_value_policy::reference())
       .function("getPhase", &TableOscillator::getPhase)
       .function("getPosition", &TableOscillator::getPosition)
       .function("getPhaseInterpolation",
@@ -990,7 +994,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<Sequencer, base<Producer>>("Sequencer")
       .smart_ptr<std::shared_ptr<Sequencer>>("Sequencer")
       .constructor(&std::make_shared<Sequencer, Type, Space>)
-      .function("getSequences", &Sequencer::getSequences)
+      .function("getSequences", &Sequencer::getSequences,
+                return_value_policy::reference())
       .function("getSequenceIndex", &Sequencer::getSequenceIndex)
       .function("getPositionIndex", &Sequencer::getPositionIndex);
 

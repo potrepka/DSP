@@ -234,9 +234,9 @@ void dsp::Engine::setup(unsigned int inputDevice, unsigned int outputDevice,
 
   numInputChannels = inputParameters.nChannels;
   numOutputChannels = outputParameters.nChannels;
+#endif
   this->numSamples = numSamples;
   this->sampleRate = sampleRate;
-#endif
 
   if (numInputChannels > nodeProcessor->getNumInputChannels()) {
     nodeProcessor->setNumInputChannels(numInputChannels);
