@@ -57,6 +57,7 @@ emcc \
   -o "$OUTPUT_DIR/native-audio.js" \
   -s WASM=1 \
   -s MODULARIZE=1 \
+  -s EXPORT_ES6=1 \
   -s EXPORT_NAME="createAudioModule" \
   -s ENVIRONMENT="web,worker" \
   -s ALLOW_MEMORY_GROWTH=1 \

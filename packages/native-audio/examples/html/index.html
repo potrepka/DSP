@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@potrepka/native-audio Test</title>
+    <title>@potrepka/native-audio HTML Demo</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -14,8 +14,13 @@
       button {
         padding: 10px 20px;
         font-size: 16px;
-        margin: 10px 5px;
         cursor: pointer;
+      }
+      #buttons {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
       }
       #output {
         margin-top: 20px;
@@ -45,11 +50,11 @@
     </style>
   </head>
   <body>
-    <h1>@potrepka/native-audio Test</h1>
+    <h1>@potrepka/native-audio HTML Demo</h1>
 
     <div id="status" class="status info">Loading WASM module...</div>
 
-    <div>
+    <div id="buttons">
       <button id="btnTest" disabled>Run Test</button>
       <button id="btnPlay" disabled>Start Engine & Play</button>
     </div>
@@ -199,8 +204,8 @@ ${workletProcessorCode}
           const AudioContext = window.AudioContext || window.webkitAudioContext
           audioContext = new AudioContext({ sampleRate: 48000 })
           const blobURL = await createAudioWorkletBlobWithWasm(
-            '../web/build/native-audio.wasm',
-            '../web/build/native-audio.js',
+            '../../web/build/native-audio.wasm',
+            '../../web/build/native-audio.js',
             'audio-worklet-processor.js',
             (status) => updateStatus(status, 'info'),
           )
@@ -228,12 +233,11 @@ ${workletProcessorCode}
         const { type, data, error } = event.data
         switch (type) {
           case 'initialized':
-            statusDiv.textContent =
-              'WASM module loaded successfully in AudioWorklet!'
+            statusDiv.textContent = 'WASM module loaded successfully!'
             statusDiv.className = 'status success'
             btnTest.disabled = false
             btnPlay.disabled = false
-            log('WASM module initialized in AudioWorklet')
+            log('WASM module initialized')
             log(`\nAvailable constants: ${data.constants}`)
             log(`\nAvailable functions: ${data.functions}`)
             break

@@ -15,13 +15,5 @@
     "target": "esnext"
   },
   "include": ["src"],
-  "exclude": [
-    "**/*.test.ts",
-    "android",
-    "cpp",
-    "dist",
-    "ios",
-    "node_modules",
-    "web"
-  ]
+  "exclude": ["dist", "node_modules"]
 }

@@ -3,5 +3,5 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "exclude": ["node_modules", "android", "cpp", "dist", "ios", "web"]
+  "exclude": ["android", "cpp", "dist", "ios", "node_modules", "web"]
 }

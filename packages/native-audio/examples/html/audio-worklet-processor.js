@@ -44,7 +44,7 @@ class AudioProcessor extends AudioWorkletProcessor {
         wasmBinary: preloadedWasmBinary,
         locateFile: (path) => {
           if (path.endsWith('.wasm')) {
-            return '../web/build/' + path
+            return '../../web/build/' + path
           }
           return path
         },
@@ -52,16 +52,17 @@ class AudioProcessor extends AudioWorkletProcessor {
       // eslint-disable-next-line no-undef
       Module = await createAudioModule(moduleConfig)
       const constants = Object.entries(Module)
-        .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
         // eslint-disable-next-line no-unused-vars
         .filter(([_key, value]) => typeof value === 'number')
         .map(([key]) => key)
+        .sort()
         .join(', ')
       const functions = Object.entries(Module)
         .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
         // eslint-disable-next-line no-unused-vars
         .filter(([_key, value]) => typeof value === 'function')
         .map(([key]) => key)
+        .sort()
         .join(', ')
       this.initialized = true
       this.port.postMessage({
