@@ -17,7 +17,7 @@ dsp::Engine::~Engine() {
     if (dac.isStreamOpen()) {
       dac.abortStream();
     }
-  } catch (RtAudioError& error) {
+  } catch (RtAudioErrorType& error) {
 #if defined(DEBUG) || defined(_DEBUG)
     error.printMessage();
 #endif
@@ -27,7 +27,7 @@ dsp::Engine::~Engine() {
     if (dac.isStreamOpen()) {
       dac.closeStream();
     }
-  } catch (RtAudioError& error) {
+  } catch (RtAudioErrorType& error) {
 #if defined(DEBUG) || defined(_DEBUG)
     error.printMessage();
 #endif
@@ -48,7 +48,7 @@ std::vector<unsigned int> dsp::Engine::getInputDevices() {
       if (deviceInfo.inputChannels != 0) {
         inputDevices.push_back(i);
       }
-    } catch (RtAudioError& error) {
+    } catch (RtAudioErrorType& error) {
 #if defined(DEBUG) || defined(_DEBUG)
       error.printMessage();
 #endif
@@ -69,7 +69,7 @@ std::vector<unsigned int> dsp::Engine::getOutputDevices() {
       if (deviceInfo.outputChannels != 0) {
         outputDevices.push_back(i);
       }
-    } catch (RtAudioError& error) {
+    } catch (RtAudioErrorType& error) {
 #if defined(DEBUG) || defined(_DEBUG)
       error.printMessage();
 #endif
@@ -108,7 +108,7 @@ unsigned int dsp::Engine::getDefaultInputDevice() {
       if (deviceInfo.inputChannels != 0) {
         return i;
       }
-    } catch (RtAudioError& error) {
+    } catch (RtAudioErrorType& error) {
 #if defined(DEBUG) || defined(_DEBUG)
       error.printMessage();
 #endif
@@ -127,7 +127,7 @@ unsigned int dsp::Engine::getDefaultOutputDevice() {
       if (deviceInfo.outputChannels != 0) {
         return i;
       }
-    } catch (RtAudioError& error) {
+    } catch (RtAudioErrorType& error) {
 #if defined(DEBUG) || defined(_DEBUG)
       error.printMessage();
 #endif
@@ -175,7 +175,7 @@ void dsp::Engine::setup(unsigned int inputDevice, unsigned int outputDevice,
     if (dac.isStreamOpen()) {
       dac.abortStream();
     }
-  } catch (RtAudioError& error) {
+  } catch (RtAudioErrorType& error) {
 #if defined(DEBUG) || defined(_DEBUG)
     error.printMessage();
 #endif
@@ -185,7 +185,7 @@ void dsp::Engine::setup(unsigned int inputDevice, unsigned int outputDevice,
     if (dac.isStreamOpen()) {
       dac.closeStream();
     }
-  } catch (RtAudioError& error) {
+  } catch (RtAudioErrorType& error) {
 #if defined(DEBUG) || defined(_DEBUG)
     error.printMessage();
 #endif
@@ -197,7 +197,7 @@ void dsp::Engine::setup(unsigned int inputDevice, unsigned int outputDevice,
   inputParameters.deviceId = inputDevice;
   try {
     inputParameters.nChannels = dac.getDeviceInfo(inputDevice).inputChannels;
-  } catch (RtAudioError& error) {
+  } catch (RtAudioErrorType& error) {
     inputParameters.nChannels = 0;
   }
   inputParameters.firstChannel = 0;
@@ -205,7 +205,7 @@ void dsp::Engine::setup(unsigned int inputDevice, unsigned int outputDevice,
   outputParameters.deviceId = outputDevice;
   try {
     outputParameters.nChannels = dac.getDeviceInfo(outputDevice).outputChannels;
-  } catch (RtAudioError& error) {
+  } catch (RtAudioErrorType& error) {
     outputParameters.nChannels = 0;
   }
   outputParameters.firstChannel = 0;
@@ -223,7 +223,7 @@ void dsp::Engine::setup(unsigned int inputDevice, unsigned int outputDevice,
                    inputParameters.nChannels > 0 ? &inputParameters : NULL,
                    format, sampleRate, &numSamples, &dsp::Engine::tick, this,
                    &options);
-  } catch (RtAudioError& error) {
+  } catch (RtAudioErrorType& error) {
 #if defined(DEBUG) || defined(_DEBUG)
     error.printMessage();
 #endif
@@ -261,7 +261,7 @@ void dsp::Engine::start() {
 #ifdef DSP_USE_RTAUDIO
   try {
     dac.startStream();
-  } catch (RtAudioError& error) {
+  } catch (RtAudioErrorType& error) {
 #if defined(DEBUG) || defined(_DEBUG)
     error.printMessage();
 #endif
@@ -276,7 +276,7 @@ std::string dsp::Engine::getDeviceName(unsigned int device) {
   try {
     deviceName = dac.getDeviceInfo(device).name;
     deviceName = deviceName.substr(deviceName.find(":") + 2);
-  } catch (RtAudioError& error) {
+  } catch (RtAudioErrorType& error) {
     deviceName = "None";
   }
 #endif
@@ -359,7 +359,7 @@ unsigned int dsp::Engine::getDeviceCount() {
   unsigned int deviceCount;
   try {
     deviceCount = dac.getDeviceCount();
-  } catch (RtAudioError& error) {
+  } catch (RtAudioErrorType& error) {
     deviceCount = 0;
 #if defined(DEBUG) || defined(_DEBUG)
     error.printMessage();
@@ -377,7 +377,7 @@ std::vector<unsigned int> dsp::Engine::getInputSampleRates(
 #ifdef DSP_USE_RTAUDIO
   try {
     inputSampleRates = dac.getDeviceInfo(inputDevice).sampleRates;
-  } catch (RtAudioError& error) {
+  } catch (RtAudioErrorType& error) {
   }
 #endif
   return inputSampleRates;
@@ -388,7 +388,7 @@ std::vector<unsigned int> dsp::Engine::getOutputSampleRates(
 #ifdef DSP_USE_RTAUDIO
   try {
     outputSampleRates = dac.getDeviceInfo(outputDevice).sampleRates;
-  } catch (RtAudioError& error) {
+  } catch (RtAudioErrorType& error) {
   }
 #endif
   return outputSampleRates;
