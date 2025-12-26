@@ -1,0 +1,95 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+.pnp
+.pnp.js
+
+# Output
+out/
+dist/
+web/build/
+build/
+*.tgz
+*.wasm
+*.js.map
+*.d.ts.map
+
+# C++ build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+
+# iOS
+ios/Pods/
+ios/*.xcworkspace
+ios/*.xcodeproj
+*.xcuserstate
+
+# Android
+android/build/
+android/.gradle/
+*.apk
+*.aab
+
+# Code coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Caches
+.eslintcache
+.cache/
+*.tsbuildinfo
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# React Native
+.expo/
+.expo-shared/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# Metro bundler
+.metro-health-check*
+
+# Temporary files
+*.tmp
+*.temp
