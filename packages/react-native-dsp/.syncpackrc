@@ -1,0 +1,37 @@
+{
+  "semverGroups": [
+    {
+      "dependencyTypes": [
+        "local",
+        "overrides",
+        "pnpmOverrides"
+      ],
+      "range": ""
+    },
+    {
+      "dependencyTypes": [
+        "dev",
+        "prod",
+        "resolutions"
+      ],
+      "range": "^"
+    },
+    {
+      "dependencyTypes": [
+        "peer"
+      ],
+      "range": ">="
+    }
+  ],
+  "versionGroups": [
+    {
+      "dependencies": [
+        "react-native"
+      ],
+      "dependencyTypes": [
+        "peer"
+      ],
+      "pinVersion": ">=0.82.0"
+    }
+  ]
+}

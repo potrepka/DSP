@@ -1,0 +1,68 @@
+{
+  "name": "@potrepka/react-native-dsp",
+  "description": "High-performance audio DSP library for TypeScript with Web and React Native support",
+  "version": "0.1.0",
+  "author": "Nathaniel Potrepka",
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@types/bun": "^1.3.4",
+    "eslint": "^9.39.2",
+    "eslint-plugin-perfectionist": "^5.0.0",
+    "eslint-plugin-unused-imports": "^4.3.0",
+    "prettier": "^3.7.4",
+    "react-native": "^0.83.1",
+    "syncpack": "^14.0.0-alpha.32",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.50.0"
+  },
+  "files": [
+    "android/",
+    "dist/",
+    "ios/",
+    "shared/",
+    "web/"
+  ],
+  "keywords": [
+    "audio",
+    "audio-processing",
+    "dsp",
+    "effects",
+    "jsi",
+    "react-native",
+    "synthesizer",
+    "wasm",
+    "web-audio"
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "peerDependencies": {
+    "react-native": ">=0.82.0"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/potrepka/DSP.git",
+    "directory": "packages/react-native-dsp"
+  },
+  "scripts": {
+    "build": "npm run build:web && npm run build:ts",
+    "build:ts": "tsc",
+    "build:web": "bash scripts/build-web.sh",
+    "clean": "rm -rf dist/ shared/lib/ shared/src/ web/build/",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:format": "prettier --cache --check \"**/*.{js,ts,md,json,html,css}\"",
+    "lint:format:fix": "prettier --cache --write \"**/*.{js,ts,md,json,html,css}\"",
+    "lint:packages": "syncpack lint",
+    "lint:packages:fix": "syncpack fix",
+    "lint:packages:format": "syncpack format",
+    "lint:packages:update": "syncpack update",
+    "lint:packages:update:minor": "syncpack update --target minor",
+    "lint:packages:update:patch": "syncpack update --target patch"
+  },
+  "types": "dist/index.d.ts"
+}
