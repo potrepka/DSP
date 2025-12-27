@@ -226,7 +226,7 @@ ${workletProcessorCode}
         } catch (error) {
           updateStatus(`Failed to initialize: ${error.message}`, 'error')
           log(`❌ Error: ${error.message}`)
-          console.error('Initialization error:', error)
+          console.error(error)
         }
       }
 
@@ -273,7 +273,7 @@ ${workletProcessorCode}
             btnPlay.disabled = false
             break
           case 'error':
-            updateStatus(error, 'error')
+            log(`\n❌ Error: ${error.message}`)
             console.error(error)
             isPlaying = false
             btnTest.disabled = true

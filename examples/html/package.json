@@ -9,8 +9,8 @@
   },
   "private": true,
   "scripts": {
-    "dev": "NODE_ENV=development bun --hot ./index.html",
-    "start": "NODE_ENV=production bun ./index.html"
+    "dev": "NODE_ENV=development bun --hot index.js",
+    "start": "NODE_ENV=production bun index.js"
   },
   "dependencies": {
     "@potrepka/react-native-dsp": "workspace:*"

@@ -48,7 +48,7 @@ export const App = () => {
         type: 'error',
       })
       addLog(`❌ Error: ${error.message}`)
-      console.error('Initialization error:', error)
+      console.error(error)
     }
   }
   const addLog = (message: string) => {
@@ -92,7 +92,7 @@ export const App = () => {
       }
     } catch (error: any) {
       addLog(`❌ Error: ${error.message}`)
-      console.error('Test error:', error)
+      console.error(error)
     }
   }
   const playTest = async () => {
@@ -130,7 +130,7 @@ export const App = () => {
       setButtonsEnabled({ test: true, play: true })
     } catch (error: any) {
       addLog(`❌ Error: ${error.message}`)
-      console.error('Play error:', error)
+      console.error(error)
       setIsPlaying(false)
       setButtonsEnabled({ test: true, play: true })
     }
