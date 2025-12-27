@@ -1,49 +1,23 @@
-import type { Space, Type } from './enums'
+// ========== Primitive Types ==========
 
-// ========== Primitive Types (matching C++ typedefs) ==========
-
-/** Audio sample value (C++ double) */
+/** C++ Sample */
 export type Sample = number
 
-/** Array of samples (C++ std::vector<Sample>) */
-export type Array = Float64Array | number[]
+/** C++ std::vector<Sample> */
+export type Array = Float64Array
 
-// ========== Configuration Types ==========
-
-/**
- * Buffer configuration options
- */
-export type BufferConfig = {
-  type?: Type
-  space?: Space
-  range?: Sample
-  defaultValue?: Sample
-  numChannels?: number
-  numSamples?: number
-}
-
-/**
- * Node configuration options
- */
-export type NodeConfig = {
-  numChannels?: number
-  numInputChannels?: number
-  numOutputChannels?: number
-  numSamples?: number
-  sampleRate?: number
-}
-
-/**
- * NodeProcessor configuration options
- */
-export type NodeProcessorConfig = {
-  numInputChannels?: number
-  numOutputChannels?: number
-  numSamples?: number
-  sampleRate?: number
-}
+/** C++ std::vector<uint8_t> */
+export type ByteArray = Uint8Array
 
 // ========== FFT Types ==========
+
+/**
+ * FFT complex data
+ */
+export type ComplexData = {
+  real: Array
+  imaginary: Array
+}
 
 /**
  * FFT magnitude and phase data
@@ -51,47 +25,6 @@ export type NodeProcessorConfig = {
 export type FFTData = {
   magnitude: Array
   phase: Array
-}
-
-/**
- * Complex number representation
- */
-export type ComplexData = {
-  real: Array
-  imaginary: Array
-}
-
-// ========== Convolver Types ==========
-
-/**
- * Impulse response mapping
- */
-export type ImpulseResponseMap = Map<string, Array>
-
-/**
- * Convolver configuration
- */
-export type ConvolverConfig = {
-  headSize: number
-  tailSize: number
-  impulseResponses?: ImpulseResponseMap
-}
-
-// ========== MIDI Types ==========
-
-/**
- * MIDI message data structure
- */
-export type MidiMessageData = {
-  bytes: Uint8Array
-  samplePosition?: number
-}
-
-/**
- * MIDI buffer data
- */
-export type MidiBufferData = {
-  messages: MidiMessageData[]
 }
 
 // ========== Platform Types ==========

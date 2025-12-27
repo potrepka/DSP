@@ -8,11 +8,9 @@ import globals from 'globals'
 const importRules = {
   'unused-imports/no-unused-imports': 'error',
   'unused-imports/no-unused-vars': [
-    'warn',
+    'error',
     {
-      args: 'after-used',
       argsIgnorePattern: '^_',
-      vars: 'all',
       varsIgnorePattern: '^_',
     },
   ],
@@ -52,6 +50,13 @@ export default [
       'unused-imports': unusedImports,
     },
     rules: {
+      'no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
       ...importRules,
     },
   },
@@ -77,6 +82,13 @@ export default [
     rules: {
       ...tsPlugin.configs.recommended.rules,
       '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
       ...importRules,
     },
   },
