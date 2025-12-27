@@ -10,7 +10,6 @@
     "moduleDetection": "force",
     "moduleResolution": "bundler",
     "outDir": "dist",
-    "rootDir": "src",
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext"

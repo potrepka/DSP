@@ -10,20 +10,21 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=development bun --hot src/index.ts",
-    "build": "tsc",
-    "start": "NODE_ENV=production bun src/index.ts"
+    "build": "tsc && vite build",
+    "dev": "vite",
+    "start": "vite preview"
   },
   "dependencies": {
     "@potrepka/react-native-dsp": "workspace:*",
-    "react": "^19",
-    "react-dom": "^19"
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "typescript": "^5.9.3"
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0"
   },
   "workspaces": [
     "../../packages/*"

@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
-import { createRoot } from 'react-dom/client'
 import type { AudioGraphNode } from '@potrepka/react-native-dsp/dist/classes/AudioGraphNode'
 import type { TestResult } from '@potrepka/react-native-dsp/dist/classes/AudioGraphNode'
 
-const App = () => {
+export const App = () => {
   const [status, setStatus] = useState({
     message: 'Initializing...',
     type: 'info',
@@ -213,6 +212,3 @@ const App = () => {
     </div>
   )
 }
-
-const root = createRoot(document.getElementById('root')!)
-root.render(<App />)
