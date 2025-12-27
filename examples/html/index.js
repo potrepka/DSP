@@ -27,12 +27,61 @@ const bgBlue = '\x1b[44m'
 const black = '\x1b[30m'
 
 const prefix = isDev ? `${bgBlue}${black} DEV ${reset} ` : ''
+const serverUrl = `http://localhost:${server.port}/`
+
+const printHeader = (includeReadyTime = false) => {
+  if (includeReadyTime) {
+    console.log(
+      `${prefix}${lightBlue}${bold}Bun v${Bun.version}${reset} ${dim}ready in${reset} ${bold}${readyTime}${reset} ms`,
+    )
+  } else {
+    console.log(`${prefix}${lightBlue}${bold}Bun v${Bun.version}${reset}`)
+  }
+  console.log(`\n${lightBlue}➜${reset} ${cyan}${serverUrl}${reset}`)
+}
+
+const printStatus = (includeReadyTime = false) => {
+  printHeader(includeReadyTime)
+}
+
+const printShortcuts = (includeReadyTime = false) => {
+  printHeader(includeReadyTime)
+  console.log(`\n  Shortcuts${dim}:${reset}`)
+  console.log()
+  console.log(`  ${dim}→${reset}   ${cyan}c + Enter${reset}   clear screen`)
+  console.log(`  ${dim}→${reset}   ${cyan}o + Enter${reset}   open in browser`)
+  console.log(`  ${dim}→${reset}   ${cyan}q + Enter${reset}   quit (or Ctrl+C)`)
+  console.log()
+}
+
+printStatus(true)
 console.log(
-  `${prefix}${lightBlue}${bold}Bun v${Bun.version}${reset} ${dim}ready in${reset} ${bold}${readyTime}${reset} ms\n`,
+  `\n${dim}Press ${cyan}h + Enter${reset}${dim} to show shortcuts${reset}`,
 )
-console.log(
-  `${lightBlue}➜${reset} ${cyan}http://localhost:${server.port}/${reset}\n`,
-)
-console.log(
-  `${dim}Press ${cyan}h + Enter${reset}${dim} to show shortcuts${reset}`,
-)
+
+process.stdin.resume()
+process.stdin.setEncoding('utf8')
+
+process.stdin.on('data', (key) => {
+  if (key === '\u0003' || key === 'q\n' || key === 'q\r') {
+    process.exit()
+  }
+  if (key === 'h\n' || key === 'h\r') {
+    console.clear()
+    printShortcuts()
+  }
+  if (key === 'c\n' || key === 'c\r') {
+    console.clear()
+    printStatus()
+  }
+  if (key === 'o\n' || key === 'o\r') {
+    const { exec } = require('child_process')
+    const command =
+      process.platform === 'darwin'
+        ? 'open'
+        : process.platform === 'win32'
+        ? 'start'
+        : 'xdg-open'
+    exec(`${command} ${serverUrl}`)
+  }
+})
