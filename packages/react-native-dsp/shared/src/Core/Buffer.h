@@ -36,7 +36,7 @@ public:
   void setChannelValues(Array value);
 
   Sample getChannelValue(size_t channel) const;
-  void setSingleChannelValue(size_t channel, Sample value);
+  void setChannelValue(size_t channel, Sample value);
   void setAllChannelValues(Sample value);
 
   Array getPeak();

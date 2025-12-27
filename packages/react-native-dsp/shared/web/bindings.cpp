@@ -287,7 +287,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getChannelValues", &Buffer::getChannelValues)
       .function("setChannelValues", &Buffer::setChannelValues)
       .function("getChannelValue", &Buffer::getChannelValue)
-      .function("setSingleChannelValue", &Buffer::setSingleChannelValue)
+      .function("setChannelValue", &Buffer::setChannelValue)
       .function("setAllChannelValues", &Buffer::setAllChannelValues)
       .function("getPeak", &Buffer::getPeak)
       .function("getRMS", &Buffer::getRMS)

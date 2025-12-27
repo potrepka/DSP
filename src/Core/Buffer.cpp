@@ -87,7 +87,7 @@ dsp::Sample dsp::Buffer::getChannelValue(size_t channel) const {
   return channelValues[channel];
 }
 
-void dsp::Buffer::setSingleChannelValue(size_t channel, Sample value) {
+void dsp::Buffer::setChannelValue(size_t channel, Sample value) {
   lock();
   DSP_ASSERT(channel < getNumChannels());
   channelValues[channel] = value;

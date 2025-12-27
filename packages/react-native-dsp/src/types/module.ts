@@ -1,6 +1,6 @@
 import type { Space, Type } from '../enums'
 
-export type Module = {
+export type Module = NodeConstructorMap & {
   NodeProcessor: new (
     numInputChannels: number,
     numOutputChannels: number,
@@ -18,6 +18,44 @@ export type Module = {
   ) => Buffer
   MidiBuffer: new () => MidiBuffer
 }
+
+export type NodeConstructorMap = {
+  Phasor: new () => Phasor
+}
+
+export type NodeType = keyof NodeConstructorMap
+
+export type NodePropsMap = {
+  Phasor: null
+}
+
+export type NodeProps<T extends NodeType> = NodePropsMap[T]
+
+export type Message<T extends NodeType> =
+  | { type: 'createNode'; id: string; nodeType: T; props?: NodeProps<T> }
+  | { type: 'destroyNode'; id: string }
+  | { type: 'setInputValue'; nodeId: string; inputName: string; value: number }
+  | {
+      type: 'setInputChannelValue'
+      nodeId: string
+      inputName: string
+      channel: number
+      value: number
+    }
+  | {
+      type: 'connect'
+      sourceNodeId: string
+      sourceOutputName: string
+      destinationNodeId: string
+      destinationInputName: string
+    }
+  | {
+      type: 'disconnect'
+      sourceNodeId: string
+      sourceOutputName: string
+      destinationNodeId: string
+      destinationInputName: string
+    }
 
 export type NodeProcessor = {
   isActive: () => boolean
@@ -81,8 +119,10 @@ export type Buffer = {
   getNumSamples: () => number
   setNumSamples: (numSamples: number) => void
   setSize: (numChannels: number, numSamples: number) => void
+  getChannelValues: () => Float64Array
+  setChannelValues: (values: Float64Array) => void
   getChannelValue: (channel: number) => number
-  setSingleChannelValue: (channel: number, value: number) => void
+  setChannelValue: (channel: number, value: number) => void
   setAllChannelValues: (value: number) => void
   getPeak: () => number
   getRMS: () => number
@@ -91,13 +131,15 @@ export type Buffer = {
   delete: () => void
 }
 
-export type Input = {
+export type Input = Buffer & {
+  getConnections: () => number
   connect: (output: Output) => void
   disconnect: (output: Output) => void
   disconnectAll: () => void
 }
 
-export type Output = {
+export type Output = Buffer & {
+  getConnections: () => number
   connect: (input: Input) => void
   disconnect: (input: Input) => void
   disconnectAll: () => void
@@ -115,9 +157,17 @@ export type Node = {
   addChild: (child: Node) => void
   removeChild: (child: Node) => void
   process: () => void
+  delete: () => void
 }
 
 export type MidiBuffer = {
   clear: () => void
   delete: () => void
+}
+
+export type Phasor = Node & {
+  getFrequency: () => Input
+  getMode: () => Input
+  getReset: () => Input
+  getOutput: () => Output
 }

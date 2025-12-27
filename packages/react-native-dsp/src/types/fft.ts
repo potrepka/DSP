@@ -1,11 +1,9 @@
-import { Array } from './data'
-
 export type ComplexData = {
-  real: Array
-  imaginary: Array
+  real: Float64Array
+  imaginary: Float64Array
 }
 
 export type FFTData = {
-  magnitude: Array
-  phase: Array
+  magnitude: Float64Array
+  phase: Float64Array
 }

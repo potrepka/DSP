@@ -29,7 +29,6 @@ void dsp::Differentiator::processNoLock() {
     Sample* resetChannel = getReset()->getWrapper().getChannelPointer(channel);
     Sample* outputChannel =
         getOutput()->getWrapper().getChannelPointer(channel);
-    Sample channelValue = getOutput()->getChannelValue(channel);
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
       if (resetChannel[sample]) {
         state[channel] = 0.0;
