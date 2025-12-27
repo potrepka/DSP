@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect } from 'react'
-import type { AudioGraphNode } from '@potrepka/react-native-dsp/dist/classes/AudioGraphNode'
-import type { TestResult } from '@potrepka/react-native-dsp/dist/classes/AudioGraphNode'
 
 export const App = () => {
   const [status, setStatus] = useState({
@@ -14,7 +12,7 @@ export const App = () => {
   })
   const [isPlaying, setIsPlaying] = useState(false)
   const audioContextRef = useRef<AudioContext | null>(null)
-  const audioNodeRef = useRef<AudioGraphNode | null>(null)
+  // const audioNodeRef = useRef<AudioGraphNode | null>(null)
   useEffect(() => {
     initialize()
   }, [])
@@ -23,25 +21,25 @@ export const App = () => {
       setStatus({ message: 'Initializing AudioContext...', type: 'info' })
       audioContextRef.current = new AudioContext({ sampleRate: 48000 })
       setStatus({ message: 'Loading WASM module...', type: 'info' })
-      const { AudioGraphNode: AudioGraphNodeClass } = await import(
-        '@potrepka/react-native-dsp/dist/classes/AudioGraphNode'
-      )
-      audioNodeRef.current = await AudioGraphNodeClass.create(
-        audioContextRef.current,
-        {
-          wasmModuleUrl: `${window.location.origin}/node_modules/@potrepka/react-native-dsp/web/build/react-native-dsp.js`,
-          processorUrl: `${window.location.origin}/node_modules/@potrepka/react-native-dsp/dist/classes/AudioGraphProcessor.js`,
-        },
-      )
-      const info = await audioNodeRef.current.getModuleInfo()
-      setStatus({
-        message: 'WASM module loaded successfully!',
-        type: 'success',
-      })
+      // const { AudioGraphNode: AudioGraphNodeClass } = await import(
+      //   '@potrepka/react-native-dsp/dist/classes/AudioGraphNode'
+      // )
+      // audioNodeRef.current = await AudioGraphNodeClass.create(
+      //   audioContextRef.current,
+      //   {
+      //     wasmModuleUrl: `${window.location.origin}/node_modules/@potrepka/react-native-dsp/web/build/react-native-dsp.js`,
+      //     processorUrl: `${window.location.origin}/node_modules/@potrepka/react-native-dsp/dist/classes/AudioGraphProcessor.js`,
+      //   },
+      // )
+      // const info = await audioNodeRef.current.getModuleInfo()
+      // setStatus({
+      //   message: 'WASM module loaded successfully!',
+      //   type: 'success',
+      // })
       setButtonsEnabled({ test: true, play: true })
       addLog('WASM module initialized')
-      addLog(`\nAvailable constants: ${info.constants.join(', ')}`)
-      addLog(`\nAvailable functions: ${info.functions.join(', ')}`)
+      // addLog(`\nAvailable constants: ${info.constants.join(', ')}`)
+      // addLog(`\nAvailable functions: ${info.functions.join(', ')}`)
     } catch (error: any) {
       setStatus({
         message: `Failed to initialize: ${error.message}`,
@@ -55,9 +53,9 @@ export const App = () => {
     setOutput((prev) => [...prev, message])
   }
   const runTest = async () => {
-    if (!audioNodeRef.current) {
-      return
-    }
+    // if (!audioNodeRef.current) {
+    //   return
+    // }
     setOutput([])
     addLog('Running test...')
     const sampleRate = 48000
@@ -67,64 +65,65 @@ export const App = () => {
       `\nSetting up Engine...\nSample Rate: ${sampleRate} Hz\nChannels: ${numChannels}\nBuffer Size: ${bufferSize} samples`,
     )
     try {
-      const result: TestResult = await audioNodeRef.current.runTest({
-        sampleRate,
-        numChannels,
-        bufferSize,
-      })
+      // const result: TestResult = await audioNodeRef.current.runTest({
+      //   sampleRate,
+      //   numChannels,
+      //   bufferSize,
+      // })
       addLog('\nOutput analysis:')
-      addLog(`Peak amplitude (L): ${result.leftPeak.toFixed(4)}`)
-      addLog(`Peak amplitude (R): ${result.rightPeak.toFixed(4)}`)
-      addLog(
-        `First ${result.arrayLength} samples (L): ${result.arrayLeft.join(
-          ', ',
-        )}`,
-      )
-      addLog(
-        `First ${result.arrayLength} samples (R): ${result.arrayRight.join(
-          ', ',
-        )}`,
-      )
-      if (result.leftPeak > 0 || result.rightPeak > 0) {
-        addLog('\n✅ Test completed successfully (signal detected)')
-      } else {
-        addLog('\n⚠️ Test completed (silence detected)')
-      }
+      // addLog(`Peak amplitude (L): ${result.leftPeak.toFixed(4)}`)
+      // addLog(`Peak amplitude (R): ${result.rightPeak.toFixed(4)}`)
+      // addLog(
+      //   `First ${result.arrayLength} samples (L): ${result.arrayLeft.join(
+      //     ', ',
+      //   )}`,
+      // )
+      // addLog(
+      //   `First ${result.arrayLength} samples (R): ${result.arrayRight.join(
+      //     ', ',
+      //   )}`,
+      // )
+      // if (result.leftPeak > 0 || result.rightPeak > 0) {
+      //   addLog('\n✅ Test completed successfully (signal detected)')
+      // } else {
+      //   addLog('\n⚠️ Test completed (silence detected)')
+      // }
     } catch (error: any) {
       addLog(`❌ Error: ${error.message}`)
       console.error(error)
     }
   }
   const playTest = async () => {
-    if (!audioNodeRef.current || !audioContextRef.current || isPlaying) {
-      return
-    }
+    // if (!audioNodeRef.current || !audioContextRef.current || isPlaying) {
+    //   return
+    // }
     try {
-      if (audioContextRef.current.state === 'suspended') {
-        await audioContextRef.current.resume()
-      }
+      // if (audioContextRef.current.state === 'suspended') {
+      //   await audioContextRef.current.resume()
+      // }
       setIsPlaying(true)
       setButtonsEnabled({ test: false, play: false })
       setOutput([])
-      const sampleRate = audioContextRef.current.sampleRate
+      // const sampleRate = audioContextRef.current.sampleRate
+      const sampleRate = 48000
       const numChannels = 2
       const bufferSize = 128
       addLog(`Testing playback at ${sampleRate} Hz...`)
       addLog(
         `\nSetting up Engine...\nSample Rate: ${sampleRate} Hz\nChannels: ${numChannels}\nBuffer Size: ${bufferSize} samples`,
       )
-      await audioNodeRef.current.setupEngine({
-        sampleRate,
-        numChannels,
-        bufferSize,
-      })
+      // await audioNodeRef.current.setupEngine({
+      //   sampleRate,
+      //   numChannels,
+      //   bufferSize,
+      // })
       addLog('\nEngine setup complete')
       addLog('\nPlaying...')
-      audioNodeRef.current.connect(audioContextRef.current.destination)
+      // audioNodeRef.current.connect(audioContextRef.current.destination)
       await new Promise((resolve) => setTimeout(resolve, 2000))
       addLog('\nStopping...')
-      audioNodeRef.current.disconnect()
-      await audioNodeRef.current.cleanup()
+      // audioNodeRef.current.disconnect()
+      // await audioNodeRef.current.cleanup()
       addLog('\n✅ Playback completed')
       setIsPlaying(false)
       setButtonsEnabled({ test: true, play: true })
