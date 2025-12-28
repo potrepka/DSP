@@ -83,7 +83,7 @@ uint8_t dsp::MidiMessage::getVelocity() const {
   return bytes[2];
 }
 
-uint8_t dsp::MidiMessage::getAfterTouchValue() const {
+uint8_t dsp::MidiMessage::getAftertouchValue() const {
   DSP_ASSERT(isAftertouch());
   return bytes[2];
 }

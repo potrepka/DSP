@@ -65,7 +65,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       const numChannels = Math.max(numInputChannels, numOutputChannels)
       this.audioBuffer = new module.Data(numChannels, numSamples)
       this.midiBuffer = new module.MidiBuffer()
-      this.sendMessage({ messageType: 'setState', state: 'running' })
+      this.sendMessage({ message: 'setState', state: 'running' })
     })
     this.port.onmessage = <T extends NodeType>(
       event: MessageEvent<IncomingMessage<T>>,
@@ -76,7 +76,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
   }
 
   private handleMessage<T extends NodeType>(msg: IncomingMessage<T>) {
-    switch (msg.messageType) {
+    switch (msg.message) {
       case 'createBuffer':
         this.createBuffer(
           msg.id,
@@ -208,8 +208,8 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     }
     if (nodeId === ReservedKeyword.NodeProcessor) {
       switch (inputName) {
-        case NodeProcessorInputName.AudioInput:
-          return this.nodeProcessor.getAudioInput()
+        case NodeProcessorInputName.AudioOutput:
+          return this.nodeProcessor.getAudioOutput()
         default:
           throw new Error(`Input not found: ${inputName}`)
       }
@@ -233,8 +233,8 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     }
     if (nodeId === ReservedKeyword.NodeProcessor) {
       switch (outputName) {
-        case NodeProcessorOutputName.AudioOutput:
-          return this.nodeProcessor.getAudioOutput()
+        case NodeProcessorOutputName.AudioInput:
+          return this.nodeProcessor.getAudioInput()
         case NodeProcessorOutputName.AudioInputClipping:
           return this.nodeProcessor.getAudioInputClipping()
         case NodeProcessorOutputName.AudioOutputClipping:
@@ -343,7 +343,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     this.midiBuffer.delete()
     this.audioBuffer.delete()
     this.nodeProcessor.delete()
-    this.sendMessage({ messageType: 'setState', state: 'closed' })
+    this.sendMessage({ message: 'setState', state: 'closed' })
   }
 }
 

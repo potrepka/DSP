@@ -1,3 +1,4 @@
+import { Space, Type } from '../enums'
 import { ReservedKeyword } from '../enums/module'
 import { Module, Node, NodeProps, NodeType } from '../types'
 
@@ -15,8 +16,13 @@ export const constructNode = <T extends NodeType>(
       node = new module.Phasor()
       break
     case 'Multiplication': {
-      const p = props as NodeProps<'Multiplication'>
-      node = new module.Multiplication(p.type, p.space)
+      const { type, space } = props as NodeProps<'Multiplication'>
+      node = new module.Multiplication(type ?? Type.RATIO, space ?? Space.TIME)
+      break
+    }
+    case 'Negative': {
+      const { type, space } = props as NodeProps<'Negative'>
+      node = new module.Negative(type ?? Type.RATIO, space ?? Space.TIME)
       break
     }
     default:

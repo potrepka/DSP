@@ -31,7 +31,7 @@ public:
   uint8_t getChannel() const;
   uint8_t getNoteNumber() const;
   uint8_t getVelocity() const;
-  uint8_t getAfterTouchValue() const;
+  uint8_t getAftertouchValue() const;
   uint8_t getControllerNumber() const;
   uint8_t getControllerValue() const;
   uint8_t getProgramChangeNumber() const;

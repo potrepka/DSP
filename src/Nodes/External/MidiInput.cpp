@@ -75,7 +75,7 @@ std::function<void()> dsp::MidiInput::processNotePressure(
         },
         [](MidiMessage message) {
           return byteToUnipolar(message.isAftertouch()
-                                    ? message.getAfterTouchValue()
+                                    ? message.getAftertouchValue()
                                 : message.isNoteOn() ? message.getVelocity()
                                                      : 0);
         });

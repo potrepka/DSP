@@ -1,16 +1,17 @@
-export const initializeWebAudio = async (
-  audioContext: AudioContext,
-): Promise<AudioWorkletNode> => {
+export const initializeWebAudio = async (): Promise<{
+  addModule: (context: BaseAudioContext) => Promise<void>
+  createAudioWorkletNode: (context: BaseAudioContext) => AudioWorkletNode
+}> => {
   const wasmJsUrl = new URL(
-    '../../web/build/react-native-dsp.js',
+    'node_modules/@potrepka/react-native-dsp/web/build/react-native-dsp.js',
     import.meta.url,
   ).href
   const wasmWasmUrl = new URL(
-    '../../web/build/react-native-dsp.wasm',
+    'node_modules/@potrepka/react-native-dsp/web/build/react-native-dsp.wasm',
     import.meta.url,
   ).href
   const processorUrl = new URL(
-    '../../dist/classes/web/WebAudioProcessor.js',
+    'node_modules/@potrepka/react-native-dsp/dist/classes/web/WebAudioProcessor.js',
     import.meta.url,
   ).href
   const [jsText, wasmBinary, processorText] = await Promise.all([
@@ -26,13 +27,20 @@ globalThis.createAudioModule = createAudioModule
 globalThis.preloadedWasmBinary = new Uint8Array([${array}]).buffer
 ${processorText}
 `
-  const blobUrl = URL.createObjectURL(
-    new Blob([workletCode], { type: 'application/javascript' }),
-  )
-  try {
-    await audioContext.audioWorklet.addModule(blobUrl)
-  } finally {
-    URL.revokeObjectURL(blobUrl)
+  const addModule = async (context: BaseAudioContext) => {
+    const blobUrl = URL.createObjectURL(
+      new Blob([workletCode], { type: 'application/javascript' }),
+    )
+    try {
+      await context.audioWorklet.addModule(blobUrl)
+    } finally {
+      URL.revokeObjectURL(blobUrl)
+    }
   }
-  return new AudioWorkletNode(audioContext, 'dsp')
+  const createAudioWorkletNode = (context: BaseAudioContext) =>
+    new AudioWorkletNode(context, 'dsp')
+  return {
+    addModule,
+    createAudioWorkletNode,
+  }
 }

@@ -304,7 +304,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getConnections", &Input::getConnections)
       .function("connect", &Input::connect)
       .function("disconnect", &Input::disconnect)
-      .function("disconnectAll", &Input::disconnectAll);
+      .function("disconnectAll", &Input::disconnectAll)
+      .function("prepareNoLock", &Input::prepareNoLock)
+      .function("processNoLock", &Input::processNoLock);
 
   // Output class (extends Buffer)
   class_<Output, base<Buffer>>("Output")
@@ -314,7 +316,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getConnections", &Output::getConnections)
       .function("connect", &Output::connect)
       .function("disconnect", &Output::disconnect)
-      .function("disconnectAll", &Output::disconnectAll);
+      .function("disconnectAll", &Output::disconnectAll)
+      .function("prepareNoLock", &Output::prepareNoLock)
+      .function("processNoLock", &Output::processNoLock);
 
   // Engine class
   class_<Engine, base<Lockable>>("Engine")
@@ -479,7 +483,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getChannel", &MidiMessage::getChannel)
       .function("getNoteNumber", &MidiMessage::getNoteNumber)
       .function("getVelocity", &MidiMessage::getVelocity)
-      .function("getAfterTouchValue", &MidiMessage::getAfterTouchValue)
+      .function("getAftertouchValue", &MidiMessage::getAftertouchValue)
       .function("getControllerNumber", &MidiMessage::getControllerNumber)
       .function("getControllerValue", &MidiMessage::getControllerValue)
       .function("getProgramChangeNumber", &MidiMessage::getProgramChangeNumber)

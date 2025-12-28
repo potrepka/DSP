@@ -7,6 +7,9 @@ export default defineConfig({
     port: 3000,
   },
   server: {
+    fs: {
+      allow: ['../..'],
+    },
     port: 3000,
   },
 })

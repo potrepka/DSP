@@ -1,3 +1,4 @@
+import { initializeWebAudio } from '@potrepka/react-native-dsp'
 import { useState, useRef, useEffect } from 'react'
 
 export const App = () => {
@@ -11,35 +12,65 @@ export const App = () => {
     play: false,
   })
   const [isPlaying, setIsPlaying] = useState(false)
+  const numChannels = 2
+  const bufferSize = 128
+  const sampleRate = 48000
+  const offlineContextRef = useRef<OfflineAudioContext | null>(null)
+  const offlineWorkletRef = useRef<AudioWorkletNode | null>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
-  // const audioNodeRef = useRef<AudioGraphNode | null>(null)
+  const audioWorkletNodeRef = useRef<AudioWorkletNode | null>(null)
+  const addLog = (message: string) => {
+    setOutput((prev) => [...prev, message])
+  }
   useEffect(() => {
     initialize()
   }, [])
   const initialize = async () => {
+    setOutput([])
+    setStatus({ message: 'Loading WASM module...', type: 'info' })
     try {
-      setStatus({ message: 'Initializing AudioContext...', type: 'info' })
+      const { addModule, createAudioWorkletNode } = await initializeWebAudio()
+      addLog('Creating OfflineAudioContext...')
+      offlineContextRef.current = new OfflineAudioContext(
+        numChannels,
+        bufferSize,
+        sampleRate,
+      )
+      addLog('Adding module to OfflineAudioContext...')
+      await addModule(offlineContextRef.current)
+      addLog('Creating AudioWorkletNode in OfflineAudioContext...')
+      offlineWorkletRef.current = createAudioWorkletNode(
+        offlineContextRef.current,
+      )
+      offlineWorkletRef.current.connect(offlineContextRef.current.destination)
+      addLog('Creating AudioContext...')
+      setStatus({ message: 'Creating AudioContext...', type: 'info' })
       audioContextRef.current = new AudioContext({ sampleRate: 48000 })
-      setStatus({ message: 'Loading WASM module...', type: 'info' })
-      // const { AudioGraphNode: AudioGraphNodeClass } = await import(
-      //   '@potrepka/react-native-dsp/dist/classes/AudioGraphNode'
-      // )
-      // audioNodeRef.current = await AudioGraphNodeClass.create(
-      //   audioContextRef.current,
-      //   {
-      //     wasmModuleUrl: `${window.location.origin}/node_modules/@potrepka/react-native-dsp/web/build/react-native-dsp.js`,
-      //     processorUrl: `${window.location.origin}/node_modules/@potrepka/react-native-dsp/dist/classes/AudioGraphProcessor.js`,
-      //   },
-      // )
-      // const info = await audioNodeRef.current.getModuleInfo()
-      // setStatus({
-      //   message: 'WASM module loaded successfully!',
-      //   type: 'success',
-      // })
+      setStatus({
+        message: 'Adding module to AudioContext...',
+        type: 'info',
+      })
+      await addModule(audioContextRef.current)
+      addLog('Creating AudioWorkletNode in AudioContext...')
+      audioWorkletNodeRef.current = createAudioWorkletNode(
+        audioContextRef.current,
+      )
+      audioWorkletNodeRef.current.connect(audioContextRef.current.destination)
+      setStatus({
+        message: 'WASM module loaded successfully!',
+        type: 'success',
+      })
       setButtonsEnabled({ test: true, play: true })
-      addLog('WASM module initialized')
-      // addLog(`\nAvailable constants: ${info.constants.join(', ')}`)
-      // addLog(`\nAvailable functions: ${info.functions.join(', ')}`)
+      addLog('Setup completed')
+      addLog('\nOffline Audio Context Info:')
+      addLog(`Channels: ${offlineContextRef.current.destination.channelCount}`)
+      addLog(`Length: ${offlineContextRef.current.length} samples`)
+      addLog(`Sample Rate: ${offlineContextRef.current.sampleRate} Hz`)
+      addLog('\nAudio Context Info:')
+      addLog(`Channels: ${audioContextRef.current.destination.channelCount}`)
+      addLog(`Sample Rate: ${audioContextRef.current.sampleRate} Hz`)
+      addLog(`Base Latency: ${audioContextRef.current.baseLatency} seconds`)
+      addLog(`Output Latency: ${audioContextRef.current.outputLatency} seconds`)
     } catch (error: any) {
       setStatus({
         message: `Failed to initialize: ${error.message}`,
@@ -49,81 +80,113 @@ export const App = () => {
       console.error(error)
     }
   }
-  const addLog = (message: string) => {
-    setOutput((prev) => [...prev, message])
+  const setupTest = (audioWorkletNode: AudioWorkletNode) => {
+    audioWorkletNode.port.postMessage({
+      message: 'createNode',
+      id: 'Phasor',
+      nodeType: 'Phasor',
+    })
+    audioWorkletNode.port.postMessage({
+      message: 'createNode',
+      id: 'Multiplication',
+      nodeType: 'Multiplication',
+    })
+    setTimeout(() => {
+      audioWorkletNode.port.postMessage({
+        message: 'setInputValue',
+        nodeId: 'Phasor',
+        inputName: 'Frequency',
+        value: 55,
+      })
+      audioWorkletNode.port.postMessage({
+        message: 'setInputValue',
+        nodeId: 'Multiplication',
+        inputName: 'Factor',
+        value: 0.5,
+      })
+      audioWorkletNode.port.postMessage({
+        message: 'connect',
+        outputNodeId: 'Phasor',
+        outputName: 'Output',
+        inputNodeId: 'Multiplication',
+        inputName: 'Input',
+      })
+      audioWorkletNode.port.postMessage({
+        message: 'connect',
+        outputNodeId: 'Multiplication',
+        outputName: 'Output',
+        inputNodeId: 'NodeProcessor',
+        inputName: 'AudioOutput',
+      })
+    }, 50)
   }
   const runTest = async () => {
-    // if (!audioNodeRef.current) {
-    //   return
-    // }
+    if (!offlineContextRef.current || !offlineWorkletRef.current) {
+      return
+    }
     setOutput([])
     addLog('Running test...')
-    const sampleRate = 48000
-    const numChannels = 2
-    const bufferSize = 256
-    addLog(
-      `\nSetting up Engine...\nSample Rate: ${sampleRate} Hz\nChannels: ${numChannels}\nBuffer Size: ${bufferSize} samples`,
-    )
     try {
-      // const result: TestResult = await audioNodeRef.current.runTest({
-      //   sampleRate,
-      //   numChannels,
-      //   bufferSize,
-      // })
+      setupTest(offlineWorkletRef.current)
       addLog('\nOutput analysis:')
-      // addLog(`Peak amplitude (L): ${result.leftPeak.toFixed(4)}`)
-      // addLog(`Peak amplitude (R): ${result.rightPeak.toFixed(4)}`)
-      // addLog(
-      //   `First ${result.arrayLength} samples (L): ${result.arrayLeft.join(
-      //     ', ',
-      //   )}`,
-      // )
-      // addLog(
-      //   `First ${result.arrayLength} samples (R): ${result.arrayRight.join(
-      //     ', ',
-      //   )}`,
-      // )
-      // if (result.leftPeak > 0 || result.rightPeak > 0) {
-      //   addLog('\n✅ Test completed successfully (signal detected)')
-      // } else {
-      //   addLog('\n⚠️ Test completed (silence detected)')
-      // }
+      const renderedBuffer = await offlineContextRef.current.startRendering()
+      const left = renderedBuffer.getChannelData(0)
+      const right = renderedBuffer.getChannelData(1)
+      let leftPeak = 0
+      let rightPeak = 0
+      for (let i = 0; i < 8; i++) {
+        const leftAmplitude = Math.abs(left[i])
+        const rightAmplitude = Math.abs(right[i])
+        if (leftAmplitude > leftPeak) {
+          leftPeak = leftAmplitude
+        }
+        if (rightAmplitude > rightPeak) {
+          rightPeak = rightAmplitude
+        }
+      }
+      const arrayLength = 8
+      const precision = 4
+      const arrayLeft = []
+      for (let i = 0; i < arrayLength; i++) {
+        arrayLeft.push(left[i].toFixed(precision))
+      }
+      const arrayRight = []
+      for (let i = 0; i < arrayLength; i++) {
+        arrayRight.push(right[i].toFixed(precision))
+      }
+      addLog(`Peak amplitude (L): ${leftPeak.toFixed(4)}`)
+      addLog(`Peak amplitude (R): ${rightPeak.toFixed(4)}`)
+      addLog(`First ${arrayLength} samples (L): ${arrayLeft.join(', ')}`)
+      addLog(`First ${arrayLength} samples (R): ${arrayRight.join(', ')}`)
+      if (leftPeak > 0 || rightPeak > 0) {
+        addLog('\n✅ Test completed successfully (signal detected)')
+      } else {
+        addLog('\n⚠️ Test completed (silence detected)')
+      }
     } catch (error: any) {
       addLog(`❌ Error: ${error.message}`)
       console.error(error)
     }
   }
   const playTest = async () => {
-    // if (!audioNodeRef.current || !audioContextRef.current || isPlaying) {
-    //   return
-    // }
+    if (!audioContextRef.current || !audioWorkletNodeRef.current || isPlaying) {
+      return
+    }
+    setOutput([])
+    if (audioContextRef.current.state === 'suspended') {
+      await audioContextRef.current.resume()
+    }
+    setIsPlaying(true)
+    setButtonsEnabled({ test: false, play: false })
     try {
-      // if (audioContextRef.current.state === 'suspended') {
-      //   await audioContextRef.current.resume()
-      // }
-      setIsPlaying(true)
-      setButtonsEnabled({ test: false, play: false })
-      setOutput([])
-      // const sampleRate = audioContextRef.current.sampleRate
-      const sampleRate = 48000
-      const numChannels = 2
-      const bufferSize = 128
+      const sampleRate = audioContextRef.current.sampleRate
       addLog(`Testing playback at ${sampleRate} Hz...`)
-      addLog(
-        `\nSetting up Engine...\nSample Rate: ${sampleRate} Hz\nChannels: ${numChannels}\nBuffer Size: ${bufferSize} samples`,
-      )
-      // await audioNodeRef.current.setupEngine({
-      //   sampleRate,
-      //   numChannels,
-      //   bufferSize,
-      // })
-      addLog('\nEngine setup complete')
+      setupTest(audioWorkletNodeRef.current)
       addLog('\nPlaying...')
-      // audioNodeRef.current.connect(audioContextRef.current.destination)
       await new Promise((resolve) => setTimeout(resolve, 2000))
       addLog('\nStopping...')
-      // audioNodeRef.current.disconnect()
-      // await audioNodeRef.current.cleanup()
+      audioWorkletNodeRef.current.disconnect()
+      audioWorkletNodeRef.current.port.postMessage({ message: 'destroy' })
       addLog('\n✅ Playback completed')
       setIsPlaying(false)
       setButtonsEnabled({ test: true, play: true })

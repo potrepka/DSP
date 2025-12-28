@@ -3,11 +3,11 @@ export enum ReservedKeyword {
 }
 
 export enum NodeProcessorInputName {
-  AudioInput = 'AudioInput',
+  AudioOutput = 'AudioOutput',
 }
 
 export enum NodeProcessorOutputName {
-  AudioOutput = 'AudioOutput',
+  AudioInput = 'AudioInput',
   AudioInputClipping = 'AudioInputClipping',
   AudioOutputClipping = 'AudioOutputClipping',
 }
