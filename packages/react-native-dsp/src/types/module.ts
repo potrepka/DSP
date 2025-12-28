@@ -21,17 +21,24 @@ export type Module = NodeConstructorMap & {
 
 export type NodeConstructorMap = {
   Phasor: new () => Phasor
+  Multiplication: new (type: Type, space: Space) => Node
 }
 
 export type NodeType = keyof NodeConstructorMap
 
-export type NodePropsMap = {
-  Phasor: null
+type NodePropsMap = {
+  Phasor: {
+    frequency: Type
+  }
+  Multiplication: {
+    type: Type
+    space: Space
+  }
 }
 
 export type NodeProps<T extends NodeType> = NodePropsMap[T]
 
-export type Message<T extends NodeType> =
+export type IncomingMessage<T extends NodeType> =
   | { type: 'createNode'; id: string; nodeType: T; props?: NodeProps<T> }
   | { type: 'destroyNode'; id: string }
   | { type: 'setInputValue'; nodeId: string; inputName: string; value: number }
@@ -56,6 +63,8 @@ export type Message<T extends NodeType> =
       destinationNodeId: string
       destinationInputName: string
     }
+
+export type OutgoingMessage = { type: 'state'; status: 'running' | 'stopped' }
 
 export type NodeProcessor = {
   isActive: () => boolean

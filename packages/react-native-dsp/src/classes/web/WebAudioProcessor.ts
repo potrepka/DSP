@@ -6,17 +6,18 @@ import {
   NodeProcessorOutputName,
   ReservedKeyword,
 } from '../../enums'
-import { getReservedKeywords } from '../../helpers'
+import { constructNode, getReservedKeywords } from '../../helpers'
 import type {
   Data,
+  IncomingMessage,
   Input,
-  Message,
   MidiBuffer,
   Module,
   Node,
   NodeProcessor,
   NodeProps,
   NodeType,
+  OutgoingMessage,
   Output,
 } from '../../types'
 
@@ -43,11 +44,12 @@ class WebAudioProcessor extends AudioWorkletProcessor {
 
   constructor(options: WebAudioProcessorOptions) {
     super()
-    if (!options.processorOptions) {
+    const { processorOptions } = options
+    if (!processorOptions) {
       throw new Error('processorOptions is required')
     }
     const { numInputChannels, numOutputChannels, numSamples, sampleRate } =
-      options.processorOptions
+      processorOptions
     createAudioModule({ wasmBinary: preloadedWasmBinary }).then((module) => {
       this.module = module
       this.nodeProcessor = new module.NodeProcessor(
@@ -56,18 +58,20 @@ class WebAudioProcessor extends AudioWorkletProcessor {
         numSamples,
         sampleRate,
       )
-      this.audioBuffer = new module.Data(
-        Math.max(numInputChannels, numOutputChannels),
-        numSamples,
-      )
+      const numChannels = Math.max(numInputChannels, numOutputChannels)
+      this.audioBuffer = new module.Data(numChannels, numSamples)
       this.midiBuffer = new module.MidiBuffer()
-      this.port.postMessage({ type: 'ready' })
+      this.sendMessage({ type: 'state', status: 'running' })
     })
-    this.port.onmessage = <T extends NodeType>(e: MessageEvent<Message<T>>) =>
-      this.handleMessage(e.data)
+    this.port.onmessage = <T extends NodeType>(
+      event: MessageEvent<IncomingMessage<T>>,
+    ) => {
+      const { data } = event
+      this.handleMessage(data)
+    }
   }
 
-  private handleMessage<T extends NodeType>(msg: Message<T>) {
+  private handleMessage<T extends NodeType>(msg: IncomingMessage<T>) {
     switch (msg.type) {
       case 'createNode':
         this.createNode(msg.id, msg.nodeType, msg.props)
@@ -105,36 +109,22 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     }
   }
 
-  private constructNode<T extends NodeType>(
-    nodeType: T,
-    _props?: NodeProps<T>,
-  ): Node {
-    if (!this.module) {
-      throw new Error('Module not initialized')
-    }
-    let node: Node
-    switch (nodeType) {
-      case 'Phasor':
-        node = new this.module.Phasor()
-        break
-      default:
-        throw new Error(`Unsupported node type: ${nodeType}`)
-    }
-    return node
+  private sendMessage(msg: OutgoingMessage) {
+    this.port.postMessage(msg)
   }
 
   private createNode<T extends NodeType>(
     nodeId: string,
     nodeType: T,
-    props?: NodeProps<T>,
+    props: NodeProps<T> = {} as NodeProps<T>,
   ) {
-    if (!this.nodeProcessor) {
+    if (!this.module || !this.nodeProcessor) {
       throw new Error('Module not initialized')
     }
     if (getReservedKeywords().includes(nodeId)) {
       throw new Error(`Keyword is reserved: ${nodeId}`)
     }
-    const node = this.constructNode(nodeType, props)
+    const node = constructNode(this.module, nodeType, props)
     this.nodes.set(nodeId, node)
     this.nodeProcessor.getDefaultNode().addChild(node)
   }
