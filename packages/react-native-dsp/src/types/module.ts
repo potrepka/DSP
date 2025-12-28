@@ -27,9 +27,7 @@ export type NodeConstructorMap = {
 export type NodeType = keyof NodeConstructorMap
 
 type NodePropsMap = {
-  Phasor: {
-    frequency: Type
-  }
+  Phasor: null
   Multiplication: {
     type: Type
     space: Space
@@ -39,32 +37,51 @@ type NodePropsMap = {
 export type NodeProps<T extends NodeType> = NodePropsMap[T]
 
 export type IncomingMessage<T extends NodeType> =
-  | { type: 'createNode'; id: string; nodeType: T; props?: NodeProps<T> }
-  | { type: 'destroyNode'; id: string }
-  | { type: 'setInputValue'; nodeId: string; inputName: string; value: number }
   | {
-      type: 'setInputChannelValue'
+      messageType: 'createBuffer'
+      id: string
+      numChannels: number
+      numSamples: number
+      type?: Type
+      space?: Space
+      range?: number
+      defaultValue?: number
+    }
+  | { messageType: 'destroyBuffer'; id: string }
+  | { messageType: 'createNode'; id: string; nodeType: T; props?: NodeProps<T> }
+  | { messageType: 'destroyNode'; id: string }
+  | {
+      messageType: 'setInputValue'
+      nodeId: string
+      inputName: string
+      value: number
+    }
+  | {
+      messageType: 'setInputChannelValue'
       nodeId: string
       inputName: string
       channel: number
       value: number
     }
   | {
-      type: 'connect'
+      messageType: 'connect'
       sourceNodeId: string
       sourceOutputName: string
       destinationNodeId: string
       destinationInputName: string
     }
   | {
-      type: 'disconnect'
+      messageType: 'disconnect'
       sourceNodeId: string
       sourceOutputName: string
       destinationNodeId: string
       destinationInputName: string
     }
 
-export type OutgoingMessage = { type: 'state'; status: 'running' | 'stopped' }
+export type OutgoingMessage = {
+  messageType: 'state'
+  status: 'running' | 'stopped'
+}
 
 export type NodeProcessor = {
   isActive: () => boolean

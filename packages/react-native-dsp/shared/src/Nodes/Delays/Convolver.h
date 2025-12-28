@@ -13,8 +13,7 @@ public:
   void setHeadSize(size_t headSize);
   size_t getTailSize() const;
   void setTailSize(size_t tailSize);
-  std::shared_ptr<dsp::Buffer> getBuffer(size_t inChannel,
-                                         size_t outChannel) const;
+  std::shared_ptr<Buffer> getBuffer(size_t inChannel, size_t outChannel) const;
   void setBuffer(size_t inChannel, size_t outChannel,
                  std::shared_ptr<Buffer> buffer);
   void initConvolvers();

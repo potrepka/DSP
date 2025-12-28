@@ -5,9 +5,12 @@ import {
   NodeProcessorInputName,
   NodeProcessorOutputName,
   ReservedKeyword,
+  Space,
+  Type,
 } from '../../enums'
 import { constructNode, getReservedKeywords } from '../../helpers'
 import type {
+  Buffer,
   Data,
   IncomingMessage,
   Input,
@@ -40,7 +43,8 @@ class WebAudioProcessor extends AudioWorkletProcessor {
   private nodeProcessor?: NodeProcessor
   private audioBuffer?: Data
   private midiBuffer?: MidiBuffer
-  private nodes: Map<string, Node> = new Map()
+  private buffers = new Map<string, Buffer>()
+  private nodes = new Map<string, Node>()
 
   constructor(options: WebAudioProcessorOptions) {
     super()
@@ -61,7 +65,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       const numChannels = Math.max(numInputChannels, numOutputChannels)
       this.audioBuffer = new module.Data(numChannels, numSamples)
       this.midiBuffer = new module.MidiBuffer()
-      this.sendMessage({ type: 'state', status: 'running' })
+      this.sendMessage({ messageType: 'state', status: 'running' })
     })
     this.port.onmessage = <T extends NodeType>(
       event: MessageEvent<IncomingMessage<T>>,
@@ -72,7 +76,21 @@ class WebAudioProcessor extends AudioWorkletProcessor {
   }
 
   private handleMessage<T extends NodeType>(msg: IncomingMessage<T>) {
-    switch (msg.type) {
+    switch (msg.messageType) {
+      case 'createBuffer':
+        this.createBuffer(
+          msg.id,
+          msg.type,
+          msg.space,
+          msg.range,
+          msg.defaultValue,
+          msg.numChannels,
+          msg.numSamples,
+        )
+        break
+      case 'destroyBuffer':
+        this.destroyBuffer(msg.id)
+        break
       case 'createNode':
         this.createNode(msg.id, msg.nodeType, msg.props)
         break
@@ -113,6 +131,41 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     this.port.postMessage(msg)
   }
 
+  private createBuffer(
+    bufferId: string,
+    type: Type = Type.RATIO,
+    space: Space = Space.TIME,
+    range: number = 0,
+    defaultValue: number = 0,
+    numChannels: number,
+    numSamples: number,
+  ) {
+    if (!this.module) {
+      throw new Error('Module not initialized')
+    }
+    if (this.buffers.has(bufferId)) {
+      throw new Error(`Buffer already exists: ${bufferId}`)
+    }
+    const buffer = new this.module.Buffer(
+      type,
+      space,
+      range,
+      defaultValue,
+      numChannels,
+      numSamples,
+    )
+    this.buffers.set(bufferId, buffer)
+  }
+
+  private destroyBuffer(bufferId: string) {
+    const buffer = this.buffers.get(bufferId)
+    if (!buffer) {
+      throw new Error(`Buffer not found: ${bufferId}`)
+    }
+    this.buffers.delete(bufferId)
+    buffer.delete()
+  }
+
   private createNode<T extends NodeType>(
     nodeId: string,
     nodeType: T,
@@ -123,6 +176,9 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     }
     if (getReservedKeywords().includes(nodeId)) {
       throw new Error(`Keyword is reserved: ${nodeId}`)
+    }
+    if (this.nodes.has(nodeId)) {
+      throw new Error(`Node already exists: ${nodeId}`)
     }
     const node = constructNode(this.module, nodeType, props)
     this.nodes.set(nodeId, node)

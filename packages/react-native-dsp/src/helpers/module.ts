@@ -14,10 +14,11 @@ export const constructNode = <T extends NodeType>(
     case 'Phasor':
       node = new module.Phasor()
       break
-    case 'Multiplication':
-      // @ts-ignore
-      node = new module.Multiplication(props.type, props.space)
+    case 'Multiplication': {
+      const p = props as NodeProps<'Multiplication'>
+      node = new module.Multiplication(p.type, p.space)
       break
+    }
     default:
       throw new Error(`Unsupported node type: ${nodeType}`)
   }
