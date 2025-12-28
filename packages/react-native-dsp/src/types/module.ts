@@ -40,12 +40,12 @@ export type IncomingMessage<T extends NodeType> =
   | {
       messageType: 'createBuffer'
       id: string
-      numChannels: number
-      numSamples: number
       type?: Type
       space?: Space
       range?: number
       defaultValue?: number
+      numChannels: number
+      numSamples: number
     }
   | { messageType: 'destroyBuffer'; id: string }
   | { messageType: 'createNode'; id: string; nodeType: T; props?: NodeProps<T> }
@@ -79,8 +79,8 @@ export type IncomingMessage<T extends NodeType> =
     }
 
 export type OutgoingMessage = {
-  messageType: 'state'
-  status: 'running' | 'stopped'
+  messageType: 'setState'
+  state: 'running' | 'closed'
 }
 
 export type NodeProcessor = {

@@ -65,7 +65,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       const numChannels = Math.max(numInputChannels, numOutputChannels)
       this.audioBuffer = new module.Data(numChannels, numSamples)
       this.midiBuffer = new module.MidiBuffer()
-      this.sendMessage({ messageType: 'state', status: 'running' })
+      this.sendMessage({ messageType: 'setState', state: 'running' })
     })
     this.port.onmessage = <T extends NodeType>(
       event: MessageEvent<IncomingMessage<T>>,
@@ -343,6 +343,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     this.midiBuffer.delete()
     this.audioBuffer.delete()
     this.nodeProcessor.delete()
+    this.sendMessage({ messageType: 'setState', state: 'closed' })
   }
 }
 
