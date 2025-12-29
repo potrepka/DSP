@@ -1,13 +1,12 @@
-import type { InputMode, Space, Type } from '../enums'
+import type { InputMode, RecorderMode, Space, Type } from '../enums'
 
 export type Module = NodeConstructorMap & {
-  NodeProcessor: new (
-    numInputChannels: number,
-    numOutputChannels: number,
-    numSamples: number,
-    sampleRate: number,
-  ) => NodeProcessor
+  // Core Constructors
   Data: new (numChannels: number, numSamples: number) => Data
+  Wrapper: {
+    new (): Wrapper
+    new (data: Data): Wrapper
+  }
   Buffer: new (
     type: Type,
     space: Space,
@@ -16,27 +15,229 @@ export type Module = NodeConstructorMap & {
     numChannels: number,
     numSamples: number,
   ) => Buffer
+  Input: new (
+    type: Type,
+    space: Space,
+    range: number,
+    defaultValue: number,
+    numChannels: number,
+    numSamples: number,
+  ) => Input
+  Output: new (
+    type: Type,
+    space: Space,
+    range: number,
+    defaultValue: number,
+    numChannels: number,
+    numSamples: number,
+  ) => Output
+  Lockable: new () => Lockable
+  Node: new () => Node
+  Consumer: new (type: Type, space: Space) => Consumer
+  Producer: new (type: Type, space: Space) => Producer
+  Transformer: {
+    new (type: Type, space: Space): Transformer
+    new (inputType: Type, outputType: Type, space: Space): Transformer
+    new (
+      inputType: Type,
+      outputType: Type,
+      inputSpace: Space,
+      outputSpace: Space,
+    ): Transformer
+  }
+  NodeProcessor: new (
+    numInputChannels: number,
+    numOutputChannels: number,
+    numSamples: number,
+    sampleRate: number,
+  ) => NodeProcessor
+  NormalizedFFT: new () => NormalizedFFT
+
+  // Midi Constructors
   MidiBuffer: new () => MidiBuffer
 }
 
 export type NodeConstructorMap = {
+  // Analyzer Nodes
+  Recorder: new (type: Type, space: Space, defaultValue: number) => Recorder
+
+  // Channel Nodes
+  ChannelMerger: new (type: Type, space: Space) => ChannelMerger
+  ChannelSplitter: new (type: Type, space: Space) => ChannelSplitter
+  MidSide: new (type: Type, space: Space) => MidSide
+  Spread: new (type: Type, space: Space) => Spread
+  StereoPanner: new (type: Type, space: Space) => StereoPanner
+
+  // Delay Nodes
+  Convolver: new () => Convolver
+  VariableDelay: new (type: Type) => VariableDelay
+
+  // Dynamics Nodes
+  Clipper: new (type: Type, space: Space) => Clipper
+  CompressorGate: new () => CompressorGate
+  DryWet: new (type: Type, space: Space) => DryWet
+  Envelope: new () => Envelope
+  Lag: new (type: Type) => Lag
+  Shaper: new (space: Space) => Shaper
+
+  // External Nodes
+  MidiInput: new (midiBuffer: MidiBuffer, type: Type) => MidiInput
+  MidiOutput: new (midiBuffer: MidiBuffer, type: Type) => MidiOutput
+
+  // Filter Nodes
+  Biquad: new () => Biquad
+  Crossover: new () => Crossover
+  OnePole: new (type: Type) => OnePole
+
+  // Generator Nodes
+  FunctionOscillator: new (type: Type) => FunctionOscillator
+  MoorerOscillator: new () => MoorerOscillator
+  Noise: new () => Noise
   Phasor: new () => Phasor
+  SamplePlayer: new (type: Type) => SamplePlayer
+  TableOscillator: new (type: Type) => TableOscillator
+
+  // Math Nodes
+  AbsoluteValue: new (type: Type, space: Space) => AbsoluteValue
+  BooleanMask: new (type: Type, space: Space) => BooleanMask
+  Comparison: new (type: Type, space: Space) => Comparison
+  Division: new (type: Type, space: Space) => Division
+  Floor: new (type: Type, space: Space) => Floor
+  ForwardFFT: new () => ForwardFFT
+  FrequencyToNote: new (space: Space) => FrequencyToNote
+  Hyperbolic: new (space: Space) => Hyperbolic
+  Identity: {
+    new (type: Type, space: Space): Identity
+    new (inputType: Type, outputType: Type, space: Space): Identity
+    new (
+      inputType: Type,
+      outputType: Type,
+      inputSpace: Space,
+      outputSpace: Space,
+    ): Identity
+  }
+  InverseFFT: new () => InverseFFT
+  Logarithm: new (space: Space) => Logarithm
+  Modulo: new (type: Type, space: Space) => Modulo
   Multiplication: new (type: Type, space: Space) => Multiplication
   Negative: new (type: Type, space: Space) => Negative
+  NoteToFrequency: new (space: Space) => NoteToFrequency
+  NotGate: new (space: Space) => NotGate
+  Power: new (space: Space) => Power
+  Reciprocal: new (type: Type, space: Space) => Reciprocal
+  Trigonometric: new (space: Space) => Trigonometric
+
+  // Trigger Nodes
+  ClockTrigger: new () => ClockTrigger
+  Differentiator: new (type: Type) => Differentiator
+  Integrator: new (type: Type) => Integrator
+  OnOff: new () => OnOff
+  ResetTrigger: new () => ResetTrigger
+  SampleAndHold: new (type: Type) => SampleAndHold
+  Sequencer: new (type: Type, space: Space) => Sequencer
+  TriggerHold: new () => TriggerHold
+
+  // Variable Nodes
+  BufferDuration: new () => BufferDuration
+  BufferRate: new () => BufferRate
+  SampleDuration: new () => SampleDuration
+  SampleRate: new () => SampleRate
 }
 
 export type NodeType = keyof NodeConstructorMap
 
 type NodePropsMap = {
+  // Analyzer Nodes
+  Recorder: { type?: Type; space?: Space; defaultValue?: number }
+
+  // Channel Nodes
+  ChannelMerger: { type?: Type; space?: Space }
+  ChannelSplitter: { type?: Type; space?: Space }
+  MidSide: { type?: Type; space?: Space }
+  Spread: { type?: Type; space?: Space }
+  StereoPanner: { type?: Type; space?: Space }
+
+  // Delay Nodes
+  Convolver: never
+
+  VariableDelay: { type?: Type }
+
+  // Dynamics Nodes
+  Clipper: { type?: Type; space?: Space }
+  CompressorGate: never
+  DryWet: { type?: Type; space?: Space }
+  Envelope: never
+  Lag: { type?: Type }
+  Shaper: { space?: Space }
+
+  // External Nodes
+  MidiInput: { midiBuffer: MidiBuffer; type?: Type }
+  MidiOutput: { midiBuffer: MidiBuffer; type?: Type }
+
+  // Filter Nodes
+  Biquad: never
+  Crossover: never
+  OnePole: { type?: Type }
+
+  // Generator Nodes
+  FunctionOscillator: { type?: Type }
+  MoorerOscillator: never
+  Noise: never
   Phasor: never
-  Multiplication: {
-    type?: Type
-    space?: Space
-  }
-  Negative: {
-    type?: Type
-    space?: Space
-  }
+  SamplePlayer: { type?: Type }
+  TableOscillator: { type?: Type }
+
+  // Math Nodes
+  AbsoluteValue: { type?: Type; space?: Space }
+  BooleanMask: { type?: Type; space?: Space }
+  Comparison: { type?: Type; space?: Space }
+  Division: { type?: Type; space?: Space }
+  Floor: { type?: Type; space?: Space }
+  ForwardFFT: never
+  FrequencyToNote: { space?: Space }
+  Hyperbolic: { space?: Space }
+  Identity:
+    | {
+        type?: Type
+        space?: Space
+      }
+    | {
+        inputType?: Type
+        outputType?: Type
+        space?: Space
+      }
+    | {
+        inputType?: Type
+        outputType?: Type
+        inputSpace?: Space
+        outputSpace?: Space
+      }
+  InverseFFT: never
+  Logarithm: { space?: Space }
+  Modulo: { type?: Type; space?: Space }
+  Multiplication: { type?: Type; space?: Space }
+  Negative: { type?: Type; space?: Space }
+  NoteToFrequency: { space?: Space }
+  NotGate: { space?: Space }
+  Power: { space?: Space }
+  Reciprocal: { type?: Type; space?: Space }
+  Trigonometric: { space?: Space }
+
+  // Trigger Nodes
+  ClockTrigger: never
+  Differentiator: { type?: Type }
+  Integrator: { type?: Type }
+  OnOff: never
+  ResetTrigger: never
+  SampleAndHold: { type?: Type }
+  Sequencer: { type?: Type; space?: Space }
+  TriggerHold: never
+
+  // Variable Nodes
+  BufferDuration: never
+  BufferRate: never
+  SampleDuration: never
+  SampleRate: never
 }
 
 export type NodeProps<T extends NodeType> = NodePropsMap[T]
@@ -92,6 +293,8 @@ export type ModuleObject = {
   delete: () => void
 }
 
+// ========== Core Classes ==========
+
 export type Data = ModuleObject & {
   getNumChannels: () => number
   getNumSamples: () => number
@@ -110,42 +313,42 @@ export type Wrapper = ModuleObject & {
   getNumSamples: () => number
   getChannelData: (channel: number) => Float64Array
   getSingleChannel: (channel: number) => Wrapper
-  getSampleRange: () => Wrapper
+  getSampleRange: (startSample: number, numSamples: number) => Wrapper
   clear: () => void
   fill: (value: number) => void
   apply: (f: (sample: number) => number) => void
   replaceWithApplicationOf: (
     f: (sample: number) => number,
     src: Wrapper,
-  ) => void
+  ) => Wrapper
   replaceWithApplicationOfTwoArgs: (
     f: (sample1: number, sample2: number) => number,
     src1: Wrapper,
     src2: Wrapper,
-  ) => void
+  ) => Wrapper
   replaceWithApplicationOfThreeArgs: (
     f: (sample1: number, sample2: number, sample3: number) => number,
     src1: Wrapper,
     src2: Wrapper,
     src3: Wrapper,
-  ) => void
+  ) => Wrapper
   copyFrom: (src: Wrapper) => void
-  add: (value: number) => void
-  addWrapper: (src: Wrapper) => void
-  multiplyBy: (value: number) => void
-  multiplyByWrapper: (src: Wrapper) => void
-  addProductOf: (src: Wrapper, value: number) => void
-  addProductOfWrappers: (src1: Wrapper, src2: Wrapper) => void
-  replaceWithNegativeOf: (src: Wrapper) => void
-  replaceWithAbsoluteValueOf: (src: Wrapper) => void
-  replaceWithSumOf: (src: Wrapper, value: number) => void
-  replaceWithSumOfWrappers: (src1: Wrapper, src2: Wrapper) => void
-  replaceWithProductOf: (src: Wrapper, value: number) => void
-  replaceWithProductOfWrappers: (src1: Wrapper, src2: Wrapper) => void
-  replaceWithMinOf: (src: Wrapper, value: number) => void
-  replaceWithMinOfWrappers: (src1: Wrapper, src2: Wrapper) => void
-  replaceWithMaxOf: (src: Wrapper, value: number) => void
-  replaceWithMaxOfWrappers: (src1: Wrapper, src2: Wrapper) => void
+  add: (value: number) => Wrapper
+  addWrapper: (src: Wrapper) => Wrapper
+  multiplyBy: (value: number) => Wrapper
+  multiplyByWrapper: (src: Wrapper) => Wrapper
+  addProductOf: (src: Wrapper, value: number) => Wrapper
+  addProductOfWrappers: (src1: Wrapper, src2: Wrapper) => Wrapper
+  replaceWithNegativeOf: (src: Wrapper) => Wrapper
+  replaceWithAbsoluteValueOf: (src: Wrapper) => Wrapper
+  replaceWithSumOf: (src: Wrapper, value: number) => Wrapper
+  replaceWithSumOfWrappers: (src1: Wrapper, src2: Wrapper) => Wrapper
+  replaceWithProductOf: (src: Wrapper, value: number) => Wrapper
+  replaceWithProductOfWrappers: (src1: Wrapper, src2: Wrapper) => Wrapper
+  replaceWithMinOf: (src: Wrapper, value: number) => Wrapper
+  replaceWithMinOfWrappers: (src1: Wrapper, src2: Wrapper) => Wrapper
+  replaceWithMaxOf: (src: Wrapper, value: number) => Wrapper
+  replaceWithMaxOfWrappers: (src1: Wrapper, src2: Wrapper) => Wrapper
   getSample: (channel: number, sampleOffset: number) => number
   setSample: (channel: number, sampleOffset: number, value: number) => void
 }
@@ -198,6 +401,32 @@ export type Output = Buffer & {
 export type Lockable = ModuleObject & {
   lock: () => void
   unlock: () => void
+}
+
+export type Engine = Lockable & {
+  getInputDevices: () => number[]
+  getOutputDevices: () => number[]
+  getSampleRates: (inputDevice: number, outputDevice: number) => number[]
+  getDefaultInputDevice: () => number
+  getDefaultOutputDevice: () => number
+  getDefaultSampleRate: (inputDevice: number, outputDevice: number) => number
+  setup: (
+    inputDevice: number,
+    outputDevice: number,
+    numSamples: number,
+    sampleRate: number,
+  ) => void
+  start: () => void
+  getDeviceName: (device: number) => string
+  getInputDeviceName: () => string
+  getOutputDeviceName: () => string
+  getNumInputChannels: () => number
+  getNumOutputChannels: () => number
+  getNumSamples: () => number
+  getSampleRate: () => number
+  getAudioBuffer: () => Data
+  getNodeProcessor: () => NodeProcessor
+  getMidiProcessor: () => MidiProcessor
 }
 
 export type Node = ModuleObject & {
@@ -259,7 +488,11 @@ export type NodeProcessor = ModuleObject & {
   process: (audioBuffer: Data, midibuffer: MidiBuffer) => void
 }
 
+// ========== Midi Classes ==========
+
 export type MidiBuffer = ModuleObject & {
+  begin: () => unknown
+  end: () => unknown
   addEvent: (midiMessage: MidiMessage, sample: number) => void
   addEvents: (
     midiBuffer: MidiBuffer,
@@ -300,10 +533,297 @@ export type MidiMessage = ModuleObject & {
   getRawDataSize: () => number
 }
 
+export type MidiProcessor = Lockable & {
+  getNumSamples: () => number
+  setNumSamples: (numSamples: number) => void
+  getSampleRate: () => number
+  setSampleRate: (sampleRate: number) => void
+  getMidiBuffer: () => MidiBuffer
+  getInputs: () => MidiProcessorInput[]
+  getOutputs: () => MidiProcessorOutput[]
+  processInputs: () => void
+  processOutputs: () => void
+}
+
+export type MidiProcessorInput = Lockable & {
+  callback: (delta: number, bytes: Uint8Array) => void
+  getDeviceName: () => string
+  setPort: (port: number) => void
+}
+
+export type MidiProcessorOutput = Lockable & {
+  getDeviceName: () => string
+  setPort: (port: number) => void
+  sendMessageWithDelay: (message: MidiMessage, delay: number) => void
+}
+
+// ========== Analyzer Nodes ==========
+
+export type Recorder = Consumer & {
+  getMode: () => RecorderMode
+  setMode: (mode: RecorderMode) => void
+  getRecordingTime: () => number
+  setRecordingTime: (time: number) => void
+  getRecordingBuffer: () => Buffer
+  getGate: () => Input
+  getReset: () => Input
+}
+
+// ========== Channel Nodes ==========
+
+export type ChannelMerger = Producer & {
+  getInput: (channel: number) => Input
+}
+
+export type ChannelSplitter = Consumer & {
+  getOutput: (channel: number) => Output
+}
+
+export type MidSide = Consumer & {
+  getMixAmount: () => Input
+  getMid: () => Output
+  getSide: () => Output
+}
+
+export type Spread = Transformer & {
+  getSpread: () => Input
+  getMode: () => Input
+}
+
+export type StereoPanner = Consumer & {
+  getDirection: () => Input
+  getLeft: () => Output
+  getRight: () => Output
+}
+
+// ========== Delay Nodes ==========
+
+export type Convolver = Transformer & {
+  getHeadSize: () => number
+  setHeadSize: (headSize: number) => void
+  getTailSize: () => number
+  setTailSize: (tailSize: number) => void
+  getBuffer: () => Buffer
+  setBuffer: (buffer: Buffer) => void
+  initConvolvers: () => void
+}
+
+export type VariableDelay = Transformer & {
+  getMaxDelayTime: () => number
+  setMaxDelayTime: (maxDelayTime: number) => void
+  getDelayTime: () => Input
+  getDecayTime: () => Input
+  getReset: () => Input
+  getFeedbackSource: () => Output
+  getFeedbackSink: () => Input
+  getFeedbackProcessor: () => Node
+}
+
+// ========== Dynamics Nodes ==========
+
+export type Clipper = Transformer & {
+  getMin: () => Input
+  getMax: () => Input
+  getMode: () => Input
+}
+
+export type CompressorGate = Transformer & {
+  getControl: () => Input
+  getThreshold: () => Input
+  getSoftness: () => Input
+  getCompressionRatio: () => Input
+  getGateRatio: () => Input
+  getAttack: () => Input
+  getRelease: () => Input
+  getGain: () => Input
+  getGainResponse: (channel: number, input: number) => number
+}
+
+export type DryWet = Producer & {
+  getDry: () => Input
+  getWet: () => Input
+  getMixAmount: () => Input
+  getA: () => Input
+  getB: () => Input
+}
+
+export type Envelope = Producer & {
+  getAttack: () => Input
+  getRelease: () => Input
+  getAttackShape: () => Input
+  getReleaseShape: () => Input
+  getGate: () => Input
+  getReset: () => Input
+  getCurrentTime: () => number
+}
+
+export type Lag = Transformer & {
+  getLagTime: () => Input
+}
+
+export type Shaper = Transformer & {
+  getDrive: () => Input
+  getMode: () => Input
+  getOutputSignal: (channel: number, input: number) => number
+}
+
+// ========== External Nodes ==========
+
+export type MidiInput = Producer & {
+  getInputMessages: () => MidiBuffer
+  getProcessFunction: () => unknown
+  setProcessFunction: (fn: unknown) => void
+  processNote: () => void
+  processNoteOn: () => void
+  processNoteOff: () => void
+  processNotePressure: () => void
+  processControl: () => void
+  processControlValue: () => void
+  processProgram: () => void
+  processChannelPressure: () => void
+  processPitchBend: () => void
+  processAllNotesOff: () => void
+  processSongPositionInQuarterNotes: () => void
+  processClock: () => void
+  processStart: () => void
+  processContinue: () => void
+  processStop: () => void
+}
+
+export type MidiOutput = Consumer & {
+  getOutputMessages: () => MidiBuffer
+  getProcessFunction: () => unknown
+  setProcessFunction: (fn: unknown) => void
+  processNote: () => void
+  processNoteOn: () => void
+  processNoteOff: () => void
+  processNotePressure: () => void
+  processControl: () => void
+  processControlValue: () => void
+  processProgram: () => void
+  processChannelPressure: () => void
+  processPitchBend: () => void
+  processAllNotesOff: () => void
+  processSongPositionInQuarterNotes: () => void
+  processClock: () => void
+  processStart: () => void
+  processContinue: () => void
+  processStop: () => void
+}
+
+// ========== Filter Nodes ==========
+
+export type Biquad = Transformer & {
+  getFrequency: () => Input
+  getResonance: () => Input
+  getAmplitude: () => Input
+  getMode: () => Input
+  getFrequencyResponse: (frequency: number) => number
+}
+
+export type Crossover = Node & {
+  getInput: () => Input
+  getFrequency: () => Input
+  getLow: () => Output
+  getHigh: () => Output
+}
+
+export type OnePole = Transformer & {
+  getFrequency: () => Input
+  getMode: () => Input
+}
+
+// ========== Generator Nodes ==========
+
+export type FunctionOscillator = Producer & {
+  getFunction: () => unknown
+  setFunction: (fn: (phase: number) => number) => void
+  getPhase: () => Input
+}
+
+export type MoorerOscillator = Producer & {
+  getPhase: () => Input
+  getIntensity: () => Input
+  getModulationIndex: () => Input
+  getHarmonics: () => Input
+  getMode: () => Input
+}
+
+export type Noise = Producer & {
+  getMode: () => Input
+}
+
 export type Phasor = Producer & {
   getFrequency: () => Input
   getMode: () => Input
   getReset: () => Input
+}
+
+export type SamplePlayer = Producer & {
+  getSamples: () => Buffer[]
+  getSpeed: () => Input
+  getStartTime: () => Input
+  getSampleIndex: () => Input
+  getInterpolation: () => Input
+  getGate: () => Input
+  getReset: () => Input
+  getCurrentTime: () => number
+}
+
+export type TableOscillator = Producer & {
+  getTables: () => Buffer[]
+  getPhase: () => Input
+  getPosition: () => Input
+  getPhaseInterpolation: () => Input
+  getPositionInterpolation: () => Input
+}
+
+// ========== Math Nodes ==========
+
+export type AbsoluteValue = Transformer
+
+export type BooleanMask = Transformer & {
+  getMask: () => Input
+}
+
+export type Comparison = Transformer & {
+  getThreshold: () => Input
+}
+
+export type Division = Transformer & {
+  getDivisor: () => Input
+}
+
+export type Floor = Transformer & {
+  getDivisor: () => Input
+}
+
+export type ForwardFFT = Consumer & {
+  getMagnitude: () => Output
+  getPhase: () => Output
+}
+
+export type FrequencyToNote = Transformer & {
+  getTuningFrequency: () => Input
+}
+
+export type Hyperbolic = Transformer & {
+  getMode: () => Input
+}
+
+export type Identity = Transformer
+
+export type InverseFFT = Producer & {
+  getMagnitude: () => Input
+  getPhase: () => Input
+}
+
+export type Logarithm = Transformer & {
+  getBase: () => Input
+}
+
+export type Modulo = Transformer & {
+  getDivisor: () => Input
 }
 
 export type Multiplication = Transformer & {
@@ -311,3 +831,102 @@ export type Multiplication = Transformer & {
 }
 
 export type Negative = Transformer
+
+export type NoteToFrequency = Transformer & {
+  getTuningFrequency: () => Input
+}
+
+export type NotGate = Transformer
+
+export type Power = Transformer & {
+  getExponent: () => Input
+}
+
+export type Reciprocal = Transformer
+
+export type Trigonometric = Transformer & {
+  getMode: () => Input
+}
+
+// ========== Trigger Nodes ==========
+
+export type ClockTrigger = Producer & {
+  getInterval: () => Input
+  getDelayTime: () => Input
+  getReset: () => Input
+  getCurrentTime: () => number
+}
+
+export type Differentiator = Transformer & {
+  getGate: () => Output
+  getReset: () => Input
+}
+
+export type Integrator = Transformer & {
+  getGate: () => Input
+  getReset: () => Input
+}
+
+export type OnOff = Producer & {
+  getOnTrigger: () => Input
+  getOffTrigger: () => Input
+}
+
+export type ResetTrigger = Producer & {
+  reset: () => void
+  resetChannel: (channel: number) => void
+}
+
+export type SampleAndHold = Transformer & {
+  getGate: () => Input
+  getReset: () => Input
+}
+
+export type Sequencer = Producer & {
+  getSequences: () => Buffer[]
+  getSequenceIndex: () => Input
+  getPositionIndex: () => Input
+}
+
+export type TriggerHold = Transformer & {
+  getHoldTime: () => Input
+  getCurrentTime: () => number
+}
+
+// ========== Variable Nodes ==========
+
+export type BufferDuration = Producer
+
+export type BufferRate = Producer
+
+export type SampleDuration = Producer
+
+export type SampleRate = Producer
+
+// ========== Utility Classes ==========
+
+export type NormalizedFFT = ModuleObject & {
+  setup: (size: number) => void
+  getSize: () => number
+  getComplexSize: () => number
+  toRealImaginary: (
+    timeChannel: Float64Array,
+    realChannel: Float64Array,
+    imaginaryChannel: Float64Array,
+  ) => void
+  fromRealImaginary: (
+    realChannel: Float64Array,
+    imaginaryChannel: Float64Array,
+    timeChannel: Float64Array,
+  ) => void
+  toMagnitudePhase: (
+    timeChannel: Float64Array,
+    magnitudeChannel: Float64Array,
+    phaseChannel: Float64Array,
+  ) => void
+  fromMagnitudePhase: (
+    magnitudeChannel: Float64Array,
+    phaseChannel: Float64Array,
+    timeChannel: Float64Array,
+  ) => void
+}

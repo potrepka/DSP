@@ -430,6 +430,22 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getOutputMessages", &NodeProcessor::getOutputMessages)
       .function("process", &NodeProcessor::process<Sample>);
 
+  // NormalizedFFT
+  class_<NormalizedFFT>("NormalizedFFT")
+      .smart_ptr<std::shared_ptr<NormalizedFFT>>("NormalizedFFT")
+      .constructor(&std::make_shared<NormalizedFFT>)
+      .function("setup", &NormalizedFFT::setup)
+      .function("getSize", &NormalizedFFT::getSize)
+      .function("getComplexSize", &NormalizedFFT::getComplexSize)
+      .function("toRealImaginary", &NormalizedFFT::toRealImaginary,
+                allow_raw_pointers())
+      .function("fromRealImaginary", &NormalizedFFT::fromRealImaginary,
+                allow_raw_pointers())
+      .function("toMagnitudePhase", &NormalizedFFT::toMagnitudePhase,
+                allow_raw_pointers())
+      .function("fromMagnitudePhase", &NormalizedFFT::fromMagnitudePhase,
+                allow_raw_pointers());
+
   // ========== Midi Classes ==========
 
   // MidiBuffer
@@ -1031,22 +1047,4 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<SampleRate, base<Producer>>("SampleRate")
       .smart_ptr<std::shared_ptr<SampleRate>>("SampleRate")
       .constructor(&std::make_shared<SampleRate>);
-
-  // ========== Utility Classes ==========
-
-  // NormalizedFFT
-  class_<NormalizedFFT>("NormalizedFFT")
-      .smart_ptr<std::shared_ptr<NormalizedFFT>>("NormalizedFFT")
-      .constructor(&std::make_shared<NormalizedFFT>)
-      .function("setup", &NormalizedFFT::setup)
-      .function("getSize", &NormalizedFFT::getSize)
-      .function("getComplexSize", &NormalizedFFT::getComplexSize)
-      .function("toRealImaginary", &NormalizedFFT::toRealImaginary,
-                allow_raw_pointers())
-      .function("fromRealImaginary", &NormalizedFFT::fromRealImaginary,
-                allow_raw_pointers())
-      .function("toMagnitudePhase", &NormalizedFFT::toMagnitudePhase,
-                allow_raw_pointers())
-      .function("fromMagnitudePhase", &NormalizedFFT::fromMagnitudePhase,
-                allow_raw_pointers());
 }
