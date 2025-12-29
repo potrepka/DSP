@@ -196,22 +196,14 @@ type NodePropsMap = {
   ForwardFFT: never
   FrequencyToNote: { space?: Space }
   Hyperbolic: { space?: Space }
-  Identity:
-    | {
-        type?: Type
-        space?: Space
-      }
-    | {
-        inputType?: Type
-        outputType?: Type
-        space?: Space
-      }
-    | {
-        inputType?: Type
-        outputType?: Type
-        inputSpace?: Space
-        outputSpace?: Space
-      }
+  Identity: {
+    type?: Type
+    space?: Space
+    inputType?: Type
+    outputType?: Type
+    inputSpace?: Space
+    outputSpace?: Space
+  }
   InverseFFT: never
   Logarithm: { space?: Space }
   Modulo: { type?: Type; space?: Space }
