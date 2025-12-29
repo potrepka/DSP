@@ -1,25 +1,24 @@
+import { Space, Type } from '../../enums/global'
 import {
   NodeProcessorInputName,
   NodeProcessorOutputName,
   ReservedKeyword,
-  Space,
-  Type,
-} from '../../enums'
-import { constructNode, getReservedKeywords } from '../../helpers'
+} from '../../enums/module'
+import { constructNode, getReservedKeywords } from '../../helpers/module'
 import type {
+  AudioModule,
   Buffer,
   Data,
   IncomingMessage,
   Input,
   MidiBuffer,
   Node,
+  NodeOptions,
   NodeProcessor,
-  NodeProps,
   NodeType,
   OutgoingMessage,
   Output,
-  WebAudioModule,
-} from '../../types'
+} from '../../types/module'
 
 declare class AudioWorkletProcessor {
   readonly port: MessagePort
@@ -35,7 +34,7 @@ declare const registerProcessor: (
   ctor: new (options: AudioWorkletNodeOptions) => AudioWorkletProcessor,
 ) => void
 
-declare const createAudioModule: () => Promise<WebAudioModule>
+declare const createAudioModule: () => Promise<AudioModule>
 
 export type WebAudioProcessorOptions = {
   processorOptions?: {
@@ -47,7 +46,7 @@ export type WebAudioProcessorOptions = {
 }
 
 class WebAudioProcessor extends AudioWorkletProcessor {
-  private module?: WebAudioModule
+  private module?: AudioModule
   private nodeProcessor?: NodeProcessor
   private audioBuffer?: Data
   private midiBuffer?: MidiBuffer
@@ -177,7 +176,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
   private createNode<T extends NodeType>(
     nodeId: string,
     nodeType: T,
-    props: NodeProps<T> = {} as NodeProps<T>,
+    props: NodeOptions<T> = {} as NodeOptions<T>,
   ) {
     if (!this.module || !this.nodeProcessor) {
       throw new Error('Module not initialized')
@@ -210,10 +209,6 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     if (!this.nodeProcessor) {
       throw new Error('Module not initialized')
     }
-    const node = this.nodes.get(nodeId)
-    if (!node) {
-      throw new Error(`Node not found: ${nodeId}`)
-    }
     if (nodeId === ReservedKeyword.NodeProcessor) {
       switch (inputName) {
         case NodeProcessorInputName.AudioOutput:
@@ -221,6 +216,10 @@ class WebAudioProcessor extends AudioWorkletProcessor {
         default:
           throw new Error(`Input not found: ${inputName}`)
       }
+    }
+    const node = this.nodes.get(nodeId)
+    if (!node) {
+      throw new Error(`Node not found: ${nodeId}`)
     }
     const getter = (node as unknown as Record<string, () => Input>)[
       `get${inputName}`
@@ -235,10 +234,6 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     if (!this.nodeProcessor) {
       throw new Error('Module not initialized')
     }
-    const node = this.nodes.get(nodeId)
-    if (!node) {
-      throw new Error(`Node not found: ${nodeId}`)
-    }
     if (nodeId === ReservedKeyword.NodeProcessor) {
       switch (outputName) {
         case NodeProcessorOutputName.AudioInput:
@@ -250,6 +245,10 @@ class WebAudioProcessor extends AudioWorkletProcessor {
         default:
           throw new Error(`Output not found: ${outputName}`)
       }
+    }
+    const node = this.nodes.get(nodeId)
+    if (!node) {
+      throw new Error(`Node not found: ${nodeId}`)
     }
     const getter = (node as unknown as Record<string, () => Output>)[
       `get${outputName}`

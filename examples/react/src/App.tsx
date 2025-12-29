@@ -1,7 +1,10 @@
-import { initializeWebAudio } from '@potrepka/react-native-dsp'
+import {
+  initializeWebAudio,
+  NodeProcessorOptions,
+} from '@potrepka/react-native-dsp'
 // @ts-ignore
 import wasmModuleUrl from '@potrepka/react-native-dsp/web/build/react-native-dsp.js?url'
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export const App = () => {
   const [status, setStatus] = useState({
@@ -20,7 +23,7 @@ export const App = () => {
   const [createAudioWorkletNode, setCreateAudioWorkletNode] = useState<
     | ((
         context: BaseAudioContext,
-        outputChannelCount: number,
+        options: NodeProcessorOptions,
       ) => AudioWorkletNode)
     | undefined
   >(undefined)
@@ -66,34 +69,32 @@ export const App = () => {
       id: 'Multiplication',
       nodeType: 'Multiplication',
     })
-    setTimeout(() => {
-      audioWorkletNode.port.postMessage({
-        message: 'setInputValue',
-        nodeId: 'Phasor',
-        inputName: 'Frequency',
-        value: 55,
-      })
-      audioWorkletNode.port.postMessage({
-        message: 'setInputValue',
-        nodeId: 'Multiplication',
-        inputName: 'Factor',
-        value: 0.5,
-      })
-      audioWorkletNode.port.postMessage({
-        message: 'connect',
-        outputNodeId: 'Phasor',
-        outputName: 'Output',
-        inputNodeId: 'Multiplication',
-        inputName: 'Input',
-      })
-      audioWorkletNode.port.postMessage({
-        message: 'connect',
-        outputNodeId: 'Multiplication',
-        outputName: 'Output',
-        inputNodeId: 'NodeProcessor',
-        inputName: 'AudioOutput',
-      })
-    }, 50)
+    audioWorkletNode.port.postMessage({
+      message: 'setInputValue',
+      nodeId: 'Phasor',
+      inputName: 'Frequency',
+      value: 55,
+    })
+    audioWorkletNode.port.postMessage({
+      message: 'setInputValue',
+      nodeId: 'Multiplication',
+      inputName: 'Factor',
+      value: 0.5,
+    })
+    audioWorkletNode.port.postMessage({
+      message: 'connect',
+      sourceNodeId: 'Phasor',
+      sourceOutputName: 'Output',
+      destinationNodeId: 'Multiplication',
+      destinationInputName: 'Input',
+    })
+    audioWorkletNode.port.postMessage({
+      message: 'connect',
+      sourceNodeId: 'Multiplication',
+      sourceOutputName: 'Output',
+      destinationNodeId: 'NodeProcessor',
+      destinationInputName: 'AudioOutput',
+    })
   }
   const testOutput = async () => {
     if (!addModule || !createAudioWorkletNode) {
@@ -101,13 +102,14 @@ export const App = () => {
     }
     setOutput([])
     try {
-      const numChannels = 2
-      const bufferSize = 128
+      const numInputChannels = 0
+      const numOutputChannels = 2
+      const numSamples = 128
       const sampleRate = 48000
       addLog('Creating OfflineAudioContext...')
       const offlineAudioContext = new OfflineAudioContext(
-        numChannels,
-        bufferSize,
+        numOutputChannels,
+        numSamples,
         sampleRate,
       )
       addLog(`\nSample Rate: ${offlineAudioContext.sampleRate} Hz`)
@@ -117,7 +119,12 @@ export const App = () => {
       await addModule(offlineAudioContext)
       const offlineAudioWorkletNode = createAudioWorkletNode(
         offlineAudioContext,
-        offlineAudioContext.destination.channelCount,
+        {
+          numInputChannels,
+          numOutputChannels,
+          numSamples,
+          sampleRate,
+        },
       )
       offlineAudioWorkletNode.connect(offlineAudioContext.destination)
       addLog('\nRunning test...')
@@ -189,10 +196,12 @@ export const App = () => {
       )
       addLog('\nPreparing AudioContext...')
       await addModule(audioContext)
-      const audioWorkletNode = createAudioWorkletNode(
-        audioContext,
-        audioContext.destination.channelCount,
-      )
+      const audioWorkletNode = createAudioWorkletNode(audioContext, {
+        numInputChannels: 0,
+        numOutputChannels: audioContext.destination.channelCount,
+        numSamples: 128,
+        sampleRate: audioContext.sampleRate,
+      })
       audioWorkletNode.connect(audioContext.destination)
       const sampleRate = audioContext.sampleRate
       addLog(`\nRunning test...`)

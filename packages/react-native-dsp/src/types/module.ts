@@ -1,6 +1,6 @@
 import type { InputMode, RecorderMode, Space, Type } from '../enums'
 
-export type WebAudioModule = NodeConstructorMap & {
+export type AudioModule = NodeConstructorMap & {
   // Core Constructors
   Data: new (numChannels: number, numSamples: number) => Data
   Wrapper: {
@@ -55,6 +55,13 @@ export type WebAudioModule = NodeConstructorMap & {
 
   // Midi Constructors
   MidiBuffer: new () => MidiBuffer
+}
+
+export type NodeProcessorOptions = {
+  numInputChannels: number
+  numOutputChannels: number
+  numSamples: number
+  sampleRate: number
 }
 
 export type NodeConstructorMap = {
@@ -146,7 +153,7 @@ export type NodeConstructorMap = {
 
 export type NodeType = keyof NodeConstructorMap
 
-type NodePropsMap = {
+type NodeOptionsMap = {
   // Analyzer Nodes
   Recorder: { type?: Type; space?: Space; defaultValue?: number }
 
@@ -232,7 +239,7 @@ type NodePropsMap = {
   SampleRate: never
 }
 
-export type NodeProps<T extends NodeType> = NodePropsMap[T]
+export type NodeOptions<T extends NodeType> = NodeOptionsMap[T]
 
 export type IncomingMessage<T extends NodeType> =
   | {
@@ -246,7 +253,7 @@ export type IncomingMessage<T extends NodeType> =
       numSamples: number
     }
   | { message: 'destroyBuffer'; id: string }
-  | { message: 'createNode'; id: string; nodeType: T; props?: NodeProps<T> }
+  | { message: 'createNode'; id: string; nodeType: T; props?: NodeOptions<T> }
   | { message: 'destroyNode'; id: string }
   | {
       message: 'setInputValue'

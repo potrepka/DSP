@@ -1,10 +1,12 @@
+import { NodeProcessorOptions } from '../types'
+
 export const initializeWebAudio = async (
   moduleUrl: string,
 ): Promise<{
   addModule: (context: BaseAudioContext) => Promise<void>
   createAudioWorkletNode: (
     context: BaseAudioContext,
-    numChannels: number,
+    options: NodeProcessorOptions,
   ) => AudioWorkletNode
 }> => {
   const addModule = async (context: BaseAudioContext) => {
@@ -13,12 +15,13 @@ export const initializeWebAudio = async (
 
   const createAudioWorkletNode = (
     context: BaseAudioContext,
-    numChannels: number,
+    options: NodeProcessorOptions,
   ) =>
     new AudioWorkletNode(context, 'dsp', {
       numberOfInputs: 1,
       numberOfOutputs: 1,
-      outputChannelCount: [numChannels],
+      outputChannelCount: [options.numOutputChannels],
+      processorOptions: options,
     })
 
   return {
