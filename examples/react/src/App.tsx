@@ -35,8 +35,8 @@ export const App = () => {
   }
   const initialize = async () => {
     setOutput([])
-    addLog('Loading WASM module...')
     setStatus({ message: 'Loading WASM module...', type: 'info' })
+    addLog('Loading WASM module...')
     try {
       const { addModule, createAudioWorkletNode } = await initializeWebAudio(
         wasmModuleUrl,
@@ -44,17 +44,17 @@ export const App = () => {
       setAddModule(() => addModule)
       setCreateAudioWorkletNode(() => createAudioWorkletNode)
       setStatus({
-        message: 'WASM module loaded successfully',
+        message: 'Initialization completed',
         type: 'success',
       })
-      addLog('Initialization completed')
+      addLog('\n✅ Initialization completed')
       setButtonsEnabled({ test: true, play: true })
     } catch (error: any) {
       setStatus({
-        message: `Failed to initialize: ${error.message}`,
+        message: `Error: ${error.message}`,
         type: 'error',
       })
-      addLog(`❌ Error: ${error.message}`)
+      addLog(`\n❌ Error: ${error.message}`)
       console.error(error)
     }
   }
@@ -101,6 +101,7 @@ export const App = () => {
       return
     }
     setOutput([])
+    setStatus({ message: 'Testing output...', type: 'info' })
     try {
       const numInputChannels = 0
       const numOutputChannels = 2
@@ -160,12 +161,17 @@ export const App = () => {
       addLog(`First ${arrayLength} samples (L): ${arrayLeft.join(', ')}`)
       addLog(`First ${arrayLength} samples (R): ${arrayRight.join(', ')}`)
       if (leftPeak > 0 || rightPeak > 0) {
-        addLog('\n✅ Test completed successfully (signal detected)')
+        setStatus({ message: 'Test completed', type: 'success' })
+        addLog('\n✅ Test completed')
       } else {
+        setStatus({
+          message: 'Test completed (silence detected)',
+          type: 'warning',
+        })
         addLog('\n⚠️ Test completed (silence detected)')
       }
     } catch (error: any) {
-      addLog(`❌ Error: ${error.message}`)
+      addLog(`\n❌ Error: ${error.message}`)
       console.error(error)
     }
   }
@@ -174,6 +180,7 @@ export const App = () => {
       return
     }
     setOutput([])
+    setStatus({ message: 'Testing playback...', type: 'info' })
     setIsPlaying(true)
     setButtonsEnabled({ test: false, play: false })
     try {
@@ -203,7 +210,6 @@ export const App = () => {
         sampleRate: audioContext.sampleRate,
       })
       audioWorkletNode.connect(audioContext.destination)
-      const sampleRate = audioContext.sampleRate
       addLog(`\nRunning test...`)
       setupTest(audioWorkletNode)
       const numSeconds = 2
@@ -212,11 +218,12 @@ export const App = () => {
       addLog('\nStopping...')
       audioWorkletNode.disconnect()
       audioWorkletNode.port.postMessage({ message: 'destroy' })
+      setStatus({ message: 'Playback completed', type: 'success' })
       addLog('\n✅ Playback completed')
       setIsPlaying(false)
       setButtonsEnabled({ test: true, play: true })
     } catch (error: any) {
-      addLog(`❌ Error: ${error.message}`)
+      addLog(`\n❌ Error: ${error.message}`)
       console.error(error)
       setIsPlaying(false)
       setButtonsEnabled({ test: true, play: true })
@@ -240,12 +247,16 @@ export const App = () => {
           background:
             status.type === 'success'
               ? '#d4edda'
+              : status.type === 'warning'
+              ? '#fff3cd'
               : status.type === 'error'
               ? '#f8d7da'
               : '#d1ecf1',
           color:
             status.type === 'success'
               ? '#155724'
+              : status.type === 'warning'
+              ? '#856404'
               : status.type === 'error'
               ? '#721c24'
               : '#0c5460',
