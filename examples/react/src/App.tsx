@@ -1,4 +1,6 @@
 import { initializeWebAudio } from '@potrepka/react-native-dsp'
+// @ts-ignore
+import wasmModuleUrl from '@potrepka/react-native-dsp/web/build/react-native-dsp.js?url'
 import { useState, useRef, useEffect } from 'react'
 
 export const App = () => {
@@ -12,65 +14,38 @@ export const App = () => {
     play: false,
   })
   const [isPlaying, setIsPlaying] = useState(false)
-  const numChannels = 2
-  const bufferSize = 128
-  const sampleRate = 48000
-  const offlineContextRef = useRef<OfflineAudioContext | null>(null)
-  const offlineWorkletRef = useRef<AudioWorkletNode | null>(null)
-  const audioContextRef = useRef<AudioContext | null>(null)
-  const audioWorkletNodeRef = useRef<AudioWorkletNode | null>(null)
-  const addLog = (message: string) => {
-    setOutput((prev) => [...prev, message])
-  }
+  const [addModule, setAddModule] = useState<
+    ((context: BaseAudioContext) => Promise<void>) | undefined
+  >(undefined)
+  const [createAudioWorkletNode, setCreateAudioWorkletNode] = useState<
+    | ((
+        context: BaseAudioContext,
+        outputChannelCount: number,
+      ) => AudioWorkletNode)
+    | undefined
+  >(undefined)
   useEffect(() => {
     initialize()
   }, [])
+  const addLog = (message: string) => {
+    setOutput((prev) => [...prev, message])
+  }
   const initialize = async () => {
     setOutput([])
+    addLog('Loading WASM module...')
     setStatus({ message: 'Loading WASM module...', type: 'info' })
     try {
-      const { addModule, createAudioWorkletNode } = await initializeWebAudio()
-      addLog('Creating OfflineAudioContext...')
-      offlineContextRef.current = new OfflineAudioContext(
-        numChannels,
-        bufferSize,
-        sampleRate,
+      const { addModule, createAudioWorkletNode } = await initializeWebAudio(
+        wasmModuleUrl,
       )
-      addLog('Adding module to OfflineAudioContext...')
-      await addModule(offlineContextRef.current)
-      addLog('Creating AudioWorkletNode in OfflineAudioContext...')
-      offlineWorkletRef.current = createAudioWorkletNode(
-        offlineContextRef.current,
-      )
-      offlineWorkletRef.current.connect(offlineContextRef.current.destination)
-      addLog('Creating AudioContext...')
-      setStatus({ message: 'Creating AudioContext...', type: 'info' })
-      audioContextRef.current = new AudioContext({ sampleRate: 48000 })
+      setAddModule(() => addModule)
+      setCreateAudioWorkletNode(() => createAudioWorkletNode)
       setStatus({
-        message: 'Adding module to AudioContext...',
-        type: 'info',
-      })
-      await addModule(audioContextRef.current)
-      addLog('Creating AudioWorkletNode in AudioContext...')
-      audioWorkletNodeRef.current = createAudioWorkletNode(
-        audioContextRef.current,
-      )
-      audioWorkletNodeRef.current.connect(audioContextRef.current.destination)
-      setStatus({
-        message: 'WASM module loaded successfully!',
+        message: 'WASM module loaded successfully',
         type: 'success',
       })
+      addLog('Initialization completed')
       setButtonsEnabled({ test: true, play: true })
-      addLog('Setup completed')
-      addLog('\nOffline Audio Context Info:')
-      addLog(`Channels: ${offlineContextRef.current.destination.channelCount}`)
-      addLog(`Length: ${offlineContextRef.current.length} samples`)
-      addLog(`Sample Rate: ${offlineContextRef.current.sampleRate} Hz`)
-      addLog('\nAudio Context Info:')
-      addLog(`Channels: ${audioContextRef.current.destination.channelCount}`)
-      addLog(`Sample Rate: ${audioContextRef.current.sampleRate} Hz`)
-      addLog(`Base Latency: ${audioContextRef.current.baseLatency} seconds`)
-      addLog(`Output Latency: ${audioContextRef.current.outputLatency} seconds`)
     } catch (error: any) {
       setStatus({
         message: `Failed to initialize: ${error.message}`,
@@ -120,16 +95,35 @@ export const App = () => {
       })
     }, 50)
   }
-  const runTest = async () => {
-    if (!offlineContextRef.current || !offlineWorkletRef.current) {
+  const testOutput = async () => {
+    if (!addModule || !createAudioWorkletNode) {
       return
     }
     setOutput([])
-    addLog('Running test...')
     try {
-      setupTest(offlineWorkletRef.current)
+      const numChannels = 2
+      const bufferSize = 128
+      const sampleRate = 48000
+      addLog('Creating OfflineAudioContext...')
+      const offlineAudioContext = new OfflineAudioContext(
+        numChannels,
+        bufferSize,
+        sampleRate,
+      )
+      addLog(`\nSample Rate: ${offlineAudioContext.sampleRate} Hz`)
+      addLog(`Channels: ${offlineAudioContext.destination.channelCount}`)
+      addLog(`Length: ${offlineAudioContext.length} samples`)
+      addLog('\nPreparing OfflineAudioContext...')
+      await addModule(offlineAudioContext)
+      const offlineAudioWorkletNode = createAudioWorkletNode(
+        offlineAudioContext,
+        offlineAudioContext.destination.channelCount,
+      )
+      offlineAudioWorkletNode.connect(offlineAudioContext.destination)
+      addLog('\nRunning test...')
+      setupTest(offlineAudioWorkletNode)
       addLog('\nOutput analysis:')
-      const renderedBuffer = await offlineContextRef.current.startRendering()
+      const renderedBuffer = await offlineAudioContext.startRendering()
       const left = renderedBuffer.getChannelData(0)
       const right = renderedBuffer.getChannelData(1)
       let leftPeak = 0
@@ -168,25 +162,47 @@ export const App = () => {
       console.error(error)
     }
   }
-  const playTest = async () => {
-    if (!audioContextRef.current || !audioWorkletNodeRef.current || isPlaying) {
+  const testPlayback = async () => {
+    if (!addModule || !createAudioWorkletNode || isPlaying) {
       return
     }
     setOutput([])
-    if (audioContextRef.current.state === 'suspended') {
-      await audioContextRef.current.resume()
-    }
     setIsPlaying(true)
     setButtonsEnabled({ test: false, play: false })
     try {
-      const sampleRate = audioContextRef.current.sampleRate
-      addLog(`Testing playback at ${sampleRate} Hz...`)
-      setupTest(audioWorkletNodeRef.current)
-      addLog('\nPlaying...')
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      addLog('Creating AudioContext...')
+      const audioContext = new AudioContext({ sampleRate: 48000 })
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume()
+      }
+      addLog(`\nSample Rate: ${audioContext.sampleRate} Hz`)
+      addLog(`Channels: ${audioContext.destination.channelCount}`)
+      addLog(
+        `Base Latency: ${
+          audioContext.baseLatency * audioContext.sampleRate
+        } samples (${audioContext.baseLatency} seconds)`,
+      )
+      addLog(
+        `Output Latency: ${
+          audioContext.outputLatency * audioContext.sampleRate
+        } samples (${audioContext.outputLatency} seconds)`,
+      )
+      addLog('\nPreparing AudioContext...')
+      await addModule(audioContext)
+      const audioWorkletNode = createAudioWorkletNode(
+        audioContext,
+        audioContext.destination.channelCount,
+      )
+      audioWorkletNode.connect(audioContext.destination)
+      const sampleRate = audioContext.sampleRate
+      addLog(`\nRunning test...`)
+      setupTest(audioWorkletNode)
+      const numSeconds = 2
+      addLog(`\nPlaying for ${numSeconds} seconds...`)
+      await new Promise((resolve) => setTimeout(resolve, numSeconds * 1000))
       addLog('\nStopping...')
-      audioWorkletNodeRef.current.disconnect()
-      audioWorkletNodeRef.current.port.postMessage({ message: 'destroy' })
+      audioWorkletNode.disconnect()
+      audioWorkletNode.port.postMessage({ message: 'destroy' })
       addLog('\n✅ Playback completed')
       setIsPlaying(false)
       setButtonsEnabled({ test: true, play: true })
@@ -237,7 +253,7 @@ export const App = () => {
         }}
       >
         <button
-          onClick={runTest}
+          onClick={testOutput}
           disabled={!buttonsEnabled.test}
           style={{
             padding: '10px 20px',
@@ -245,10 +261,10 @@ export const App = () => {
             cursor: 'pointer',
           }}
         >
-          Run Test
+          Test Output
         </button>
         <button
-          onClick={playTest}
+          onClick={testPlayback}
           disabled={!buttonsEnabled.play}
           style={{
             padding: '10px 20px',
@@ -256,7 +272,7 @@ export const App = () => {
             cursor: 'pointer',
           }}
         >
-          Start Engine & Play
+          Test Playback
         </button>
       </div>
       <div

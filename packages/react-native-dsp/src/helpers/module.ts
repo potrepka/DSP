@@ -1,12 +1,12 @@
 import { Space, Type } from '../enums'
 import { ReservedKeyword } from '../enums/module'
-import { Module, Node, NodeProps, NodeType } from '../types'
+import { Node, NodeProps, NodeType, WebAudioModule } from '../types'
 
 export const getReservedKeywords = () =>
   Object.values(ReservedKeyword) as string[]
 
 export const constructNode = <T extends NodeType>(
-  module: Module,
+  module: WebAudioModule,
   nodeType: T,
   props: NodeProps<T>,
 ) => {

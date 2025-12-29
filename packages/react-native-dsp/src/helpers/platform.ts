@@ -8,19 +8,21 @@ export const getPlatformInfo = (): PlatformInfo => {
       name: 'web',
     }
   }
-  const userAgent = navigator.userAgent
-  if (/android/i.test(userAgent)) {
-    return {
-      isWeb: false,
-      isNative: true,
-      name: 'android',
+  if (typeof navigator !== 'undefined') {
+    const userAgent = navigator.userAgent
+    if (/android/i.test(userAgent)) {
+      return {
+        isWeb: false,
+        isNative: true,
+        name: 'android',
+      }
     }
-  }
-  if (/iPad|iPhone|iPod/.test(userAgent)) {
-    return {
-      isWeb: false,
-      isNative: true,
-      name: 'ios',
+    if (/iPad|iPhone|iPod/.test(userAgent)) {
+      return {
+        isWeb: false,
+        isNative: true,
+        name: 'ios',
+      }
     }
   }
   return {

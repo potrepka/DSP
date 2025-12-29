@@ -1,6 +1,6 @@
 import type { InputMode, RecorderMode, Space, Type } from '../enums'
 
-export type Module = NodeConstructorMap & {
+export type WebAudioModule = NodeConstructorMap & {
   // Core Constructors
   Data: new (numChannels: number, numSamples: number) => Data
   Wrapper: {
@@ -281,13 +281,13 @@ export type OutgoingMessage = {
   state: 'running' | 'closed'
 }
 
-export type ModuleObject = {
+export type Deletable = {
   delete: () => void
 }
 
 // ========== Core Classes ==========
 
-export type Data = ModuleObject & {
+export type Data = Deletable & {
   getNumChannels: () => number
   getNumSamples: () => number
   setSize: (numChannels: number, numSamples: number) => void
@@ -300,7 +300,7 @@ export type Data = ModuleObject & {
   getWriteData: () => Float64Array[]
 }
 
-export type Wrapper = ModuleObject & {
+export type Wrapper = Deletable & {
   getNumChannels: () => number
   getNumSamples: () => number
   getChannelData: (channel: number) => Float64Array
@@ -345,7 +345,7 @@ export type Wrapper = ModuleObject & {
   setSample: (channel: number, sampleOffset: number, value: number) => void
 }
 
-export type Buffer = ModuleObject & {
+export type Buffer = Deletable & {
   getType: () => Type
   setType: (type: Type) => void
   getSpace: () => Space
@@ -390,7 +390,7 @@ export type Output = Buffer & {
   processNoLock: () => void
 }
 
-export type Lockable = ModuleObject & {
+export type Lockable = Deletable & {
   lock: () => void
   unlock: () => void
 }
@@ -421,7 +421,7 @@ export type Engine = Lockable & {
   getMidiProcessor: () => MidiProcessor
 }
 
-export type Node = ModuleObject & {
+export type Node = Deletable & {
   isActive: () => boolean
   setActive: (active: boolean) => void
   getNumChannels: () => number
@@ -456,7 +456,7 @@ export type Producer = Node & {
 
 export type Transformer = Consumer & Producer
 
-export type NodeProcessor = ModuleObject & {
+export type NodeProcessor = Deletable & {
   isActive: () => boolean
   setActive: (active: boolean) => void
   getAudioInput: () => Output
@@ -482,7 +482,7 @@ export type NodeProcessor = ModuleObject & {
 
 // ========== Midi Classes ==========
 
-export type MidiBuffer = ModuleObject & {
+export type MidiBuffer = Deletable & {
   begin: () => unknown
   end: () => unknown
   addEvent: (midiMessage: MidiMessage, sample: number) => void
@@ -495,7 +495,7 @@ export type MidiBuffer = ModuleObject & {
   clear: () => void
 }
 
-export type MidiMessage = ModuleObject & {
+export type MidiMessage = Deletable & {
   isNote: () => boolean
   isNoteOff: () => boolean
   isNoteOn: () => boolean
@@ -897,7 +897,7 @@ export type SampleRate = Producer
 
 // ========== Utility Classes ==========
 
-export type NormalizedFFT = ModuleObject & {
+export type NormalizedFFT = Deletable & {
   setup: (size: number) => void
   getSize: () => number
   getComplexSize: () => number

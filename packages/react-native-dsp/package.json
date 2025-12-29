@@ -54,7 +54,7 @@
     "directory": "packages/react-native-dsp"
   },
   "scripts": {
-    "build": "npm run build:web && npm run build:ts",
+    "build": "npm run build:ts && npm run build:web",
     "build:ts": "tsc",
     "build:web": "bash scripts/build-web.sh",
     "clean": "rm -rf dist/ shared/lib/ shared/src/ web/build/",

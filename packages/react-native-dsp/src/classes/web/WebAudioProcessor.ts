@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="./audioWorklet.d.ts" />
-
 import {
   NodeProcessorInputName,
   NodeProcessorOutputName,
@@ -15,19 +12,30 @@ import type {
   IncomingMessage,
   Input,
   MidiBuffer,
-  Module,
   Node,
   NodeProcessor,
   NodeProps,
   NodeType,
   OutgoingMessage,
   Output,
+  WebAudioModule,
 } from '../../types'
 
-declare const createAudioModule: (opts?: {
-  wasmBinary?: ArrayBuffer
-}) => Promise<Module>
-declare const preloadedWasmBinary: ArrayBuffer
+declare class AudioWorkletProcessor {
+  readonly port: MessagePort
+  process(
+    inputs: Float32Array[][],
+    outputs: Float32Array[][],
+    parameters: Record<string, Float32Array>,
+  ): boolean
+}
+
+declare const registerProcessor: (
+  name: string,
+  ctor: new (options: AudioWorkletNodeOptions) => AudioWorkletProcessor,
+) => void
+
+declare const createAudioModule: () => Promise<WebAudioModule>
 
 export type WebAudioProcessorOptions = {
   processorOptions?: {
@@ -39,7 +47,7 @@ export type WebAudioProcessorOptions = {
 }
 
 class WebAudioProcessor extends AudioWorkletProcessor {
-  private module?: Module
+  private module?: WebAudioModule
   private nodeProcessor?: NodeProcessor
   private audioBuffer?: Data
   private midiBuffer?: MidiBuffer
@@ -54,17 +62,17 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     }
     const { numInputChannels, numOutputChannels, numSamples, sampleRate } =
       processorOptions
-    createAudioModule({ wasmBinary: preloadedWasmBinary }).then((module) => {
+    createAudioModule().then((module) => {
       this.module = module
-      this.nodeProcessor = new module.NodeProcessor(
+      this.nodeProcessor = new this.module.NodeProcessor(
         numInputChannels,
         numOutputChannels,
         numSamples,
         sampleRate,
       )
       const numChannels = Math.max(numInputChannels, numOutputChannels)
-      this.audioBuffer = new module.Data(numChannels, numSamples)
-      this.midiBuffer = new module.MidiBuffer()
+      this.audioBuffer = new this.module.Data(numChannels, numSamples)
+      this.midiBuffer = new this.module.MidiBuffer()
       this.sendMessage({ message: 'setState', state: 'running' })
     })
     this.port.onmessage = <T extends NodeType>(
