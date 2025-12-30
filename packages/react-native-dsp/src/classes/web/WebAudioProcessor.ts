@@ -8,6 +8,7 @@ import { constructNode, getReservedKeywords } from '../../helpers/module'
 import type {
   AudioModule,
   Buffer,
+  BufferOptions,
   Data,
   IncomingMessage,
   Input,
@@ -18,6 +19,7 @@ import type {
   NodeType,
   OutgoingMessage,
   Output,
+  TableOscillator,
 } from '../../types/module'
 
 declare class AudioWorkletProcessor {
@@ -85,24 +87,16 @@ class WebAudioProcessor extends AudioWorkletProcessor {
   private handleMessage<T extends NodeType>(msg: IncomingMessage<T>) {
     switch (msg.message) {
       case 'createBuffer':
-        this.createBuffer(
-          msg.id,
-          msg.type,
-          msg.space,
-          msg.range,
-          msg.defaultValue,
-          msg.numChannels,
-          msg.numSamples,
-        )
+        this.createBuffer(msg.bufferId, msg.options)
         break
-      case 'destroyBuffer':
-        this.destroyBuffer(msg.id)
+      case 'deleteBuffer':
+        this.deleteBuffer(msg.bufferId)
         break
       case 'createNode':
-        this.createNode(msg.id, msg.nodeType, msg.props)
+        this.createNode(msg.nodeId, msg.nodeType, msg.options)
         break
-      case 'destroyNode':
-        this.destroyNode(msg.id)
+      case 'deleteNode':
+        this.deleteNode(msg.nodeId)
         break
       case 'setInputValue':
         this.setInputValue(msg.nodeId, msg.inputName, msg.value)
@@ -114,6 +108,9 @@ class WebAudioProcessor extends AudioWorkletProcessor {
           msg.channel,
           msg.value,
         )
+        break
+      case 'pushTable':
+        this.pushTable(msg.nodeId, msg.bufferId)
         break
       case 'connect':
         this.connect(
@@ -131,6 +128,9 @@ class WebAudioProcessor extends AudioWorkletProcessor {
           msg.destinationInputName,
         )
         break
+      case 'delete':
+        this.delete()
+        break
     }
   }
 
@@ -140,12 +140,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
 
   private createBuffer(
     bufferId: string,
-    type: Type = Type.RATIO,
-    space: Space = Space.TIME,
-    range: number = 0,
-    defaultValue: number = 0,
-    numChannels: number,
-    numSamples: number,
+    options: BufferOptions = {} as BufferOptions,
   ) {
     if (!this.module) {
       throw new Error('Module not initialized')
@@ -153,6 +148,15 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     if (this.buffers.has(bufferId)) {
       throw new Error(`Buffer already exists: ${bufferId}`)
     }
+    const {
+      type = Type.RATIO,
+      space = Space.TIME,
+      range = 1,
+      defaultValue = 0,
+      numChannels,
+      numSamples,
+      data = [],
+    } = options
     const buffer = new this.module.Buffer(
       type,
       space,
@@ -161,10 +165,17 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       numChannels,
       numSamples,
     )
+    const wrapper = buffer.getWrapper()
+    for (let channel = 0; channel < numChannels; channel++) {
+      const writeChannelData = wrapper.getChannelData(channel)
+      for (let sample = 0; sample < numSamples; sample++) {
+        writeChannelData[sample] = data[channel][sample]
+      }
+    }
     this.buffers.set(bufferId, buffer)
   }
 
-  private destroyBuffer(bufferId: string) {
+  private deleteBuffer(bufferId: string) {
     const buffer = this.buffers.get(bufferId)
     if (!buffer) {
       throw new Error(`Buffer not found: ${bufferId}`)
@@ -176,7 +187,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
   private createNode<T extends NodeType>(
     nodeId: string,
     nodeType: T,
-    props: NodeOptions<T> = {} as NodeOptions<T>,
+    options: NodeOptions<T> = {} as NodeOptions<T>,
   ) {
     if (!this.module || !this.nodeProcessor) {
       throw new Error('Module not initialized')
@@ -187,12 +198,12 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     if (this.nodes.has(nodeId)) {
       throw new Error(`Node already exists: ${nodeId}`)
     }
-    const node = constructNode(this.module, nodeType, props)
+    const node = constructNode(this.module, nodeType, options)
     this.nodes.set(nodeId, node)
     this.nodeProcessor.getDefaultNode().addChild(node)
   }
 
-  private destroyNode(nodeId: string) {
+  private deleteNode(nodeId: string) {
     if (!this.nodeProcessor) {
       throw new Error('Module not initialized')
     }
@@ -274,14 +285,27 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     input.setChannelValue(channel, value)
   }
 
+  private pushTable(nodeId: string, bufferId: string) {
+    const node = this.nodes.get(nodeId)
+    if (!node) {
+      throw new Error(`Node not found: ${nodeId}`)
+    }
+    const buffer = this.buffers.get(bufferId)
+    if (!buffer) {
+      throw new Error(`Buffer not found: ${bufferId}`)
+    }
+    const tableOscillatorNode = node as TableOscillator
+    tableOscillatorNode.getTables().push_back(buffer)
+  }
+
   private connect(
-    outputNodeId: string,
-    outputName: string,
-    inputNodeId: string,
-    inputName: string,
+    sourceNodeId: string,
+    sourceOutputName: string,
+    destinationNodeId: string,
+    destinationInputName: string,
   ) {
-    const output = this.getOutput(outputNodeId, outputName)
-    const input = this.getInput(inputNodeId, inputName)
+    const output = this.getOutput(sourceNodeId, sourceOutputName)
+    const input = this.getInput(destinationNodeId, destinationInputName)
     output.connect(input)
   }
 
@@ -298,7 +322,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
 
   process(inputs: Float32Array[][], outputs: Float32Array[][]): boolean {
     if (!this.nodeProcessor || !this.audioBuffer || !this.midiBuffer) {
-      return false
+      return true
     }
     if (inputs.length > 0) {
       const input = inputs[0]
@@ -338,7 +362,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     return true
   }
 
-  destroy() {
+  delete() {
     if (!this.nodeProcessor || !this.audioBuffer || !this.midiBuffer) {
       throw new Error('Module not initialized')
     }

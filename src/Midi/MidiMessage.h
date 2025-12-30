@@ -43,13 +43,13 @@ public:
                              uint8_t velocity);
   static MidiMessage noteOn(uint8_t channel, uint8_t noteNumber,
                             uint8_t velocity);
-  static MidiMessage aftertouchChange(uint8_t channel, uint8_t noteNumber,
-                                      uint8_t aftertouchValue);
-  static MidiMessage controllerEvent(uint8_t channel, uint8_t controllerNumber,
-                                     uint8_t controllerValue);
+  static MidiMessage aftertouch(uint8_t channel, uint8_t noteNumber,
+                                uint8_t aftertouchValue);
+  static MidiMessage controller(uint8_t channel, uint8_t controllerNumber,
+                                uint8_t controllerValue);
   static MidiMessage programChange(uint8_t channel, uint8_t programNumber);
-  static MidiMessage channelPressureChange(uint8_t channel,
-                                           uint8_t channelPressureValue);
+  static MidiMessage channelPressure(uint8_t channel,
+                                     uint8_t channelPressureValue);
   static MidiMessage pitchWheel(uint8_t channel, int pitchWheelValue);
   static MidiMessage allNotesOff(uint8_t channel);
   static MidiMessage songPositionPointer(int songPositionPointerMidiBeat);

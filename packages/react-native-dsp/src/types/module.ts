@@ -1,6 +1,38 @@
 import type { InputMode, RecorderMode, Space, Type } from '../enums'
 
 export type AudioModule = NodeConstructorMap & {
+  // Vector Constructors
+  UInt8Vector: new () => UInt8Vector
+  UIntVector: new () => UIntVector
+  SampleVector: new () => SampleVector
+  AudioFFTSampleVector: new () => AudioFFTSampleVector
+  BufferVector: new () => BufferVector
+  InputVector: new () => InputVector
+  OutputVector: new () => OutputVector
+  NodeVector: new () => NodeVector
+  MidiProcessorInputVector: new () => MidiProcessorInputVector
+  MidiProcessorOutputVector: new () => MidiProcessorOutputVector
+
+  // Global Functions
+  byteToUnipolar: (value: number) => number
+  unipolarToByte: (value: number) => number
+  shortToUnipolar: (value: number) => number
+  unipolarToShort: (value: number) => number
+  clip: (value: number, min: number, max: number) => number
+  wrap: (value: number, max: number) => number
+  linear: (
+    data: Float64Array,
+    size: number,
+    index: number,
+    defaultValue?: number,
+  ) => number
+  hermite: (
+    data: Float64Array,
+    size: number,
+    index: number,
+    defaultValue?: number,
+  ) => number
+
   // Core Constructors
   Data: new (numChannels: number, numSamples: number) => Data
   Wrapper: {
@@ -32,6 +64,7 @@ export type AudioModule = NodeConstructorMap & {
     numSamples: number,
   ) => Output
   Lockable: new () => Lockable
+  Engine: new () => Engine
   Node: new () => Node
   Consumer: new (type: Type, space: Space) => Consumer
   Producer: new (type: Type, space: Space) => Producer
@@ -55,6 +88,47 @@ export type AudioModule = NodeConstructorMap & {
 
   // Midi Constructors
   MidiBuffer: new () => MidiBuffer
+  MidiMessage: {
+    new (byte0: number): MidiMessage
+    new (byte0: number, byte1: number): MidiMessage
+    new (byte0: number, byte1: number, byte2: number): MidiMessage
+    fromArray: (bytes: UInt8Vector) => MidiMessage
+    noteOff: (
+      channel: number,
+      noteNumber: number,
+      velocity: number,
+    ) => MidiMessage
+    noteOn: (
+      channel: number,
+      noteNumber: number,
+      velocity: number,
+    ) => MidiMessage
+    aftertouch: (
+      channel: number,
+      noteNumber: number,
+      aftertouchValue: number,
+    ) => MidiMessage
+    controller: (
+      channel: number,
+      controllerNumber: number,
+      controllerValue: number,
+    ) => MidiMessage
+    programChange: (channel: number, programNumber: number) => MidiMessage
+    channelPressure: (
+      channel: number,
+      channelPressureValue: number,
+    ) => MidiMessage
+    pitchWheel: (channel: number, pitchWheelValue: number) => MidiMessage
+    allNotesOff: (channel: number) => MidiMessage
+    songPositionPointer: (songPositionPointerMidiBeat: number) => MidiMessage
+    midiClock: () => MidiMessage
+    midiStart: () => MidiMessage
+    midiContinue: () => MidiMessage
+    midiStop: () => MidiMessage
+  }
+  MidiProcessor: new () => MidiProcessor
+  MidiProcessorInput: new (port: number) => MidiProcessorInput
+  MidiProcessorOutput: new (port: number) => MidiProcessorOutput
 }
 
 export type NodeProcessorOptions = {
@@ -62,6 +136,16 @@ export type NodeProcessorOptions = {
   numOutputChannels: number
   numSamples: number
   sampleRate: number
+}
+
+export type BufferOptions = {
+  type?: Type
+  space?: Space
+  range?: number
+  defaultValue?: number
+  numChannels: number
+  numSamples: number
+  data?: Float64Array[]
 }
 
 export type NodeConstructorMap = {
@@ -239,22 +323,32 @@ type NodeOptionsMap = {
   SampleRate: never
 }
 
-export type NodeOptions<T extends NodeType> = NodeOptionsMap[T]
+export type NodeOptions<T extends NodeType> = NodeOptionsMap[T] & {
+  numChannels: number
+  numInputChannels?: number
+  numOutputChannels?: number
+}
 
 export type IncomingMessage<T extends NodeType> =
   | {
       message: 'createBuffer'
-      id: string
-      type?: Type
-      space?: Space
-      range?: number
-      defaultValue?: number
-      numChannels: number
-      numSamples: number
+      bufferId: string
+      options?: BufferOptions
     }
-  | { message: 'destroyBuffer'; id: string }
-  | { message: 'createNode'; id: string; nodeType: T; props?: NodeOptions<T> }
-  | { message: 'destroyNode'; id: string }
+  | {
+      message: 'deleteBuffer'
+      bufferId: string
+    }
+  | {
+      message: 'createNode'
+      nodeId: string
+      nodeType: T
+      options?: NodeOptions<T>
+    }
+  | {
+      message: 'deleteNode'
+      nodeId: string
+    }
   | {
       message: 'setInputValue'
       nodeId: string
@@ -267,6 +361,11 @@ export type IncomingMessage<T extends NodeType> =
       inputName: string
       channel: number
       value: number
+    }
+  | {
+      message: 'pushTable'
+      nodeId: string
+      bufferId: string
     }
   | {
       message: 'connect'
@@ -282,6 +381,9 @@ export type IncomingMessage<T extends NodeType> =
       destinationNodeId: string
       destinationInputName: string
     }
+  | {
+      message: 'delete'
+    }
 
 export type OutgoingMessage = {
   message: 'setState'
@@ -291,6 +393,27 @@ export type OutgoingMessage = {
 export type Deletable = {
   delete: () => void
 }
+
+export type Vector<T> = Deletable & {
+  clone: () => Vector<T>
+  get: (index: number) => T
+  isAliasOf: (other: Vector<T>) => boolean
+  push_back: (value: T) => void
+  resize: (count: number, value: T) => void
+  set: (index: number, value: T) => boolean
+  size: () => number
+}
+
+export type UInt8Vector = Vector<number>
+export type UIntVector = Vector<number>
+export type SampleVector = Vector<number>
+export type AudioFFTSampleVector = Vector<number>
+export type BufferVector = Vector<Buffer>
+export type InputVector = Vector<Input>
+export type OutputVector = Vector<Output>
+export type NodeVector = Vector<Node>
+export type MidiProcessorInputVector = Vector<MidiProcessorInput>
+export type MidiProcessorOutputVector = Vector<MidiProcessorOutput>
 
 // ========== Core Classes ==========
 
@@ -380,7 +503,7 @@ export type Buffer = Deletable & {
 export type Input = Buffer & {
   getMode: () => InputMode
   setMode: (mode: InputMode) => void
-  getConnections: () => Output[]
+  getConnections: () => OutputVector
   connect: (output: Output) => void
   disconnect: (output: Output) => void
   disconnectAll: () => void
@@ -389,7 +512,7 @@ export type Input = Buffer & {
 }
 
 export type Output = Buffer & {
-  getConnections: () => Input[]
+  getConnections: () => InputVector
   connect: (input: Input) => void
   disconnect: (input: Input) => void
   disconnectAll: () => void
@@ -403,9 +526,9 @@ export type Lockable = Deletable & {
 }
 
 export type Engine = Lockable & {
-  getInputDevices: () => number[]
-  getOutputDevices: () => number[]
-  getSampleRates: (inputDevice: number, outputDevice: number) => number[]
+  getInputDevices: () => UIntVector
+  getOutputDevices: () => UIntVector
+  getSampleRates: (inputDevice: number, outputDevice: number) => UIntVector
   getDefaultInputDevice: () => number
   getDefaultOutputDevice: () => number
   getDefaultSampleRate: (inputDevice: number, outputDevice: number) => number
@@ -443,9 +566,9 @@ export type Node = Deletable & {
   setSampleRate: (sampleRate: number) => void
   getOneOverNumSamples: () => number
   getOneOverSampleRate: () => number
-  getInputs: () => Input[]
-  getOutputs: () => Output[]
-  getChildren: () => Node[]
+  getInputs: () => InputVector
+  getOutputs: () => OutputVector
+  getChildren: () => NodeVector
   addChild: (child: Node) => void
   removeChild: (child: Node) => void
   sortChildren: () => void
@@ -481,7 +604,7 @@ export type NodeProcessor = Deletable & {
   setInputSize: (numChannels: number, numSamples: number) => void
   setOutputSize: (numChannels: number, numSamples: number) => void
   getDefaultNode: () => Node
-  getNodes: () => Node[]
+  getNodes: () => NodeVector
   getInputMessages: () => MidiBuffer
   getOutputMessages: () => MidiBuffer
   process: (audioBuffer: Data, midibuffer: MidiBuffer) => void
@@ -538,8 +661,8 @@ export type MidiProcessor = Lockable & {
   getSampleRate: () => number
   setSampleRate: (sampleRate: number) => void
   getMidiBuffer: () => MidiBuffer
-  getInputs: () => MidiProcessorInput[]
-  getOutputs: () => MidiProcessorOutput[]
+  getInputs: () => MidiProcessorInputVector
+  getOutputs: () => MidiProcessorOutputVector
   processInputs: () => void
   processOutputs: () => void
 }
@@ -680,7 +803,7 @@ export type MidiInput = Producer & {
   processControlValue: () => void
   processProgram: () => void
   processChannelPressure: () => void
-  processPitchBend: () => void
+  processPitchWheel: () => void
   processAllNotesOff: () => void
   processSongPositionInQuarterNotes: () => void
   processClock: () => void
@@ -701,7 +824,7 @@ export type MidiOutput = Consumer & {
   processControlValue: () => void
   processProgram: () => void
   processChannelPressure: () => void
-  processPitchBend: () => void
+  processPitchWheel: () => void
   processAllNotesOff: () => void
   processSongPositionInQuarterNotes: () => void
   processClock: () => void
@@ -759,7 +882,7 @@ export type Phasor = Producer & {
 }
 
 export type SamplePlayer = Producer & {
-  getSamples: () => Buffer[]
+  getSamples: () => BufferVector
   getSpeed: () => Input
   getStartTime: () => Input
   getSampleIndex: () => Input
@@ -770,7 +893,7 @@ export type SamplePlayer = Producer & {
 }
 
 export type TableOscillator = Producer & {
-  getTables: () => Buffer[]
+  getTables: () => BufferVector
   getPhase: () => Input
   getPosition: () => Input
   getPhaseInterpolation: () => Input
@@ -882,7 +1005,7 @@ export type SampleAndHold = Transformer & {
 }
 
 export type Sequencer = Producer & {
-  getSequences: () => Buffer[]
+  getSequences: () => BufferVector
   getSequenceIndex: () => Input
   getPositionIndex: () => Input
 }

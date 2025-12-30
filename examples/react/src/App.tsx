@@ -1,4 +1,5 @@
 import {
+  BiquadMode,
   initializeWebAudio,
   NodeProcessorOptions,
 } from '@potrepka/react-native-dsp'
@@ -59,41 +60,124 @@ export const App = () => {
     }
   }
   const setupTest = (audioWorkletNode: AudioWorkletNode) => {
+    // Create nodes
     audioWorkletNode.port.postMessage({
       message: 'createNode',
-      id: 'Phasor',
+      nodeId: 'phasor',
       nodeType: 'Phasor',
+      options: {
+        numChannels: 2,
+      },
     })
     audioWorkletNode.port.postMessage({
       message: 'createNode',
-      id: 'Multiplication',
-      nodeType: 'Multiplication',
+      nodeId: 'osc',
+      nodeType: 'TableOscillator',
+      options: {
+        numChannels: 2,
+      },
     })
+    audioWorkletNode.port.postMessage({
+      message: 'createNode',
+      nodeId: 'filter',
+      nodeType: 'Biquad',
+      options: {
+        numChannels: 2,
+      },
+    })
+    audioWorkletNode.port.postMessage({
+      message: 'createNode',
+      nodeId: 'gain',
+      nodeType: 'Multiplication',
+      options: {
+        numChannels: 2,
+      },
+    })
+
+    // Set input values
     audioWorkletNode.port.postMessage({
       message: 'setInputValue',
-      nodeId: 'Phasor',
+      nodeId: 'phasor',
       inputName: 'Frequency',
       value: 55,
     })
     audioWorkletNode.port.postMessage({
       message: 'setInputValue',
-      nodeId: 'Multiplication',
+      nodeId: 'filter',
+      inputName: 'Frequency',
+      value: 880,
+    })
+    audioWorkletNode.port.postMessage({
+      message: 'setInputValue',
+      nodeId: 'filter',
+      inputName: 'Mode',
+      value: BiquadMode.LOW_PASS,
+    })
+    audioWorkletNode.port.postMessage({
+      message: 'setInputValue',
+      nodeId: 'gain',
       inputName: 'Factor',
       value: 0.5,
     })
+
+    // Set table
+    const sawtoothBufferSize = 2048
+    const sawtoothBufferData = [new Float64Array(sawtoothBufferSize)]
+    for (let sample = 0; sample < sawtoothBufferSize; sample++) {
+      const phase = sample / sawtoothBufferSize
+      const value = 2 * ((phase + 0.5) % 1) - 1
+      sawtoothBufferData[0][sample] = value
+    }
+    audioWorkletNode.port.postMessage({
+      message: 'createBuffer',
+      bufferId: 'sawtooth',
+      options: {
+        numChannels: 1,
+        numSamples: sawtoothBufferSize,
+        data: sawtoothBufferData,
+      },
+    })
+    audioWorkletNode.port.postMessage({
+      message: 'pushTable',
+      nodeId: 'osc',
+      bufferId: 'sawtooth',
+    })
+
+    // Connect nodes
     audioWorkletNode.port.postMessage({
       message: 'connect',
-      sourceNodeId: 'Phasor',
+      sourceNodeId: 'phasor',
       sourceOutputName: 'Output',
-      destinationNodeId: 'Multiplication',
+      destinationNodeId: 'osc',
+      destinationInputName: 'Phase',
+    })
+    audioWorkletNode.port.postMessage({
+      message: 'connect',
+      sourceNodeId: 'osc',
+      sourceOutputName: 'Output',
+      destinationNodeId: 'filter',
       destinationInputName: 'Input',
     })
     audioWorkletNode.port.postMessage({
       message: 'connect',
-      sourceNodeId: 'Multiplication',
+      sourceNodeId: 'filter',
+      sourceOutputName: 'Output',
+      destinationNodeId: 'gain',
+      destinationInputName: 'Input',
+    })
+    audioWorkletNode.port.postMessage({
+      message: 'connect',
+      sourceNodeId: 'gain',
       sourceOutputName: 'Output',
       destinationNodeId: 'NodeProcessor',
       destinationInputName: 'AudioOutput',
+    })
+
+    // Delay?
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve()
+      }, 100)
     })
   }
   const testOutput = async () => {
@@ -105,7 +189,7 @@ export const App = () => {
     try {
       const numInputChannels = 0
       const numOutputChannels = 2
-      const numSamples = 128
+      const numSamples = 48000
       const sampleRate = 48000
       addLog('Creating OfflineAudioContext...')
       const offlineAudioContext = new OfflineAudioContext(
@@ -123,20 +207,20 @@ export const App = () => {
         {
           numInputChannels,
           numOutputChannels,
-          numSamples,
+          numSamples: 128,
           sampleRate,
         },
       )
       offlineAudioWorkletNode.connect(offlineAudioContext.destination)
       addLog('\nRunning test...')
-      setupTest(offlineAudioWorkletNode)
-      addLog('\nOutput analysis:')
+      await setupTest(offlineAudioWorkletNode)
       const renderedBuffer = await offlineAudioContext.startRendering()
+      addLog('\nOutput analysis:')
       const left = renderedBuffer.getChannelData(0)
       const right = renderedBuffer.getChannelData(1)
       let leftPeak = 0
       let rightPeak = 0
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < numSamples; i++) {
         const leftAmplitude = Math.abs(left[i])
         const rightAmplitude = Math.abs(right[i])
         if (leftAmplitude > leftPeak) {
@@ -147,19 +231,22 @@ export const App = () => {
         }
       }
       const arrayLength = 8
-      const precision = 4
       const arrayLeft = []
       for (let i = 0; i < arrayLength; i++) {
-        arrayLeft.push(left[i].toFixed(precision))
+        arrayLeft.push(left[i])
       }
       const arrayRight = []
       for (let i = 0; i < arrayLength; i++) {
-        arrayRight.push(right[i].toFixed(precision))
+        arrayRight.push(right[i])
       }
-      addLog(`Peak amplitude (L): ${leftPeak.toFixed(4)}`)
-      addLog(`Peak amplitude (R): ${rightPeak.toFixed(4)}`)
-      addLog(`First ${arrayLength} samples (L): ${arrayLeft.join(', ')}`)
-      addLog(`First ${arrayLength} samples (R): ${arrayRight.join(', ')}`)
+      addLog(`Peak amplitude (L): ${leftPeak}`)
+      addLog(`Peak amplitude (R): ${rightPeak}`)
+      addLog(
+        `First ${arrayLength} samples (L): [\n  ${arrayLeft.join(',\n  ')}\n]`,
+      )
+      addLog(
+        `First ${arrayLength} samples (R): [\n  ${arrayRight.join(',\n  ')}\n]`,
+      )
       if (leftPeak > 0 || rightPeak > 0) {
         setStatus({ message: 'Test completed', type: 'success' })
         addLog('\n✅ Test completed')
@@ -211,13 +298,14 @@ export const App = () => {
       })
       audioWorkletNode.connect(audioContext.destination)
       addLog(`\nRunning test...`)
-      setupTest(audioWorkletNode)
+      await setupTest(audioWorkletNode)
       const numSeconds = 2
       addLog(`\nPlaying for ${numSeconds} seconds...`)
       await new Promise((resolve) => setTimeout(resolve, numSeconds * 1000))
       addLog('\nStopping...')
       audioWorkletNode.disconnect()
-      audioWorkletNode.port.postMessage({ message: 'destroy' })
+      await audioContext.close()
+      audioWorkletNode.port.postMessage({ message: 'delete' })
       setStatus({ message: 'Playback completed', type: 'success' })
       addLog('\n✅ Playback completed')
       setIsPlaying(false)

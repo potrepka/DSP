@@ -136,7 +136,7 @@ std::function<void()> dsp::MidiInput::processChannelPressure(uint8 channel) {
   };
 }
 
-std::function<void()> dsp::MidiInput::processPitchBend(uint8 channel) {
+std::function<void()> dsp::MidiInput::processPitchWheel(uint8 channel) {
   return [this, channel]() {
     processContinuous(
         [channel](MidiMessage message) {

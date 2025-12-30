@@ -62,7 +62,7 @@ std::function<void()> dsp::MidiOutput::processNotePressure(
     uint8 channel, std::unordered_set<uint8> noteSet) {
   return [this, channel, noteSet]() {
     processContinuous(noteSet, [channel](uint8 note, Sample current) {
-      return MidiMessage::aftertouchChange(
+      return MidiMessage::aftertouch(
           channel, note, static_cast<uint8>(unipolarToByte(current)));
     });
   };
@@ -71,8 +71,8 @@ std::function<void()> dsp::MidiOutput::processNotePressure(
 std::function<void()> dsp::MidiOutput::processControl(uint8 channel) {
   return [this, channel]() {
     processContinuous([channel](Sample current) {
-      return MidiMessage::controllerEvent(channel, static_cast<uint8>(current),
-                                          uint8(0));
+      return MidiMessage::controller(channel, static_cast<uint8>(current),
+                                     uint8(0));
     });
   };
 }
@@ -81,7 +81,7 @@ std::function<void()> dsp::MidiOutput::processControlValue(
     uint8 channel, std::unordered_set<uint8> controlSet) {
   return [this, channel, controlSet]() {
     processContinuous(controlSet, [channel](uint8 control, Sample current) {
-      return MidiMessage::controllerEvent(
+      return MidiMessage::controller(
           channel, control, static_cast<uint8>(unipolarToByte(current)));
     });
   };
@@ -98,16 +98,16 @@ std::function<void()> dsp::MidiOutput::processProgram(uint8 channel) {
 std::function<void()> dsp::MidiOutput::processChannelPressure(uint8 channel) {
   return [this, channel]() {
     processContinuous([channel](Sample current) {
-      return MidiMessage::channelPressureChange(
+      return MidiMessage::channelPressure(
           channel, static_cast<uint8>(unipolarToByte(current)));
     });
   };
 }
 
-std::function<void()> dsp::MidiOutput::processPitchBend(uint8 channel) {
+std::function<void()> dsp::MidiOutput::processPitchWheel(uint8 channel) {
   return [this, channel]() {
     processContinuous([channel](Sample current) {
-      return MidiMessage::channelPressureChange(
+      return MidiMessage::pitchWheel(
           channel, static_cast<uint8>(bipolarToShort(current)));
     });
   };

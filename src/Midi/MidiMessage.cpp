@@ -134,18 +134,18 @@ dsp::MidiMessage dsp::MidiMessage::noteOn(uint8_t channel, uint8_t noteNumber,
   return MidiMessage(0x90 | (channel - 1), noteNumber, velocity);
 }
 
-dsp::MidiMessage dsp::MidiMessage::aftertouchChange(uint8_t channel,
-                                                    uint8_t noteNumber,
-                                                    uint8_t aftertouchValue) {
+dsp::MidiMessage dsp::MidiMessage::aftertouch(uint8_t channel,
+                                              uint8_t noteNumber,
+                                              uint8_t aftertouchValue) {
   DSP_ASSERT(channel >= 1 && channel <= 16);
   DSP_ASSERT(noteNumber < 128);
   DSP_ASSERT(aftertouchValue < 128);
   return MidiMessage(0xa0 | (channel - 1), noteNumber, aftertouchValue);
 }
 
-dsp::MidiMessage dsp::MidiMessage::controllerEvent(uint8_t channel,
-                                                   uint8_t controllerNumber,
-                                                   uint8_t controllerValue) {
+dsp::MidiMessage dsp::MidiMessage::controller(uint8_t channel,
+                                              uint8_t controllerNumber,
+                                              uint8_t controllerValue) {
   DSP_ASSERT(channel >= 1 && channel <= 16);
   DSP_ASSERT(controllerNumber < 128);
   DSP_ASSERT(controllerValue < 128);
@@ -159,7 +159,7 @@ dsp::MidiMessage dsp::MidiMessage::programChange(uint8_t channel,
   return MidiMessage(0xc0 | (channel - 1), programNumber);
 }
 
-dsp::MidiMessage dsp::MidiMessage::channelPressureChange(
+dsp::MidiMessage dsp::MidiMessage::channelPressure(
     uint8_t channel, uint8_t channelPressureValue) {
   DSP_ASSERT(channel >= 1 && channel <= 16);
   DSP_ASSERT(channelPressureValue < 128);
@@ -174,7 +174,7 @@ dsp::MidiMessage dsp::MidiMessage::pitchWheel(uint8_t channel,
 }
 
 dsp::MidiMessage dsp::MidiMessage::allNotesOff(uint8_t channel) {
-  return controllerEvent(channel, 123, 0);
+  return controller(channel, 123, 0);
 }
 
 dsp::MidiMessage dsp::MidiMessage::songPositionPointer(

@@ -124,8 +124,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   register_vector<std::shared_ptr<Input>>("InputVector");
   register_vector<std::shared_ptr<Output>>("OutputVector");
   register_vector<std::shared_ptr<Node>>("NodeVector");
-  register_vector<std::shared_ptr<MidiProcessor::Input>>("MidiInputVector");
-  register_vector<std::shared_ptr<MidiProcessor::Output>>("MidiOutputVector");
+  register_vector<std::shared_ptr<MidiProcessor::Input>>(
+      "MidiProcessorInputVector");
+  register_vector<std::shared_ptr<MidiProcessor::Output>>(
+      "MidiProcessorOutputVector");
 
   // ========== Multimaps ==========
 
@@ -470,11 +472,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
           })
       .class_function("noteOff", &MidiMessage::noteOff)
       .class_function("noteOn", &MidiMessage::noteOn)
-      .class_function("aftertouchChange", &MidiMessage::aftertouchChange)
-      .class_function("controllerEvent", &MidiMessage::controllerEvent)
+      .class_function("aftertouch", &MidiMessage::aftertouch)
+      .class_function("controller", &MidiMessage::controller)
       .class_function("programChange", &MidiMessage::programChange)
-      .class_function("channelPressureChange",
-                      &MidiMessage::channelPressureChange)
+      .class_function("channelPressure", &MidiMessage::channelPressure)
       .class_function("pitchWheel", &MidiMessage::pitchWheel)
       .class_function("allNotesOff", &MidiMessage::allNotesOff)
       .class_function("songPositionPointer", &MidiMessage::songPositionPointer)
@@ -725,7 +726,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("processControlValue", &MidiInput::processControlValue)
       .function("processProgram", &MidiInput::processProgram)
       .function("processChannelPressure", &MidiInput::processChannelPressure)
-      .function("processPitchBend", &MidiInput::processPitchBend)
+      .function("processPitchWheel", &MidiInput::processPitchWheel)
       .function("processAllNotesOff", &MidiInput::processAllNotesOff)
       .function("processSongPositionInQuarterNotes",
                 &MidiInput::processSongPositionInQuarterNotes)
@@ -750,7 +751,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("processControlValue", &MidiInput::processControlValue)
       .function("processProgram", &MidiInput::processProgram)
       .function("processChannelPressure", &MidiInput::processChannelPressure)
-      .function("processPitchBend", &MidiInput::processPitchBend)
+      .function("processPitchWheel", &MidiInput::processPitchWheel)
       .function("processAllNotesOff", &MidiInput::processAllNotesOff)
       .function("processSongPositionInQuarterNotes",
                 &MidiInput::processSongPositionInQuarterNotes)

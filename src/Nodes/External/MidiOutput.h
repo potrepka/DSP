@@ -28,7 +28,7 @@ public:
       uint8 channel, std::unordered_set<uint8> controlSet);
   std::function<void()> processProgram(uint8 channel);
   std::function<void()> processChannelPressure(uint8 channel);
-  std::function<void()> processPitchBend(uint8 channel);
+  std::function<void()> processPitchWheel(uint8 channel);
   std::function<void()> processAllNotesOff(uint8 channel);
   std::function<void()> processSongPositionInQuarterNotes();
   std::function<void()> processClock();
