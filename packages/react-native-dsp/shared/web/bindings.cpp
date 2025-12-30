@@ -225,10 +225,6 @@ EMSCRIPTEN_BINDINGS(native_audio) {
                 select_overload<Wrapper&(std::function<Sample(Sample, Sample)>,
                                          Wrapper, Wrapper)>(
                     &Wrapper::replaceWithApplicationOf))
-      .function("replaceWithApplicationOfThreeArgs",
-                select_overload<Wrapper&(
-                    std::function<Sample(Sample, Sample, Sample)>, Wrapper,
-                    Wrapper, Wrapper)>(&Wrapper::replaceWithApplicationOf))
       .function("copyFrom", &Wrapper::copyFrom)
       .function("add", select_overload<Wrapper&(Sample)>(&Wrapper::add))
       .function("addWrapper", select_overload<Wrapper&(Wrapper)>(&Wrapper::add))

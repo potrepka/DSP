@@ -24,6 +24,7 @@ dsp::FrequencyResponse dsp::OnePole::getFrequencyResponse(size_t channel,
     const Sample oneOverSampleRate = getOneOverSampleRate();
     const Sample f =
         getFrequency()->getWrapper().getSample(channel, lastSample);
+    const Sample mode = getMode()->getWrapper().getSample(channel, lastSample);
     unlock();
     const Sample radians =
         PI * clip(f, 0.0, 0.5 * sampleRate) * oneOverSampleRate;

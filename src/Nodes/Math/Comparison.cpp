@@ -12,7 +12,7 @@ std::shared_ptr<dsp::Input> dsp::Comparison::getThreshold() const {
 
 void dsp::Comparison::processNoLock() {
   getOutput()->getWrapper().replaceWithApplicationOf(
-      [this](Sample x, Sample y) {
+      [](Sample x, Sample y) {
         const Sample diff = x - y;
         return (0.0 < diff) - (diff < 0.0);
       },

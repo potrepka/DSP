@@ -452,12 +452,6 @@ export type Wrapper = Deletable & {
     src1: Wrapper,
     src2: Wrapper,
   ) => Wrapper
-  replaceWithApplicationOfThreeArgs: (
-    f: (sample1: number, sample2: number, sample3: number) => number,
-    src1: Wrapper,
-    src2: Wrapper,
-    src3: Wrapper,
-  ) => Wrapper
   copyFrom: (src: Wrapper) => void
   add: (value: number) => Wrapper
   addWrapper: (src: Wrapper) => Wrapper

@@ -24,19 +24,31 @@ dsp::FrequencyResponse dsp::OnePole::getFrequencyResponse(size_t channel,
     const Sample oneOverSampleRate = getOneOverSampleRate();
     const Sample f =
         getFrequency()->getWrapper().getSample(channel, lastSample);
+    const Sample mode = getMode()->getWrapper().getSample(channel, lastSample);
     unlock();
     const Sample radians =
         PI * clip(f, 0.0, 0.5 * sampleRate) * oneOverSampleRate;
     const Sample g = tan(radians / (1.0 + radians));
-    const Sample omega = 2.0 * PI * frequency * oneOverSampleRate;
+    const Sample twoGMinusOne = 2.0 * g - 1.0;
+    const Sample omega = TAU * frequency * oneOverSampleRate;
     const Sample cosW = cos(omega);
     const Sample sinW = sin(omega);
-    const Sample a = g * (1.0 + cosW);
-    const Sample b = -g * sinW;
-    const Sample gPlusOne = g + 1.0;
-    const Sample gMinusOne = g - 1.0;
-    const Sample c = gPlusOne + gMinusOne * cosW;
-    const Sample d = -gMinusOne * sinW;
+    Sample a, b;
+    switch (static_cast<int>(mode)) {
+      case Mode::LOW_PASS: {
+        a = g * (1.0 + cosW);
+        b = -g * sinW;
+        break;
+      }
+      case Mode::HIGH_PASS: {
+        const Sample oneMinusG = 1.0 - g;
+        a = oneMinusG * (1.0 - cosW);
+        b = oneMinusG * sinW;
+        break;
+      }
+    }
+    const Sample c = 1.0 + twoGMinusOne * cosW;
+    const Sample d = -twoGMinusOne * sinW;
     const Sample magnitudeNum = a * a + b * b;
     const Sample magnitudeDen = c * c + d * d;
     const Sample magnitude = sqrt(magnitudeNum / magnitudeDen);
@@ -76,8 +88,8 @@ void dsp::OnePole::processNoLock() {
       const Sample oneOverSampleRate = getOneOverSampleRate();
       const Sample radians =
           PI * clip(frequency, 0.0, 0.5 * sampleRate) * oneOverSampleRate;
-      const Sample delta =
-          tan(radians / (1.0 + radians)) * (input - state[channel]);
+      const Sample g = tan(radians / (1.0 + radians));
+      const Sample delta = g * (input - state[channel]);
       state[channel] += delta;
       switch (static_cast<int>(mode)) {
         case Mode::LOW_PASS:
