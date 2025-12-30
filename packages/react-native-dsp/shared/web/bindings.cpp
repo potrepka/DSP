@@ -114,6 +114,17 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   constant("TRIGONOMETRIC_MODE_COSINE", Trigonometric::Mode::COSINE);
   constant("TRIGONOMETRIC_MODE_TANGENT", Trigonometric::Mode::TANGENT);
 
+  // ========== Global Functions ==========
+
+  function("byteToUnipolar", &byteToUnipolar);
+  function("unipolarToByte", &unipolarToByte);
+  function("shortToBipolar", &shortToBipolar);
+  function("bipolarToShort", &bipolarToShort);
+  function("clip", &clip);
+  function("wrap", &wrap);
+  function("linear", &linear, allow_raw_pointers());
+  function("hermite", &hermite, allow_raw_pointers());
+
   // ========== Vectors ==========
 
   register_vector<uint8_t>("UInt8Vector");
@@ -132,17 +143,6 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // ========== Multimaps ==========
 
   // register_multimap<double, MidiMessage>("MidiMessageMultimap");
-
-  // ========== Global Functions ==========
-
-  function("byteToUnipolar", &byteToUnipolar);
-  function("unipolarToByte", &unipolarToByte);
-  function("shortToBipolar", &shortToBipolar);
-  function("bipolarToShort", &bipolarToShort);
-  function("clip", &clip);
-  function("wrap", &wrap);
-  function("linear", &linear, allow_raw_pointers());
-  function("hermite", &hermite, allow_raw_pointers());
 
   // ========== Core Classes ==========
 

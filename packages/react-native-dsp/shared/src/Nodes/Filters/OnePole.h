@@ -18,6 +18,8 @@ public:
   std::shared_ptr<Input> getFrequency() const;
   std::shared_ptr<Input> getMode() const;
 
+  FrequencyResponse getFrequencyResponse(size_t channel, Sample frequency);
+
 protected:
   void setNumOutputChannelsNoLock(size_t numChannels) override;
   void processNoLock() override;

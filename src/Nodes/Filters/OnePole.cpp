@@ -14,6 +14,54 @@ std::shared_ptr<dsp::Input> dsp::OnePole::getFrequency() const {
 
 std::shared_ptr<dsp::Input> dsp::OnePole::getMode() const { return mode; }
 
+dsp::FrequencyResponse dsp::OnePole::getFrequencyResponse(size_t channel,
+                                                          Sample frequency) {
+  lock();
+  DSP_ASSERT(channel < getNumChannels());
+  if (getNumSamples() > 0) {
+    const size_t lastSample = getNumSamples() - 1;
+    const Sample sampleRate = getSampleRate();
+    const Sample oneOverSampleRate = getOneOverSampleRate();
+    const Sample f =
+        getFrequency()->getWrapper().getSample(channel, lastSample);
+    unlock();
+    const Sample radians =
+        PI * clip(f, 0.0, 0.5 * sampleRate) * oneOverSampleRate;
+    const Sample g = tan(radians / (1.0 + radians));
+    const Sample twoGMinusOne = 2.0 * g - 1.0;
+    const Sample omega = TAU * frequency * oneOverSampleRate;
+    const Sample cosW = cos(omega);
+    const Sample sinW = sin(omega);
+    Sample a, b;
+    switch (static_cast<int>(mode)) {
+      case Mode::LOW_PASS: {
+        a = g * (1.0 + cosW);
+        b = -g * sinW;
+        break;
+      }
+      case Mode::HIGH_PASS: {
+        const Sample oneMinusG = 1.0 - g;
+        a = oneMinusG * (1.0 - cosW);
+        b = oneMinusG * sinW;
+        break;
+      }
+    }
+    const Sample c = 1.0 + twoGMinusOne * cosW;
+    const Sample d = -twoGMinusOne * sinW;
+    const Sample magnitudeNum = a * a + b * b;
+    const Sample magnitudeDen = c * c + d * d;
+    const Sample magnitude = sqrt(magnitudeNum / magnitudeDen);
+    const Sample phaseNum = b * c - a * d;
+    const Sample phaseDen = a * c + b * d;
+    const Sample bipolar = ONE_OVER_TAU * atan2(phaseNum, phaseDen);
+    const Sample phase = bipolar < 0.0 ? bipolar + 1.0 : bipolar;
+    return {magnitude, phase};
+  } else {
+    unlock();
+    return {1.0, 0.0};
+  }
+}
+
 void dsp::OnePole::setNumOutputChannelsNoLock(size_t numChannels) {
   Node::setNumOutputChannelsNoLock(numChannels);
   state.resize(numChannels, 0.0);
@@ -35,9 +83,12 @@ void dsp::OnePole::processNoLock() {
       if (isnan(state[channel])) {
         state[channel] = 0.0;
       }
-      const Sample radians = PI * frequency * getOneOverSampleRate();
-      const Sample delta =
-          tan(radians / (1.0 + radians)) * (input - state[channel]);
+      const Sample sampleRate = getSampleRate();
+      const Sample oneOverSampleRate = getOneOverSampleRate();
+      const Sample radians =
+          PI * clip(frequency, 0.0, 0.5 * sampleRate) * oneOverSampleRate;
+      const Sample g = tan(radians / (1.0 + radians));
+      const Sample delta = g * (input - state[channel]);
       state[channel] += delta;
       switch (static_cast<int>(mode)) {
         case Mode::LOW_PASS:

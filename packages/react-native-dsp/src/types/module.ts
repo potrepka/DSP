@@ -1,19 +1,12 @@
-import type { InputMode, RecorderMode, Space, Type } from '../enums'
+import type { InputMode, RecorderMode, Space, TargetType, Type } from '../enums'
 
-export type AudioModule = NodeConstructorMap & {
-  // Vector Constructors
-  UInt8Vector: new () => UInt8Vector
-  UIntVector: new () => UIntVector
-  SampleVector: new () => SampleVector
-  AudioFFTSampleVector: new () => AudioFFTSampleVector
-  BufferVector: new () => BufferVector
-  InputVector: new () => InputVector
-  OutputVector: new () => OutputVector
-  NodeVector: new () => NodeVector
-  MidiProcessorInputVector: new () => MidiProcessorInputVector
-  MidiProcessorOutputVector: new () => MidiProcessorOutputVector
+export type AudioModule = GlobalFunctionMap &
+  VectorConstructorMap &
+  CoreConsturctorMap &
+  MidiConstructorMap &
+  NodeConstructorMap
 
-  // Global Functions
+export type GlobalFunctionMap = {
   byteToUnipolar: (value: number) => number
   unipolarToByte: (value: number) => number
   shortToUnipolar: (value: number) => number
@@ -32,8 +25,22 @@ export type AudioModule = NodeConstructorMap & {
     index: number,
     defaultValue?: number,
   ) => number
+}
 
-  // Core Constructors
+export type VectorConstructorMap = {
+  UInt8Vector: new () => UInt8Vector
+  UIntVector: new () => UIntVector
+  SampleVector: new () => SampleVector
+  AudioFFTSampleVector: new () => AudioFFTSampleVector
+  BufferVector: new () => BufferVector
+  InputVector: new () => InputVector
+  OutputVector: new () => OutputVector
+  NodeVector: new () => NodeVector
+  MidiProcessorInputVector: new () => MidiProcessorInputVector
+  MidiProcessorOutputVector: new () => MidiProcessorOutputVector
+}
+
+export type CoreConsturctorMap = {
   Data: new (numChannels: number, numSamples: number) => Data
   Wrapper: {
     new (): Wrapper
@@ -85,8 +92,9 @@ export type AudioModule = NodeConstructorMap & {
     sampleRate: number,
   ) => NodeProcessor
   NormalizedFFT: new () => NormalizedFFT
+}
 
-  // Midi Constructors
+export type MidiConstructorMap = {
   MidiBuffer: new () => MidiBuffer
   MidiMessage: {
     new (byte0: number): MidiMessage
@@ -129,23 +137,6 @@ export type AudioModule = NodeConstructorMap & {
   MidiProcessor: new () => MidiProcessor
   MidiProcessorInput: new (port: number) => MidiProcessorInput
   MidiProcessorOutput: new (port: number) => MidiProcessorOutput
-}
-
-export type NodeProcessorOptions = {
-  numInputChannels: number
-  numOutputChannels: number
-  numSamples: number
-  sampleRate: number
-}
-
-export type BufferOptions = {
-  type?: Type
-  space?: Space
-  range?: number
-  defaultValue?: number
-  numChannels: number
-  numSamples: number
-  data?: Float64Array[]
 }
 
 export type NodeConstructorMap = {
@@ -235,6 +226,16 @@ export type NodeConstructorMap = {
   SampleRate: new () => SampleRate
 }
 
+export type BufferOptions = {
+  type?: Type
+  space?: Space
+  range?: number
+  defaultValue?: number
+  numChannels: number
+  numSamples: number
+  data?: Float64Array[]
+}
+
 export type NodeType = keyof NodeConstructorMap
 
 type NodeOptionsMap = {
@@ -249,15 +250,15 @@ type NodeOptionsMap = {
   StereoPanner: { type?: Type; space?: Space }
 
   // Delay Nodes
-  Convolver: never
+  Convolver: unknown
 
   VariableDelay: { type?: Type }
 
   // Dynamics Nodes
   Clipper: { type?: Type; space?: Space }
-  CompressorGate: never
+  CompressorGate: unknown
   DryWet: { type?: Type; space?: Space }
-  Envelope: never
+  Envelope: unknown
   Lag: { type?: Type }
   Shaper: { space?: Space }
 
@@ -266,15 +267,15 @@ type NodeOptionsMap = {
   MidiOutput: { midiBuffer: MidiBuffer; type?: Type }
 
   // Filter Nodes
-  Biquad: never
-  Crossover: never
+  Biquad: unknown
+  Crossover: unknown
   OnePole: { type?: Type }
 
   // Generator Nodes
   FunctionOscillator: { type?: Type }
-  MoorerOscillator: never
-  Noise: never
-  Phasor: never
+  MoorerOscillator: unknown
+  Noise: unknown
+  Phasor: unknown
   SamplePlayer: { type?: Type }
   TableOscillator: { type?: Type }
 
@@ -284,7 +285,7 @@ type NodeOptionsMap = {
   Comparison: { type?: Type; space?: Space }
   Division: { type?: Type; space?: Space }
   Floor: { type?: Type; space?: Space }
-  ForwardFFT: never
+  ForwardFFT: unknown
   FrequencyToNote: { space?: Space }
   Hyperbolic: { space?: Space }
   Identity: {
@@ -295,7 +296,7 @@ type NodeOptionsMap = {
     inputSpace?: Space
     outputSpace?: Space
   }
-  InverseFFT: never
+  InverseFFT: unknown
   Logarithm: { space?: Space }
   Modulo: { type?: Type; space?: Space }
   Multiplication: { type?: Type; space?: Space }
@@ -307,26 +308,33 @@ type NodeOptionsMap = {
   Trigonometric: { space?: Space }
 
   // Trigger Nodes
-  ClockTrigger: never
+  ClockTrigger: unknown
   Differentiator: { type?: Type }
   Integrator: { type?: Type }
-  OnOff: never
-  ResetTrigger: never
+  OnOff: unknown
+  ResetTrigger: unknown
   SampleAndHold: { type?: Type }
   Sequencer: { type?: Type; space?: Space }
-  TriggerHold: never
+  TriggerHold: unknown
 
   // Variable Nodes
-  BufferDuration: never
-  BufferRate: never
-  SampleDuration: never
-  SampleRate: never
+  BufferDuration: unknown
+  BufferRate: unknown
+  SampleDuration: unknown
+  SampleRate: unknown
 }
 
 export type NodeOptions<T extends NodeType> = NodeOptionsMap[T] & {
   numChannels: number
   numInputChannels?: number
   numOutputChannels?: number
+}
+
+export type NodeProcessorOptions = {
+  numInputChannels: number
+  numOutputChannels: number
+  numSamples: number
+  sampleRate: number
 }
 
 export type IncomingMessage<T extends NodeType> =
@@ -350,45 +358,41 @@ export type IncomingMessage<T extends NodeType> =
       nodeId: string
     }
   | {
-      message: 'setInputValue'
-      nodeId: string
-      inputName: string
-      value: number
-    }
-  | {
-      message: 'setInputChannelValue'
-      nodeId: string
-      inputName: string
-      channel: number
-      value: number
-    }
-  | {
-      message: 'pushTable'
-      nodeId: string
-      bufferId: string
-    }
-  | {
-      message: 'connect'
-      sourceNodeId: string
-      sourceOutputName: string
-      destinationNodeId: string
-      destinationInputName: string
-    }
-  | {
-      message: 'disconnect'
-      sourceNodeId: string
-      sourceOutputName: string
-      destinationNodeId: string
-      destinationInputName: string
-    }
-  | {
       message: 'delete'
     }
+  | {
+      message: 'call'
+      requestId: string
+      target: Target
+      functionName: string
+      args: unknown[]
+    }
 
-export type OutgoingMessage = {
-  message: 'setState'
-  state: 'running' | 'closed'
-}
+export type Target =
+  | {
+      type: TargetType.Node
+      nodeType: NodeType
+      id: string
+    }
+  | {
+      type: TargetType.NodeProcessor
+    }
+  | {
+      type: Exclude<TargetType, TargetType.Node | TargetType.NodeProcessor>
+      id: string
+    }
+
+export type OutgoingMessage =
+  | {
+      message: 'setState'
+      state: 'running' | 'closed'
+    }
+  | {
+      message: 'response'
+      requestId: string
+      result?: null | number | boolean | string | Array<number> | Target
+      error?: string
+    }
 
 export type Deletable = {
   delete: () => void

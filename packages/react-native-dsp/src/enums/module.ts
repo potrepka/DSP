@@ -1,5 +1,6 @@
 export enum ReservedKeyword {
   NodeProcessor = 'NodeProcessor',
+  DefaultNode = 'DefaultNode',
 }
 
 export enum NodeProcessorInputName {

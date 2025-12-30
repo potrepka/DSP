@@ -59,11 +59,12 @@ dsp::FrequencyResponse dsp::Biquad::getFrequencyResponse(size_t channel,
     const Sample b = -b1 * sinW - b2 * sin2W;
     const Sample c = a0 + a1 * cosW + a2 * cos2W;
     const Sample d = -a1 * sinW - a2 * sin2W;
-    const Sample denominator = c * c + d * d;
-    const Sample real = (a * c + b * d) / denominator;
-    const Sample imaginary = (b * c - a * d) / denominator;
-    const Sample magnitude = sqrt(real * real + imaginary * imaginary);
-    const Sample bipolar = ONE_OVER_TAU * atan2(imaginary, real);
+    const Sample magnitudeNum = a * a + b * b;
+    const Sample magnitudeDen = c * c + d * d;
+    const Sample magnitude = sqrt(magnitudeNum / magnitudeDen);
+    const Sample phaseNum = b * c - a * d;
+    const Sample phaseDen = a * c + b * d;
+    const Sample bipolar = ONE_OVER_TAU * atan2(phaseNum, phaseDen);
     const Sample phase = bipolar < 0.0 ? bipolar + 1.0 : bipolar;
     return {magnitude, phase};
   } else {

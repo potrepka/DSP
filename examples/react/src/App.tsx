@@ -1,5 +1,7 @@
 import {
+  AudioModule,
   BiquadMode,
+  DSP,
   initializeWebAudio,
   NodeProcessorOptions,
 } from '@potrepka/react-native-dsp'
@@ -59,68 +61,26 @@ export const App = () => {
       console.error(error)
     }
   }
-  const setupTest = (audioWorkletNode: AudioWorkletNode) => {
-    // Create nodes
-    audioWorkletNode.port.postMessage({
-      message: 'createNode',
-      nodeId: 'phasor',
-      nodeType: 'Phasor',
-      options: {
-        numChannels: 2,
-      },
-    })
-    audioWorkletNode.port.postMessage({
-      message: 'createNode',
-      nodeId: 'osc',
-      nodeType: 'TableOscillator',
-      options: {
-        numChannels: 2,
-      },
-    })
-    audioWorkletNode.port.postMessage({
-      message: 'createNode',
-      nodeId: 'filter',
-      nodeType: 'Biquad',
-      options: {
-        numChannels: 2,
-      },
-    })
-    audioWorkletNode.port.postMessage({
-      message: 'createNode',
-      nodeId: 'gain',
-      nodeType: 'Multiplication',
-      options: {
-        numChannels: 2,
-      },
-    })
+  const setupTest = async (audioWorkletNode: AudioWorkletNode) => {
+    // Create the DSP instance
+    const dsp = new DSP(audioWorkletNode)
+
+    // Wait for the module to initialize
+    await dsp.ready()
+
+    // Create nodes using the fluent API
+    const phasor = dsp.createPhasor({ numChannels: 2 })
+    const osc = dsp.createTableOscillator({ numChannels: 2 })
+    const filter = dsp.createBiquad({ numChannels: 2 })
+    const gain = dsp.createMultiplication({ numChannels: 2 })
 
     // Set input values
-    audioWorkletNode.port.postMessage({
-      message: 'setInputValue',
-      nodeId: 'phasor',
-      inputName: 'Frequency',
-      value: 55,
-    })
-    audioWorkletNode.port.postMessage({
-      message: 'setInputValue',
-      nodeId: 'filter',
-      inputName: 'Frequency',
-      value: 880,
-    })
-    audioWorkletNode.port.postMessage({
-      message: 'setInputValue',
-      nodeId: 'filter',
-      inputName: 'Mode',
-      value: BiquadMode.LOW_PASS,
-    })
-    audioWorkletNode.port.postMessage({
-      message: 'setInputValue',
-      nodeId: 'gain',
-      inputName: 'Factor',
-      value: 0.5,
-    })
+    await phasor.getFrequency().setAllChannelValues(55)
+    await filter.getFrequency().setAllChannelValues(880)
+    await filter.getMode().setAllChannelValues(BiquadMode.LOW_PASS)
+    await gain.getFactor().setAllChannelValues(0.5)
 
-    // Set table
+    // Create wavetable
     const sawtoothBufferSize = 2048
     const sawtoothBufferData = [new Float64Array(sawtoothBufferSize)]
     for (let sample = 0; sample < sawtoothBufferSize; sample++) {
@@ -128,57 +88,18 @@ export const App = () => {
       const value = 2 * ((phase + 0.5) % 1) - 1
       sawtoothBufferData[0][sample] = value
     }
-    audioWorkletNode.port.postMessage({
-      message: 'createBuffer',
-      bufferId: 'sawtooth',
-      options: {
-        numChannels: 1,
-        numSamples: sawtoothBufferSize,
-        data: sawtoothBufferData,
-      },
+    const sawtooth = dsp.createBuffer({
+      numChannels: 1,
+      numSamples: sawtoothBufferSize,
+      data: sawtoothBufferData,
     })
-    audioWorkletNode.port.postMessage({
-      message: 'pushTable',
-      nodeId: 'osc',
-      bufferId: 'sawtooth',
-    })
+    await osc.getTables().push_back(sawtooth)
 
-    // Connect nodes
-    audioWorkletNode.port.postMessage({
-      message: 'connect',
-      sourceNodeId: 'phasor',
-      sourceOutputName: 'Output',
-      destinationNodeId: 'osc',
-      destinationInputName: 'Phase',
-    })
-    audioWorkletNode.port.postMessage({
-      message: 'connect',
-      sourceNodeId: 'osc',
-      sourceOutputName: 'Output',
-      destinationNodeId: 'filter',
-      destinationInputName: 'Input',
-    })
-    audioWorkletNode.port.postMessage({
-      message: 'connect',
-      sourceNodeId: 'filter',
-      sourceOutputName: 'Output',
-      destinationNodeId: 'gain',
-      destinationInputName: 'Input',
-    })
-    audioWorkletNode.port.postMessage({
-      message: 'connect',
-      sourceNodeId: 'gain',
-      sourceOutputName: 'Output',
-      destinationNodeId: 'NodeProcessor',
-      destinationInputName: 'AudioOutput',
-    })
-
-    // Delay?
-    return new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve()
-      }, 100)
-    })
+    // Connect the graph
+    await phasor.getOutput().connect(osc.getPhase())
+    await osc.getOutput().connect(filter.getInput())
+    await filter.getOutput().connect(gain.getInput())
+    await gain.getOutput().connect(dsp.nodeProcessor.getAudioOutput())
   }
   const testOutput = async () => {
     if (!addModule || !createAudioWorkletNode) {
