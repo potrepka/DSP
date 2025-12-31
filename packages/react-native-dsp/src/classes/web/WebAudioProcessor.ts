@@ -224,9 +224,15 @@ class WebAudioProcessor extends AudioWorkletProcessor {
   ) => {
     this.assertReady()
     try {
-      const method = (this.module as Record<string, unknown>)[objectType]
+      const constructor = (this.module as Record<string, unknown>)[objectType]
+      if (typeof constructor !== 'function') {
+        throw new Error(`Object type not found: ${objectType}`)
+      }
+      const method = (constructor as unknown as Record<string, unknown>)[
+        methodName
+      ]
       if (typeof method !== 'function') {
-        throw new Error(`Method not found: ${objectType}`)
+        throw new Error(`Method not found: ${methodName}`)
       }
       const resolvedArgs = args.map((arg) => this.deserialize(arg))
       const result = method.apply(null, resolvedArgs)

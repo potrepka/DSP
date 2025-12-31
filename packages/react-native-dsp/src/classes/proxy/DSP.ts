@@ -82,14 +82,7 @@ export class DSP {
       }
     }
   }
-  isReady = async () => {
-    if (this.ready) {
-      return
-    }
-    return this.readyPromise
-  }
-  getNodeProcessor = (): NodeProcessorProxy => this.#nodeProcessor
-  createObject = <T extends ObjectType>(
+  private createObject = <T extends ObjectType>(
     objectType: T,
     options: Options<T> = {} as Options<T>,
   ): Promise<Target> => {
@@ -100,7 +93,7 @@ export class DSP {
       options,
     })
   }
-  callStatic = (
+  private callStatic = (
     objectType: string,
     methodName: string,
     args: unknown[],
@@ -113,6 +106,13 @@ export class DSP {
       args,
     })
   }
+  isReady = async () => {
+    if (this.ready) {
+      return
+    }
+    return this.readyPromise
+  }
+  getNodeProcessor = (): NodeProcessorProxy => this.#nodeProcessor
   delete = (): Promise<void> => {
     return this.sendMessage<void>({
       message: 'delete',

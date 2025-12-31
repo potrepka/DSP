@@ -2,6 +2,7 @@ import { chainable } from '../../../helpers/proxy'
 import { Target } from '../../../types/module'
 import { Chainable, ProxyContext } from '../../../types/proxy'
 import { BaseProxy } from '../core/BaseProxy'
+import { MidiMessageProxy } from './MidiMessageProxy'
 
 export class MidiBufferProxy extends BaseProxy {
   constructor(context: ProxyContext, target: Target) {
@@ -13,7 +14,10 @@ export class MidiBufferProxy extends BaseProxy {
   end = (): Chainable<unknown> => {
     return chainable(this.call('end', []))
   }
-  addEvent = (midiMessage: BaseProxy, sample: number): Chainable<void> => {
+  addEvent = (
+    midiMessage: MidiMessageProxy,
+    sample: number,
+  ): Chainable<void> => {
     return chainable(this.call('addEvent', [midiMessage, sample]))
   }
   addEvents = (
