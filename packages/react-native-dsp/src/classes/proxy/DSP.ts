@@ -9,6 +9,7 @@ import {
 import { ProxyContext } from '../../types/proxy'
 import { BufferProxy } from './core/BufferProxy'
 import { NodeProcessorProxy } from './core/NodeProcessorProxy'
+import { MidiBufferProxy } from './midi/MidiBufferProxy'
 import { MidiMessageProxy } from './midi/MidiMessageProxy'
 import { BiquadProxy } from './nodes/BiquadProxy'
 import { MultiplicationProxy } from './nodes/MultiplicationProxy'
@@ -144,6 +145,12 @@ export class DSP {
   ): Promise<MultiplicationProxy> => {
     const target = await this.createObject('Multiplication', options)
     return new MultiplicationProxy(this.#context, target)
+  }
+  createMidiBuffer = async (
+    options: Options<'MidiBuffer'> = {} as Options<'MidiBuffer'>,
+  ): Promise<MidiBufferProxy> => {
+    const target = await this.createObject('MidiBuffer', options)
+    return new MidiBufferProxy(this.#context, target)
   }
   createMidiMessage = async (bytes: number[]): Promise<MidiMessageProxy> => {
     const target = await this.callStatic('MidiMessage', 'fromArray', [bytes])

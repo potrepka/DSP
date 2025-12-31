@@ -9,6 +9,22 @@ export const createObject = <T extends ObjectType>(
   let reference: Deletable
   switch (objectType) {
     // Core Classes
+    case 'Data': {
+      const dataOptions = options as Options<'Data'>
+      const { numChannels, numSamples } = dataOptions
+      reference = new module.Data(numChannels ?? 0, numSamples ?? 0)
+      break
+    }
+    case 'Wrapper': {
+      const wrapperOptions = options as Options<'Wrapper'>
+      const { data } = wrapperOptions
+      if (data !== undefined) {
+        reference = new module.Wrapper(data)
+      } else {
+        reference = new module.Wrapper()
+      }
+      break
+    }
     case 'Buffer': {
       const bufferOptions = options as Options<'Buffer'>
       const { type, space, range, defaultValue, numChannels, numSamples } =
@@ -21,6 +37,72 @@ export const createObject = <T extends ObjectType>(
         numChannels ?? 0,
         numSamples ?? 0,
       )
+      break
+    }
+    case 'Input': {
+      const inputOptions = options as Options<'Input'>
+      const { type, space, range, defaultValue, numChannels, numSamples } =
+        inputOptions
+      reference = new module.Input(
+        type ?? Type.RATIO,
+        space ?? Space.TIME,
+        range ?? 0,
+        defaultValue ?? 0,
+        numChannels ?? 0,
+        numSamples ?? 0,
+      )
+      break
+    }
+    case 'Output': {
+      const outputOptions = options as Options<'Output'>
+      const { type, space, range, defaultValue, numChannels, numSamples } =
+        outputOptions
+      reference = new module.Output(
+        type ?? Type.RATIO,
+        space ?? Space.TIME,
+        range ?? 0,
+        defaultValue ?? 0,
+        numChannels ?? 0,
+        numSamples ?? 0,
+      )
+      break
+    }
+    case 'Lockable':
+      reference = new module.Lockable()
+      break
+    case 'Node':
+      reference = new module.Node()
+      break
+    case 'NodeProcessor': {
+      const processorOptions = options as Options<'NodeProcessor'>
+      const { numInputChannels, numOutputChannels, numSamples, sampleRate } =
+        processorOptions
+      reference = new module.NodeProcessor(
+        numInputChannels ?? 0,
+        numOutputChannels ?? 0,
+        numSamples ?? 0,
+        sampleRate ?? 48000,
+      )
+      break
+    }
+    case 'NormalizedFFT':
+      reference = new module.NormalizedFFT()
+      break
+
+    // Midi Classes
+    case 'MidiBuffer':
+      reference = new module.MidiBuffer()
+      break
+    case 'MidiMessage': {
+      const messageOptions = options as Options<'MidiMessage'>
+      const { byte0, byte1, byte2 } = messageOptions
+      if (byte2 !== undefined) {
+        reference = new module.MidiMessage(byte0 ?? 0, byte1 ?? 0, byte2)
+      } else if (byte1 !== undefined) {
+        reference = new module.MidiMessage(byte0 ?? 0, byte1)
+      } else {
+        reference = new module.MidiMessage(byte0 ?? 0)
+      }
       break
     }
 
@@ -112,7 +194,7 @@ export const createObject = <T extends ObjectType>(
     // External Nodes
     case 'MidiInput': {
       const { midiBuffer, type } = options as Options<'MidiInput'>
-      if (!midiBuffer) {
+      if (midiBuffer === undefined) {
         throw new Error('midiBuffer is required for MidiInput')
       }
       reference = new module.MidiInput(midiBuffer, type ?? Type.RATIO)
@@ -120,7 +202,7 @@ export const createObject = <T extends ObjectType>(
     }
     case 'MidiOutput': {
       const { midiBuffer, type } = options as Options<'MidiOutput'>
-      if (!midiBuffer) {
+      if (midiBuffer === undefined) {
         throw new Error('midiBuffer is required for MidiOutput')
       }
       reference = new module.MidiOutput(midiBuffer, type ?? Type.RATIO)
@@ -214,14 +296,17 @@ export const createObject = <T extends ObjectType>(
     case 'Identity': {
       const { type, space, inputType, outputType, inputSpace, outputSpace } =
         options as Options<'Identity'>
-      if ((inputType || outputType) && (inputSpace || outputSpace)) {
+      if (
+        (inputType !== undefined || outputType !== undefined) &&
+        (inputSpace !== undefined || outputSpace !== undefined)
+      ) {
         reference = new module.Identity(
           inputType ?? type ?? Type.RATIO,
           outputType ?? type ?? Type.RATIO,
           inputSpace ?? space ?? Space.TIME,
           outputSpace ?? space ?? Space.TIME,
         )
-      } else if (inputType || outputType) {
+      } else if (inputType !== undefined || outputType !== undefined) {
         reference = new module.Identity(
           inputType ?? type ?? Type.RATIO,
           outputType ?? type ?? Type.RATIO,

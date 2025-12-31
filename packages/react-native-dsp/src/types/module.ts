@@ -672,9 +672,13 @@ export type NodeProcessor = Deletable & {
 
 // ========== Midi Classes ==========
 
+export type MidiEvent = {
+  samplePosition: number
+  midiMessage: MidiMessage
+}
+
 export type MidiBuffer = Deletable & {
-  begin: () => unknown
-  end: () => unknown
+  getEvents: () => MidiEvent[]
   addEvent: (midiMessage: MidiMessage, sample: number) => void
   addEvents: (
     midiBuffer: MidiBuffer,
@@ -683,9 +687,6 @@ export type MidiBuffer = Deletable & {
     sampleDeltaToAdd: number,
   ) => void
   clear: () => void
-  forEach: (
-    callback: (samplePosition: number, midiMessage: MidiMessage) => void,
-  ) => void
 }
 
 export type MidiMessage = Deletable & {

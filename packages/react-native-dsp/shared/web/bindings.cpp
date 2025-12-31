@@ -450,18 +450,22 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<MidiBuffer>("MidiBuffer")
       .smart_ptr<std::shared_ptr<MidiBuffer>>("MidiBuffer")
       .constructor(&std::make_shared<MidiBuffer>)
-      .function("begin", &MidiBuffer::begin)
-      .function("end", &MidiBuffer::end)
+      .function(
+          "getEvents",
+          std::function<val(const MidiBuffer&)>([](const MidiBuffer& buffer) {
+            val array = val::array();
+            size_t index = 0;
+            for (const auto& timedMsg : buffer) {
+              val event = val::object();
+              event.set("samplePosition", timedMsg.samplePosition);
+              event.set("midiMessage", timedMsg.getMessage());
+              array.set(index++, event);
+            }
+            return array;
+          }))
       .function("addEvent", &MidiBuffer::addEvent)
       .function("addEvents", &MidiBuffer::addEvents)
-      .function("clear", &MidiBuffer::clear)
-      .function("forEach", std::function<void(const MidiBuffer&, val)>(
-                               [](const MidiBuffer& buffer, val callback) {
-                                 for (const auto& timedMsg : buffer) {
-                                   callback(timedMsg.samplePosition,
-                                            timedMsg.getMessage());
-                                 }
-                               }));
+      .function("clear", &MidiBuffer::clear);
 
   // MidiMessage
   class_<MidiMessage>("MidiMessage")
