@@ -80,16 +80,10 @@ export const App = () => {
     gain.setNumChannels(2)
 
     // Set input values
-    await phasor
-      .getFrequency()
-      .then((frequency) => frequency.setAllChannelValues(55))
-    await filter
-      .getFrequency()
-      .then((frequency) => frequency.setAllChannelValues(880))
-    await filter
-      .getMode()
-      .then((mode) => mode.setAllChannelValues(BiquadMode.LOW_PASS))
-    await gain.getFactor().then((factor) => factor.setAllChannelValues(0.5))
+    await phasor.getFrequency().setAllChannelValues(55)
+    await filter.getFrequency().setAllChannelValues(880)
+    await filter.getMode().setAllChannelValues(BiquadMode.LOW_PASS)
+    await gain.getFactor().setAllChannelValues(0.5)
 
     // Create wavetable
     const sawtoothBufferSize = 2048
@@ -103,23 +97,15 @@ export const App = () => {
       const value = 2 * ((phase + 0.5) % 1) - 1
       sawtoothWrapper.setSample(0, sample, value)
     }
-    await osc.getTables().then((tables) => tables.push_back(sawtooth))
+    await osc.getTables().push_back(sawtooth)
 
     // Connect the graph
-    await phasor
-      .getOutput()
-      .then(async (output) => output.connect(await osc.getPhase()))
-    await osc
-      .getOutput()
-      .then(async (output) => output.connect(await filter.getInput()))
-    await filter
-      .getOutput()
-      .then(async (output) => output.connect(await gain.getInput()))
+    await phasor.getOutput().connect(await osc.getPhase())
+    await osc.getOutput().connect(await filter.getInput())
+    await filter.getOutput().connect(await gain.getInput())
     await gain
       .getOutput()
-      .then(async (output) =>
-        output.connect(await dsp.getNodeProcessor().getAudioOutput()),
-      )
+      .connect(await dsp.getNodeProcessor().getAudioOutput())
   }
   const testOutput = async () => {
     if (!addModule || !createAudioWorkletNode) {
