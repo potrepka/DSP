@@ -1,11 +1,11 @@
 import { InputMode, Space, Type } from '../../../enums'
 import type { ProxyContext, Target } from '../../../types'
+import { BaseProxy } from './BaseProxy'
 import { DataProxy } from './DataProxy'
-import { Proxy } from './Proxy'
 import { VectorProxy } from './VectorProxy'
 import { WrapperProxy } from './WrapperProxy'
 
-export class BufferProxy extends Proxy {
+export class BufferProxy extends BaseProxy {
   constructor(context: ProxyContext, target: Target) {
     super(context, target)
   }

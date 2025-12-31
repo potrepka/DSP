@@ -1,6 +1,6 @@
 import type { ProxyContext, SerializedValue, Target } from '../../../types'
 
-export abstract class Proxy {
+export abstract class BaseProxy {
   constructor(
     protected readonly context: ProxyContext,
     public readonly target: Target,

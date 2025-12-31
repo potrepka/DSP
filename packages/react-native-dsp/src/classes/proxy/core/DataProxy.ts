@@ -1,7 +1,7 @@
 import type { ProxyContext, Target } from '../../../types'
-import { Proxy } from './Proxy'
+import { BaseProxy } from './BaseProxy'
 
-export class DataProxy extends Proxy {
+export class DataProxy extends BaseProxy {
   constructor(context: ProxyContext, target: Target) {
     super(context, target)
   }
@@ -22,6 +22,14 @@ export class DataProxy extends Proxy {
     return this.call('clear', [])
   }
 
+  getReadChannelData = (_channel: number): never => {
+    throw new Error('getReadChannelData is not implemented')
+  }
+
+  getWriteChannelData = (_channel: number): never => {
+    throw new Error('getWriteChannelData is not implemented')
+  }
+
   getMagnitude = (
     channel: number,
     startSample: number,
@@ -36,5 +44,13 @@ export class DataProxy extends Proxy {
     numSamples: number,
   ): Promise<number> => {
     return this.call('getRMSLevel', [channel, startSample, numSamples])
+  }
+
+  getReadData = (): never => {
+    throw new Error('getReadData is not implemented')
+  }
+
+  getWriteData = (): never => {
+    throw new Error('getWriteData is not implemented')
   }
 }

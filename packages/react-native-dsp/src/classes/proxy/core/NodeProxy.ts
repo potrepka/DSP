@@ -1,9 +1,9 @@
 import type { ProxyContext, Target } from '../../../types'
+import { BaseProxy } from './BaseProxy'
 import { InputProxy, OutputProxy } from './BufferProxy'
-import { Proxy } from './Proxy'
 import { VectorProxy } from './VectorProxy'
 
-export class NodeProxy extends Proxy {
+export class NodeProxy extends BaseProxy {
   constructor(context: ProxyContext, target: Target) {
     super(context, target)
   }

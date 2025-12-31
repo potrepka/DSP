@@ -1,7 +1,7 @@
 import type { ProxyContext, Target } from '../../../types'
-import { Proxy } from './Proxy'
+import { BaseProxy } from './BaseProxy'
 
-export class WrapperProxy extends Proxy {
+export class WrapperProxy extends BaseProxy {
   constructor(context: ProxyContext, target: Target) {
     super(context, target)
   }
@@ -12,6 +12,10 @@ export class WrapperProxy extends Proxy {
 
   getNumSamples = (): Promise<number> => {
     return this.call('getNumSamples', [])
+  }
+
+  getChannelData = (_channel: number): never => {
+    throw new Error('getChannelData is not implemented')
   }
 
   getSingleChannel = async (channel: number): Promise<WrapperProxy> => {
@@ -38,6 +42,25 @@ export class WrapperProxy extends Proxy {
   fill = async (value: number): Promise<WrapperProxy> => {
     await this.call<void>('fill', [value])
     return this
+  }
+
+  apply = (_f: (x: number) => number): never => {
+    throw new Error('apply is not implemented')
+  }
+
+  replaceWithApplicationOf = (
+    _f: (x: number) => number,
+    _src: WrapperProxy,
+  ): never => {
+    throw new Error('replaceWithApplicationOf is not implemented')
+  }
+
+  replaceWithApplicationOfTwoArgs = (
+    _f: (x: number, y: number) => number,
+    _src1: WrapperProxy,
+    _src2: WrapperProxy,
+  ): never => {
+    throw new Error('replaceWithApplicationOfTwoArgs is not implemented')
   }
 
   copyFrom = async (src: WrapperProxy): Promise<WrapperProxy> => {
