@@ -1,33 +1,21 @@
-import { Space, Type } from '../../enums/global'
-import {
-  NodeProcessorInputName,
-  NodeProcessorOutputName,
-  ReservedKeyword,
-} from '../../enums/module'
-import { TargetType } from '../../enums/proxy'
-import { constructNode, getReservedKeywords } from '../../helpers/module'
+import { nanoid } from 'nanoid/non-secure'
+import { ID_LENGTH } from '../../constants/proxy'
+import { createObject } from '../../helpers/module'
 import type {
   AudioModule,
-  Buffer,
-  BufferVector,
   Data,
   Deletable,
-  IncomingMessage,
-  Input,
-  InputVector,
   MidiBuffer,
   Node,
   NodeProcessor,
-  NodeType,
-  NodeVector,
   ObjectType,
   Options,
-  OutgoingMessage,
-  Output,
-  OutputVector,
+  RequestMessage,
+  ResponseMessage,
   SerializedValue,
   Target,
 } from '../../types/module'
+import { WeakValueMap } from '../util/WeakValueMap'
 
 declare class AudioWorkletProcessor {
   readonly port: MessagePort
@@ -55,12 +43,13 @@ type WebAudioProcessorOptions = AudioWorkletNodeOptions & {
 }
 
 class WebAudioProcessor extends AudioWorkletProcessor {
-  private module?: AudioModule
-  private nodeProcessor?: NodeProcessor
-  private audioBuffer?: Data
-  private midiBuffer?: MidiBuffer
-  private objects = new Map<string, Deletable>()
-  private targets = new WeakMap<object, Target>()
+  #module?: AudioModule
+  #nodeProcessor?: NodeProcessor
+  #audioBuffer?: Data
+  #midiBuffer?: MidiBuffer
+  readonly #instances = new Map<string, Deletable>()
+  readonly #properties = new WeakValueMap<string, object>()
+  readonly #targets = new WeakMap<object, Target>()
 
   constructor(options: WebAudioProcessorOptions) {
     super()
@@ -71,33 +60,33 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     const { numInputChannels, numOutputChannels, numSamples, sampleRate } =
       processorOptions
     createAudioModule().then((module) => {
-      this.module = module
-      this.nodeProcessor = new this.module.NodeProcessor(
+      this.#module = module
+      this.#nodeProcessor = new this.#module.NodeProcessor(
         numInputChannels,
         numOutputChannels,
         numSamples,
         sampleRate,
       )
       const numChannels = Math.max(numInputChannels, numOutputChannels)
-      this.audioBuffer = new this.module.Data(numChannels, numSamples)
-      this.midiBuffer = new this.module.MidiBuffer()
-      this.sendMessage({ message: 'setState', state: 'running' })
+      this.#audioBuffer = new this.#module.Data(numChannels, numSamples)
+      this.#midiBuffer = new this.#module.MidiBuffer()
+      this.sendMessage({ message: 'state', state: 'running' })
     })
     this.port.onmessage = this.handleMessage
   }
 
   process(inputs: Float32Array[][], outputs: Float32Array[][]): boolean {
-    if (!this.nodeProcessor || !this.audioBuffer || !this.midiBuffer) {
+    if (!this.#nodeProcessor || !this.#audioBuffer || !this.#midiBuffer) {
       return true
     }
     if (inputs.length > 0) {
       const input = inputs[0]
       for (
         let channel = 0;
-        channel < this.audioBuffer.getNumChannels() && channel < input.length;
+        channel < this.#audioBuffer.getNumChannels() && channel < input.length;
         channel++
       ) {
-        const channelData = this.audioBuffer.getReadChannelData(channel)
+        const channelData = this.#audioBuffer.getReadChannelData(channel)
         for (
           let sample = 0;
           sample < channelData.length && sample < input[channel].length;
@@ -107,15 +96,15 @@ class WebAudioProcessor extends AudioWorkletProcessor {
         }
       }
     }
-    this.nodeProcessor.process(this.audioBuffer, this.midiBuffer)
+    this.#nodeProcessor.process(this.#audioBuffer, this.#midiBuffer)
     if (outputs.length > 0) {
       const output = outputs[0]
       for (
         let channel = 0;
-        channel < this.audioBuffer.getNumChannels() && channel < output.length;
+        channel < this.#audioBuffer.getNumChannels() && channel < output.length;
         channel++
       ) {
-        const channelData = this.audioBuffer.getReadChannelData(channel)
+        const channelData = this.#audioBuffer.getReadChannelData(channel)
         for (
           let sample = 0;
           sample < channelData.length && sample < output[channel].length;
@@ -129,18 +118,18 @@ class WebAudioProcessor extends AudioWorkletProcessor {
   }
 
   private handleMessage = <T extends ObjectType>(
-    event: MessageEvent<IncomingMessage<T>>,
+    event: MessageEvent<RequestMessage<T>>,
   ) => {
     const { data } = event
     switch (data.message) {
       case 'createObject': {
-        const { objectId, objectType, options } = data
-        this.createObject(objectId, objectType, options)
+        const { requestId, objectType, options } = data
+        this.createObject(requestId, objectType, options)
         break
       }
       case 'deleteObject': {
-        const { objectId } = data
-        this.deleteObject(objectId)
+        const { requestId, objectId } = data
+        this.deleteObject(requestId, objectId)
         break
       }
       case 'callMethod': {
@@ -154,95 +143,47 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     }
   }
 
-  private sendMessage = (msg: OutgoingMessage) => {
+  private sendMessage = (msg: ResponseMessage) => {
     this.port.postMessage(msg)
   }
 
+  private generateObjectId = (): string => nanoid(ID_LENGTH)
+
   private createObject = <T extends ObjectType>(
-    objectId: string,
+    requestId: string,
     objectType: T,
     options: Options<T> = {} as Options<T>,
   ) => {
-    if (!this.module) {
+    if (!this.#module || !this.#nodeProcessor) {
       throw new Error('Module not initialized')
     }
-    if (getReservedKeywords().includes(objectId)) {
-      throw new Error(`Keyword is reserved: ${objectId}`)
-    }
-    if (this.objects.has(objectId)) {
-      throw new Error(`Object already exists: ${objectId}`)
-    }
-    if (objectType === 'Buffer') {
-      const bufferOptions = options as Options<'Buffer'>
-      const {
-        type = Type.RATIO,
-        space = Space.TIME,
-        range = 0,
-        defaultValue = 0,
-        numChannels = 1,
-        numSamples = 1,
-        data = [],
-      } = bufferOptions
-      const buffer = new this.module.Buffer(
-        type,
-        space,
-        range,
-        defaultValue,
-        numChannels,
-        numSamples,
-      )
-      const wrapper = buffer.getWrapper()
-      for (
-        let channel = 0;
-        channel < numChannels && channel < data.length;
-        channel++
-      ) {
-        const channelData = data[channel]
-        const writeChannelData = wrapper.getChannelData(channel)
-        for (
-          let sample = 0;
-          sample < numSamples && sample < channelData.length;
-          sample++
-        ) {
-          writeChannelData[sample] = channelData[sample]
-        }
-      }
-      this.objects.set(objectId, buffer)
-      this.registerTarget(buffer, { type: TargetType.Buffer, id: objectId })
-      return
-    }
-    if (objectType in this.module && this.nodeProcessor) {
-      const node = constructNode(
-        this.module,
-        objectType as NodeType,
-        options as Options<NodeType>,
-      )
-      this.objects.set(objectId, node)
-      this.registerTarget(node, {
-        type: TargetType.Node,
-        nodeType: objectType as NodeType,
-        id: objectId,
-      })
-      this.nodeProcessor.getDefaultNode().addChild(node)
-      return
-    }
-    throw new Error(`Unknown object type: ${objectType}`)
+    const objectId = this.generateObjectId()
+    const instance = createObject(this.#module, objectType, options)
+    const target = { __type: 'Target' as const, id: objectId }
+    this.#instances.set(objectId, instance)
+    this.#targets.set(instance, target)
+    this.sendMessage({ message: 'response', requestId, result: target })
   }
 
-  private deleteObject = (objectId: string) => {
-    const obj = this.objects.get(objectId)
-    if (!obj) {
-      throw new Error(`Object not found: ${objectId}`)
-    }
-    if (this.nodeProcessor && 'delete' in obj) {
-      const target = this.targets.get(obj)
-      if (target && target.type === TargetType.Node) {
-        this.nodeProcessor.getDefaultNode().removeChild(obj as Node)
+  private deleteObject = (requestId: string, objectId: string) => {
+    try {
+      const obj = this.#instances.get(objectId)
+      if (!obj) {
+        throw new Error(`Object not found: ${objectId}`)
       }
-    }
-    this.objects.delete(objectId)
-    if ('delete' in obj && typeof obj.delete === 'function') {
-      obj.delete()
+      const target = this.#targets.get(obj)
+      if (this.#nodeProcessor && target) {
+        this.#nodeProcessor.getDefaultNode().removeChild(obj as Node)
+      }
+      this.#instances.delete(objectId)
+      if ('delete' in obj && typeof obj.delete === 'function') {
+        obj.delete()
+      }
+      this.sendMessage({ message: 'response', requestId, result: true })
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+      this.sendMessage({ message: 'response', requestId, error: errorMessage })
     }
   }
 
@@ -273,242 +214,42 @@ class WebAudioProcessor extends AudioWorkletProcessor {
   }
 
   private delete() {
-    if (!this.nodeProcessor || !this.audioBuffer || !this.midiBuffer) {
+    if (!this.#nodeProcessor || !this.#audioBuffer || !this.#midiBuffer) {
       throw new Error('Module not initialized')
     }
-    for (const [objectId, object] of this.objects) {
-      const target = this.targets.get(object)
-      if (target && target.type === TargetType.Node) {
-        this.nodeProcessor.getDefaultNode().removeChild(object as Node)
-      }
-      this.objects.delete(objectId)
-      object.delete()
+    for (const [objectId, instance] of this.#instances) {
+      this.#nodeProcessor.getDefaultNode().removeChild(instance as Node)
+      this.#instances.delete(objectId)
+      instance.delete()
     }
-    this.midiBuffer.delete()
-    this.audioBuffer.delete()
-    this.nodeProcessor.delete()
-    this.sendMessage({ message: 'setState', state: 'closed' })
+    this.#midiBuffer.delete()
+    this.#audioBuffer.delete()
+    this.#nodeProcessor.delete()
+    this.sendMessage({ message: 'state', state: 'closed' })
   }
 
-  private registerTarget = (obj: object, target: Target) => {
-    this.targets.set(obj, target)
-  }
-
-  private getTargetObject = (target: Target) => {
-    switch (target.type) {
-      case TargetType.Buffer: {
-        const [nodeId, bufferName] = target.id.split(':')
-        if (bufferName) {
-          return this.getBuffer(nodeId, bufferName)
-        }
-        const buffer = this.objects.get(target.id)
-        if (!buffer) {
-          throw new Error(`Buffer not found: ${target.id}`)
-        }
-        return buffer
+  private getTargetObject = (target: Target): object => {
+    const { id } = target
+    if (id === 'NodeProcessor') {
+      if (!this.#nodeProcessor) {
+        throw new Error('Module not initialized')
       }
-      case TargetType.BufferVector: {
-        const [nodeId, vectorName] = target.id.split(':')
-        return this.getBufferVector(nodeId, vectorName)
-      }
-      case TargetType.Input: {
-        const [nodeId, inputName] = target.id.split(':')
-        return this.getInput(nodeId, inputName)
-      }
-      case TargetType.InputVector: {
-        const [nodeId, vectorName] = target.id.split(':')
-        return this.getInputVector(nodeId, vectorName)
-      }
-      case TargetType.Node: {
-        const [nodeId, nodeName] = target.id.split(':')
-        if (nodeName) {
-          return this.getNode(nodeId, nodeName, target.nodeType)
-        }
-        const node = this.objects.get(target.id)
-        if (!node) {
-          throw new Error(`Node not found: ${target.id}`)
-        }
-        return node
-      }
-      case TargetType.NodeProcessor: {
-        if (!this.nodeProcessor) {
-          throw new Error('Module not initialized')
-        }
-        return this.nodeProcessor
-      }
-      case TargetType.NodeVector: {
-        const [nodeId, vectorName] = target.id.split(':')
-        return this.getNodeVector(nodeId, vectorName)
-      }
-      case TargetType.Output: {
-        const [nodeId, outputName] = target.id.split(':')
-        return this.getOutput(nodeId, outputName)
-      }
-      case TargetType.OutputVector: {
-        const [nodeId, vectorName] = target.id.split(':')
-        return this.getOutputVector(nodeId, vectorName)
-      }
+      return this.#nodeProcessor
     }
-  }
-
-  private isTarget = (value: unknown): value is Target => {
-    if (typeof value !== 'object' || value === null || !('type' in value)) {
-      return false
+    const instance = this.#instances.get(id) ?? this.#properties.get(id)
+    if (!instance) {
+      throw new Error(`Object not found: ${id}`)
     }
-    const obj = value as Record<string, unknown>
-    if (obj.type === TargetType.NodeProcessor) {
-      return true
-    }
-    return 'id' in obj && typeof obj.id === 'string'
+    return instance
   }
 
-  private getProperty = <
-    T extends
-      | Buffer
-      | BufferVector
-      | Input
-      | InputVector
-      | Node
-      | NodeVector
-      | Output
-      | OutputVector,
-  >(
-    targetType:
-      | TargetType.Buffer
-      | TargetType.BufferVector
-      | TargetType.Input
-      | TargetType.InputVector
-      | TargetType.Node
-      | TargetType.NodeVector
-      | TargetType.Output
-      | TargetType.OutputVector,
-    nodeId: string,
-    propertyName: string,
-    nodeType?: NodeType,
-  ): T => {
-    if (targetType === TargetType.Node && nodeType === undefined) {
-      throw new Error('nodeType is required for Node target')
-    }
-    const node = this.objects.get(nodeId)
-    if (!node) {
-      throw new Error(`Node not found: ${nodeId}`)
-    }
-    const getter = (node as unknown as Record<string, () => T>)[
-      `get${propertyName}`
-    ]
-    if (typeof getter !== 'function') {
-      throw new Error(`Property not found: ${propertyName}`)
-    }
-    const result = getter.call(node)
-    const target =
-      targetType === TargetType.Node
-        ? {
-            type: targetType,
-            id: `${nodeId}:${propertyName}`,
-            nodeType: nodeType!,
-          }
-        : {
-            type: targetType,
-            id: `${nodeId}:${propertyName}`,
-          }
-    this.registerTarget(result as object, target)
-    return result
-  }
-
-  private getBuffer = (nodeId: string, bufferName: string): Buffer => {
-    return this.getProperty(TargetType.Buffer, nodeId, bufferName)
-  }
-
-  private getBufferVector = (
-    nodeId: string,
-    vectorName: string,
-  ): BufferVector => {
-    return this.getProperty(TargetType.BufferVector, nodeId, vectorName)
-  }
-
-  private getInput = (nodeId: string, inputName: string): Input => {
-    if (!this.nodeProcessor) {
-      throw new Error('Module not initialized')
-    }
-    if (nodeId === ReservedKeyword.NodeProcessor) {
-      switch (inputName) {
-        case NodeProcessorInputName.AudioOutput: {
-          const input = this.nodeProcessor.getAudioOutput()
-          this.registerTarget(input, {
-            type: TargetType.Input,
-            id: `${nodeId}:${inputName}`,
-          })
-          return input
-        }
-        default:
-          throw new Error(`Input not found: ${inputName}`)
-      }
-    }
-    return this.getProperty<Input>(TargetType.Input, nodeId, inputName)
-  }
-
-  private getInputVector = (
-    nodeId: string,
-    vectorName: string,
-  ): InputVector => {
-    return this.getProperty(TargetType.InputVector, nodeId, vectorName)
-  }
-
-  private getNode = (
-    nodeId: string,
-    nodeName: string,
-    nodeType: NodeType,
-  ): Node => {
-    return this.getProperty(TargetType.Node, nodeId, nodeName, nodeType)
-  }
-
-  private getNodeVector = (nodeId: string, vectorName: string): NodeVector => {
-    return this.getProperty(TargetType.NodeVector, nodeId, vectorName)
-  }
-
-  private getOutput = (nodeId: string, outputName: string): Output => {
-    if (!this.nodeProcessor) {
-      throw new Error('Module not initialized')
-    }
-    if (nodeId === ReservedKeyword.NodeProcessor) {
-      switch (outputName) {
-        case NodeProcessorOutputName.AudioInput: {
-          const output = this.nodeProcessor.getAudioInput()
-          this.registerTarget(output, {
-            type: TargetType.Output,
-            id: `${nodeId}:${outputName}`,
-          })
-          return output
-        }
-        case NodeProcessorOutputName.AudioInputClipping: {
-          const output = this.nodeProcessor.getAudioInputClipping()
-          this.registerTarget(output, {
-            type: TargetType.Output,
-            id: `${nodeId}:${outputName}`,
-          })
-          return output
-        }
-        case NodeProcessorOutputName.AudioOutputClipping: {
-          const output = this.nodeProcessor.getAudioOutputClipping()
-          this.registerTarget(output, {
-            type: TargetType.Output,
-            id: `${nodeId}:${outputName}`,
-          })
-          return output
-        }
-        default:
-          throw new Error(`Output not found: ${outputName}`)
-      }
-    }
-    return this.getProperty<Output>(TargetType.Output, nodeId, outputName)
-  }
-
-  private getOutputVector = (
-    nodeId: string,
-    vectorName: string,
-  ): OutputVector => {
-    return this.getProperty(TargetType.OutputVector, nodeId, vectorName)
-  }
+  private isTarget = (value: unknown): value is Target =>
+    typeof value === 'object' &&
+    value !== null &&
+    '__type' in value &&
+    value.__type === 'Target' &&
+    'id' in value &&
+    typeof value.id === 'string'
 
   private serialize = (value: unknown): SerializedValue => {
     if (value === undefined || value === null) {
@@ -525,7 +266,15 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       return Array.from(value)
     }
     if (typeof value === 'object') {
-      return this.targets.get(value)
+      const existingTarget = this.#targets.get(value)
+      if (existingTarget) {
+        return existingTarget
+      }
+      const id = this.generateObjectId()
+      const target = { __type: 'Target' as const, id }
+      this.#properties.set(id, value)
+      this.#targets.set(value, target)
+      return target
     }
     return undefined
   }

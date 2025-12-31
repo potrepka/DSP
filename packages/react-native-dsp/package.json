@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "author": "Nathaniel Potrepka",
   "dependencies": {
+    "nanoid": "^5.1.6",
     "react-native-audio-api": "^0.10.3"
   },
   "devDependencies": {

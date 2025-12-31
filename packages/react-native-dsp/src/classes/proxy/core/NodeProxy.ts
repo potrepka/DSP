@@ -1,129 +1,117 @@
-import { TargetType } from '../../../enums'
-import type { NodeType, ProxyContext, Target } from '../../../types'
+import type { ProxyContext, Target } from '../../../types'
 import { InputProxy, OutputProxy } from './BufferProxy'
+import { Proxy } from './Proxy'
 import { VectorProxy } from './VectorProxy'
 
-export class NodeProxy {
-  constructor(
-    protected readonly context: ProxyContext,
-    public readonly id: string,
-    public readonly nodeType: NodeType,
-  ) {}
-  toTarget = (): Target => ({
-    type: TargetType.Node,
-    nodeType: this.nodeType,
-    id: this.id,
-  })
-  delete = (): Promise<void> => {
-    this.context.port.postMessage({
-      message: 'deleteNode',
-      nodeId: this.id,
-    })
-    return Promise.resolve()
+export class NodeProxy extends Proxy {
+  constructor(context: ProxyContext, target: Target) {
+    super(context, target)
   }
-  protected createInputProxy = (inputName: string) => {
-    return new InputProxy(this.context, this.id, inputName)
+
+  protected createInput = async (inputName: string): Promise<InputProxy> => {
+    const target = await this.call<Target>(`get${inputName}`, [])
+    return new InputProxy(this.context, target)
   }
-  protected createOutputProxy = (outputName: string) => {
-    return new OutputProxy(this.context, this.id, outputName)
+
+  protected createOutput = async (outputName: string): Promise<OutputProxy> => {
+    const target = await this.call<Target>(`get${outputName}`, [])
+    return new OutputProxy(this.context, target)
   }
+
   isActive = (): Promise<boolean> => {
-    return this.context.call(this.toTarget(), 'isActive', [])
+    return this.call('isActive', [])
   }
+
   setActive = (active: boolean): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setActive', [active])
+    return this.call('setActive', [active])
   }
+
   getNumChannels = (): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getNumChannels', [])
+    return this.call('getNumChannels', [])
   }
+
   setNumChannels = (numChannels: number): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setNumChannels', [numChannels])
+    return this.call('setNumChannels', [numChannels])
   }
+
   getNumInputChannels = (): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getNumInputChannels', [])
+    return this.call('getNumInputChannels', [])
   }
+
   setNumInputChannels = (numChannels: number): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setNumInputChannels', [
-      numChannels,
-    ])
+    return this.call('setNumInputChannels', [numChannels])
   }
+
   getNumOutputChannels = (): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getNumOutputChannels', [])
+    return this.call('getNumOutputChannels', [])
   }
+
   setNumOutputChannels = (numChannels: number): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setNumOutputChannels', [
-      numChannels,
-    ])
+    return this.call('setNumOutputChannels', [numChannels])
   }
+
   getNumSamples = (): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getNumSamples', [])
+    return this.call('getNumSamples', [])
   }
+
   setNumSamples = (numSamples: number): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setNumSamples', [numSamples])
+    return this.call('setNumSamples', [numSamples])
   }
+
   getSampleRate = (): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getSampleRate', [])
+    return this.call('getSampleRate', [])
   }
+
   setSampleRate = (sampleRate: number): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setSampleRate', [sampleRate])
+    return this.call('setSampleRate', [sampleRate])
   }
+
   getOneOverNumSamples = (): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getOneOverNumSamples', [])
+    return this.call('getOneOverNumSamples', [])
   }
+
   getOneOverSampleRate = (): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getOneOverSampleRate', [])
+    return this.call('getOneOverSampleRate', [])
   }
-  getInputs = (): VectorProxy<InputProxy> => {
-    const target: Target = {
-      type: TargetType.InputVector,
-      id: `${this.id}:Inputs`,
-    }
+
+  getInputs = async (): Promise<VectorProxy<InputProxy>> => {
+    const target = await this.call<Target>('getInputs', [])
     return new VectorProxy(this.context, target, (itemTarget: Target) => {
-      if (itemTarget.type !== TargetType.Input) {
-        throw new Error('Expected Input target')
-      }
-      const [nodeId, inputName] = itemTarget.id.split(':')
-      return new InputProxy(this.context, nodeId, inputName)
+      return new InputProxy(this.context, itemTarget)
     })
   }
-  getOutputs = (): VectorProxy<OutputProxy> => {
-    const target: Target = {
-      type: TargetType.OutputVector,
-      id: `${this.id}:Outputs`,
-    }
+
+  getOutputs = async (): Promise<VectorProxy<OutputProxy>> => {
+    const target = await this.call<Target>('getOutputs', [])
     return new VectorProxy(this.context, target, (itemTarget: Target) => {
-      if (itemTarget.type !== TargetType.Output) {
-        throw new Error('Expected Output target')
-      }
-      const [nodeId, outputName] = itemTarget.id.split(':')
-      return new OutputProxy(this.context, nodeId, outputName)
+      return new OutputProxy(this.context, itemTarget)
     })
   }
-  getChildren = (): VectorProxy<NodeProxy> => {
-    const target: Target = {
-      type: TargetType.NodeVector,
-      id: `${this.id}:Children`,
-    }
+
+  getChildren = async (): Promise<VectorProxy<NodeProxy>> => {
+    const target = await this.call<Target>('getChildren', [])
     return new VectorProxy(this.context, target, (itemTarget: Target) => {
-      if (itemTarget.type !== TargetType.Node) {
-        throw new Error('Expected Node target')
-      }
-      return new NodeProxy(this.context, itemTarget.id, itemTarget.nodeType)
+      return new NodeProxy(this.context, itemTarget)
     })
   }
+
   addChild = (child: NodeProxy): Promise<void> => {
-    return this.context.call(this.toTarget(), 'addChild', [child.toTarget()])
+    return this.call('addChild', [child])
   }
+
   removeChild = (child: NodeProxy): Promise<void> => {
-    return this.context.call(this.toTarget(), 'removeChild', [child.toTarget()])
+    return this.call('removeChild', [child])
   }
+
   sortChildren = (): Promise<void> => {
-    return this.context.call(this.toTarget(), 'sortChildren', [])
+    return this.call('sortChildren', [])
   }
+
   disconnectAll = (): Promise<void> => {
-    return this.context.call(this.toTarget(), 'disconnectAll', [])
+    return this.call('disconnectAll', [])
   }
+
   process = (): Promise<void> => {
-    return this.context.call(this.toTarget(), 'process', [])
+    return this.call('process', [])
   }
 }

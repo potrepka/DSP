@@ -1,12 +1,13 @@
-import { Space, Type } from '../../enums'
+import { nanoid } from 'nanoid/non-secure'
+import { ID_LENGTH } from '../../constants/proxy'
 import type {
-  ObjectType,
+  NodeType,
   Options,
-  OutgoingMessage,
   ProxyContext,
+  ResponseMessage,
   Target,
 } from '../../types'
-import { BufferProxy, NodeProcessorProxy } from './core'
+import { BufferProxy, NodeProcessorProxy, NodeProxy } from './core'
 import {
   BiquadProxy,
   MultiplicationProxy,
@@ -14,64 +15,64 @@ import {
   TableOscillatorProxy,
 } from './nodes'
 
-type PendingRequest = {
-  resolve: (value: unknown) => void
+type PendingRequest<T = unknown> = {
+  resolve: (value: T | PromiseLike<T>) => void
   reject: (error: Error) => void
 }
 
 export class DSP {
-  private readonly context: ProxyContext
-  private idCounter = 0
-  private requestIdCounter = 0
-  private isReady = false
+  readonly #context: ProxyContext
+  readonly #port: MessagePort
+  readonly #nodeProcessor: NodeProcessorProxy
+  readonly #pendingRequests = new Map<string, PendingRequest>()
   private readyResolve?: () => void
   private readyPromise: Promise<void>
-  private pendingRequests = new Map<string, PendingRequest>()
-  public readonly nodeProcessor: NodeProcessorProxy
+  private isReady = false
 
   constructor(workletNode: AudioWorkletNode) {
-    this.context = { port: workletNode.port, call: this.call }
-    this.nodeProcessor = new NodeProcessorProxy(this.context)
+    this.#context = { sendMessage: this.sendMessage }
+    this.#port = workletNode.port
+    this.#nodeProcessor = new NodeProcessorProxy(this.#context, {
+      __type: 'Target',
+      id: 'NodeProcessor',
+    })
     this.readyPromise = new Promise((resolve) => {
       this.readyResolve = resolve
     })
-    workletNode.port.onmessage = this.handleMessage
+    this.#port.onmessage = this.handleMessage
   }
 
-  private call = <T>(
-    target: Target,
-    methodName: string,
-    args: unknown[],
-  ): Promise<T> => {
+  private generateRequestId = () => nanoid(ID_LENGTH)
+
+  private sendMessage = <T>(message: {
+    message: string
+    requestId: string
+    [key: string]: unknown
+  }): Promise<T> => {
     return new Promise((resolve, reject) => {
-      const requestId = `req_${this.requestIdCounter++}`
-      this.pendingRequests.set(requestId, {
+      const requestId = this.generateRequestId()
+      const messageWithId = { ...message, requestId }
+      this.#pendingRequests.set(requestId, {
         resolve: resolve as (value: unknown) => void,
         reject,
       })
-      this.context.port.postMessage({
-        message: 'callMethod',
-        requestId,
-        target,
-        methodName,
-        args,
-      })
+      this.#port.postMessage(messageWithId)
     })
   }
 
-  private handleMessage = (event: MessageEvent<OutgoingMessage>) => {
+  private handleMessage = (event: MessageEvent<ResponseMessage>) => {
     const { data } = event
     switch (data.message) {
-      case 'setState':
+      case 'state':
         if (data.state === 'running') {
           this.isReady = true
           this.readyResolve?.()
         }
         break
       case 'response': {
-        const pending = this.pendingRequests.get(data.requestId)
+        const pending = this.#pendingRequests.get(data.requestId)
         if (pending) {
-          this.pendingRequests.delete(data.requestId)
+          this.#pendingRequests.delete(data.requestId)
           if (data.error) {
             pending.reject(new Error(data.error))
           } else {
@@ -90,69 +91,53 @@ export class DSP {
     return this.readyPromise
   }
 
-  private generateObjectId = () => `obj_${this.idCounter++}`
+  getNodeProcessor = (): NodeProcessorProxy => this.#nodeProcessor
 
-  private postMessage = (message: unknown) => {
-    this.context.port.postMessage(message)
-  }
-
-  private createObject = <T extends ObjectType>(
-    objectType: T,
-    options: Options<T> = {} as Options<T>,
-  ) => {
-    const objectId = this.generateObjectId()
-    this.postMessage({
+  createBuffer = async (
+    options: Options<'Buffer'> = {} as Options<'Buffer'>,
+  ): Promise<BufferProxy> => {
+    const target = await this.sendMessage<Target>({
       message: 'createObject',
-      objectId,
-      objectType,
+      requestId: this.generateRequestId(),
+      objectType: 'Buffer',
       options,
     })
-    return objectId
+    return new BufferProxy(this.#context, target)
   }
 
-  createBuffer = (options: Options<'Buffer'> = {} as Options<'Buffer'>) => {
-    const {
-      type = Type.RATIO,
-      space = Space.TIME,
-      range = 0,
-      defaultValue = 0,
-      numChannels = 1,
-      numSamples = 1,
-      data = [],
-    } = options
-    const objectId = this.createObject('Buffer', {
-      type,
-      space,
-      range,
-      defaultValue,
-      numChannels,
-      numSamples,
-      data,
+  createNode = async <T extends NodeType>(
+    nodeType?: T,
+    options?: Options<T>,
+  ): Promise<NodeProxy> => {
+    const target = await this.sendMessage<Target>({
+      message: 'createObject',
+      requestId: this.generateRequestId(),
+      objectType: nodeType,
+      options,
     })
-    return new BufferProxy(this.context, objectId)
+    return new NodeProxy(this.#context, target)
   }
 
-  createBiquad = (options?: Options<'Biquad'>) => {
-    const nodeId = this.createObject('Biquad', options)
-    return new BiquadProxy(this.context, nodeId)
-  }
+  createBiquad = async (options?: Options<'Biquad'>): Promise<BiquadProxy> =>
+    this.createNode('Biquad', options) as Promise<BiquadProxy>
 
-  createPhasor = (options?: Options<'Phasor'>) => {
-    const nodeId = this.createObject('Phasor', options)
-    return new PhasorProxy(this.context, nodeId)
-  }
+  createPhasor = async (options?: Options<'Phasor'>): Promise<PhasorProxy> =>
+    this.createNode('Phasor', options) as Promise<PhasorProxy>
 
-  createTableOscillator = (options?: Options<'TableOscillator'>) => {
-    const nodeId = this.createObject('TableOscillator', options)
-    return new TableOscillatorProxy(this.context, nodeId)
-  }
+  createTableOscillator = async (
+    options?: Options<'TableOscillator'>,
+  ): Promise<TableOscillatorProxy> =>
+    this.createNode('TableOscillator', options) as Promise<TableOscillatorProxy>
 
-  createMultiplication = (options?: Options<'Multiplication'>) => {
-    const nodeId = this.createObject('Multiplication', options)
-    return new MultiplicationProxy(this.context, nodeId)
-  }
+  createMultiplication = async (
+    options?: Options<'Multiplication'>,
+  ): Promise<MultiplicationProxy> =>
+    this.createNode('Multiplication', options) as Promise<MultiplicationProxy>
 
-  delete = () => {
-    this.postMessage({ message: 'delete' })
+  delete = (): Promise<void> => {
+    return this.sendMessage<void>({
+      message: 'delete',
+      requestId: this.generateRequestId(),
+    })
   }
 }

@@ -1,9 +1,10 @@
-import type { ProxyContext } from '../../../types'
+import type { ProxyContext, Target } from '../../../types'
 import { InputProxy, TransformerProxy } from '../core'
 
 export class MultiplicationProxy extends TransformerProxy {
-  constructor(context: ProxyContext, id: string) {
-    super(context, id, 'Multiplication')
+  constructor(context: ProxyContext, target: Target) {
+    super(context, target)
   }
-  getFactor = (): InputProxy => this.createInputProxy('Factor')
+
+  getFactor = (): Promise<InputProxy> => this.createInput('Factor')
 }

@@ -1,105 +1,100 @@
-import { InputMode, Space, TargetType, Type } from '../../../enums'
+import { InputMode, Space, Type } from '../../../enums'
 import type { Data, ProxyContext, Target, Wrapper } from '../../../types'
+import { Proxy } from './Proxy'
 import { VectorProxy } from './VectorProxy'
 
-export class BufferProxy {
-  constructor(
-    protected readonly context: ProxyContext,
-    public readonly id: string,
-  ) {}
-  toTarget = (): Target => ({ type: TargetType.Buffer, id: this.id })
-  delete = async (): Promise<void> => {
-    this.context.port.postMessage({
-      message: 'deleteBuffer',
-      bufferId: this.id,
-    })
+export class BufferProxy extends Proxy {
+  constructor(context: ProxyContext, target: Target) {
+    super(context, target)
   }
+
   getType = (): Promise<Type> => {
-    return this.context.call(this.toTarget(), 'getType', [])
+    return this.call('getType', [])
   }
+
   setType = (type: Type): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setType', [type])
+    return this.call('setType', [type])
   }
+
   getSpace = (): Promise<Space> => {
-    return this.context.call(this.toTarget(), 'getSpace', [])
+    return this.call('getSpace', [])
   }
+
   setSpace = (space: Space): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setSpace', [space])
+    return this.call('setSpace', [space])
   }
+
   getRange = (): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getRange', [])
+    return this.call('getRange', [])
   }
+
   setRange = (range: number): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setRange', [range])
+    return this.call('setRange', [range])
   }
+
   getDefaultValue = (): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getDefaultValue', [])
+    return this.call('getDefaultValue', [])
   }
+
   setDefaultValue = (value: number): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setDefaultValue', [value])
+    return this.call('setDefaultValue', [value])
   }
+
   getNumChannels = (): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getNumChannels', [])
+    return this.call('getNumChannels', [])
   }
+
   setNumChannels = (numChannels: number): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setNumChannels', [numChannels])
+    return this.call('setNumChannels', [numChannels])
   }
+
   getNumSamples = (): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getNumSamples', [])
+    return this.call('getNumSamples', [])
   }
+
   setNumSamples = (numSamples: number): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setNumSamples', [numSamples])
+    return this.call('setNumSamples', [numSamples])
   }
+
   setSize = (numChannels: number, numSamples: number): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setSize', [
-      numChannels,
-      numSamples,
-    ])
+    return this.call('setSize', [numChannels, numSamples])
   }
+
   getChannelValues = async (): Promise<Float64Array> => {
-    const result = await this.context.call<number[]>(
-      this.toTarget(),
-      'getChannelValues',
-      [],
-    )
+    const result = await this.call<number[]>('getChannelValues', [])
     return new Float64Array(result)
   }
+
   setChannelValues = (values: Float64Array): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setChannelValues', [
-      Array.from(values),
-    ])
+    return this.call('setChannelValues', [Array.from(values)])
   }
+
   getChannelValue = (channel: number): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getChannelValue', [channel])
+    return this.call('getChannelValue', [channel])
   }
+
   setChannelValue = (channel: number, value: number): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setChannelValue', [
-      channel,
-      value,
-    ])
+    return this.call('setChannelValue', [channel, value])
   }
+
   setAllChannelValues = (value: number): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setAllChannelValues', [value])
+    return this.call('setAllChannelValues', [value])
   }
+
   getPeak = async (): Promise<Float64Array> => {
-    const result = await this.context.call<number[]>(
-      this.toTarget(),
-      'getPeak',
-      [],
-    )
+    const result = await this.call<number[]>('getPeak', [])
     return new Float64Array(result)
   }
+
   getRMS = async (): Promise<Float64Array> => {
-    const result = await this.context.call<number[]>(
-      this.toTarget(),
-      'getRMS',
-      [],
-    )
+    const result = await this.call<number[]>('getRMS', [])
     return new Float64Array(result)
   }
+
   getData = (): Data => {
     throw new Error('getData returns a complex object that cannot be proxied')
   }
+
   getWrapper = (): Wrapper => {
     throw new Error(
       'getWrapper returns a complex object that cannot be proxied',
@@ -108,85 +103,67 @@ export class BufferProxy {
 }
 
 export class InputProxy extends BufferProxy {
-  constructor(
-    context: ProxyContext,
-    public readonly nodeId: string,
-    public readonly inputName: string,
-  ) {
-    super(context, `${nodeId}:${inputName}`)
-  }
-  override toTarget = (): Target => ({ type: TargetType.Input, id: this.id })
   getMode = (): Promise<InputMode> => {
-    return this.context.call(this.toTarget(), 'getMode', [])
+    return this.call('getMode', [])
   }
+
   setMode = (mode: InputMode): Promise<void> => {
-    return this.context.call(this.toTarget(), 'setMode', [mode])
+    return this.call('setMode', [mode])
   }
-  getConnections = (): VectorProxy<OutputProxy> => {
-    const target: Target = {
-      type: TargetType.OutputVector,
-      id: `${this.id}:Connections`,
-    }
+
+  getConnections = async (): Promise<VectorProxy<OutputProxy>> => {
+    const target = await this.call<Target>('getConnections', [])
     return new VectorProxy(this.context, target, (itemTarget: Target) => {
-      if (itemTarget.type !== TargetType.Output) {
-        throw new Error('Expected Output target')
-      }
-      const [nodeId, outputName] = itemTarget.id.split(':')
-      return new OutputProxy(this.context, nodeId, outputName)
+      return new OutputProxy(this.context, itemTarget)
     })
   }
+
   connect = (output: OutputProxy): Promise<void> => {
-    return this.context.call(this.toTarget(), 'connect', [output.toTarget()])
+    return this.call('connect', [output])
   }
+
   disconnect = (output: OutputProxy): Promise<void> => {
-    return this.context.call(this.toTarget(), 'disconnect', [output.toTarget()])
+    return this.call('disconnect', [output])
   }
+
   disconnectAll = (): Promise<void> => {
-    return this.context.call(this.toTarget(), 'disconnectAll', [])
+    return this.call('disconnectAll', [])
   }
+
   prepareNoLock = (): Promise<void> => {
-    return this.context.call(this.toTarget(), 'prepareNoLock', [])
+    return this.call('prepareNoLock', [])
   }
+
   processNoLock = (): Promise<void> => {
-    return this.context.call(this.toTarget(), 'processNoLock', [])
+    return this.call('processNoLock', [])
   }
 }
 
 export class OutputProxy extends BufferProxy {
-  constructor(
-    context: ProxyContext,
-    public readonly nodeId: string,
-    public readonly outputName: string,
-  ) {
-    super(context, `${nodeId}:${outputName}`)
-  }
-  override toTarget = (): Target => ({ type: TargetType.Output, id: this.id })
-  getConnections = (): VectorProxy<InputProxy> => {
-    const target: Target = {
-      type: TargetType.InputVector,
-      id: `${this.id}:Connections`,
-    }
+  getConnections = async (): Promise<VectorProxy<InputProxy>> => {
+    const target = await this.call<Target>('getConnections', [])
     return new VectorProxy(this.context, target, (itemTarget: Target) => {
-      if (itemTarget.type !== TargetType.Input) {
-        throw new Error('Expected Input target')
-      }
-      const [nodeId, inputName] = itemTarget.id.split(':')
-      return new InputProxy(this.context, nodeId, inputName)
+      return new InputProxy(this.context, itemTarget)
     })
   }
+
   connect = (input: InputProxy): Promise<void> => {
-    return this.context.call(this.toTarget(), 'connect', [input.toTarget()])
+    return this.call('connect', [input])
   }
+
   disconnect = (input: InputProxy): Promise<void> => {
-    return this.context.call(this.toTarget(), 'disconnect', [input.toTarget()])
+    return this.call('disconnect', [input])
   }
+
   disconnectAll = (): Promise<void> => {
-    return this.context.call(this.toTarget(), 'disconnectAll', [])
+    return this.call('disconnectAll', [])
   }
+
   prepareNoLock = (): Promise<void> => {
-    return this.context.call(this.toTarget(), 'prepareNoLock', [])
+    return this.call('prepareNoLock', [])
   }
+
   processNoLock = (): Promise<void> => {
-    return this.context.call(this.toTarget(), 'processNoLock', [])
+    return this.call('processNoLock', [])
   }
 }

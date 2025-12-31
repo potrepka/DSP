@@ -1,5 +1,4 @@
 import {
-  AudioModule,
   BiquadMode,
   DSP,
   initializeWebAudio,
@@ -69,22 +68,28 @@ export const App = () => {
     await dsp.ready()
 
     // Create nodes using the fluent API
-    const phasor = dsp.createPhasor()
-    const osc = dsp.createTableOscillator()
-    const filter = dsp.createBiquad()
-    const gain = dsp.createMultiplication()
+    const phasor = await dsp.createPhasor()
+    const osc = await dsp.createTableOscillator()
+    const filter = await dsp.createBiquad()
+    const gain = await dsp.createMultiplication()
 
-    //
+    // Set number of channels
     phasor.setNumChannels(2)
     osc.setNumChannels(2)
     filter.setNumChannels(2)
     gain.setNumChannels(2)
 
     // Set input values
-    await phasor.getFrequency().setAllChannelValues(55)
-    await filter.getFrequency().setAllChannelValues(880)
-    await filter.getMode().setAllChannelValues(BiquadMode.LOW_PASS)
-    await gain.getFactor().setAllChannelValues(0.5)
+    await phasor
+      .getFrequency()
+      .then((frequency) => frequency.setAllChannelValues(55))
+    await filter
+      .getFrequency()
+      .then((frequency) => frequency.setAllChannelValues(880))
+    await filter
+      .getMode()
+      .then((mode) => mode.setAllChannelValues(BiquadMode.LOW_PASS))
+    await gain.getFactor().then((factor) => factor.setAllChannelValues(0.5))
 
     // Create wavetable
     const sawtoothBufferSize = 2048
@@ -94,18 +99,27 @@ export const App = () => {
       const value = 2 * ((phase + 0.5) % 1) - 1
       sawtoothBufferData[0][sample] = value
     }
-    const sawtooth = dsp.createBuffer({
+    const sawtooth = await dsp.createBuffer({
       numChannels: 1,
       numSamples: sawtoothBufferSize,
-      data: sawtoothBufferData,
     })
-    await osc.getTables().push_back(sawtooth)
+    await osc.getTables().then((tables) => tables.push_back(sawtooth))
 
     // Connect the graph
-    await phasor.getOutput().connect(osc.getPhase())
-    await osc.getOutput().connect(filter.getInput())
-    await filter.getOutput().connect(gain.getInput())
-    await gain.getOutput().connect(dsp.nodeProcessor.getAudioOutput())
+    await phasor
+      .getOutput()
+      .then(async (output) => output.connect(await osc.getPhase()))
+    await osc
+      .getOutput()
+      .then(async (output) => output.connect(await filter.getInput()))
+    await filter
+      .getOutput()
+      .then(async (output) => output.connect(await gain.getInput()))
+    await gain
+      .getOutput()
+      .then(async (output) =>
+        output.connect(await dsp.getNodeProcessor().getAudioOutput()),
+      )
   }
   const testOutput = async () => {
     if (!addModule || !createAudioWorkletNode) {

@@ -1,27 +1,33 @@
 import type { ProxyContext, Target } from '../../../types'
+import { Proxy } from './Proxy'
 
-export class VectorProxy<T extends { toTarget: () => Target }> {
+export class VectorProxy<T extends Proxy> extends Proxy {
   constructor(
-    private readonly context: ProxyContext,
-    private readonly target: Target,
+    context: ProxyContext,
+    target: Target,
     private readonly createItem: (target: Target) => T,
-  ) {}
+  ) {
+    super(context, target)
+  }
+
   get = async (index: number): Promise<T> => {
-    const itemTarget = await this.context.call<Target>(this.target, 'get', [
-      index,
-    ])
+    const itemTarget = await this.call<Target>('get', [index])
     return this.createItem(itemTarget)
   }
+
   push_back = (value: T): Promise<void> => {
-    return this.context.call(this.target, 'push_back', [value.toTarget()])
+    return this.call('push_back', [value])
   }
+
   resize = (count: number, value: T): Promise<void> => {
-    return this.context.call(this.target, 'resize', [count, value.toTarget()])
+    return this.call('resize', [count, value])
   }
+
   set = (index: number, value: T): Promise<boolean> => {
-    return this.context.call(this.target, 'set', [index, value.toTarget()])
+    return this.call('set', [index, value])
   }
+
   size = (): Promise<number> => {
-    return this.context.call(this.target, 'size', [])
+    return this.call('size', [])
   }
 }

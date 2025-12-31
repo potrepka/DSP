@@ -1,17 +1,17 @@
-import type { ProxyContext } from '../../../types'
+import type { ProxyContext, Target } from '../../../types'
 import { InputProxy, TransformerProxy } from '../core'
 
 export class BiquadProxy extends TransformerProxy {
-  constructor(context: ProxyContext, id: string) {
-    super(context, id, 'Biquad')
+  constructor(context: ProxyContext, target: Target) {
+    super(context, target)
   }
-  getFrequency = (): InputProxy => this.createInputProxy('Frequency')
-  getResonance = (): InputProxy => this.createInputProxy('Resonance')
-  getAmplitude = (): InputProxy => this.createInputProxy('Amplitude')
-  getMode = (): InputProxy => this.createInputProxy('Mode')
+
+  getFrequency = (): Promise<InputProxy> => this.createInput('Frequency')
+  getResonance = (): Promise<InputProxy> => this.createInput('Resonance')
+  getAmplitude = (): Promise<InputProxy> => this.createInput('Amplitude')
+  getMode = (): Promise<InputProxy> => this.createInput('Mode')
+
   getFrequencyResponse = (frequency: number): Promise<number> => {
-    return this.context.call(this.toTarget(), 'getFrequencyResponse', [
-      frequency,
-    ])
+    return this.call('getFrequencyResponse', [frequency])
   }
 }

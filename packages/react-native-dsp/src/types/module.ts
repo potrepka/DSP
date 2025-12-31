@@ -1,4 +1,4 @@
-import type { InputMode, RecorderMode, Space, TargetType, Type } from '../enums'
+import type { InputMode, RecorderMode, Space, Type } from '../enums'
 
 export type AudioModule = GlobalFunctionMap & ObjectConstructorMap
 
@@ -254,7 +254,6 @@ type OptionsMap = {
     defaultValue: number
     numChannels: number
     numSamples: number
-    data?: Float64Array[]
   }
   Input: {
     type: Type
@@ -399,6 +398,11 @@ export type NodeProcessorOptions = {
   sampleRate: number
 }
 
+export type Target = {
+  __type: 'Target'
+  id: string
+}
+
 export type SerializedValue =
   | string
   | number
@@ -408,15 +412,16 @@ export type SerializedValue =
   | null
   | undefined
 
-export type IncomingMessage<T extends ObjectType> =
+export type RequestMessage<T extends ObjectType> =
   | {
       message: 'createObject'
-      objectId: string
+      requestId: string
       objectType: T
       options?: Options<T>
     }
   | {
       message: 'deleteObject'
+      requestId: string
       objectId: string
     }
   | {
@@ -430,23 +435,9 @@ export type IncomingMessage<T extends ObjectType> =
       message: 'delete'
     }
 
-export type Target =
+export type ResponseMessage =
   | {
-      type: TargetType.Node
-      id: string
-      nodeType: NodeType
-    }
-  | {
-      type: TargetType.NodeProcessor
-    }
-  | {
-      type: Exclude<TargetType, TargetType.Node | TargetType.NodeProcessor>
-      id: string
-    }
-
-export type OutgoingMessage =
-  | {
-      message: 'setState'
+      message: 'state'
       state: 'running' | 'closed'
     }
   | {

@@ -29,7 +29,7 @@ Always use Bun package manager (`bun`/`bunx`).
 
 - Do not add comments, except for @ts-ignore and eslint-disable-next-line
   comments as a last ditch effort to fix TypeScript/ESLint errors.
-- Do not add blank lines within functions. Blank lines are allowed in classes.
+- Do not add blank lines within functions or classes.
 - Do not terminate statements with semicolons.
 - Use single quotes for strings.
 - Use trailing commas.
