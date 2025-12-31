@@ -1,10 +1,6 @@
 import type { InputMode, RecorderMode, Space, TargetType, Type } from '../enums'
 
-export type AudioModule = GlobalFunctionMap &
-  VectorConstructorMap &
-  CoreConsturctorMap &
-  MidiConstructorMap &
-  NodeConstructorMap
+export type AudioModule = GlobalFunctionMap & ObjectConstructorMap
 
 export type GlobalFunctionMap = {
   byteToUnipolar: (value: number) => number
@@ -26,6 +22,13 @@ export type GlobalFunctionMap = {
     defaultValue?: number,
   ) => number
 }
+
+export type ObjectConstructorMap = VectorConstructorMap &
+  CoreConsturctorMap &
+  MidiConstructorMap &
+  NodeConstructorMap
+
+export type ObjectType = keyof ObjectConstructorMap
 
 export type VectorConstructorMap = {
   UInt8Vector: new () => UInt8Vector
@@ -226,69 +229,55 @@ export type NodeConstructorMap = {
   SampleRate: new () => SampleRate
 }
 
-export type BufferOptions = {
-  type?: Type
-  space?: Space
-  range?: number
-  defaultValue?: number
-  numChannels: number
-  numSamples: number
-  data?: Float64Array[]
-}
-
 export type NodeType = keyof NodeConstructorMap
 
-type NodeOptionsMap = {
-  // Analyzer Nodes
-  Recorder: { type?: Type; space?: Space; defaultValue?: number }
+type OptionsMap = {
+  // Vectors
+  UInt8Vector: unknown
+  UIntVector: unknown
+  SampleVector: unknown
+  AudioFFTSampleVector: unknown
+  BufferVector: unknown
+  InputVector: unknown
+  OutputVector: unknown
+  NodeVector: unknown
+  MidiProcessorInputVector: unknown
+  MidiProcessorOutputVector: unknown
 
-  // Channel Nodes
-  ChannelMerger: { type?: Type; space?: Space }
-  ChannelSplitter: { type?: Type; space?: Space }
-  MidSide: { type?: Type; space?: Space }
-  Spread: { type?: Type; space?: Space }
-  StereoPanner: { type?: Type; space?: Space }
-
-  // Delay Nodes
-  Convolver: unknown
-
-  VariableDelay: { type?: Type }
-
-  // Dynamics Nodes
-  Clipper: { type?: Type; space?: Space }
-  CompressorGate: unknown
-  DryWet: { type?: Type; space?: Space }
-  Envelope: unknown
-  Lag: { type?: Type }
-  Shaper: { space?: Space }
-
-  // External Nodes
-  MidiInput: { midiBuffer: MidiBuffer; type?: Type }
-  MidiOutput: { midiBuffer: MidiBuffer; type?: Type }
-
-  // Filter Nodes
-  Biquad: unknown
-  Crossover: unknown
-  OnePole: { type?: Type }
-
-  // Generator Nodes
-  FunctionOscillator: { type?: Type }
-  MoorerOscillator: unknown
-  Noise: unknown
-  Phasor: unknown
-  SamplePlayer: { type?: Type }
-  TableOscillator: { type?: Type }
-
-  // Math Nodes
-  AbsoluteValue: { type?: Type; space?: Space }
-  BooleanMask: { type?: Type; space?: Space }
-  Comparison: { type?: Type; space?: Space }
-  Division: { type?: Type; space?: Space }
-  Floor: { type?: Type; space?: Space }
-  ForwardFFT: unknown
-  FrequencyToNote: { space?: Space }
-  Hyperbolic: { space?: Space }
-  Identity: {
+  // Core objects
+  Data: { numChannels: number; numSamples: number }
+  Wrapper: { data?: Data }
+  Buffer: {
+    type: Type
+    space: Space
+    range: number
+    defaultValue: number
+    numChannels: number
+    numSamples: number
+    data?: Float64Array[]
+  }
+  Input: {
+    type: Type
+    space: Space
+    range: number
+    defaultValue: number
+    numChannels: number
+    numSamples: number
+  }
+  Output: {
+    type: Type
+    space: Space
+    range: number
+    defaultValue: number
+    numChannels: number
+    numSamples: number
+  }
+  Lockable: unknown
+  Engine: unknown
+  Node: unknown
+  Consumer: { type: Type; space: Space }
+  Producer: { type: Type; space: Space }
+  Transformer: {
     type?: Type
     space?: Space
     inputType?: Type
@@ -296,39 +285,113 @@ type NodeOptionsMap = {
     inputSpace?: Space
     outputSpace?: Space
   }
-  InverseFFT: unknown
-  Logarithm: { space?: Space }
-  Modulo: { type?: Type; space?: Space }
-  Multiplication: { type?: Type; space?: Space }
-  Negative: { type?: Type; space?: Space }
-  NoteToFrequency: { space?: Space }
-  NotGate: { space?: Space }
-  Power: { space?: Space }
-  Reciprocal: { type?: Type; space?: Space }
-  Trigonometric: { space?: Space }
+  NodeProcessor: {
+    numInputChannels: number
+    numOutputChannels: number
+    numSamples: number
+    sampleRate: number
+  }
+  NormalizedFFT: unknown
 
-  // Trigger Nodes
+  // MIDI objects
+  MidiBuffer: unknown
+  MidiMessage: { byte0: number; byte1?: number; byte2?: number }
+  MidiProcessor: unknown
+  MidiProcessorInput: { port: number }
+  MidiProcessorOutput: { port: number }
+
+  // Nodes - Analyzer
+  Recorder: {
+    type: Type
+    space: Space
+    defaultValue: number
+    numChannels: number
+  }
+
+  // Nodes - Channel
+  ChannelMerger: { type: Type; space: Space }
+  ChannelSplitter: { type: Type; space: Space }
+  MidSide: { type: Type; space: Space }
+  Spread: { type: Type; space: Space }
+  StereoPanner: { type: Type; space: Space }
+
+  // Nodes - Delay
+  Convolver: unknown
+  VariableDelay: { type: Type }
+
+  // Nodes - Dynamics
+  Clipper: { type: Type; space: Space }
+  CompressorGate: unknown
+  DryWet: { type: Type; space: Space }
+  Envelope: unknown
+  Lag: { type: Type }
+  Shaper: { space: Space }
+
+  // Nodes - External
+  MidiInput: { midiBuffer: MidiBuffer; type: Type }
+  MidiOutput: { midiBuffer: MidiBuffer; type: Type }
+
+  // Nodes - Filter
+  Biquad: unknown
+  Crossover: unknown
+  OnePole: { type: Type }
+
+  // Nodes - Generator
+  FunctionOscillator: { type: Type }
+  MoorerOscillator: unknown
+  Noise: unknown
+  Phasor: unknown
+  SamplePlayer: { type: Type }
+  TableOscillator: { type: Type }
+
+  // Nodes - Math
+  AbsoluteValue: { type: Type; space: Space }
+  BooleanMask: { type: Type; space: Space }
+  Comparison: { type: Type; space: Space }
+  Division: { type: Type; space: Space }
+  Floor: { type: Type; space: Space }
+  ForwardFFT: unknown
+  FrequencyToNote: { space: Space }
+  Hyperbolic: { space: Space }
+  Identity: {
+    type?: Type
+    space?: Space
+    inputType?: Type
+    outputType?: Type
+    inputSpace?: Space
+    outputSpace?: Space
+    numChannels: number
+  }
+  InverseFFT: unknown
+  Logarithm: { space: Space }
+  Modulo: { type: Type; space: Space }
+  Multiplication: { type: Type; space: Space }
+  Negative: { type: Type; space: Space }
+  NoteToFrequency: { space: Space }
+  NotGate: { space: Space }
+  Power: { space: Space }
+  Reciprocal: { type: Type; space: Space }
+  Trigonometric: { space: Space }
+
+  // Nodes - Trigger
   ClockTrigger: unknown
-  Differentiator: { type?: Type }
-  Integrator: { type?: Type }
+  Differentiator: { type: Type }
+  Integrator: { type: Type }
   OnOff: unknown
   ResetTrigger: unknown
-  SampleAndHold: { type?: Type }
-  Sequencer: { type?: Type; space?: Space }
+  SampleAndHold: { type: Type }
+  Sequencer: { type: Type; space: Space }
   TriggerHold: unknown
 
-  // Variable Nodes
+  // Nodes - Variable
   BufferDuration: unknown
   BufferRate: unknown
   SampleDuration: unknown
   SampleRate: unknown
 }
 
-export type NodeOptions<T extends NodeType> = NodeOptionsMap[T] & {
-  numChannels: number
-  numInputChannels?: number
-  numOutputChannels?: number
-}
+// Generic Options type - makes all constructor args optional
+export type Options<T extends ObjectType> = Partial<OptionsMap[T]>
 
 export type NodeProcessorOptions = {
   numInputChannels: number
@@ -337,35 +400,35 @@ export type NodeProcessorOptions = {
   sampleRate: number
 }
 
-export type IncomingMessage<T extends NodeType> =
+export type SerializedValue =
+  | string
+  | number
+  | boolean
+  | Target
+  | number[]
+  | null
+  | undefined
+
+export type IncomingMessage<T extends ObjectType> =
   | {
-      message: 'createBuffer'
-      bufferId: string
-      options?: BufferOptions
+      message: 'createObject'
+      objectId: string
+      objectType: T
+      options?: Options<T>
     }
   | {
-      message: 'deleteBuffer'
-      bufferId: string
+      message: 'deleteObject'
+      objectId: string
     }
   | {
-      message: 'createNode'
-      nodeId: string
-      nodeType: T
-      options?: NodeOptions<T>
-    }
-  | {
-      message: 'deleteNode'
-      nodeId: string
+      message: 'callMethod'
+      requestId: string
+      target: Target
+      methodName: string
+      args: SerializedValue[]
     }
   | {
       message: 'delete'
-    }
-  | {
-      message: 'call'
-      requestId: string
-      target: Target
-      functionName: string
-      args: unknown[]
     }
 
 export type Target =
@@ -390,7 +453,7 @@ export type OutgoingMessage =
   | {
       message: 'response'
       requestId: string
-      result?: null | number | boolean | string | Array<number> | Target
+      result?: SerializedValue
       error?: string
     }
 

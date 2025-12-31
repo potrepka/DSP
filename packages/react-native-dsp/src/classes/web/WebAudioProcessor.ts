@@ -9,21 +9,23 @@ import { constructNode, getReservedKeywords } from '../../helpers/module'
 import type {
   AudioModule,
   Buffer,
-  BufferOptions,
   BufferVector,
   Data,
+  Deletable,
   IncomingMessage,
   Input,
   InputVector,
   MidiBuffer,
   Node,
-  NodeOptions,
   NodeProcessor,
   NodeType,
   NodeVector,
+  ObjectType,
+  Options,
   OutgoingMessage,
   Output,
   OutputVector,
+  SerializedValue,
   Target,
 } from '../../types/module'
 
@@ -57,8 +59,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
   private nodeProcessor?: NodeProcessor
   private audioBuffer?: Data
   private midiBuffer?: MidiBuffer
-  private buffers = new Map<string, Buffer>()
-  private nodes = new Map<string, Node>()
+  private objects = new Map<string, Deletable>()
   private targets = new WeakMap<object, Target>()
 
   constructor(options: WebAudioProcessorOptions) {
@@ -82,7 +83,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       this.midiBuffer = new this.module.MidiBuffer()
       this.sendMessage({ message: 'setState', state: 'running' })
     })
-    this.port.onmessage = <T extends NodeType>(
+    this.port.onmessage = <T extends ObjectType>(
       event: MessageEvent<IncomingMessage<T>>,
     ) => {
       const { data } = event
@@ -90,23 +91,23 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     }
   }
 
-  private handleMessage<T extends NodeType>(msg: IncomingMessage<T>) {
+  private handleMessage<T extends ObjectType>(msg: IncomingMessage<T>) {
     switch (msg.message) {
-      case 'createBuffer':
-        this.createBuffer(msg.bufferId, msg.options)
+      case 'createObject': {
+        const { objectId, objectType, options } = msg
+        this.createObject(objectId, objectType, options)
         break
-      case 'deleteBuffer':
-        this.deleteBuffer(msg.bufferId)
+      }
+      case 'deleteObject': {
+        const { objectId } = msg
+        this.deleteObject(objectId)
         break
-      case 'createNode':
-        this.createNode(msg.nodeId, msg.nodeType, msg.options)
+      }
+      case 'callMethod': {
+        const { requestId, target, methodName, args } = msg
+        this.callMethod(requestId, target, methodName, args)
         break
-      case 'deleteNode':
-        this.deleteNode(msg.nodeId)
-        break
-      case 'call':
-        this.handleCall(msg.requestId, msg.target, msg.functionName, msg.args)
-        break
+      }
       case 'delete':
         this.delete()
         break
@@ -117,93 +118,104 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     this.port.postMessage(msg)
   }
 
-  private createBuffer(
-    bufferId: string,
-    options: BufferOptions = {} as BufferOptions,
+  private createObject<T extends ObjectType>(
+    objectId: string,
+    objectType: T,
+    options: Options<T> = {} as Options<T>,
   ) {
     if (!this.module) {
       throw new Error('Module not initialized')
     }
-    if (this.buffers.has(bufferId)) {
-      throw new Error(`Buffer already exists: ${bufferId}`)
+
+    // Check for reserved keywords
+    if (getReservedKeywords().includes(objectId)) {
+      throw new Error(`Keyword is reserved: ${objectId}`)
     }
-    const {
-      type = Type.RATIO,
-      space = Space.TIME,
-      range = 0,
-      defaultValue = 0,
-      numChannels,
-      numSamples,
-      data = [],
-    } = options
-    const buffer = new this.module.Buffer(
-      type,
-      space,
-      range,
-      defaultValue,
-      numChannels,
-      numSamples,
-    )
-    const wrapper = buffer.getWrapper()
-    for (
-      let channel = 0;
-      channel < numChannels && channel < data.length;
-      channel++
-    ) {
-      const channelData = data[channel]
-      const writeChannelData = wrapper.getChannelData(channel)
+
+    // Check if object already exists
+    if (this.objects.has(objectId)) {
+      throw new Error(`Object already exists: ${objectId}`)
+    }
+
+    // Handle Buffer creation specially (needs data handling)
+    if (objectType === 'Buffer') {
+      const bufferOptions = options as Options<'Buffer'>
+      const {
+        type = Type.RATIO,
+        space = Space.TIME,
+        range = 0,
+        defaultValue = 0,
+        numChannels = 1,
+        numSamples = 1,
+        data = [],
+      } = bufferOptions
+      const buffer = new this.module.Buffer(
+        type,
+        space,
+        range,
+        defaultValue,
+        numChannels,
+        numSamples,
+      )
+      const wrapper = buffer.getWrapper()
       for (
-        let sample = 0;
-        sample < numSamples && sample < channelData.length;
-        sample++
+        let channel = 0;
+        channel < numChannels && channel < data.length;
+        channel++
       ) {
-        writeChannelData[sample] = channelData[sample]
+        const channelData = data[channel]
+        const writeChannelData = wrapper.getChannelData(channel)
+        for (
+          let sample = 0;
+          sample < numSamples && sample < channelData.length;
+          sample++
+        ) {
+          writeChannelData[sample] = channelData[sample]
+        }
+      }
+      this.objects.set(objectId, buffer)
+      this.registerTarget(buffer, { type: TargetType.Buffer, id: objectId })
+      return
+    }
+
+    // Handle Node types
+    if (objectType in this.module && this.nodeProcessor) {
+      const node = constructNode(
+        this.module,
+        objectType as NodeType,
+        options as Options<NodeType>,
+      )
+      this.objects.set(objectId, node)
+      this.registerTarget(node, {
+        type: TargetType.Node,
+        nodeType: objectType as NodeType,
+        id: objectId,
+      })
+      this.nodeProcessor.getDefaultNode().addChild(node)
+      return
+    }
+
+    throw new Error(`Unknown object type: ${objectType}`)
+  }
+
+  private deleteObject(objectId: string) {
+    const obj = this.objects.get(objectId)
+    if (!obj) {
+      throw new Error(`Object not found: ${objectId}`)
+    }
+
+    // Remove from parent if it's a node
+    if (this.nodeProcessor && 'delete' in obj) {
+      const target = this.targets.get(obj)
+      if (target && target.type === TargetType.Node) {
+        this.nodeProcessor.getDefaultNode().removeChild(obj as Node)
       }
     }
-    this.buffers.set(bufferId, buffer)
-    this.registerTarget(buffer, { type: TargetType.Buffer, id: bufferId })
-  }
 
-  private deleteBuffer(bufferId: string) {
-    const buffer = this.buffers.get(bufferId)
-    if (!buffer) {
-      throw new Error(`Buffer not found: ${bufferId}`)
+    this.objects.delete(objectId)
+    if ('delete' in obj && typeof obj.delete === 'function') {
+      obj.delete()
     }
-    this.buffers.delete(bufferId)
-    buffer.delete()
-  }
-
-  private createNode<T extends NodeType>(
-    nodeId: string,
-    nodeType: T,
-    options: NodeOptions<T> = {} as NodeOptions<T>,
-  ) {
-    if (!this.module || !this.nodeProcessor) {
-      throw new Error('Module not initialized')
-    }
-    if (getReservedKeywords().includes(nodeId)) {
-      throw new Error(`Keyword is reserved: ${nodeId}`)
-    }
-    if (this.nodes.has(nodeId)) {
-      throw new Error(`Node already exists: ${nodeId}`)
-    }
-    const node = constructNode(this.module, nodeType, options)
-    this.nodes.set(nodeId, node)
-    this.registerTarget(node, { type: TargetType.Node, nodeType, id: nodeId })
-    this.nodeProcessor.getDefaultNode().addChild(node)
-  }
-
-  private deleteNode(nodeId: string) {
-    if (!this.nodeProcessor) {
-      throw new Error('Module not initialized')
-    }
-    const node = this.nodes.get(nodeId)
-    if (!node) {
-      throw new Error(`Node not found: ${nodeId}`)
-    }
-    this.nodeProcessor.getDefaultNode().removeChild(node)
-    this.nodes.delete(nodeId)
-    node.delete()
   }
 
   private registerTarget(obj: object, target: Target) {
@@ -237,7 +249,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     if (targetType === TargetType.Node && nodeType === undefined) {
       throw new Error('nodeType is required for Node target')
     }
-    const node = this.nodes.get(nodeId)
+    const node = this.objects.get(nodeId)
     if (!node) {
       throw new Error(`Node not found: ${nodeId}`)
     }
@@ -391,10 +403,13 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     if (!this.nodeProcessor || !this.audioBuffer || !this.midiBuffer) {
       throw new Error('Module not initialized')
     }
-    for (const [nodeId, node] of this.nodes) {
-      this.nodeProcessor.getDefaultNode().removeChild(node)
-      this.nodes.delete(nodeId)
-      node.delete()
+    for (const [objectId, object] of this.objects) {
+      const target = this.targets.get(object)
+      if (target && target.type === TargetType.Node) {
+        this.nodeProcessor.getDefaultNode().removeChild(object as Node)
+      }
+      this.objects.delete(objectId)
+      object.delete()
     }
     this.midiBuffer.delete()
     this.audioBuffer.delete()
@@ -413,33 +428,24 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     return 'id' in obj && typeof obj.id === 'string'
   }
 
-  private resolveArgs(args: unknown[]): unknown[] {
-    return args.map((arg) => {
-      if (this.isTarget(arg)) {
-        return this.getTargetObject(arg)
-      }
-      return arg
-    })
-  }
-
-  private handleCall(
+  private callMethod(
     requestId: string,
     target: Target,
-    functionName: string,
-    args: unknown[],
+    methodName: string,
+    args: SerializedValue[],
   ) {
     try {
       const obj = this.getTargetObject(target)
-      const resolvedArgs = this.resolveArgs(args)
-      const f = (obj as Record<string, unknown>)[functionName]
+      const resolvedArgs = args.map((arg) => this.deserialize(arg))
+      const f = (obj as Record<string, unknown>)[methodName]
       if (typeof f !== 'function') {
-        throw new Error(`Function not found: ${functionName}`)
+        throw new Error(`Method not found: ${methodName}`)
       }
       const result = f.apply(obj, resolvedArgs)
       this.sendMessage({
         message: 'response',
         requestId,
-        result: this.serializeResult(result),
+        result: this.serialize(result),
       })
     } catch (error) {
       const errorMessage =
@@ -455,7 +461,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
         if (bufferName) {
           return this.getBuffer(nodeId, bufferName)
         }
-        const buffer = this.buffers.get(target.id)
+        const buffer = this.objects.get(target.id)
         if (!buffer) {
           throw new Error(`Buffer not found: ${target.id}`)
         }
@@ -478,7 +484,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
         if (nodeName) {
           return this.getNode(nodeId, nodeName, target.nodeType)
         }
-        const node = this.nodes.get(target.id)
+        const node = this.objects.get(target.id)
         if (!node) {
           throw new Error(`Node not found: ${target.id}`)
         }
@@ -505,24 +511,31 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     }
   }
 
-  private serializeResult(result: unknown) {
-    if (result === undefined || result === null) {
-      return result
+  private serialize(value: unknown): SerializedValue {
+    if (value === undefined || value === null) {
+      return value
     }
     if (
-      typeof result === 'number' ||
-      typeof result === 'boolean' ||
-      typeof result === 'string'
+      typeof value === 'number' ||
+      typeof value === 'boolean' ||
+      typeof value === 'string'
     ) {
-      return result
+      return value
     }
-    if (result instanceof Float64Array || result instanceof Float32Array) {
-      return Array.from(result)
+    if (value instanceof Float64Array || value instanceof Float32Array) {
+      return Array.from(value)
     }
-    if (typeof result === 'object') {
-      return this.targets.get(result)
+    if (typeof value === 'object') {
+      return this.targets.get(value)
     }
     return undefined
+  }
+
+  private deserialize(value: SerializedValue): unknown {
+    if (this.isTarget(value)) {
+      return this.getTargetObject(value)
+    }
+    return value
   }
 }
 

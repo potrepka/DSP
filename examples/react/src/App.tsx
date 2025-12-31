@@ -69,10 +69,16 @@ export const App = () => {
     await dsp.ready()
 
     // Create nodes using the fluent API
-    const phasor = dsp.createPhasor({ numChannels: 2 })
-    const osc = dsp.createTableOscillator({ numChannels: 2 })
-    const filter = dsp.createBiquad({ numChannels: 2 })
-    const gain = dsp.createMultiplication({ numChannels: 2 })
+    const phasor = dsp.createPhasor()
+    const osc = dsp.createTableOscillator()
+    const filter = dsp.createBiquad()
+    const gain = dsp.createMultiplication()
+
+    //
+    phasor.setNumChannels(2)
+    osc.setNumChannels(2)
+    filter.setNumChannels(2)
+    gain.setNumChannels(2)
 
     // Set input values
     await phasor.getFrequency().setAllChannelValues(55)
