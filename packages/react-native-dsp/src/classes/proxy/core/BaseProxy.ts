@@ -6,9 +6,7 @@ export abstract class BaseProxy {
     protected readonly context: ProxyContext,
     public readonly target: Target,
   ) {}
-
   toTarget = (): Target => this.target
-
   protected call = <T>(methodName: string, args: unknown[]): Promise<T> => {
     return this.context.sendMessage<T>({
       message: 'callMethod',
@@ -23,7 +21,6 @@ export abstract class BaseProxy {
       }) as SerializedValue[],
     })
   }
-
   delete = (): Promise<void> => {
     return this.context.sendMessage<void>({
       message: 'deleteObject',

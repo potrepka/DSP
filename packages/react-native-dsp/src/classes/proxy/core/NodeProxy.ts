@@ -1,5 +1,6 @@
+import { chainable } from '../../../helpers/proxy'
 import { Target } from '../../../types/module'
-import { ProxyContext } from '../../../types/proxy'
+import { Chainable, ProxyContext } from '../../../types/proxy'
 import { BaseProxy } from './BaseProxy'
 import { InputProxy, OutputProxy } from './BufferProxy'
 import { VectorProxy } from './VectorProxy'
@@ -8,111 +9,105 @@ export class NodeProxy extends BaseProxy {
   constructor(context: ProxyContext, target: Target) {
     super(context, target)
   }
-
-  protected createInput = async (inputName: string): Promise<InputProxy> => {
-    const target = await this.call<Target>(`get${inputName}`, [])
-    return new InputProxy(this.context, target)
+  protected createInput = (inputName: string): Chainable<InputProxy> => {
+    return chainable(
+      this.call<Target>(`get${inputName}`, []).then(
+        (target) => new InputProxy(this.context, target),
+      ),
+    )
   }
-
-  protected createOutput = async (outputName: string): Promise<OutputProxy> => {
-    const target = await this.call<Target>(`get${outputName}`, [])
-    return new OutputProxy(this.context, target)
+  protected createOutput = (outputName: string): Chainable<OutputProxy> => {
+    return chainable(
+      this.call<Target>(`get${outputName}`, []).then(
+        (target) => new OutputProxy(this.context, target),
+      ),
+    )
   }
-
-  isActive = (): Promise<boolean> => {
-    return this.call('isActive', [])
+  isActive = (): Chainable<boolean> => {
+    return chainable(this.call('isActive', []))
   }
-
-  setActive = (active: boolean): Promise<void> => {
-    return this.call('setActive', [active])
+  setActive = (active: boolean): Chainable<void> => {
+    return chainable(this.call('setActive', [active]))
   }
-
-  getNumChannels = (): Promise<number> => {
-    return this.call('getNumChannels', [])
+  getNumChannels = (): Chainable<number> => {
+    return chainable(this.call('getNumChannels', []))
   }
-
-  setNumChannels = (numChannels: number): Promise<void> => {
-    return this.call('setNumChannels', [numChannels])
+  setNumChannels = (numChannels: number): Chainable<void> => {
+    return chainable(this.call('setNumChannels', [numChannels]))
   }
-
-  getNumInputChannels = (): Promise<number> => {
-    return this.call('getNumInputChannels', [])
+  getNumInputChannels = (): Chainable<number> => {
+    return chainable(this.call('getNumInputChannels', []))
   }
-
-  setNumInputChannels = (numChannels: number): Promise<void> => {
-    return this.call('setNumInputChannels', [numChannels])
+  setNumInputChannels = (numChannels: number): Chainable<void> => {
+    return chainable(this.call('setNumInputChannels', [numChannels]))
   }
-
-  getNumOutputChannels = (): Promise<number> => {
-    return this.call('getNumOutputChannels', [])
+  getNumOutputChannels = (): Chainable<number> => {
+    return chainable(this.call('getNumOutputChannels', []))
   }
-
-  setNumOutputChannels = (numChannels: number): Promise<void> => {
-    return this.call('setNumOutputChannels', [numChannels])
+  setNumOutputChannels = (numChannels: number): Chainable<void> => {
+    return chainable(this.call('setNumOutputChannels', [numChannels]))
   }
-
-  getNumSamples = (): Promise<number> => {
-    return this.call('getNumSamples', [])
+  getNumSamples = (): Chainable<number> => {
+    return chainable(this.call('getNumSamples', []))
   }
-
-  setNumSamples = (numSamples: number): Promise<void> => {
-    return this.call('setNumSamples', [numSamples])
+  setNumSamples = (numSamples: number): Chainable<void> => {
+    return chainable(this.call('setNumSamples', [numSamples]))
   }
-
-  getSampleRate = (): Promise<number> => {
-    return this.call('getSampleRate', [])
+  getSampleRate = (): Chainable<number> => {
+    return chainable(this.call('getSampleRate', []))
   }
-
-  setSampleRate = (sampleRate: number): Promise<void> => {
-    return this.call('setSampleRate', [sampleRate])
+  setSampleRate = (sampleRate: number): Chainable<void> => {
+    return chainable(this.call('setSampleRate', [sampleRate]))
   }
-
-  getOneOverNumSamples = (): Promise<number> => {
-    return this.call('getOneOverNumSamples', [])
+  getOneOverNumSamples = (): Chainable<number> => {
+    return chainable(this.call('getOneOverNumSamples', []))
   }
-
-  getOneOverSampleRate = (): Promise<number> => {
-    return this.call('getOneOverSampleRate', [])
+  getOneOverSampleRate = (): Chainable<number> => {
+    return chainable(this.call('getOneOverSampleRate', []))
   }
-
-  getInputs = async (): Promise<VectorProxy<InputProxy>> => {
-    const target = await this.call<Target>('getInputs', [])
-    return new VectorProxy(this.context, target, (itemTarget: Target) => {
-      return new InputProxy(this.context, itemTarget)
-    })
+  getInputs = (): Chainable<VectorProxy<InputProxy>> => {
+    return chainable(
+      this.call<Target>('getInputs', []).then(
+        (target) =>
+          new VectorProxy(this.context, target, (itemTarget: Target) => {
+            return new InputProxy(this.context, itemTarget)
+          }),
+      ),
+    )
   }
-
-  getOutputs = async (): Promise<VectorProxy<OutputProxy>> => {
-    const target = await this.call<Target>('getOutputs', [])
-    return new VectorProxy(this.context, target, (itemTarget: Target) => {
-      return new OutputProxy(this.context, itemTarget)
-    })
+  getOutputs = (): Chainable<VectorProxy<OutputProxy>> => {
+    return chainable(
+      this.call<Target>('getOutputs', []).then(
+        (target) =>
+          new VectorProxy(this.context, target, (itemTarget: Target) => {
+            return new OutputProxy(this.context, itemTarget)
+          }),
+      ),
+    )
   }
-
-  getChildren = async (): Promise<VectorProxy<NodeProxy>> => {
-    const target = await this.call<Target>('getChildren', [])
-    return new VectorProxy(this.context, target, (itemTarget: Target) => {
-      return new NodeProxy(this.context, itemTarget)
-    })
+  getChildren = (): Chainable<VectorProxy<NodeProxy>> => {
+    return chainable(
+      this.call<Target>('getChildren', []).then(
+        (target) =>
+          new VectorProxy(this.context, target, (itemTarget: Target) => {
+            return new NodeProxy(this.context, itemTarget)
+          }),
+      ),
+    )
   }
-
-  addChild = (child: NodeProxy): Promise<void> => {
-    return this.call('addChild', [child])
+  addChild = (child: NodeProxy): Chainable<void> => {
+    return chainable(this.call('addChild', [child]))
   }
-
-  removeChild = (child: NodeProxy): Promise<void> => {
-    return this.call('removeChild', [child])
+  removeChild = (child: NodeProxy): Chainable<void> => {
+    return chainable(this.call('removeChild', [child]))
   }
-
-  sortChildren = (): Promise<void> => {
-    return this.call('sortChildren', [])
+  sortChildren = (): Chainable<void> => {
+    return chainable(this.call('sortChildren', []))
   }
-
-  disconnectAll = (): Promise<void> => {
-    return this.call('disconnectAll', [])
+  disconnectAll = (): Chainable<void> => {
+    return chainable(this.call('disconnectAll', []))
   }
-
-  process = (): Promise<void> => {
-    return this.call('process', [])
+  process = (): Chainable<void> => {
+    return chainable(this.call('process', []))
   }
 }

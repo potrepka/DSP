@@ -1,56 +1,51 @@
+import { chainable } from '../../../helpers/proxy'
 import { Target } from '../../../types/module'
-import { ProxyContext } from '../../../types/proxy'
+import { Chainable, ProxyContext } from '../../../types/proxy'
 import { BaseProxy } from './BaseProxy'
 
 export class DataProxy extends BaseProxy {
   constructor(context: ProxyContext, target: Target) {
     super(context, target)
   }
-
-  getNumChannels = (): Promise<number> => {
-    return this.call('getNumChannels', [])
+  getNumChannels = (): Chainable<number> => {
+    return chainable(this.call('getNumChannels', []))
   }
-
-  getNumSamples = (): Promise<number> => {
-    return this.call('getNumSamples', [])
+  getNumSamples = (): Chainable<number> => {
+    return chainable(this.call('getNumSamples', []))
   }
-
-  setSize = (numChannels: number, numSamples: number): Promise<void> => {
-    return this.call('setSize', [numChannels, numSamples])
+  setSize = (numChannels: number, numSamples: number): Chainable<void> => {
+    return chainable(this.call('setSize', [numChannels, numSamples]))
   }
-
-  clear = (): Promise<void> => {
-    return this.call('clear', [])
+  clear = (): Chainable<void> => {
+    return chainable(this.call('clear', []))
   }
-
   getReadChannelData = (_channel: number): never => {
     throw new Error('getReadChannelData is not implemented')
   }
-
   getWriteChannelData = (_channel: number): never => {
     throw new Error('getWriteChannelData is not implemented')
   }
-
   getMagnitude = (
     channel: number,
     startSample: number,
     numSamples: number,
-  ): Promise<number> => {
-    return this.call('getMagnitude', [channel, startSample, numSamples])
+  ): Chainable<number> => {
+    return chainable(
+      this.call('getMagnitude', [channel, startSample, numSamples]),
+    )
   }
-
   getRMSLevel = (
     channel: number,
     startSample: number,
     numSamples: number,
-  ): Promise<number> => {
-    return this.call('getRMSLevel', [channel, startSample, numSamples])
+  ): Chainable<number> => {
+    return chainable(
+      this.call('getRMSLevel', [channel, startSample, numSamples]),
+    )
   }
-
   getReadData = (): never => {
     throw new Error('getReadData is not implemented')
   }
-
   getWriteData = (): never => {
     throw new Error('getWriteData is not implemented')
   }

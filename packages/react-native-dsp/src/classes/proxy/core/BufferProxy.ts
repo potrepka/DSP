@@ -1,6 +1,7 @@
 import { InputMode, Space, Type } from '../../../enums/global'
+import { chainable } from '../../../helpers/proxy'
 import { Target } from '../../../types/module'
-import { ProxyContext } from '../../../types/proxy'
+import { Chainable, ProxyContext } from '../../../types/proxy'
 import { BaseProxy } from './BaseProxy'
 import { DataProxy } from './DataProxy'
 import { VectorProxy } from './VectorProxy'
@@ -10,163 +11,152 @@ export class BufferProxy extends BaseProxy {
   constructor(context: ProxyContext, target: Target) {
     super(context, target)
   }
-
-  getType = (): Promise<Type> => {
-    return this.call('getType', [])
+  getType = (): Chainable<Type> => {
+    return chainable(this.call('getType', []))
   }
-
-  setType = (type: Type): Promise<void> => {
-    return this.call('setType', [type])
+  setType = (type: Type): Chainable<void> => {
+    return chainable(this.call('setType', [type]))
   }
-
-  getSpace = (): Promise<Space> => {
-    return this.call('getSpace', [])
+  getSpace = (): Chainable<Space> => {
+    return chainable(this.call('getSpace', []))
   }
-
-  setSpace = (space: Space): Promise<void> => {
-    return this.call('setSpace', [space])
+  setSpace = (space: Space): Chainable<void> => {
+    return chainable(this.call('setSpace', [space]))
   }
-
-  getRange = (): Promise<number> => {
-    return this.call('getRange', [])
+  getRange = (): Chainable<number> => {
+    return chainable(this.call('getRange', []))
   }
-
-  setRange = (range: number): Promise<void> => {
-    return this.call('setRange', [range])
+  setRange = (range: number): Chainable<void> => {
+    return chainable(this.call('setRange', [range]))
   }
-
-  getDefaultValue = (): Promise<number> => {
-    return this.call('getDefaultValue', [])
+  getDefaultValue = (): Chainable<number> => {
+    return chainable(this.call('getDefaultValue', []))
   }
-
-  setDefaultValue = (value: number): Promise<void> => {
-    return this.call('setDefaultValue', [value])
+  setDefaultValue = (value: number): Chainable<void> => {
+    return chainable(this.call('setDefaultValue', [value]))
   }
-
-  getNumChannels = (): Promise<number> => {
-    return this.call('getNumChannels', [])
+  getNumChannels = (): Chainable<number> => {
+    return chainable(this.call('getNumChannels', []))
   }
-
-  setNumChannels = (numChannels: number): Promise<void> => {
-    return this.call('setNumChannels', [numChannels])
+  setNumChannels = (numChannels: number): Chainable<void> => {
+    return chainable(this.call('setNumChannels', [numChannels]))
   }
-
-  getNumSamples = (): Promise<number> => {
-    return this.call('getNumSamples', [])
+  getNumSamples = (): Chainable<number> => {
+    return chainable(this.call('getNumSamples', []))
   }
-
-  setNumSamples = (numSamples: number): Promise<void> => {
-    return this.call('setNumSamples', [numSamples])
+  setNumSamples = (numSamples: number): Chainable<void> => {
+    return chainable(this.call('setNumSamples', [numSamples]))
   }
-
-  setSize = (numChannels: number, numSamples: number): Promise<void> => {
-    return this.call('setSize', [numChannels, numSamples])
+  setSize = (numChannels: number, numSamples: number): Chainable<void> => {
+    return chainable(this.call('setSize', [numChannels, numSamples]))
   }
-
-  getChannelValues = async (): Promise<Float64Array> => {
-    const result = await this.call<number[]>('getChannelValues', [])
-    return new Float64Array(result)
+  getChannelValues = (): Chainable<Float64Array> => {
+    return chainable(
+      this.call<number[]>('getChannelValues', []).then(
+        (result) => new Float64Array(result),
+      ),
+    )
   }
-
-  setChannelValues = (values: Float64Array): Promise<void> => {
-    return this.call('setChannelValues', [Array.from(values)])
+  setChannelValues = (values: Float64Array): Chainable<void> => {
+    return chainable(this.call('setChannelValues', [Array.from(values)]))
   }
-
-  getChannelValue = (channel: number): Promise<number> => {
-    return this.call('getChannelValue', [channel])
+  getChannelValue = (channel: number): Chainable<number> => {
+    return chainable(this.call('getChannelValue', [channel]))
   }
-
-  setChannelValue = (channel: number, value: number): Promise<void> => {
-    return this.call('setChannelValue', [channel, value])
+  setChannelValue = (channel: number, value: number): Chainable<void> => {
+    return chainable(this.call('setChannelValue', [channel, value]))
   }
-
-  setAllChannelValues = (value: number): Promise<void> => {
-    return this.call('setAllChannelValues', [value])
+  setAllChannelValues = (value: number): Chainable<void> => {
+    return chainable(this.call('setAllChannelValues', [value]))
   }
-
-  getPeak = async (): Promise<Float64Array> => {
-    const result = await this.call<number[]>('getPeak', [])
-    return new Float64Array(result)
+  getPeak = (): Chainable<Float64Array> => {
+    return chainable(
+      this.call<number[]>('getPeak', []).then(
+        (result) => new Float64Array(result),
+      ),
+    )
   }
-
-  getRMS = async (): Promise<Float64Array> => {
-    const result = await this.call<number[]>('getRMS', [])
-    return new Float64Array(result)
+  getRMS = (): Chainable<Float64Array> => {
+    return chainable(
+      this.call<number[]>('getRMS', []).then(
+        (result) => new Float64Array(result),
+      ),
+    )
   }
-
-  getData = async (): Promise<DataProxy> => {
-    const target = await this.call<Target>('getData', [])
-    return new DataProxy(this.context, target)
+  getData = (): Chainable<DataProxy> => {
+    return chainable(
+      this.call<Target>('getData', []).then(
+        (target) => new DataProxy(this.context, target),
+      ),
+    )
   }
-
-  getWrapper = async (): Promise<WrapperProxy> => {
-    const target = await this.call<Target>('getWrapper', [])
-    return new WrapperProxy(this.context, target)
+  getWrapper = (): Chainable<WrapperProxy> => {
+    return chainable(
+      this.call<Target>('getWrapper', []).then(
+        (target) => new WrapperProxy(this.context, target),
+      ),
+    )
   }
 }
 
 export class InputProxy extends BufferProxy {
-  getMode = (): Promise<InputMode> => {
-    return this.call('getMode', [])
+  getMode = (): Chainable<InputMode> => {
+    return chainable(this.call('getMode', []))
   }
-
-  setMode = (mode: InputMode): Promise<void> => {
-    return this.call('setMode', [mode])
+  setMode = (mode: InputMode): Chainable<void> => {
+    return chainable(this.call('setMode', [mode]))
   }
-
-  getConnections = async (): Promise<VectorProxy<OutputProxy>> => {
-    const target = await this.call<Target>('getConnections', [])
-    return new VectorProxy(this.context, target, (itemTarget: Target) => {
-      return new OutputProxy(this.context, itemTarget)
-    })
+  getConnections = (): Chainable<VectorProxy<OutputProxy>> => {
+    return chainable(
+      this.call<Target>('getConnections', []).then(
+        (target) =>
+          new VectorProxy(this.context, target, (itemTarget: Target) => {
+            return new OutputProxy(this.context, itemTarget)
+          }),
+      ),
+    )
   }
-
-  connect = (output: OutputProxy): Promise<void> => {
-    return this.call('connect', [output])
+  connect = (output: OutputProxy): Chainable<void> => {
+    return chainable(this.call('connect', [output]))
   }
-
-  disconnect = (output: OutputProxy): Promise<void> => {
-    return this.call('disconnect', [output])
+  disconnect = (output: OutputProxy): Chainable<void> => {
+    return chainable(this.call('disconnect', [output]))
   }
-
-  disconnectAll = (): Promise<void> => {
-    return this.call('disconnectAll', [])
+  disconnectAll = (): Chainable<void> => {
+    return chainable(this.call('disconnectAll', []))
   }
-
-  prepareNoLock = (): Promise<void> => {
-    return this.call('prepareNoLock', [])
+  prepareNoLock = (): Chainable<void> => {
+    return chainable(this.call('prepareNoLock', []))
   }
-
-  processNoLock = (): Promise<void> => {
-    return this.call('processNoLock', [])
+  processNoLock = (): Chainable<void> => {
+    return chainable(this.call('processNoLock', []))
   }
 }
 
 export class OutputProxy extends BufferProxy {
-  getConnections = async (): Promise<VectorProxy<InputProxy>> => {
-    const target = await this.call<Target>('getConnections', [])
-    return new VectorProxy(this.context, target, (itemTarget: Target) => {
-      return new InputProxy(this.context, itemTarget)
-    })
+  getConnections = (): Chainable<VectorProxy<InputProxy>> => {
+    return chainable(
+      this.call<Target>('getConnections', []).then(
+        (target) =>
+          new VectorProxy(this.context, target, (itemTarget: Target) => {
+            return new InputProxy(this.context, itemTarget)
+          }),
+      ),
+    )
   }
-
-  connect = (input: InputProxy): Promise<void> => {
-    return this.call('connect', [input])
+  connect = (input: InputProxy): Chainable<void> => {
+    return chainable(this.call('connect', [input]))
   }
-
-  disconnect = (input: InputProxy): Promise<void> => {
-    return this.call('disconnect', [input])
+  disconnect = (input: InputProxy): Chainable<void> => {
+    return chainable(this.call('disconnect', [input]))
   }
-
-  disconnectAll = (): Promise<void> => {
-    return this.call('disconnectAll', [])
+  disconnectAll = (): Chainable<void> => {
+    return chainable(this.call('disconnectAll', []))
   }
-
-  prepareNoLock = (): Promise<void> => {
-    return this.call('prepareNoLock', [])
+  prepareNoLock = (): Chainable<void> => {
+    return chainable(this.call('prepareNoLock', []))
   }
-
-  processNoLock = (): Promise<void> => {
-    return this.call('processNoLock', [])
+  processNoLock = (): Chainable<void> => {
+    return chainable(this.call('processNoLock', []))
   }
 }

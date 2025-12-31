@@ -1,61 +1,53 @@
+import { chainable } from '../../../helpers/proxy'
 import { Target } from '../../../types/module'
-import { ProxyContext } from '../../../types/proxy'
+import { Chainable, ProxyContext } from '../../../types/proxy'
 import { BaseProxy } from './BaseProxy'
 
 export class WrapperProxy extends BaseProxy {
   constructor(context: ProxyContext, target: Target) {
     super(context, target)
   }
-
-  getNumChannels = (): Promise<number> => {
-    return this.call('getNumChannels', [])
+  getNumChannels = (): Chainable<number> => {
+    return chainable(this.call('getNumChannels', []))
   }
-
-  getNumSamples = (): Promise<number> => {
-    return this.call('getNumSamples', [])
+  getNumSamples = (): Chainable<number> => {
+    return chainable(this.call('getNumSamples', []))
   }
-
   getChannelData = (_channel: number): never => {
     throw new Error('getChannelData is not implemented')
   }
-
-  getSingleChannel = async (channel: number): Promise<WrapperProxy> => {
-    const target = await this.call<Target>('getSingleChannel', [channel])
-    return new WrapperProxy(this.context, target)
+  getSingleChannel = (channel: number): Chainable<WrapperProxy> => {
+    return chainable(
+      this.call<Target>('getSingleChannel', [channel]).then(
+        (target) => new WrapperProxy(this.context, target),
+      ),
+    )
   }
-
-  getSampleRange = async (
+  getSampleRange = (
     sampleOffset: number,
     numSamples: number,
-  ): Promise<WrapperProxy> => {
-    const target = await this.call<Target>('getSampleRange', [
-      sampleOffset,
-      numSamples,
-    ])
-    return new WrapperProxy(this.context, target)
+  ): Chainable<WrapperProxy> => {
+    return chainable(
+      this.call<Target>('getSampleRange', [sampleOffset, numSamples]).then(
+        (target) => new WrapperProxy(this.context, target),
+      ),
+    )
   }
-
-  clear = async (): Promise<WrapperProxy> => {
-    await this.call<void>('clear', [])
-    return this
+  clear = (): Chainable<this> => {
+    return chainable(this.call<void>('clear', []).then(() => this))
   }
-
-  fill = async (value: number): Promise<WrapperProxy> => {
-    await this.call<void>('fill', [value])
-    return this
+  fill = (value: number): Chainable<this> => {
+    return chainable(this.call<void>('fill', [value]).then(() => this))
   }
-
   apply = (_f: (x: number) => number): never => {
     throw new Error('apply is not implemented')
   }
-
   replaceWithApplicationOf = (
     _f: (x: number) => number,
     _src: WrapperProxy,
   ): never => {
     throw new Error('replaceWithApplicationOf is not implemented')
   }
-
   replaceWithApplicationOfTwoArgs = (
     _f: (x: number, y: number) => number,
     _src1: WrapperProxy,
@@ -63,133 +55,117 @@ export class WrapperProxy extends BaseProxy {
   ): never => {
     throw new Error('replaceWithApplicationOfTwoArgs is not implemented')
   }
-
-  copyFrom = async (src: WrapperProxy): Promise<WrapperProxy> => {
-    await this.call<void>('copyFrom', [src])
-    return this
+  copyFrom = (src: WrapperProxy): Chainable<this> => {
+    return chainable(this.call<void>('copyFrom', [src]).then(() => this))
   }
-
-  add = async (value: number): Promise<WrapperProxy> => {
-    await this.call<void>('add', [value])
-    return this
+  add = (value: number): Chainable<this> => {
+    return chainable(this.call<void>('add', [value]).then(() => this))
   }
-
-  addWrapper = async (src: WrapperProxy): Promise<WrapperProxy> => {
-    await this.call<void>('addWrapper', [src])
-    return this
+  addWrapper = (src: WrapperProxy): Chainable<this> => {
+    return chainable(this.call<void>('addWrapper', [src]).then(() => this))
   }
-
-  multiplyBy = async (value: number): Promise<WrapperProxy> => {
-    await this.call<void>('multiplyBy', [value])
-    return this
+  multiplyBy = (value: number): Chainable<this> => {
+    return chainable(this.call<void>('multiplyBy', [value]).then(() => this))
   }
-
-  multiplyByWrapper = async (src: WrapperProxy): Promise<WrapperProxy> => {
-    await this.call<void>('multiplyByWrapper', [src])
-    return this
+  multiplyByWrapper = (src: WrapperProxy): Chainable<this> => {
+    return chainable(
+      this.call<void>('multiplyByWrapper', [src]).then(() => this),
+    )
   }
-
-  addProductOf = async (
-    src: WrapperProxy,
-    value: number,
-  ): Promise<WrapperProxy> => {
-    await this.call<void>('addProductOf', [src, value])
-    return this
+  addProductOf = (src: WrapperProxy, value: number): Chainable<this> => {
+    return chainable(
+      this.call<void>('addProductOf', [src, value]).then(() => this),
+    )
   }
-
-  addProductOfWrappers = async (
+  addProductOfWrappers = (
     src1: WrapperProxy,
     src2: WrapperProxy,
-  ): Promise<WrapperProxy> => {
-    await this.call<void>('addProductOfWrappers', [src1, src2])
-    return this
+  ): Chainable<this> => {
+    return chainable(
+      this.call<void>('addProductOfWrappers', [src1, src2]).then(() => this),
+    )
   }
-
-  replaceWithNegativeOf = async (src: WrapperProxy): Promise<WrapperProxy> => {
-    await this.call<void>('replaceWithNegativeOf', [src])
-    return this
+  replaceWithNegativeOf = (src: WrapperProxy): Chainable<this> => {
+    return chainable(
+      this.call<void>('replaceWithNegativeOf', [src]).then(() => this),
+    )
   }
-
-  replaceWithAbsoluteValueOf = async (
-    src: WrapperProxy,
-  ): Promise<WrapperProxy> => {
-    await this.call<void>('replaceWithAbsoluteValueOf', [src])
-    return this
+  replaceWithAbsoluteValueOf = (src: WrapperProxy): Chainable<this> => {
+    return chainable(
+      this.call<void>('replaceWithAbsoluteValueOf', [src]).then(() => this),
+    )
   }
-
-  replaceWithSumOf = async (
-    src: WrapperProxy,
-    value: number,
-  ): Promise<WrapperProxy> => {
-    await this.call<void>('replaceWithSumOf', [src, value])
-    return this
+  replaceWithSumOf = (src: WrapperProxy, value: number): Chainable<this> => {
+    return chainable(
+      this.call<void>('replaceWithSumOf', [src, value]).then(() => this),
+    )
   }
-
-  replaceWithSumOfWrappers = async (
+  replaceWithSumOfWrappers = (
     src1: WrapperProxy,
     src2: WrapperProxy,
-  ): Promise<WrapperProxy> => {
-    await this.call<void>('replaceWithSumOfWrappers', [src1, src2])
-    return this
+  ): Chainable<this> => {
+    return chainable(
+      this.call<void>('replaceWithSumOfWrappers', [src1, src2]).then(
+        () => this,
+      ),
+    )
   }
-
-  replaceWithProductOf = async (
+  replaceWithProductOf = (
     src: WrapperProxy,
     value: number,
-  ): Promise<WrapperProxy> => {
-    await this.call<void>('replaceWithProductOf', [src, value])
-    return this
+  ): Chainable<this> => {
+    return chainable(
+      this.call<void>('replaceWithProductOf', [src, value]).then(() => this),
+    )
   }
-
-  replaceWithProductOfWrappers = async (
+  replaceWithProductOfWrappers = (
     src1: WrapperProxy,
     src2: WrapperProxy,
-  ): Promise<WrapperProxy> => {
-    await this.call<void>('replaceWithProductOfWrappers', [src1, src2])
-    return this
+  ): Chainable<this> => {
+    return chainable(
+      this.call<void>('replaceWithProductOfWrappers', [src1, src2]).then(
+        () => this,
+      ),
+    )
   }
-
-  replaceWithMinOf = async (
-    src: WrapperProxy,
-    value: number,
-  ): Promise<WrapperProxy> => {
-    await this.call<void>('replaceWithMinOf', [src, value])
-    return this
+  replaceWithMinOf = (src: WrapperProxy, value: number): Chainable<this> => {
+    return chainable(
+      this.call<void>('replaceWithMinOf', [src, value]).then(() => this),
+    )
   }
-
-  replaceWithMinOfWrappers = async (
+  replaceWithMinOfWrappers = (
     src1: WrapperProxy,
     src2: WrapperProxy,
-  ): Promise<WrapperProxy> => {
-    await this.call<void>('replaceWithMinOfWrappers', [src1, src2])
-    return this
+  ): Chainable<this> => {
+    return chainable(
+      this.call<void>('replaceWithMinOfWrappers', [src1, src2]).then(
+        () => this,
+      ),
+    )
   }
-
-  replaceWithMaxOf = async (
-    src: WrapperProxy,
-    value: number,
-  ): Promise<WrapperProxy> => {
-    await this.call<void>('replaceWithMaxOf', [src, value])
-    return this
+  replaceWithMaxOf = (src: WrapperProxy, value: number): Chainable<this> => {
+    return chainable(
+      this.call<void>('replaceWithMaxOf', [src, value]).then(() => this),
+    )
   }
-
-  replaceWithMaxOfWrappers = async (
+  replaceWithMaxOfWrappers = (
     src1: WrapperProxy,
     src2: WrapperProxy,
-  ): Promise<WrapperProxy> => {
-    await this.call<void>('replaceWithMaxOfWrappers', [src1, src2])
-    return this
+  ): Chainable<this> => {
+    return chainable(
+      this.call<void>('replaceWithMaxOfWrappers', [src1, src2]).then(
+        () => this,
+      ),
+    )
   }
-
-  getSample = (channel: number, sampleOffset: number): Promise<number> => {
-    return this.call('getSample', [channel, sampleOffset])
+  getSample = (channel: number, sampleOffset: number): Chainable<number> => {
+    return chainable(this.call('getSample', [channel, sampleOffset]))
   }
-
   setSample = (
     channel: number,
     sampleOffset: number,
     value: number,
-  ): Promise<void> => {
-    return this.call('setSample', [channel, sampleOffset, value])
+  ): Chainable<void> => {
+    return chainable(this.call('setSample', [channel, sampleOffset, value]))
   }
 }

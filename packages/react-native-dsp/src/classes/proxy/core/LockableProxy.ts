@@ -1,17 +1,16 @@
+import { chainable } from '../../../helpers/proxy'
 import { Target } from '../../../types/module'
-import { ProxyContext } from '../../../types/proxy'
+import { Chainable, ProxyContext } from '../../../types/proxy'
 import { BaseProxy } from './BaseProxy'
 
 export class LockableProxy extends BaseProxy {
   constructor(context: ProxyContext, target: Target) {
     super(context, target)
   }
-
-  lock = (): Promise<void> => {
-    return this.call('lock', [])
+  lock = (): Chainable<void> => {
+    return chainable(this.call('lock', []))
   }
-
-  unlock = (): Promise<void> => {
-    return this.call('unlock', [])
+  unlock = (): Chainable<void> => {
+    return chainable(this.call('unlock', []))
   }
 }

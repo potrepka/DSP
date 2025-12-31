@@ -1,5 +1,6 @@
+import { chainable } from '../../../helpers/proxy'
 import { Data, MidiBuffer, Target } from '../../../types/module'
-import { ProxyContext } from '../../../types/proxy'
+import { Chainable, ProxyContext } from '../../../types/proxy'
 import { BaseProxy } from './BaseProxy'
 import { InputProxy, OutputProxy } from './BufferProxy'
 import { NodeProxy } from './NodeProxy'
@@ -9,102 +10,97 @@ export class NodeProcessorProxy extends BaseProxy {
   constructor(context: ProxyContext, target: Target) {
     super(context, target)
   }
-
-  isActive = (): Promise<boolean> => {
-    return this.call('isActive', [])
+  isActive = (): Chainable<boolean> => {
+    return chainable(this.call('isActive', []))
   }
-
-  setActive = (active: boolean): Promise<void> => {
-    return this.call('setActive', [active])
+  setActive = (active: boolean): Chainable<void> => {
+    return chainable(this.call('setActive', [active]))
   }
-
-  getAudioInput = async (): Promise<OutputProxy> => {
-    const target = await this.call<Target>('getAudioInput', [])
-    return new OutputProxy(this.context, target)
-  }
-
-  getAudioOutput = async (): Promise<InputProxy> => {
-    const target = await this.call<Target>('getAudioOutput', [])
-    return new InputProxy(this.context, target)
-  }
-
-  getAudioInputClipping = async (): Promise<OutputProxy> => {
-    const target = await this.call<Target>('getAudioInputClipping', [])
-    return new OutputProxy(this.context, target)
-  }
-
-  getAudioOutputClipping = async (): Promise<OutputProxy> => {
-    const target = await this.call<Target>('getAudioOutputClipping', [])
-    return new OutputProxy(this.context, target)
-  }
-
-  getNumInputChannels = (): Promise<number> => {
-    return this.call('getNumInputChannels', [])
-  }
-
-  setNumInputChannels = (numChannels: number): Promise<void> => {
-    return this.call('setNumInputChannels', [numChannels])
-  }
-
-  getNumOutputChannels = (): Promise<number> => {
-    return this.call('getNumOutputChannels', [])
-  }
-
-  setNumOutputChannels = (numChannels: number): Promise<void> => {
-    return this.call('setNumOutputChannels', [numChannels])
-  }
-
-  getNumSamples = (): Promise<number> => {
-    return this.call('getNumSamples', [])
-  }
-
-  setNumSamples = (numSamples: number): Promise<void> => {
-    return this.call('setNumSamples', [numSamples])
-  }
-
-  getSampleRate = (): Promise<number> => {
-    return this.call('getSampleRate', [])
-  }
-
-  setSampleRate = (sampleRate: number): Promise<void> => {
-    return this.call('setSampleRate', [sampleRate])
-  }
-
-  setInputSize = (numChannels: number, numSamples: number): Promise<void> => {
-    return this.call('setInputSize', [numChannels, numSamples])
-  }
-
-  setOutputSize = (numChannels: number, numSamples: number): Promise<void> => {
-    return this.call('setOutputSize', [numChannels, numSamples])
-  }
-
-  getDefaultNode = async (): Promise<NodeProxy> => {
-    const target = await this.call<Target>('getDefaultNode', [])
-    return new NodeProxy(this.context, target)
-  }
-
-  getNodes = async (): Promise<VectorProxy<NodeProxy>> => {
-    const target = await this.call<Target>('getNodes', [])
-    return new VectorProxy(this.context, target, (nodeTarget: Target) => {
-      return new NodeProxy(this.context, nodeTarget)
-    })
-  }
-
-  getInputMessages = (): MidiBuffer => {
-    throw new Error(
-      'getInputMessages returns a complex object that cannot be proxied',
+  getAudioInput = (): Chainable<OutputProxy> => {
+    return chainable(
+      this.call<Target>('getAudioInput', []).then(
+        (target) => new OutputProxy(this.context, target),
+      ),
     )
   }
-
-  getOutputMessages = (): MidiBuffer => {
-    throw new Error(
-      'getOutputMessages returns a complex object that cannot be proxied',
+  getAudioOutput = (): Chainable<InputProxy> => {
+    return chainable(
+      this.call<Target>('getAudioOutput', []).then(
+        (target) => new InputProxy(this.context, target),
+      ),
     )
   }
-
-  process = (_audioBuffer: Data, _midiBuffer: MidiBuffer): Promise<void> => {
-    throw new Error(
-      'process requires Data and MidiBuffer objects from the worklet',
+  getAudioInputClipping = (): Chainable<OutputProxy> => {
+    return chainable(
+      this.call<Target>('getAudioInputClipping', []).then(
+        (target) => new OutputProxy(this.context, target),
+      ),
     )
+  }
+  getAudioOutputClipping = (): Chainable<OutputProxy> => {
+    return chainable(
+      this.call<Target>('getAudioOutputClipping', []).then(
+        (target) => new OutputProxy(this.context, target),
+      ),
+    )
+  }
+  getNumInputChannels = (): Chainable<number> => {
+    return chainable(this.call('getNumInputChannels', []))
+  }
+  setNumInputChannels = (numChannels: number): Chainable<void> => {
+    return chainable(this.call('setNumInputChannels', [numChannels]))
+  }
+  getNumOutputChannels = (): Chainable<number> => {
+    return chainable(this.call('getNumOutputChannels', []))
+  }
+  setNumOutputChannels = (numChannels: number): Chainable<void> => {
+    return chainable(this.call('setNumOutputChannels', [numChannels]))
+  }
+  getNumSamples = (): Chainable<number> => {
+    return chainable(this.call('getNumSamples', []))
+  }
+  setNumSamples = (numSamples: number): Chainable<void> => {
+    return chainable(this.call('setNumSamples', [numSamples]))
+  }
+  getSampleRate = (): Chainable<number> => {
+    return chainable(this.call('getSampleRate', []))
+  }
+  setSampleRate = (sampleRate: number): Chainable<void> => {
+    return chainable(this.call('setSampleRate', [sampleRate]))
+  }
+  setInputSize = (numChannels: number, numSamples: number): Chainable<void> => {
+    return chainable(this.call('setInputSize', [numChannels, numSamples]))
+  }
+  setOutputSize = (
+    numChannels: number,
+    numSamples: number,
+  ): Chainable<void> => {
+    return chainable(this.call('setOutputSize', [numChannels, numSamples]))
+  }
+  getDefaultNode = (): Chainable<NodeProxy> => {
+    return chainable(
+      this.call<Target>('getDefaultNode', []).then(
+        (target) => new NodeProxy(this.context, target),
+      ),
+    )
+  }
+  getNodes = (): Chainable<VectorProxy<NodeProxy>> => {
+    return chainable(
+      this.call<Target>('getNodes', []).then(
+        (target) =>
+          new VectorProxy(this.context, target, (nodeTarget: Target) => {
+            return new NodeProxy(this.context, nodeTarget)
+          }),
+      ),
+    )
+  }
+  getInputMessages = (): never => {
+    throw new Error('getInputMessages is not implemented')
+  }
+  getOutputMessages = (): never => {
+    throw new Error('getOutputMessages is not implemented')
+  }
+  process = (_audioBuffer: Data, _midiBuffer: MidiBuffer): never => {
+    throw new Error('process is not implemented')
   }
 }
