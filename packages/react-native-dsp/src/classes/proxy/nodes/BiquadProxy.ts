@@ -1,5 +1,7 @@
-import type { ProxyContext, Target } from '../../../types'
-import { InputProxy, TransformerProxy } from '../core'
+import { Target } from '../../../types/module'
+import { ProxyContext } from '../../../types/proxy'
+import { InputProxy } from '../core/BufferProxy'
+import { TransformerProxy } from '../core/TransformerProxy'
 
 export class BiquadProxy extends TransformerProxy {
   constructor(context: ProxyContext, target: Target) {

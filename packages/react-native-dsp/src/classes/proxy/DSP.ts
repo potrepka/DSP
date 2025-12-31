@@ -1,19 +1,18 @@
 import { nanoid } from 'nanoid/non-secure'
 import { ID_LENGTH, NODE_PROCESSOR_ID } from '../../constants/proxy'
-import type {
+import {
   ObjectType,
   Options,
-  ProxyContext,
   ResponseMessage,
   Target,
-} from '../../types'
-import { BufferProxy, NodeProcessorProxy } from './core'
-import {
-  BiquadProxy,
-  MultiplicationProxy,
-  PhasorProxy,
-  TableOscillatorProxy,
-} from './nodes'
+} from '../../types/module'
+import { ProxyContext } from '../../types/proxy'
+import { BufferProxy } from './core/BufferProxy'
+import { NodeProcessorProxy } from './core/NodeProcessorProxy'
+import { BiquadProxy } from './nodes/BiquadProxy'
+import { MultiplicationProxy } from './nodes/MultiplicationProxy'
+import { PhasorProxy } from './nodes/PhasorProxy'
+import { TableOscillatorProxy } from './nodes/TableOscillatorProxy'
 
 type PendingRequest<T = unknown> = {
   resolve: (value: T | PromiseLike<T>) => void

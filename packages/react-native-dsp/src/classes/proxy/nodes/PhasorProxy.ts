@@ -1,5 +1,7 @@
-import type { ProxyContext, Target } from '../../../types'
-import { InputProxy, ProducerProxy } from '../core'
+import { Target } from '../../../types/module'
+import { ProxyContext } from '../../../types/proxy'
+import { InputProxy } from '../core/BufferProxy'
+import { ProducerProxy } from '../core/ProducerProxy'
 
 export class PhasorProxy extends ProducerProxy {
   constructor(context: ProxyContext, target: Target) {

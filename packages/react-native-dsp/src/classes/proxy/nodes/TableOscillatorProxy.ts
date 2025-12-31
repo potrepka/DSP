@@ -1,5 +1,8 @@
-import type { ProxyContext, Target } from '../../../types'
-import { BufferProxy, InputProxy, ProducerProxy, VectorProxy } from '../core'
+import { Target } from '../../../types/module'
+import { ProxyContext } from '../../../types/proxy'
+import { BufferProxy, InputProxy } from '../core/BufferProxy'
+import { ProducerProxy } from '../core/ProducerProxy'
+import { VectorProxy } from '../core/VectorProxy'
 
 export class TableOscillatorProxy extends ProducerProxy {
   constructor(context: ProxyContext, target: Target) {

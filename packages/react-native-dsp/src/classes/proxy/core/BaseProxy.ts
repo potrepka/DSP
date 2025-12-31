@@ -1,4 +1,5 @@
-import type { ProxyContext, SerializedValue, Target } from '../../../types'
+import { SerializedValue, Target } from '../../../types/module'
+import { ProxyContext } from '../../../types/proxy'
 
 export abstract class BaseProxy {
   constructor(

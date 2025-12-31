@@ -1,4 +1,4 @@
-import { NodeProcessorOptions } from '../types'
+import { NodeProcessorOptions } from '../types/module'
 
 export const initializeWebAudio = async (
   moduleUrl: string,

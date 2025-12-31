@@ -1,5 +1,5 @@
-import { Space, Type } from '../enums'
-import { AudioModule, Deletable, ObjectType, Options } from '../types'
+import { Space, Type } from '../enums/global'
+import { AudioModule, Deletable, ObjectType, Options } from '../types/module'
 
 export const createObject = <T extends ObjectType>(
   module: AudioModule,

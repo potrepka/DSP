@@ -1,4 +1,5 @@
-import type { InputMode, RecorderMode, Space, Type } from '../enums'
+import { InputMode, Space, Type } from '../enums/global'
+import { RecorderMode } from '../enums/node'
 
 export type AudioModule = GlobalFunctionMap & ObjectConstructorMap
 

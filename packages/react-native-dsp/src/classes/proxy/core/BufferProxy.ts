@@ -1,5 +1,6 @@
-import { InputMode, Space, Type } from '../../../enums'
-import type { ProxyContext, Target } from '../../../types'
+import { InputMode, Space, Type } from '../../../enums/global'
+import { Target } from '../../../types/module'
+import { ProxyContext } from '../../../types/proxy'
 import { BaseProxy } from './BaseProxy'
 import { DataProxy } from './DataProxy'
 import { VectorProxy } from './VectorProxy'

@@ -1,4 +1,5 @@
-import type { Data, MidiBuffer, ProxyContext, Target } from '../../../types'
+import { Data, MidiBuffer, Target } from '../../../types/module'
+import { ProxyContext } from '../../../types/proxy'
 import { BaseProxy } from './BaseProxy'
 import { InputProxy, OutputProxy } from './BufferProxy'
 import { NodeProxy } from './NodeProxy'

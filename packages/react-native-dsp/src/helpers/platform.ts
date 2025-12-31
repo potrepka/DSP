@@ -1,4 +1,4 @@
-import { PlatformInfo } from '../types'
+import { PlatformInfo } from '../types/platform'
 
 export const getPlatformInfo = (): PlatformInfo => {
   if (typeof window !== 'undefined' && typeof document !== 'undefined') {
