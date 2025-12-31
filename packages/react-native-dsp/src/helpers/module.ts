@@ -112,13 +112,17 @@ export const createObject = <T extends ObjectType>(
     // External Nodes
     case 'MidiInput': {
       const { midiBuffer, type } = options as Options<'MidiInput'>
-      if (!midiBuffer) throw new Error('midiBuffer is required for MidiInput')
+      if (!midiBuffer) {
+        throw new Error('midiBuffer is required for MidiInput')
+      }
       reference = new module.MidiInput(midiBuffer, type ?? Type.RATIO)
       break
     }
     case 'MidiOutput': {
       const { midiBuffer, type } = options as Options<'MidiOutput'>
-      if (!midiBuffer) throw new Error('midiBuffer is required for MidiOutput')
+      if (!midiBuffer) {
+        throw new Error('midiBuffer is required for MidiOutput')
+      }
       reference = new module.MidiOutput(midiBuffer, type ?? Type.RATIO)
       break
     }

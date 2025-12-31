@@ -1,7 +1,9 @@
 import { InputMode, Space, Type } from '../../../enums'
-import type { Data, ProxyContext, Target, Wrapper } from '../../../types'
+import type { ProxyContext, Target } from '../../../types'
+import { DataProxy } from './DataProxy'
 import { Proxy } from './Proxy'
 import { VectorProxy } from './VectorProxy'
+import { WrapperProxy } from './WrapperProxy'
 
 export class BufferProxy extends Proxy {
   constructor(context: ProxyContext, target: Target) {
@@ -91,14 +93,14 @@ export class BufferProxy extends Proxy {
     return new Float64Array(result)
   }
 
-  getData = (): Data => {
-    throw new Error('getData returns a complex object that cannot be proxied')
+  getData = async (): Promise<DataProxy> => {
+    const target = await this.call<Target>('getData', [])
+    return new DataProxy(this.context, target)
   }
 
-  getWrapper = (): Wrapper => {
-    throw new Error(
-      'getWrapper returns a complex object that cannot be proxied',
-    )
+  getWrapper = async (): Promise<WrapperProxy> => {
+    const target = await this.call<Target>('getWrapper', [])
+    return new WrapperProxy(this.context, target)
   }
 }
 

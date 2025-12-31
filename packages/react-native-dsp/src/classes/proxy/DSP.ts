@@ -1,13 +1,13 @@
 import { nanoid } from 'nanoid/non-secure'
-import { ID_LENGTH } from '../../constants/proxy'
+import { ID_LENGTH, NODE_PROCESSOR_ID } from '../../constants/proxy'
 import type {
-  NodeType,
+  ObjectType,
   Options,
   ProxyContext,
   ResponseMessage,
   Target,
 } from '../../types'
-import { BufferProxy, NodeProcessorProxy, NodeProxy } from './core'
+import { BufferProxy, NodeProcessorProxy } from './core'
 import {
   BiquadProxy,
   MultiplicationProxy,
@@ -27,14 +27,14 @@ export class DSP {
   readonly #pendingRequests = new Map<string, PendingRequest>()
   private readyResolve?: () => void
   private readyPromise: Promise<void>
-  private isReady = false
+  private ready = false
 
   constructor(workletNode: AudioWorkletNode) {
     this.#context = { sendMessage: this.sendMessage }
     this.#port = workletNode.port
     this.#nodeProcessor = new NodeProcessorProxy(this.#context, {
       __type: 'Target',
-      id: 'NodeProcessor',
+      id: NODE_PROCESSOR_ID,
     })
     this.readyPromise = new Promise((resolve) => {
       this.readyResolve = resolve
@@ -65,7 +65,7 @@ export class DSP {
     switch (data.message) {
       case 'state':
         if (data.state === 'running') {
-          this.isReady = true
+          this.ready = true
           this.readyResolve?.()
         }
         break
@@ -84,60 +84,62 @@ export class DSP {
     }
   }
 
-  ready = async () => {
-    if (this.isReady) {
+  isReady = async () => {
+    if (this.ready) {
       return
     }
     return this.readyPromise
   }
-
-  getNodeProcessor = (): NodeProcessorProxy => this.#nodeProcessor
-
-  createBuffer = async (
-    options: Options<'Buffer'> = {} as Options<'Buffer'>,
-  ): Promise<BufferProxy> => {
-    const target = await this.sendMessage<Target>({
-      message: 'createObject',
-      requestId: this.generateRequestId(),
-      objectType: 'Buffer',
-      options,
-    })
-    return new BufferProxy(this.#context, target)
-  }
-
-  createNode = async <T extends NodeType>(
-    nodeType?: T,
-    options?: Options<T>,
-  ): Promise<NodeProxy> => {
-    const target = await this.sendMessage<Target>({
-      message: 'createObject',
-      requestId: this.generateRequestId(),
-      objectType: nodeType,
-      options,
-    })
-    return new NodeProxy(this.#context, target)
-  }
-
-  createBiquad = async (options?: Options<'Biquad'>): Promise<BiquadProxy> =>
-    this.createNode('Biquad', options) as Promise<BiquadProxy>
-
-  createPhasor = async (options?: Options<'Phasor'>): Promise<PhasorProxy> =>
-    this.createNode('Phasor', options) as Promise<PhasorProxy>
-
-  createTableOscillator = async (
-    options?: Options<'TableOscillator'>,
-  ): Promise<TableOscillatorProxy> =>
-    this.createNode('TableOscillator', options) as Promise<TableOscillatorProxy>
-
-  createMultiplication = async (
-    options?: Options<'Multiplication'>,
-  ): Promise<MultiplicationProxy> =>
-    this.createNode('Multiplication', options) as Promise<MultiplicationProxy>
 
   delete = (): Promise<void> => {
     return this.sendMessage<void>({
       message: 'delete',
       requestId: this.generateRequestId(),
     })
+  }
+
+  getNodeProcessor = (): NodeProcessorProxy => this.#nodeProcessor
+
+  createObject = <T extends ObjectType>(
+    objectType: T,
+    options: Options<T> = {} as Options<T>,
+  ): Promise<Target> => {
+    return this.sendMessage<Target>({
+      message: 'createObject',
+      requestId: this.generateRequestId(),
+      objectType,
+      options,
+    })
+  }
+
+  createBuffer = async (
+    options: Options<'Buffer'> = {} as Options<'Buffer'>,
+  ): Promise<BufferProxy> => {
+    const target = await this.createObject('Buffer', options)
+    return new BufferProxy(this.#context, target)
+  }
+
+  createBiquad = async (options?: Options<'Biquad'>): Promise<BiquadProxy> => {
+    const target = await this.createObject('Biquad', options)
+    return new BiquadProxy(this.#context, target)
+  }
+
+  createPhasor = async (options?: Options<'Phasor'>): Promise<PhasorProxy> => {
+    const target = await this.createObject('Phasor', options)
+    return new PhasorProxy(this.#context, target)
+  }
+
+  createTableOscillator = async (
+    options?: Options<'TableOscillator'>,
+  ): Promise<TableOscillatorProxy> => {
+    const target = await this.createObject('TableOscillator', options)
+    return new TableOscillatorProxy(this.#context, target)
+  }
+
+  createMultiplication = async (
+    options?: Options<'Multiplication'>,
+  ): Promise<MultiplicationProxy> => {
+    const target = await this.createObject('Multiplication', options)
+    return new MultiplicationProxy(this.#context, target)
   }
 }

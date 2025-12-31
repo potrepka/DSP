@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid/non-secure'
-import { ID_LENGTH } from '../../constants/proxy'
+import { ID_LENGTH, NODE_PROCESSOR_ID } from '../../constants/proxy'
 import { createObject } from '../../helpers/module'
 import type {
   AudioModule,
@@ -43,10 +43,10 @@ type WebAudioProcessorOptions = AudioWorkletNodeOptions & {
 }
 
 class WebAudioProcessor extends AudioWorkletProcessor {
-  #module?: AudioModule
-  #nodeProcessor?: NodeProcessor
-  #audioBuffer?: Data
-  #midiBuffer?: MidiBuffer
+  module?: AudioModule
+  nodeProcessor?: NodeProcessor
+  audioBuffer?: Data
+  midiBuffer?: MidiBuffer
   readonly #instances = new Map<string, Deletable>()
   readonly #properties = new WeakValueMap<string, object>()
   readonly #targets = new WeakMap<object, Target>()
@@ -60,33 +60,47 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     const { numInputChannels, numOutputChannels, numSamples, sampleRate } =
       processorOptions
     createAudioModule().then((module) => {
-      this.#module = module
-      this.#nodeProcessor = new this.#module.NodeProcessor(
+      this.module = module
+      this.nodeProcessor = new this.module.NodeProcessor(
         numInputChannels,
         numOutputChannels,
         numSamples,
         sampleRate,
       )
       const numChannels = Math.max(numInputChannels, numOutputChannels)
-      this.#audioBuffer = new this.#module.Data(numChannels, numSamples)
-      this.#midiBuffer = new this.#module.MidiBuffer()
+      this.audioBuffer = new this.module.Data(numChannels, numSamples)
+      this.midiBuffer = new this.module.MidiBuffer()
       this.sendMessage({ message: 'state', state: 'running' })
     })
     this.port.onmessage = this.handleMessage
   }
 
-  process(inputs: Float32Array[][], outputs: Float32Array[][]): boolean {
-    if (!this.#nodeProcessor || !this.#audioBuffer || !this.#midiBuffer) {
-      return true
+  assertReady(): asserts this is this & {
+    module: AudioModule
+    nodeProcessor: NodeProcessor
+    audioBuffer: Data
+    midiBuffer: MidiBuffer
+  } {
+    if (
+      this.module === undefined ||
+      this.nodeProcessor === undefined ||
+      this.audioBuffer === undefined ||
+      this.midiBuffer === undefined
+    ) {
+      throw new Error('Module not initialized')
     }
+  }
+
+  process(inputs: Float32Array[][], outputs: Float32Array[][]): boolean {
+    this.assertReady()
     if (inputs.length > 0) {
       const input = inputs[0]
       for (
         let channel = 0;
-        channel < this.#audioBuffer.getNumChannels() && channel < input.length;
+        channel < this.audioBuffer.getNumChannels() && channel < input.length;
         channel++
       ) {
-        const channelData = this.#audioBuffer.getReadChannelData(channel)
+        const channelData = this.audioBuffer.getReadChannelData(channel)
         for (
           let sample = 0;
           sample < channelData.length && sample < input[channel].length;
@@ -96,15 +110,15 @@ class WebAudioProcessor extends AudioWorkletProcessor {
         }
       }
     }
-    this.#nodeProcessor.process(this.#audioBuffer, this.#midiBuffer)
+    this.nodeProcessor.process(this.audioBuffer, this.midiBuffer)
     if (outputs.length > 0) {
       const output = outputs[0]
       for (
         let channel = 0;
-        channel < this.#audioBuffer.getNumChannels() && channel < output.length;
+        channel < this.audioBuffer.getNumChannels() && channel < output.length;
         channel++
       ) {
-        const channelData = this.#audioBuffer.getReadChannelData(channel)
+        const channelData = this.audioBuffer.getReadChannelData(channel)
         for (
           let sample = 0;
           sample < channelData.length && sample < output[channel].length;
@@ -154,31 +168,41 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     objectType: T,
     options: Options<T> = {} as Options<T>,
   ) => {
-    if (!this.#module || !this.#nodeProcessor) {
-      throw new Error('Module not initialized')
+    this.assertReady()
+    try {
+      const objectId = this.generateObjectId()
+      const instance = createObject(this.module, objectType, options)
+      const target = {
+        __type: 'Target' as const,
+        id: objectId,
+        isChild: instance instanceof this.module.Node,
+      }
+      this.#instances.set(objectId, instance)
+      this.#targets.set(instance, target)
+      if (target.isChild) {
+        this.nodeProcessor.getDefaultNode().addChild(instance as Node)
+      }
+      this.sendMessage({ message: 'response', requestId, result: target })
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+      this.sendMessage({ message: 'response', requestId, error: errorMessage })
     }
-    const objectId = this.generateObjectId()
-    const instance = createObject(this.#module, objectType, options)
-    const target = { __type: 'Target' as const, id: objectId }
-    this.#instances.set(objectId, instance)
-    this.#targets.set(instance, target)
-    this.sendMessage({ message: 'response', requestId, result: target })
   }
 
   private deleteObject = (requestId: string, objectId: string) => {
+    this.assertReady()
     try {
-      const obj = this.#instances.get(objectId)
-      if (!obj) {
+      const instance = this.#instances.get(objectId)
+      if (!instance) {
         throw new Error(`Object not found: ${objectId}`)
       }
-      const target = this.#targets.get(obj)
-      if (this.#nodeProcessor && target) {
-        this.#nodeProcessor.getDefaultNode().removeChild(obj as Node)
+      const target = this.#targets.get(instance)
+      if (target?.isChild) {
+        this.nodeProcessor.getDefaultNode().removeChild(instance as Node)
       }
       this.#instances.delete(objectId)
-      if ('delete' in obj && typeof obj.delete === 'function') {
-        obj.delete()
-      }
+      instance.delete()
       this.sendMessage({ message: 'response', requestId, result: true })
     } catch (error) {
       const errorMessage =
@@ -193,14 +217,15 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     methodName: string,
     args: SerializedValue[],
   ) => {
+    this.assertReady()
     try {
-      const obj = this.getTargetObject(target)
+      const instance = this.getTargetObject(target)
       const resolvedArgs = args.map((arg) => this.deserialize(arg))
-      const f = (obj as Record<string, unknown>)[methodName]
+      const f = (instance as Record<string, unknown>)[methodName]
       if (typeof f !== 'function') {
         throw new Error(`Method not found: ${methodName}`)
       }
-      const result = f.apply(obj, resolvedArgs)
+      const result = f.apply(instance, resolvedArgs)
       this.sendMessage({
         message: 'response',
         requestId,
@@ -214,27 +239,26 @@ class WebAudioProcessor extends AudioWorkletProcessor {
   }
 
   private delete() {
-    if (!this.#nodeProcessor || !this.#audioBuffer || !this.#midiBuffer) {
-      throw new Error('Module not initialized')
-    }
+    this.assertReady()
     for (const [objectId, instance] of this.#instances) {
-      this.#nodeProcessor.getDefaultNode().removeChild(instance as Node)
+      const target = this.#targets.get(instance)
+      if (target?.isChild) {
+        this.nodeProcessor.getDefaultNode().removeChild(instance as Node)
+      }
       this.#instances.delete(objectId)
       instance.delete()
     }
-    this.#midiBuffer.delete()
-    this.#audioBuffer.delete()
-    this.#nodeProcessor.delete()
+    this.midiBuffer.delete()
+    this.audioBuffer.delete()
+    this.nodeProcessor.delete()
     this.sendMessage({ message: 'state', state: 'closed' })
   }
 
   private getTargetObject = (target: Target): object => {
     const { id } = target
-    if (id === 'NodeProcessor') {
-      if (!this.#nodeProcessor) {
-        throw new Error('Module not initialized')
-      }
-      return this.#nodeProcessor
+    if (id === NODE_PROCESSOR_ID) {
+      this.assertReady()
+      return this.nodeProcessor
     }
     const instance = this.#instances.get(id) ?? this.#properties.get(id)
     if (!instance) {

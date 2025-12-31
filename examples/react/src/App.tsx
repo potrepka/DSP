@@ -65,7 +65,7 @@ export const App = () => {
     const dsp = new DSP(audioWorkletNode)
 
     // Wait for the module to initialize
-    await dsp.ready()
+    await dsp.isReady()
 
     // Create nodes using the fluent API
     const phasor = await dsp.createPhasor()
@@ -93,16 +93,16 @@ export const App = () => {
 
     // Create wavetable
     const sawtoothBufferSize = 2048
-    const sawtoothBufferData = [new Float64Array(sawtoothBufferSize)]
-    for (let sample = 0; sample < sawtoothBufferSize; sample++) {
-      const phase = sample / sawtoothBufferSize
-      const value = 2 * ((phase + 0.5) % 1) - 1
-      sawtoothBufferData[0][sample] = value
-    }
     const sawtooth = await dsp.createBuffer({
       numChannels: 1,
       numSamples: sawtoothBufferSize,
     })
+    const sawtoothWrapper = await sawtooth.getWrapper()
+    for (let sample = 0; sample < sawtoothBufferSize; sample++) {
+      const phase = sample / sawtoothBufferSize
+      const value = 2 * ((phase + 0.5) % 1) - 1
+      sawtoothWrapper.setSample(0, sample, value)
+    }
     await osc.getTables().then((tables) => tables.push_back(sawtooth))
 
     // Connect the graph
@@ -156,6 +156,8 @@ export const App = () => {
       addLog('\nRunning test...')
       await setupTest(offlineAudioWorkletNode)
       const renderedBuffer = await offlineAudioContext.startRendering()
+      offlineAudioWorkletNode.disconnect()
+      await offlineAudioWorkletNode.port.postMessage({ message: 'delete' })
       addLog('\nOutput analysis:')
       const left = renderedBuffer.getChannelData(0)
       const right = renderedBuffer.getChannelData(1)
@@ -246,7 +248,7 @@ export const App = () => {
       addLog('\nStopping...')
       audioWorkletNode.disconnect()
       await audioContext.close()
-      audioWorkletNode.port.postMessage({ message: 'delete' })
+      await audioWorkletNode.port.postMessage({ message: 'delete' })
       setStatus({ message: 'Playback completed', type: 'success' })
       addLog('\n✅ Playback completed')
       setIsPlaying(false)

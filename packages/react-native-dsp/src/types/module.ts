@@ -401,6 +401,7 @@ export type NodeProcessorOptions = {
 export type Target = {
   __type: 'Target'
   id: string
+  isChild?: boolean
 }
 
 export type SerializedValue =
