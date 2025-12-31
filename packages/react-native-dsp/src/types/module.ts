@@ -295,7 +295,7 @@ type OptionsMap = {
 
   // MIDI objects
   MidiBuffer: unknown
-  MidiMessage: { byte0: number; byte1?: number; byte2?: number }
+  MidiMessage: { byte0: number; byte1: number; byte2: number }
   MidiProcessor: unknown
   MidiProcessorInput: { port: number }
   MidiProcessorOutput: { port: number }

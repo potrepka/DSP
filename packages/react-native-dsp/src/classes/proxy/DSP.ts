@@ -153,7 +153,15 @@ export class DSP {
     return new MidiBufferProxy(this.#context, target)
   }
   createMidiMessage = async (bytes: number[]): Promise<MidiMessageProxy> => {
-    const target = await this.callStatic('MidiMessage', 'fromArray', [bytes])
+    if (bytes.length === 0) {
+      throw new Error('MidiMessage requires at least 1 byte')
+    }
+    const options: Options<'MidiMessage'> = {
+      byte0: bytes[0],
+      byte1: bytes[1],
+      byte2: bytes[2],
+    }
+    const target = await this.createObject('MidiMessage', options)
     return new MidiMessageProxy(this.#context, target)
   }
   createNoteOff = async (

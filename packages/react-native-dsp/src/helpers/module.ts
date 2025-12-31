@@ -10,14 +10,12 @@ export const createObject = <T extends ObjectType>(
   switch (objectType) {
     // Core Classes
     case 'Data': {
-      const dataOptions = options as Options<'Data'>
-      const { numChannels, numSamples } = dataOptions
+      const { numChannels, numSamples } = options as Options<'Data'>
       reference = new module.Data(numChannels ?? 0, numSamples ?? 0)
       break
     }
     case 'Wrapper': {
-      const wrapperOptions = options as Options<'Wrapper'>
-      const { data } = wrapperOptions
+      const { data } = options as Options<'Wrapper'>
       if (data !== undefined) {
         reference = new module.Wrapper(data)
       } else {
@@ -26,9 +24,8 @@ export const createObject = <T extends ObjectType>(
       break
     }
     case 'Buffer': {
-      const bufferOptions = options as Options<'Buffer'>
       const { type, space, range, defaultValue, numChannels, numSamples } =
-        bufferOptions
+        options as Options<'Buffer'>
       reference = new module.Buffer(
         type ?? Type.RATIO,
         space ?? Space.TIME,
@@ -40,9 +37,8 @@ export const createObject = <T extends ObjectType>(
       break
     }
     case 'Input': {
-      const inputOptions = options as Options<'Input'>
       const { type, space, range, defaultValue, numChannels, numSamples } =
-        inputOptions
+        options as Options<'Input'>
       reference = new module.Input(
         type ?? Type.RATIO,
         space ?? Space.TIME,
@@ -54,9 +50,8 @@ export const createObject = <T extends ObjectType>(
       break
     }
     case 'Output': {
-      const outputOptions = options as Options<'Output'>
       const { type, space, range, defaultValue, numChannels, numSamples } =
-        outputOptions
+        options as Options<'Output'>
       reference = new module.Output(
         type ?? Type.RATIO,
         space ?? Space.TIME,
@@ -74,9 +69,8 @@ export const createObject = <T extends ObjectType>(
       reference = new module.Node()
       break
     case 'NodeProcessor': {
-      const processorOptions = options as Options<'NodeProcessor'>
       const { numInputChannels, numOutputChannels, numSamples, sampleRate } =
-        processorOptions
+        options as Options<'NodeProcessor'>
       reference = new module.NodeProcessor(
         numInputChannels ?? 0,
         numOutputChannels ?? 0,
@@ -94,8 +88,7 @@ export const createObject = <T extends ObjectType>(
       reference = new module.MidiBuffer()
       break
     case 'MidiMessage': {
-      const messageOptions = options as Options<'MidiMessage'>
-      const { byte0, byte1, byte2 } = messageOptions
+      const { byte0, byte1, byte2 } = options as Options<'MidiMessage'>
       if (byte2 !== undefined) {
         reference = new module.MidiMessage(byte0 ?? 0, byte1 ?? 0, byte2)
       } else if (byte1 !== undefined) {
