@@ -1,4 +1,5 @@
 export type ProxyContext = {
+  generateRequestId: () => string
   sendMessage: <T>(message: {
     message: string
     requestId: string

@@ -1,8 +1,10 @@
 import { chainable } from '../../../helpers/proxy'
-import { Data, MidiBuffer, Target } from '../../../types/module'
+import { Target } from '../../../types/module'
 import { Chainable, ProxyContext } from '../../../types/proxy'
+import { MidiBufferProxy } from '../midi/MidiBufferProxy'
 import { BaseProxy } from './BaseProxy'
 import { InputProxy, OutputProxy } from './BufferProxy'
+import { DataProxy } from './DataProxy'
 import { NodeProxy } from './NodeProxy'
 import { VectorProxy } from './VectorProxy'
 
@@ -94,13 +96,24 @@ export class NodeProcessorProxy extends BaseProxy {
       ),
     )
   }
-  getInputMessages = (): never => {
-    throw new Error('getInputMessages is not implemented')
+  getInputMessages = (): Chainable<MidiBufferProxy> => {
+    return chainable(
+      this.call<Target>('getInputMessages', []).then(
+        (target) => new MidiBufferProxy(this.context, target),
+      ),
+    )
   }
-  getOutputMessages = (): never => {
-    throw new Error('getOutputMessages is not implemented')
+  getOutputMessages = (): Chainable<MidiBufferProxy> => {
+    return chainable(
+      this.call<Target>('getOutputMessages', []).then(
+        (target) => new MidiBufferProxy(this.context, target),
+      ),
+    )
   }
-  process = (_audioBuffer: Data, _midiBuffer: MidiBuffer): never => {
-    throw new Error('process is not implemented')
+  process = (
+    audioBuffer: DataProxy,
+    midiBuffer: MidiBufferProxy,
+  ): Chainable<void> => {
+    return chainable(this.call('process', [audioBuffer, midiBuffer]))
   }
 }

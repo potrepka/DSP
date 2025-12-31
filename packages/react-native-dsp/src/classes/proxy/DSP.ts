@@ -9,6 +9,7 @@ import {
 import { ProxyContext } from '../../types/proxy'
 import { BufferProxy } from './core/BufferProxy'
 import { NodeProcessorProxy } from './core/NodeProcessorProxy'
+import { MidiMessageProxy } from './midi/MidiMessageProxy'
 import { BiquadProxy } from './nodes/BiquadProxy'
 import { MultiplicationProxy } from './nodes/MultiplicationProxy'
 import { PhasorProxy } from './nodes/PhasorProxy'
@@ -27,9 +28,11 @@ export class DSP {
   private readyResolve?: () => void
   private readyPromise: Promise<void>
   private ready = false
-
   constructor(workletNode: AudioWorkletNode) {
-    this.#context = { sendMessage: this.sendMessage }
+    this.#context = {
+      generateRequestId: this.generateRequestId,
+      sendMessage: this.sendMessage,
+    }
     this.#port = workletNode.port
     this.#nodeProcessor = new NodeProcessorProxy(this.#context, {
       __type: 'Target',
@@ -40,9 +43,7 @@ export class DSP {
     })
     this.#port.onmessage = this.handleMessage
   }
-
   private generateRequestId = () => nanoid(ID_LENGTH)
-
   private sendMessage = <T>(message: {
     message: string
     requestId: string
@@ -58,7 +59,6 @@ export class DSP {
       this.#port.postMessage(messageWithId)
     })
   }
-
   private handleMessage = (event: MessageEvent<ResponseMessage>) => {
     const { data } = event
     switch (data.message) {
@@ -82,23 +82,13 @@ export class DSP {
       }
     }
   }
-
   isReady = async () => {
     if (this.ready) {
       return
     }
     return this.readyPromise
   }
-
-  delete = (): Promise<void> => {
-    return this.sendMessage<void>({
-      message: 'delete',
-      requestId: this.generateRequestId(),
-    })
-  }
-
   getNodeProcessor = (): NodeProcessorProxy => this.#nodeProcessor
-
   createObject = <T extends ObjectType>(
     objectType: T,
     options: Options<T> = {} as Options<T>,
@@ -110,35 +100,161 @@ export class DSP {
       options,
     })
   }
-
+  callStatic = (
+    objectType: string,
+    methodName: string,
+    args: unknown[],
+  ): Promise<Target> => {
+    return this.sendMessage<Target>({
+      message: 'callStatic',
+      requestId: this.generateRequestId(),
+      objectType,
+      methodName,
+      args,
+    })
+  }
+  delete = (): Promise<void> => {
+    return this.sendMessage<void>({
+      message: 'delete',
+      requestId: this.generateRequestId(),
+    })
+  }
   createBuffer = async (
     options: Options<'Buffer'> = {} as Options<'Buffer'>,
   ): Promise<BufferProxy> => {
     const target = await this.createObject('Buffer', options)
     return new BufferProxy(this.#context, target)
   }
-
   createBiquad = async (options?: Options<'Biquad'>): Promise<BiquadProxy> => {
     const target = await this.createObject('Biquad', options)
     return new BiquadProxy(this.#context, target)
   }
-
   createPhasor = async (options?: Options<'Phasor'>): Promise<PhasorProxy> => {
     const target = await this.createObject('Phasor', options)
     return new PhasorProxy(this.#context, target)
   }
-
   createTableOscillator = async (
     options?: Options<'TableOscillator'>,
   ): Promise<TableOscillatorProxy> => {
     const target = await this.createObject('TableOscillator', options)
     return new TableOscillatorProxy(this.#context, target)
   }
-
   createMultiplication = async (
     options?: Options<'Multiplication'>,
   ): Promise<MultiplicationProxy> => {
     const target = await this.createObject('Multiplication', options)
     return new MultiplicationProxy(this.#context, target)
+  }
+  createMidiMessage = async (bytes: number[]): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'fromArray', [bytes])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createNoteOff = async (
+    channel: number,
+    noteNumber: number,
+    velocity: number,
+  ): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'noteOff', [
+      channel,
+      noteNumber,
+      velocity,
+    ])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createNoteOn = async (
+    channel: number,
+    noteNumber: number,
+    velocity: number,
+  ): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'noteOn', [
+      channel,
+      noteNumber,
+      velocity,
+    ])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createAftertouch = async (
+    channel: number,
+    noteNumber: number,
+    aftertouchValue: number,
+  ): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'aftertouch', [
+      channel,
+      noteNumber,
+      aftertouchValue,
+    ])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createController = async (
+    channel: number,
+    controllerNumber: number,
+    controllerValue: number,
+  ): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'controller', [
+      channel,
+      controllerNumber,
+      controllerValue,
+    ])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createProgramChange = async (
+    channel: number,
+    programNumber: number,
+  ): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'programChange', [
+      channel,
+      programNumber,
+    ])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createChannelPressure = async (
+    channel: number,
+    channelPressureValue: number,
+  ): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'channelPressure', [
+      channel,
+      channelPressureValue,
+    ])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createPitchWheel = async (
+    channel: number,
+    pitchWheelValue: number,
+  ): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'pitchWheel', [
+      channel,
+      pitchWheelValue,
+    ])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createAllNotesOff = async (channel: number): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'allNotesOff', [
+      channel,
+    ])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createSongPositionPointer = async (
+    songPositionPointerMidiBeat: number,
+  ): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'songPositionPointer', [
+      songPositionPointerMidiBeat,
+    ])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createMidiClock = async (): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'midiClock', [])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createMidiStart = async (): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'midiStart', [])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createMidiContinue = async (): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'midiContinue', [])
+    return new MidiMessageProxy(this.#context, target)
+  }
+  createMidiStop = async (): Promise<MidiMessageProxy> => {
+    const target = await this.callStatic('MidiMessage', 'midiStop', [])
+    return new MidiMessageProxy(this.#context, target)
   }
 }

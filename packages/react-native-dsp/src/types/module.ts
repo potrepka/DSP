@@ -427,7 +427,14 @@ export type RequestMessage<T extends ObjectType> =
       objectId: string
     }
   | {
-      message: 'callMethod'
+      message: 'callStatic'
+      requestId: string
+      objectType: string
+      methodName: string
+      args: SerializedValue[]
+    }
+  | {
+      message: 'call'
       requestId: string
       target: Target
       methodName: string
@@ -676,6 +683,9 @@ export type MidiBuffer = Deletable & {
     sampleDeltaToAdd: number,
   ) => void
   clear: () => void
+  forEach: (
+    callback: (samplePosition: number, midiMessage: MidiMessage) => void,
+  ) => void
 }
 
 export type MidiMessage = Deletable & {

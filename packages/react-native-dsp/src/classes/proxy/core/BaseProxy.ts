@@ -9,8 +9,8 @@ export abstract class BaseProxy {
   toTarget = (): Target => this.target
   protected call = <T>(methodName: string, args: unknown[]): Promise<T> => {
     return this.context.sendMessage<T>({
-      message: 'callMethod',
-      requestId: '',
+      message: 'call',
+      requestId: this.context.generateRequestId(),
       target: this.target,
       methodName,
       args: args.map((arg) => {
@@ -24,7 +24,7 @@ export abstract class BaseProxy {
   delete = (): Promise<void> => {
     return this.context.sendMessage<void>({
       message: 'deleteObject',
-      requestId: '',
+      requestId: this.context.generateRequestId(),
       objectId: this.target.id,
     })
   }

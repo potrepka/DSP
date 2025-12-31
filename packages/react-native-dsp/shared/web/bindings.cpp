@@ -454,7 +454,14 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("end", &MidiBuffer::end)
       .function("addEvent", &MidiBuffer::addEvent)
       .function("addEvents", &MidiBuffer::addEvents)
-      .function("clear", &MidiBuffer::clear);
+      .function("clear", &MidiBuffer::clear)
+      .function("forEach", std::function<void(const MidiBuffer&, val)>(
+                               [](const MidiBuffer& buffer, val callback) {
+                                 for (const auto& timedMsg : buffer) {
+                                   callback(timedMsg.samplePosition,
+                                            timedMsg.getMessage());
+                                 }
+                               }));
 
   // MidiMessage
   class_<MidiMessage>("MidiMessage")

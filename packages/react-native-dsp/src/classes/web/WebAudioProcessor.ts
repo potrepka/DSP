@@ -146,9 +146,14 @@ class WebAudioProcessor extends AudioWorkletProcessor {
         this.deleteObject(requestId, objectId)
         break
       }
-      case 'callMethod': {
+      case 'callStatic': {
+        const { requestId, objectType, methodName, args } = data
+        this.callStatic(requestId, objectType, methodName, args)
+        break
+      }
+      case 'call': {
         const { requestId, target, methodName, args } = data
-        this.callMethod(requestId, target, methodName, args)
+        this.call(requestId, target, methodName, args)
         break
       }
       case 'delete':
@@ -211,7 +216,33 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     }
   }
 
-  private callMethod = (
+  private callStatic = (
+    requestId: string,
+    objectType: string,
+    methodName: string,
+    args: SerializedValue[],
+  ) => {
+    this.assertReady()
+    try {
+      const method = (this.module as Record<string, unknown>)[objectType]
+      if (typeof method !== 'function') {
+        throw new Error(`Method not found: ${objectType}`)
+      }
+      const resolvedArgs = args.map((arg) => this.deserialize(arg))
+      const result = method.apply(null, resolvedArgs)
+      this.sendMessage({
+        message: 'response',
+        requestId,
+        result: this.serialize(result),
+      })
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+      this.sendMessage({ message: 'response', requestId, error: errorMessage })
+    }
+  }
+
+  private call = (
     requestId: string,
     target: Target,
     methodName: string,
@@ -220,12 +251,12 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     this.assertReady()
     try {
       const instance = this.getTargetObject(target)
-      const resolvedArgs = args.map((arg) => this.deserialize(arg))
-      const f = (instance as Record<string, unknown>)[methodName]
-      if (typeof f !== 'function') {
+      const method = (instance as Record<string, unknown>)[methodName]
+      if (typeof method !== 'function') {
         throw new Error(`Method not found: ${methodName}`)
       }
-      const result = f.apply(instance, resolvedArgs)
+      const resolvedArgs = args.map((arg) => this.deserialize(arg))
+      const result = method.apply(instance, resolvedArgs)
       this.sendMessage({
         message: 'response',
         requestId,
