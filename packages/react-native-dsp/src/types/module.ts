@@ -371,8 +371,8 @@ export type IncomingMessage<T extends NodeType> =
 export type Target =
   | {
       type: TargetType.Node
-      nodeType: NodeType
       id: string
+      nodeType: NodeType
     }
   | {
       type: TargetType.NodeProcessor

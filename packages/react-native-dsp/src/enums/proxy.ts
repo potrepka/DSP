@@ -1,8 +1,11 @@
 export enum TargetType {
   Buffer = 'Buffer',
+  BufferVector = 'BufferVector',
+  Input = 'Input',
+  InputVector = 'InputVector',
   Node = 'Node',
   NodeProcessor = 'NodeProcessor',
-  Input = 'Input',
+  NodeVector = 'NodeVector',
   Output = 'Output',
-  Vector = 'Vector',
+  OutputVector = 'OutputVector',
 }

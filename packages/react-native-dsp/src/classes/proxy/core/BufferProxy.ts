@@ -124,7 +124,7 @@ export class InputProxy extends BufferProxy {
   }
   getConnections = (): VectorProxy<OutputProxy> => {
     const target: Target = {
-      type: TargetType.Vector,
+      type: TargetType.OutputVector,
       id: `${this.id}:Connections`,
     }
     return new VectorProxy(this.context, target, (itemTarget: Target) => {
@@ -163,7 +163,7 @@ export class OutputProxy extends BufferProxy {
   override toTarget = (): Target => ({ type: TargetType.Output, id: this.id })
   getConnections = (): VectorProxy<InputProxy> => {
     const target: Target = {
-      type: TargetType.Vector,
+      type: TargetType.InputVector,
       id: `${this.id}:Connections`,
     }
     return new VectorProxy(this.context, target, (itemTarget: Target) => {

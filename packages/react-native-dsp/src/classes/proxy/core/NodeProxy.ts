@@ -74,7 +74,10 @@ export class NodeProxy {
     return this.context.call(this.toTarget(), 'getOneOverSampleRate', [])
   }
   getInputs = (): VectorProxy<InputProxy> => {
-    const target: Target = { type: TargetType.Vector, id: `${this.id}:Inputs` }
+    const target: Target = {
+      type: TargetType.InputVector,
+      id: `${this.id}:Inputs`,
+    }
     return new VectorProxy(this.context, target, (itemTarget: Target) => {
       if (itemTarget.type !== TargetType.Input) {
         throw new Error('Expected Input target')
@@ -84,7 +87,10 @@ export class NodeProxy {
     })
   }
   getOutputs = (): VectorProxy<OutputProxy> => {
-    const target: Target = { type: TargetType.Vector, id: `${this.id}:Outputs` }
+    const target: Target = {
+      type: TargetType.OutputVector,
+      id: `${this.id}:Outputs`,
+    }
     return new VectorProxy(this.context, target, (itemTarget: Target) => {
       if (itemTarget.type !== TargetType.Output) {
         throw new Error('Expected Output target')
@@ -95,7 +101,7 @@ export class NodeProxy {
   }
   getChildren = (): VectorProxy<NodeProxy> => {
     const target: Target = {
-      type: TargetType.Vector,
+      type: TargetType.NodeVector,
       id: `${this.id}:Children`,
     }
     return new VectorProxy(this.context, target, (itemTarget: Target) => {

@@ -90,7 +90,7 @@ export class NodeProcessorProxy {
   }
   getNodes = (): VectorProxy<NodeProxy> => {
     const target: Target = {
-      type: TargetType.Vector,
+      type: TargetType.NodeVector,
       id: `${ReservedKeyword.NodeProcessor}:Nodes`,
     }
     return new VectorProxy(this.context, target, (nodeTarget: Target) => {

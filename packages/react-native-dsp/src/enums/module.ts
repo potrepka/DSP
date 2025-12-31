@@ -12,3 +12,11 @@ export enum NodeProcessorOutputName {
   AudioInputClipping = 'AudioInputClipping',
   AudioOutputClipping = 'AudioOutputClipping',
 }
+
+export enum NodeProcessorNodeName {
+  DefaultNode = 'DefaultNode',
+}
+
+export enum NodeProcessorNodeVectorName {
+  Nodes = 'Nodes',
+}

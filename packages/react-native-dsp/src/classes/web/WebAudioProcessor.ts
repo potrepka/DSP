@@ -10,16 +10,20 @@ import type {
   AudioModule,
   Buffer,
   BufferOptions,
+  BufferVector,
   Data,
   IncomingMessage,
   Input,
+  InputVector,
   MidiBuffer,
   Node,
   NodeOptions,
   NodeProcessor,
   NodeType,
+  NodeVector,
   OutgoingMessage,
   Output,
+  OutputVector,
   Target,
 } from '../../types/module'
 
@@ -141,10 +145,19 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       numSamples,
     )
     const wrapper = buffer.getWrapper()
-    for (let channel = 0; channel < numChannels; channel++) {
+    for (
+      let channel = 0;
+      channel < numChannels && channel < data.length;
+      channel++
+    ) {
+      const channelData = data[channel]
       const writeChannelData = wrapper.getChannelData(channel)
-      for (let sample = 0; sample < numSamples; sample++) {
-        writeChannelData[sample] = data[channel][sample]
+      for (
+        let sample = 0;
+        sample < numSamples && sample < channelData.length;
+        sample++
+      ) {
+        writeChannelData[sample] = channelData[sample]
       }
     }
     this.buffers.set(bufferId, buffer)
@@ -176,34 +189,8 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     }
     const node = constructNode(this.module, nodeType, options)
     this.nodes.set(nodeId, node)
-    this.registerNodeTargets(nodeId, node, nodeType)
-    this.nodeProcessor.getDefaultNode().addChild(node)
-  }
-
-  private registerTarget(obj: object, target: Target) {
-    this.targets.set(obj, target)
-  }
-
-  private registerNodeTargets(nodeId: string, node: Node, nodeType: NodeType) {
     this.registerTarget(node, { type: TargetType.Node, nodeType, id: nodeId })
-    const inputVector = node.getInputs()
-    for (let i = 0; i < inputVector.size(); i++) {
-      const input = inputVector.get(i)
-      const inputRecord = input as unknown as Record<string, () => string>
-      this.registerTarget(input, {
-        type: TargetType.Input,
-        id: `${nodeId}:${inputRecord.getName()}`,
-      })
-    }
-    const outputVector = node.getOutputs()
-    for (let i = 0; i < outputVector.size(); i++) {
-      const output = outputVector.get(i)
-      const outputRecord = output as unknown as Record<string, () => string>
-      this.registerTarget(output, {
-        type: TargetType.Output,
-        id: `${nodeId}:${outputRecord.getName()}`,
-      })
-    }
+    this.nodeProcessor.getDefaultNode().addChild(node)
   }
 
   private deleteNode(nodeId: string) {
@@ -219,29 +206,102 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     node.delete()
   }
 
+  private registerTarget(obj: object, target: Target) {
+    this.targets.set(obj, target)
+  }
+
+  private getProperty<
+    T extends
+      | Buffer
+      | BufferVector
+      | Input
+      | InputVector
+      | Node
+      | NodeVector
+      | Output
+      | OutputVector,
+  >(
+    targetType:
+      | TargetType.Buffer
+      | TargetType.BufferVector
+      | TargetType.Input
+      | TargetType.InputVector
+      | TargetType.Node
+      | TargetType.NodeVector
+      | TargetType.Output
+      | TargetType.OutputVector,
+    nodeId: string,
+    propertyName: string,
+    nodeType?: NodeType,
+  ): T {
+    if (targetType === TargetType.Node && nodeType === undefined) {
+      throw new Error('nodeType is required for Node target')
+    }
+    const node = this.nodes.get(nodeId)
+    if (!node) {
+      throw new Error(`Node not found: ${nodeId}`)
+    }
+    const getter = (node as unknown as Record<string, () => T>)[
+      `get${propertyName}`
+    ]
+    if (typeof getter !== 'function') {
+      throw new Error(`Property not found: ${propertyName}`)
+    }
+    const result = getter.call(node)
+    const target =
+      targetType === TargetType.Node
+        ? {
+            type: targetType,
+            id: `${nodeId}:${propertyName}`,
+            nodeType: nodeType!,
+          }
+        : {
+            type: targetType,
+            id: `${nodeId}:${propertyName}`,
+          }
+    this.registerTarget(result as object, target)
+    return result
+  }
+
+  private getBuffer(nodeId: string, bufferName: string): Buffer {
+    return this.getProperty(TargetType.Buffer, nodeId, bufferName)
+  }
+
+  private getBufferVector(nodeId: string, vectorName: string): BufferVector {
+    return this.getProperty(TargetType.BufferVector, nodeId, vectorName)
+  }
+
   private getInput(nodeId: string, inputName: string): Input {
     if (!this.nodeProcessor) {
       throw new Error('Module not initialized')
     }
     if (nodeId === ReservedKeyword.NodeProcessor) {
       switch (inputName) {
-        case NodeProcessorInputName.AudioOutput:
-          return this.nodeProcessor.getAudioOutput()
+        case NodeProcessorInputName.AudioOutput: {
+          const input = this.nodeProcessor.getAudioOutput()
+          this.registerTarget(input, {
+            type: TargetType.Input,
+            id: `${nodeId}:${inputName}`,
+          })
+          return input
+        }
         default:
           throw new Error(`Input not found: ${inputName}`)
       }
     }
-    const node = this.nodes.get(nodeId)
-    if (!node) {
-      throw new Error(`Node not found: ${nodeId}`)
-    }
-    const getter = (node as unknown as Record<string, () => Input>)[
-      `get${inputName}`
-    ]
-    if (typeof getter !== 'function') {
-      throw new Error(`Input not found: ${inputName}`)
-    }
-    return getter.call(node)
+    return this.getProperty<Input>(TargetType.Input, nodeId, inputName)
+  }
+
+  private getInputVector(nodeId: string, vectorName: string): InputVector {
+    return this.getProperty(TargetType.InputVector, nodeId, vectorName)
+  }
+
+  private getNode(nodeId: string, nodeName: string, nodeType: NodeType): Node {
+    return this.getProperty(TargetType.Node, nodeId, nodeName, nodeType)
+  }
+
+  private getNodeVector(nodeId: string, vectorName: string): NodeVector {
+    return this.getProperty(TargetType.NodeVector, nodeId, vectorName)
   }
 
   private getOutput(nodeId: string, outputName: string): Output {
@@ -250,27 +310,39 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     }
     if (nodeId === ReservedKeyword.NodeProcessor) {
       switch (outputName) {
-        case NodeProcessorOutputName.AudioInput:
-          return this.nodeProcessor.getAudioInput()
-        case NodeProcessorOutputName.AudioInputClipping:
-          return this.nodeProcessor.getAudioInputClipping()
-        case NodeProcessorOutputName.AudioOutputClipping:
-          return this.nodeProcessor.getAudioOutputClipping()
+        case NodeProcessorOutputName.AudioInput: {
+          const output = this.nodeProcessor.getAudioInput()
+          this.registerTarget(output, {
+            type: TargetType.Output,
+            id: `${nodeId}:${outputName}`,
+          })
+          return output
+        }
+        case NodeProcessorOutputName.AudioInputClipping: {
+          const output = this.nodeProcessor.getAudioInputClipping()
+          this.registerTarget(output, {
+            type: TargetType.Output,
+            id: `${nodeId}:${outputName}`,
+          })
+          return output
+        }
+        case NodeProcessorOutputName.AudioOutputClipping: {
+          const output = this.nodeProcessor.getAudioOutputClipping()
+          this.registerTarget(output, {
+            type: TargetType.Output,
+            id: `${nodeId}:${outputName}`,
+          })
+          return output
+        }
         default:
           throw new Error(`Output not found: ${outputName}`)
       }
     }
-    const node = this.nodes.get(nodeId)
-    if (!node) {
-      throw new Error(`Node not found: ${nodeId}`)
-    }
-    const getter = (node as unknown as Record<string, () => Output>)[
-      `get${outputName}`
-    ]
-    if (typeof getter !== 'function') {
-      throw new Error(`Output not found: ${outputName}`)
-    }
-    return getter.call(node)
+    return this.getProperty<Output>(TargetType.Output, nodeId, outputName)
+  }
+
+  private getOutputVector(nodeId: string, vectorName: string): OutputVector {
+    return this.getProperty(TargetType.OutputVector, nodeId, vectorName)
   }
 
   process(inputs: Float32Array[][], outputs: Float32Array[][]): boolean {
@@ -376,16 +448,36 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     }
   }
 
-  private getTargetObject(target: Target): unknown {
+  private getTargetObject(target: Target) {
     switch (target.type) {
       case TargetType.Buffer: {
+        const [nodeId, bufferName] = target.id.split(':')
+        if (bufferName) {
+          return this.getBuffer(nodeId, bufferName)
+        }
         const buffer = this.buffers.get(target.id)
         if (!buffer) {
           throw new Error(`Buffer not found: ${target.id}`)
         }
         return buffer
       }
+      case TargetType.BufferVector: {
+        const [nodeId, vectorName] = target.id.split(':')
+        return this.getBufferVector(nodeId, vectorName)
+      }
+      case TargetType.Input: {
+        const [nodeId, inputName] = target.id.split(':')
+        return this.getInput(nodeId, inputName)
+      }
+      case TargetType.InputVector: {
+        const [nodeId, vectorName] = target.id.split(':')
+        return this.getInputVector(nodeId, vectorName)
+      }
       case TargetType.Node: {
+        const [nodeId, nodeName] = target.id.split(':')
+        if (nodeName) {
+          return this.getNode(nodeId, nodeName, target.nodeType)
+        }
         const node = this.nodes.get(target.id)
         if (!node) {
           throw new Error(`Node not found: ${target.id}`)
@@ -398,61 +490,22 @@ class WebAudioProcessor extends AudioWorkletProcessor {
         }
         return this.nodeProcessor
       }
-      case TargetType.Input: {
-        const [nodeId, inputName] = target.id.split(':')
-        return this.getInput(nodeId, inputName)
+      case TargetType.NodeVector: {
+        const [nodeId, vectorName] = target.id.split(':')
+        return this.getNodeVector(nodeId, vectorName)
       }
       case TargetType.Output: {
         const [nodeId, outputName] = target.id.split(':')
         return this.getOutput(nodeId, outputName)
       }
-      case TargetType.Vector: {
-        return this.getVector(target.id)
+      case TargetType.OutputVector: {
+        const [nodeId, vectorName] = target.id.split(':')
+        return this.getOutputVector(nodeId, vectorName)
       }
     }
   }
 
-  private getVector(vectorId: string): unknown {
-    const parts = vectorId.split(':')
-    const vectorName = parts.pop()
-    const parentId = parts.join(':')
-    if (vectorName === 'Nodes') {
-      if (!this.nodeProcessor) {
-        throw new Error('Module not initialized')
-      }
-      return this.nodeProcessor.getNodes()
-    }
-    const node = this.nodes.get(parentId)
-    if (!node) {
-      throw new Error(`Node not found: ${parentId}`)
-    }
-    if (vectorName === 'Connections') {
-      const [nodeId, portName] = parentId.split(':')
-      const portNode = this.nodes.get(nodeId)
-      if (!portNode) {
-        throw new Error(`Node not found: ${nodeId}`)
-      }
-      const portGetter = (portNode as unknown as Record<string, () => unknown>)[
-        `get${portName}`
-      ]
-      if (typeof portGetter !== 'function') {
-        throw new Error(`Port not found: ${portName}`)
-      }
-      const port = portGetter.call(portNode) as Record<string, () => unknown>
-      return port.getConnections()
-    }
-    const getter = (node as unknown as Record<string, () => unknown>)[
-      `get${vectorName}`
-    ]
-    if (typeof getter !== 'function') {
-      throw new Error(`Vector not found: ${vectorName}`)
-    }
-    return getter.call(node)
-  }
-
-  private serializeResult(
-    result: unknown,
-  ): undefined | null | number | boolean | string | Array<number> | Target {
+  private serializeResult(result: unknown) {
     if (result === undefined || result === null) {
       return result
     }

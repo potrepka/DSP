@@ -7,7 +7,10 @@ export class TableOscillatorProxy extends ProducerProxy {
     super(context, id, 'TableOscillator')
   }
   getTables = (): VectorProxy<BufferProxy> => {
-    const target: Target = { type: TargetType.Vector, id: `${this.id}:Tables` }
+    const target: Target = {
+      type: TargetType.BufferVector,
+      id: `${this.id}:Tables`,
+    }
     return new VectorProxy(this.context, target, (itemTarget: Target) => {
       if (itemTarget.type !== TargetType.Buffer) {
         throw new Error('Expected Buffer target')
