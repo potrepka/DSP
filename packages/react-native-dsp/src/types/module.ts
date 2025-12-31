@@ -390,7 +390,6 @@ type OptionsMap = {
   SampleRate: unknown
 }
 
-// Generic Options type - makes all constructor args optional
 export type Options<T extends ObjectType> = Partial<OptionsMap[T]>
 
 export type NodeProcessorOptions = {
