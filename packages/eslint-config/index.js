@@ -42,7 +42,6 @@ export default [
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.node,
       },
     },
     plugins: {
@@ -65,7 +64,6 @@ export default [
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.node,
       },
       parser: tsParser,
       parserOptions: {
