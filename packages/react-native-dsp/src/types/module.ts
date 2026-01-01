@@ -406,13 +406,13 @@ export type Target = {
 }
 
 export type SerializedValue =
-  | string
-  | number
-  | boolean
-  | Target
-  | number[]
   | null
-  | undefined
+  | string
+  | boolean
+  | number
+  | bigint
+  | SerializedValue[]
+  | Target
 
 export type RequestMessage<T extends ObjectType> =
   | {

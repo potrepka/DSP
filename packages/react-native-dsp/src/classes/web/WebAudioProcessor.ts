@@ -314,17 +314,34 @@ class WebAudioProcessor extends AudioWorkletProcessor {
 
   private serialize = (value: unknown): SerializedValue => {
     if (value === undefined || value === null) {
-      return value
+      return null
     }
     if (
-      typeof value === 'number' ||
+      typeof value === 'string' ||
       typeof value === 'boolean' ||
-      typeof value === 'string'
+      typeof value === 'number' ||
+      typeof value === 'bigint'
     ) {
       return value
     }
-    if (value instanceof Float64Array || value instanceof Float32Array) {
+    if (
+      value instanceof Int8Array ||
+      value instanceof Uint8Array ||
+      value instanceof Uint8ClampedArray ||
+      value instanceof Int16Array ||
+      value instanceof Uint16Array ||
+      value instanceof Int32Array ||
+      value instanceof Uint32Array ||
+      value instanceof Float32Array ||
+      value instanceof Float64Array
+    ) {
       return Array.from(value)
+    }
+    if (value instanceof BigInt64Array || value instanceof BigUint64Array) {
+      return Array.from(value)
+    }
+    if (Array.isArray(value)) {
+      return value.map((item) => this.serialize(item)) as SerializedValue
     }
     if (typeof value === 'object') {
       const existingTarget = this.#targets.get(value)
@@ -337,7 +354,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       this.#targets.set(value, target)
       return target
     }
-    return undefined
+    return null
   }
 
   private deserialize = (value: SerializedValue): unknown => {
