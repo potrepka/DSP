@@ -30,7 +30,6 @@
 #include "Nodes/Filters/Crossover.h"
 #include "Nodes/Filters/OnePole.h"
 #include "Nodes/Generators/FunctionOscillator.h"
-#include "Nodes/Generators/MoorerOscillator.h"
 #include "Nodes/Generators/Noise.h"
 #include "Nodes/Generators/Phasor.h"
 #include "Nodes/Generators/SamplePlayer.h"

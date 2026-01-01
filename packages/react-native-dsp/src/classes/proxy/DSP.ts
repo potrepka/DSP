@@ -42,7 +42,6 @@ import { MidiInputProxy } from './nodes/MidiInputProxy'
 import { MidiOutputProxy } from './nodes/MidiOutputProxy'
 import { MidSideProxy } from './nodes/MidSideProxy'
 import { ModuloProxy } from './nodes/ModuloProxy'
-import { MoorerOscillatorProxy } from './nodes/MoorerOscillatorProxy'
 import { MultiplicationProxy } from './nodes/MultiplicationProxy'
 import { NegativeProxy } from './nodes/NegativeProxy'
 import { NoiseProxy } from './nodes/NoiseProxy'
@@ -414,12 +413,6 @@ export class DSP {
   ): Promise<FunctionOscillatorProxy> => {
     const target = await this.createObject('FunctionOscillator', options)
     return new FunctionOscillatorProxy(this.#context, target)
-  }
-  createMoorerOscillator = async (
-    options?: Options<'MoorerOscillator'>,
-  ): Promise<MoorerOscillatorProxy> => {
-    const target = await this.createObject('MoorerOscillator', options)
-    return new MoorerOscillatorProxy(this.#context, target)
   }
   createNoise = async (options?: Options<'Noise'>): Promise<NoiseProxy> => {
     const target = await this.createObject('Noise', options)

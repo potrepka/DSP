@@ -55,14 +55,6 @@ export enum OnePoleMode {
 }
 
 /**
- * Moorer oscillator mode
- */
-export enum MoorerOscillatorMode {
-  ONE_SIDED = 0,
-  TWO_SIDED = 1,
-}
-
-/**
  * Noise generation mode
  */
 export enum NoiseMode {

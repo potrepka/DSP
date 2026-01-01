@@ -90,12 +90,6 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   constant("ONEPOLE_MODE_LOW_PASS", OnePole::Mode::LOW_PASS);
   constant("ONEPOLE_MODE_HIGH_PASS", OnePole::Mode::HIGH_PASS);
 
-  // MoorerOscillator::Mode
-  constant("MOORER_OSCILLATOR_MODE_ONE_SIDED",
-           MoorerOscillator::Mode::ONE_SIDED);
-  constant("MOORER_OSCILLATOR_MODE_TWO_SIDED",
-           MoorerOscillator::Mode::TWO_SIDED);
-
   // Noise::Mode
   constant("NOISE_MODE_WHITE", Noise::Mode::WHITE);
   constant("NOISE_MODE_PINK", Noise::Mode::PINK);
@@ -804,16 +798,6 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getFunction", &FunctionOscillator::getFunction)
       .function("setFunction", &FunctionOscillator::setFunction)
       .function("getPhase", &FunctionOscillator::getPhase);
-
-  // MoorerOscillator
-  class_<MoorerOscillator, base<Producer>>("MoorerOscillator")
-      .smart_ptr<std::shared_ptr<MoorerOscillator>>("MoorerOscillator")
-      .constructor(&std::make_shared<MoorerOscillator>)
-      .function("getPhase", &MoorerOscillator::getPhase)
-      .function("getIntensity", &MoorerOscillator::getIntensity)
-      .function("getModulationIndex", &MoorerOscillator::getModulationIndex)
-      .function("getHarmonics", &MoorerOscillator::getHarmonics)
-      .function("getMode", &MoorerOscillator::getMode);
 
   // Noise
   class_<Noise, base<Producer>>("Noise")

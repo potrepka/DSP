@@ -221,9 +221,6 @@ export const createObject = <T extends ObjectType>(
       reference = new module.FunctionOscillator(type ?? Type.RATIO)
       break
     }
-    case 'MoorerOscillator':
-      reference = new module.MoorerOscillator()
-      break
     case 'Noise':
       reference = new module.Noise()
       break

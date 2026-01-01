@@ -177,7 +177,6 @@ export type NodeConstructorMap = {
 
   // Generator Nodes
   FunctionOscillator: new (type: Type) => FunctionOscillator
-  MoorerOscillator: new () => MoorerOscillator
   Noise: new () => Noise
   Phasor: new () => Phasor
   SamplePlayer: new (type: Type) => SamplePlayer
@@ -338,7 +337,6 @@ type OptionsMap = {
 
   // Nodes - Generator
   FunctionOscillator: { type: Type }
-  MoorerOscillator: unknown
   Noise: unknown
   Phasor: unknown
   SamplePlayer: { type: Type }
@@ -925,14 +923,6 @@ export type FunctionOscillator = Producer & {
   getFunction: () => unknown
   setFunction: (fn: (phase: number) => number) => void
   getPhase: () => Input
-}
-
-export type MoorerOscillator = Producer & {
-  getPhase: () => Input
-  getIntensity: () => Input
-  getModulationIndex: () => Input
-  getHarmonics: () => Input
-  getMode: () => Input
 }
 
 export type Noise = Producer & {
