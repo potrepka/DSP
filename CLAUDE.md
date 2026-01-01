@@ -2,12 +2,11 @@
 
 ## Project Outline
 
-- `examples/html`: DSP HTML demo
 - `examples/react`: DSP React demo
-- `lib/FFTConvolver`: FFT Convolver library
+- `lib/FFTConvolver`: FFT convolver library
 - `lib/simd_math_prims`: SIMD math primitives library
 - `packages/react-native-dsp`: React Native DSP library
-- `src`: C++ source code for DSP libraries
+- `src`: C++ source code for DSP library
 
 ## Scripts
 

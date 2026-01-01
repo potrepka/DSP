@@ -1,32 +1,33 @@
 {
-  "name": "@potrepka/dsp-react",
+  "name": "@dsp/react",
   "version": "0.1.0",
   "author": "Nathaniel Potrepka",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/potrepka/DSP.git",
-    "directory": "examples/react"
-  },
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "tsc && vite build",
-    "dev": "vite",
-    "start": "vite preview"
-  },
   "dependencies": {
     "@potrepka/react-native-dsp": "workspace:*",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },
   "devDependencies": {
+    "@dsp/eslint-config": "workspace:*",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
+    "eslint": "^9.39.2",
     "typescript": "^5.9.3",
     "vite": "^7.3.0"
   },
-  "workspaces": [
-    "../../packages/*"
-  ]
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/potrepka/DSP.git",
+    "directory": "examples/react"
+  },
+  "scripts": {
+    "build": "tsc && vite build",
+    "clean": "rm -rf .turbo/ dist/ node_modules/",
+    "dev": "vite",
+    "lint": "eslint .",
+    "start": "vite preview"
+  },
+  "type": "module"
 }

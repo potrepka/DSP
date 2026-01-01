@@ -8,10 +8,10 @@ if [ "$1" = "--check" ]; then
 fi
 
 files=$(find . -type f \( -name "*.cpp" -o -name "*.h" \) \
-  -not -path "*/node_modules/*" \
-  -not -path "*/.bun/*" \
-  -not -path "*/build/*" \
-  -not -path "*/dist/*")
+  -not -path "*/android/*" \
+  -not -path "*/dist/*" \
+  -not -path "*/ios/*" \
+  -not -path "*/node_modules/*")
 
 if [ -z "$files" ]; then
   echo "No C++ files found."

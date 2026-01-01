@@ -40,9 +40,8 @@ export const App = () => {
     setStatus({ message: 'Loading WASM module...', type: 'info' })
     addLog('Loading WASM module...')
     try {
-      const { addModule, createAudioWorkletNode } = await initializeWebAudio(
-        wasmModuleUrl,
-      )
+      const { addModule, createAudioWorkletNode } =
+        await initializeWebAudio(wasmModuleUrl)
       setAddModule(() => addModule)
       setCreateAudioWorkletNode(() => createAudioWorkletNode)
       setStatus({
@@ -51,12 +50,12 @@ export const App = () => {
       })
       addLog('\n✅ Initialization completed')
       setButtonsEnabled({ test: true, play: true })
-    } catch (error: any) {
+    } catch (error) {
       setStatus({
-        message: `Error: ${error.message}`,
+        message: `Error: ${(error as Error).message}`,
         type: 'error',
       })
-      addLog(`\n❌ Error: ${error.message}`)
+      addLog(`\n❌ Error: ${(error as Error).message}`)
       console.error(error)
     }
   }
@@ -186,8 +185,8 @@ export const App = () => {
         })
         addLog('\n⚠️ Test completed (silence detected)')
       }
-    } catch (error: any) {
-      addLog(`\n❌ Error: ${error.message}`)
+    } catch (error) {
+      addLog(`\n❌ Error: ${(error as Error).message}`)
       console.error(error)
     }
   }
@@ -239,8 +238,8 @@ export const App = () => {
       addLog('\n✅ Playback completed')
       setIsPlaying(false)
       setButtonsEnabled({ test: true, play: true })
-    } catch (error: any) {
-      addLog(`\n❌ Error: ${error.message}`)
+    } catch (error) {
+      addLog(`\n❌ Error: ${(error as Error).message}`)
       console.error(error)
       setIsPlaying(false)
       setButtonsEnabled({ test: true, play: true })
@@ -265,18 +264,18 @@ export const App = () => {
             status.type === 'success'
               ? '#d4edda'
               : status.type === 'warning'
-              ? '#fff3cd'
-              : status.type === 'error'
-              ? '#f8d7da'
-              : '#d1ecf1',
+                ? '#fff3cd'
+                : status.type === 'error'
+                  ? '#f8d7da'
+                  : '#d1ecf1',
           color:
             status.type === 'success'
               ? '#155724'
               : status.type === 'warning'
-              ? '#856404'
-              : status.type === 'error'
-              ? '#721c24'
-              : '#0c5460',
+                ? '#856404'
+                : status.type === 'error'
+                  ? '#721c24'
+                  : '#0c5460',
         }}
       >
         {status.message}

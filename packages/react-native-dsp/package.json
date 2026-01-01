@@ -8,18 +8,19 @@
     "react-native-audio-api": "^0.10.3"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
-    "@types/bun": "^1.3.4",
+    "@dsp/eslint-config": "workspace:*",
+    "@types/bun": "^1.3.5",
     "eslint": "^9.39.2",
-    "eslint-plugin-perfectionist": "^5.0.0",
-    "eslint-plugin-unused-imports": "^4.3.0",
-    "nitrogen": "^0.32.0",
-    "prettier": "^3.7.4",
     "react-native": "^0.83.1",
-    "react-native-nitro-modules": "^0.32.0",
-    "syncpack": "^14.0.0-alpha.32",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.50.0"
+    "typescript": "^5.9.3"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "development": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./web/build/react-native-dsp.js": "./web/build/react-native-dsp.js"
   },
   "files": [
     "android/",
@@ -58,17 +59,9 @@
     "build": "npm run build:ts && npm run build:web",
     "build:ts": "tsc",
     "build:web": "bash scripts/build-web.sh",
-    "clean": "rm -rf dist/ shared/lib/ shared/src/ web/build/",
+    "clean": "rm -rf dist/ node_modules/ shared/lib/ shared/src/ web/build/",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "lint:format": "prettier --cache --check \"**/*.{js,ts,md,json,html,css}\"",
-    "lint:format:fix": "prettier --cache --write \"**/*.{js,ts,md,json,html,css}\"",
-    "lint:packages": "syncpack lint",
-    "lint:packages:fix": "syncpack fix",
-    "lint:packages:format": "syncpack format",
-    "lint:packages:update": "syncpack update",
-    "lint:packages:update:minor": "syncpack update --target minor",
-    "lint:packages:update:patch": "syncpack update --target patch"
+    "test": "bun test"
   },
   "types": "dist/index.d.ts"
 }
