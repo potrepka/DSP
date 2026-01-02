@@ -73,10 +73,10 @@ export const App = () => {
     const gain = await dsp.createMultiplication()
 
     // Set number of channels
-    phasor.setNumChannels(2)
-    osc.setNumChannels(2)
-    filter.setNumChannels(2)
-    gain.setNumChannels(2)
+    await phasor.setNumChannels(2)
+    await osc.setNumChannels(2)
+    await filter.setNumChannels(2)
+    await gain.setNumChannels(2)
 
     // Set input values
     await phasor.getFrequency().setAllChannelValues(55)

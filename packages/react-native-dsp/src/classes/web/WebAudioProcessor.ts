@@ -15,7 +15,6 @@ import type {
   SerializedValue,
   Target,
 } from '../../types/module'
-import { WeakValueMap } from '../util/WeakValueMap'
 
 declare class AudioWorkletProcessor {
   readonly port: MessagePort
@@ -48,7 +47,8 @@ class WebAudioProcessor extends AudioWorkletProcessor {
   audioBuffer?: Data
   midiBuffer?: MidiBuffer
   readonly #instances = new Map<string, Deletable>()
-  readonly #properties = new WeakValueMap<string, object>()
+  readonly #properties = new Map<string, object>()
+  readonly #references = new Map<string, string[]>()
   readonly #targets = new WeakMap<object, Target>()
 
   constructor(options: WebAudioProcessorOptions) {
@@ -183,6 +183,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
         isChild: instance instanceof this.module.Node,
       }
       this.#instances.set(objectId, instance)
+      this.#references.set(objectId, [])
       this.#targets.set(instance, target)
       if (target.isChild) {
         this.nodeProcessor.getDefaultNode().addChild(instance as Node)
@@ -192,6 +193,24 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       const errorMessage =
         error instanceof Error ? error.message : String(error)
       this.sendMessage({ message: 'response', requestId, error: errorMessage })
+    }
+  }
+
+  private deleteReferences = (
+    objectId: string,
+    visited: Set<string> = new Set(),
+  ) => {
+    if (visited.has(objectId)) {
+      throw new Error(`Cycle detected: ${objectId}`)
+    }
+    visited.add(objectId)
+    const references = this.#references.get(objectId)
+    if (references) {
+      for (const referenceId of references) {
+        this.deleteReferences(referenceId, visited)
+        this.#properties.delete(referenceId)
+      }
+      this.#references.delete(objectId)
     }
   }
 
@@ -206,6 +225,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       if (target?.isChild) {
         this.nodeProcessor.getDefaultNode().removeChild(instance as Node)
       }
+      this.deleteReferences(objectId)
       this.#instances.delete(objectId)
       instance.delete()
       this.sendMessage({ message: 'response', requestId, result: true })
@@ -239,7 +259,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       this.sendMessage({
         message: 'response',
         requestId,
-        result: this.serialize(result),
+        result: this.serialize(result, undefined),
       })
     } catch (error) {
       const errorMessage =
@@ -266,7 +286,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       this.sendMessage({
         message: 'response',
         requestId,
-        result: this.serialize(result),
+        result: this.serialize(result, target.id),
       })
     } catch (error) {
       const errorMessage =
@@ -282,6 +302,7 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       if (target?.isChild) {
         this.nodeProcessor.getDefaultNode().removeChild(instance as Node)
       }
+      this.deleteReferences(objectId)
       this.#instances.delete(objectId)
       instance.delete()
     }
@@ -312,7 +333,10 @@ class WebAudioProcessor extends AudioWorkletProcessor {
     'id' in value &&
     typeof value.id === 'string'
 
-  private serialize = (value: unknown): SerializedValue => {
+  private serialize = (
+    value: unknown,
+    sourceId: string | undefined,
+  ): SerializedValue => {
     if (value === undefined || value === null) {
       return null
     }
@@ -341,7 +365,9 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       return Array.from(value)
     }
     if (Array.isArray(value)) {
-      return value.map((item) => this.serialize(item)) as SerializedValue
+      return value.map((item) =>
+        this.serialize(item, sourceId),
+      ) as SerializedValue
     }
     if (typeof value === 'object') {
       const existingTarget = this.#targets.get(value)
@@ -350,7 +376,13 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       }
       const id = this.generateObjectId()
       const target = { __type: 'Target' as const, id }
-      this.#properties.set(id, value)
+      if (sourceId === undefined) {
+        this.#instances.set(id, value as Deletable)
+      } else {
+        this.#properties.set(id, value)
+        this.#references.get(sourceId)?.push(id)
+      }
+      this.#references.set(id, [])
       this.#targets.set(value, target)
       return target
     }

@@ -47,5 +47,9 @@ expo-env.d.ts
 *.key
 *.mobileprovision
 
+# Tarballs
+*.tgz
+*.tar.gz
+
 # Metro
 .metro-health-check*
