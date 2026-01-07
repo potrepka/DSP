@@ -21,7 +21,6 @@ export { BiquadProxy } from './classes/proxy/nodes/BiquadProxy'
 export { MultiplicationProxy } from './classes/proxy/nodes/MultiplicationProxy'
 export { PhasorProxy } from './classes/proxy/nodes/PhasorProxy'
 export { TableOscillatorProxy } from './classes/proxy/nodes/TableOscillatorProxy'
-export { WeakValueMap } from './classes/util/WeakValueMap'
 export {
   E,
   LOG_OF_TWO,
