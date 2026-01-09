@@ -1,0 +1,4 @@
+CompileFlags:
+  Add:
+    - -DDSP_NO_RTAUDIO
+    - -DDSP_NO_RTMIDI

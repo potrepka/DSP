@@ -8,7 +8,7 @@
 #endif
 
 #ifdef DSP_USE_RTAUDIO
-#include "RtAudio.h"
+#include <RtAudio.h>
 #endif
 
 namespace dsp {

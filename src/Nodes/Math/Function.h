@@ -4,9 +4,9 @@
 
 namespace dsp {
 
-class FunctionOscillator : public Producer {
+class Function : public Producer {
 public:
-  FunctionOscillator(Type type = Type::RATIO);
+  Function(Type type = Type::RATIO);
 
   std::shared_ptr<std::function<Sample(Sample)>> getFunction() const;
   void setFunction(std::shared_ptr<std::function<Sample(Sample)>> function);

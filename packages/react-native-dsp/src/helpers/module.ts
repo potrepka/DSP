@@ -216,11 +216,6 @@ export const createObject = <T extends ObjectType>(
     }
 
     // Generator Nodes
-    case 'FunctionOscillator': {
-      const { type } = options as Options<'FunctionOscillator'>
-      reference = new module.FunctionOscillator(type ?? Type.RATIO)
-      break
-    }
     case 'Noise':
       reference = new module.Noise()
       break
@@ -276,6 +271,11 @@ export const createObject = <T extends ObjectType>(
     case 'FrequencyToNote': {
       const { space } = options as Options<'FrequencyToNote'>
       reference = new module.FrequencyToNote(space ?? Space.TIME)
+      break
+    }
+    case 'Function': {
+      const { type } = options as Options<'Function'>
+      reference = new module.Function(type ?? Type.RATIO)
       break
     }
     case 'Hyperbolic': {

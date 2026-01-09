@@ -3,7 +3,7 @@
 #include <cmath>
 #include <vector>
 
-#include "../lib/FFTConvolver/AudioFFT.h"
+#include "../../lib/FFTConvolver/AudioFFT.h"
 #include "Constants.h"
 
 namespace dsp {

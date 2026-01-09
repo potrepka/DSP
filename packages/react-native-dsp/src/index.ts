@@ -82,7 +82,7 @@ export type {
   Floor,
   ForwardFFT,
   FrequencyToNote,
-  FunctionOscillator,
+  Function,
   GlobalFunctionMap,
   Hyperbolic,
   Identity,

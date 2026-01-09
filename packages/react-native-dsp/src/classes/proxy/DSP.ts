@@ -31,7 +31,7 @@ import { EnvelopeProxy } from './nodes/EnvelopeProxy'
 import { FloorProxy } from './nodes/FloorProxy'
 import { ForwardFFTProxy } from './nodes/ForwardFFTProxy'
 import { FrequencyToNoteProxy } from './nodes/FrequencyToNoteProxy'
-import { FunctionOscillatorProxy } from './nodes/FunctionOscillatorProxy'
+import { FunctionProxy } from './nodes/FunctionProxy'
 import { HyperbolicProxy } from './nodes/HyperbolicProxy'
 import { IdentityProxy } from './nodes/IdentityProxy'
 import { IntegratorProxy } from './nodes/IntegratorProxy'
@@ -408,11 +408,11 @@ export class DSP {
     const target = await this.createObject('OnePole', options)
     return new OnePoleProxy(this.#context, target)
   }
-  createFunctionOscillator = async (
-    options?: Options<'FunctionOscillator'>,
-  ): Promise<FunctionOscillatorProxy> => {
-    const target = await this.createObject('FunctionOscillator', options)
-    return new FunctionOscillatorProxy(this.#context, target)
+  createFunction = async (
+    options?: Options<'Function'>,
+  ): Promise<FunctionProxy> => {
+    const target = await this.createObject('Function', options)
+    return new FunctionProxy(this.#context, target)
   }
   createNoise = async (options?: Options<'Noise'>): Promise<NoiseProxy> => {
     const target = await this.createObject('Noise', options)

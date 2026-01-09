@@ -6,7 +6,7 @@
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 
-#include "../../../../src/DSP.h"
+#include "../src/DSP.h"
 
 using namespace emscripten;
 using namespace dsp;
@@ -791,14 +791,6 @@ EMSCRIPTEN_BINDINGS(native_audio) {
 
   // ========== Generator Nodes ==========
 
-  // FunctionOscillator
-  class_<FunctionOscillator, base<Producer>>("FunctionOscillator")
-      .smart_ptr<std::shared_ptr<FunctionOscillator>>("FunctionOscillator")
-      .constructor(&std::make_shared<FunctionOscillator, Type>)
-      .function("getFunction", &FunctionOscillator::getFunction)
-      .function("setFunction", &FunctionOscillator::setFunction)
-      .function("getPhase", &FunctionOscillator::getPhase);
-
   // Noise
   class_<Noise, base<Producer>>("Noise")
       .smart_ptr<std::shared_ptr<Noise>>("Noise")
@@ -883,6 +875,14 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .smart_ptr<std::shared_ptr<FrequencyToNote>>("FrequencyToNote")
       .constructor(&std::make_shared<FrequencyToNote, Space>)
       .function("getTuningFrequency", &FrequencyToNote::getTuningFrequency);
+
+  // Function
+  class_<Function, base<Producer>>("Function")
+      .smart_ptr<std::shared_ptr<Function>>("Function")
+      .constructor(&std::make_shared<Function, Type>)
+      .function("getFunction", &Function::getFunction)
+      .function("setFunction", &Function::setFunction)
+      .function("getPhase", &Function::getPhase);
 
   // Hyperbolic
   class_<Hyperbolic, base<Transformer>>("Hyperbolic")

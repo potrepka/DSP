@@ -11,7 +11,7 @@
 #endif
 
 #ifdef DSP_USE_RTMIDI
-#include "RtMidi.h"
+#include <RtMidi.h>
 #endif
 
 namespace dsp {

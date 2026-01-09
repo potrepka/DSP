@@ -176,7 +176,6 @@ export type NodeConstructorMap = {
   OnePole: new (type: Type) => OnePole
 
   // Generator Nodes
-  FunctionOscillator: new (type: Type) => FunctionOscillator
   Noise: new () => Noise
   Phasor: new () => Phasor
   SamplePlayer: new (type: Type) => SamplePlayer
@@ -190,6 +189,7 @@ export type NodeConstructorMap = {
   Floor: new (type: Type, space: Space) => Floor
   ForwardFFT: new () => ForwardFFT
   FrequencyToNote: new (space: Space) => FrequencyToNote
+  Function: new (type: Type) => Function
   Hyperbolic: new (space: Space) => Hyperbolic
   Identity: {
     new (type: Type, space: Space): Identity
@@ -336,7 +336,6 @@ type OptionsMap = {
   OnePole: { type: Type }
 
   // Nodes - Generator
-  FunctionOscillator: { type: Type }
   Noise: unknown
   Phasor: unknown
   SamplePlayer: { type: Type }
@@ -350,6 +349,7 @@ type OptionsMap = {
   Floor: { type: Type; space: Space }
   ForwardFFT: unknown
   FrequencyToNote: { space: Space }
+  Function: { type: Type }
   Hyperbolic: { space: Space }
   Identity: {
     type?: Type
@@ -919,12 +919,6 @@ export type OnePole = Transformer & {
 
 // ========== Generator Nodes ==========
 
-export type FunctionOscillator = Producer & {
-  getFunction: () => unknown
-  setFunction: (fn: (phase: number) => number) => void
-  getPhase: () => Input
-}
-
 export type Noise = Producer & {
   getMode: () => Input
 }
@@ -981,6 +975,12 @@ export type ForwardFFT = Consumer & {
 
 export type FrequencyToNote = Transformer & {
   getTuningFrequency: () => Input
+}
+
+export type Function = Producer & {
+  getFunction: () => unknown
+  setFunction: (fn: (phase: number) => number) => void
+  getPhase: () => Input
 }
 
 export type Hyperbolic = Transformer & {

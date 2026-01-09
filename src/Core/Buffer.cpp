@@ -234,7 +234,7 @@ void dsp::Input::processNoLock() {
       wrapper.apply([](Sample x) { return floor(x); });
       break;
     case Type::BOOLEAN:
-      wrapper.apply([](Sample x) { return static_cast<int>(floor(x)) & 1; });
+      wrapper.apply([](Sample x) { return x ? 1.0 : 0.0; });
       break;
     default:
       break;

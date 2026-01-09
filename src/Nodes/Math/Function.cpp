@@ -1,25 +1,23 @@
-﻿#include "FunctionOscillator.h"
+﻿#include "Function.h"
 
-dsp::FunctionOscillator::FunctionOscillator(Type type)
+dsp::Function::Function(Type type)
     : Producer(type), phase(std::make_shared<Input>(Type::RATIO)) {
   getInputs().push_back(phase);
 }
 
 std::shared_ptr<std::function<dsp::Sample(dsp::Sample)>>
-dsp::FunctionOscillator::getFunction() const {
+dsp::Function::getFunction() const {
   return function;
 }
 
-void dsp::FunctionOscillator::setFunction(
+void dsp::Function::setFunction(
     std::shared_ptr<std::function<Sample(Sample)>> function) {
   this->function = function;
 }
 
-std::shared_ptr<dsp::Input> dsp::FunctionOscillator::getPhase() const {
-  return phase;
-}
+std::shared_ptr<dsp::Input> dsp::Function::getPhase() const { return phase; }
 
-void dsp::FunctionOscillator::processNoLock() {
+void dsp::Function::processNoLock() {
   if (function != nullptr) {
     for (size_t channel = 0; channel < getNumChannels(); ++channel) {
       Sample* phaseChannel =
