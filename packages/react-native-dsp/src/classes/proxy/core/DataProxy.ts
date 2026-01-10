@@ -19,8 +19,8 @@ export class DataProxy extends BaseProxy {
   clear = (): Chainable<void> => {
     return chainable(this.call('clear', []))
   }
-  getReadChannelData = (_channel: number): never => {
-    throw new Error('getReadChannelData is not implemented')
+  getReadChannelData = (channel: number): Chainable<number[]> => {
+    return chainable(this.call('getReadChannelData', [channel]))
   }
   getWriteChannelData = (_channel: number): never => {
     throw new Error('getWriteChannelData is not implemented')
@@ -43,8 +43,8 @@ export class DataProxy extends BaseProxy {
       this.call('getRMSLevel', [channel, startSample, numSamples]),
     )
   }
-  getReadData = (): never => {
-    throw new Error('getReadData is not implemented')
+  getReadData = (): Chainable<number[][]> => {
+    return chainable(this.call('getReadData', []))
   }
   getWriteData = (): never => {
     throw new Error('getWriteData is not implemented')

@@ -1,27 +1,32 @@
 ﻿#include "Functions.h"
 
 dsp::Sample dsp::byteToUnipolar(const int value) {
-  return value == 0 ? 0.0 : (value + 1) * 0.0078125;
+  int v = std::max(0, std::min(127, value));
+  return (v + (v > 0)) * 0.0078125;
 }
 
-int dsp::unipolarToByte(const Sample signal) {
-  return signal == 0.0 ? 0 : static_cast<int>(signal * 128) - 1;
+int dsp::unipolarToByte(const Sample sample) {
+  int value = static_cast<int>(sample * 128) - 1;
+  return std::max(0, std::min(127, value));
 }
 
 dsp::Sample dsp::shortToBipolar(const int value) {
-  return (value > 8192 ? value - 8191 : value - 8192) * 0.0001220703125;
+  int v = std::max(0, std::min(16383, value));
+  return (v - 8192 + (v > 8192)) * 0.0001220703125;
 }
 
-int dsp::bipolarToShort(const Sample signal) {
-  return static_cast<int>(signal * 8192) + (signal > 0 ? 8191 : 8192);
+int dsp::bipolarToShort(const Sample sample) {
+  int positive = sample > 0.0;
+  int value = static_cast<int>(sample * 8192) + 8192 - positive;
+  return std::max(positive * 8192, std::min(16383, value));
 }
 
-dsp::Sample dsp::clip(const Sample signal, const Sample min, const Sample max) {
-  return max < min || signal < min ? min : signal > max ? max : signal;
+dsp::Sample dsp::clip(const Sample sample, const Sample min, const Sample max) {
+  return std::max(min, std::min(max, sample));
 }
 
-dsp::Sample dsp::wrap(const Sample signal, const Sample max) {
-  return max == 0.0 ? 0.0 : signal - floor(signal / max) * max;
+dsp::Sample dsp::wrap(const Sample sample, const Sample max) {
+  return max == 0.0 ? 0.0 : sample - floor(sample / max) * max;
 }
 
 dsp::Sample dsp::linear(const Sample x1, const Sample x2, const Sample mu) {

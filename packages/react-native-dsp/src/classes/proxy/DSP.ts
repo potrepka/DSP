@@ -159,6 +159,17 @@ export class DSP {
       args,
     })
   }
+  private callFunction = <T>(
+    functionName: string,
+    args: unknown[],
+  ): Promise<T> => {
+    return this.sendMessage<T>({
+      message: 'callFunction',
+      requestId: this.generateRequestId(),
+      functionName,
+      args,
+    })
+  }
   isReady = async () => {
     if (this.ready) {
       return
@@ -171,6 +182,80 @@ export class DSP {
       message: 'delete',
       requestId: this.generateRequestId(),
     })
+  }
+  byteToUnipolar = (value: number): Promise<number> => {
+    return this.callFunction<number>('byteToUnipolar', [value])
+  }
+  unipolarToByte = (sample: number): Promise<number> => {
+    return this.callFunction<number>('unipolarToByte', [sample])
+  }
+  shortToBipolar = (value: number): Promise<number> => {
+    return this.callFunction<number>('shortToBipolar', [value])
+  }
+  bipolarToShort = (sample: number): Promise<number> => {
+    return this.callFunction<number>('bipolarToShort', [sample])
+  }
+  clip = (sample: number, min: number, max: number): Promise<number> => {
+    return this.callFunction<number>('clip', [sample, min, max])
+  }
+  wrap = (sample: number, max: number): Promise<number> => {
+    return this.callFunction<number>('wrap', [sample, max])
+  }
+  linear = (x1: number, x2: number, mu: number): Promise<number> => {
+    return this.callFunction<number>('linear', [x1, x2, mu])
+  }
+  hermite = (
+    x0: number,
+    x1: number,
+    x2: number,
+    x3: number,
+    mu: number,
+  ): Promise<number> => {
+    return this.callFunction<number>('hermite', [x0, x1, x2, x3, mu])
+  }
+  linearClipped = (
+    data: number[],
+    index: number,
+    defaultValue: number = 0,
+  ): Promise<number> => {
+    return this.callFunction<number>('linearClipped', [
+      data,
+      index,
+      defaultValue,
+    ])
+  }
+  hermiteClipped = (
+    data: number[],
+    index: number,
+    defaultValue: number = 0,
+  ): Promise<number> => {
+    return this.callFunction<number>('hermiteClipped', [
+      data,
+      index,
+      defaultValue,
+    ])
+  }
+  linearWrapped = (
+    data: number[],
+    index: number,
+    defaultValue: number = 0,
+  ): Promise<number> => {
+    return this.callFunction<number>('linearWrapped', [
+      data,
+      index,
+      defaultValue,
+    ])
+  }
+  hermiteWrapped = (
+    data: number[],
+    index: number,
+    defaultValue: number = 0,
+  ): Promise<number> => {
+    return this.callFunction<number>('hermiteWrapped', [
+      data,
+      index,
+      defaultValue,
+    ])
   }
   createBuffer = async (
     options: Options<'Buffer'> = {} as Options<'Buffer'>,

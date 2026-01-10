@@ -17,22 +17,30 @@ export type AudioModule = GlobalFunctionMap & ObjectConstructorMap
 
 export type GlobalFunctionMap = {
   byteToUnipolar: (value: number) => number
-  unipolarToByte: (value: number) => number
-  shortToUnipolar: (value: number) => number
-  unipolarToShort: (value: number) => number
-  clip: (value: number, min: number, max: number) => number
-  wrap: (value: number, max: number) => number
-  linear: (
-    data: Float64Array,
-    size: number,
-    index: number,
-    defaultValue?: number,
-  ) => number
+  unipolarToByte: (sample: number) => number
+  shortToBipolar: (value: number) => number
+  bipolarToShort: (sample: number) => number
+  clip: (sample: number, min: number, max: number) => number
+  wrap: (sample: number, max: number) => number
+  linear: (x1: number, x2: number, mu: number) => number
   hermite: (
-    data: Float64Array,
-    size: number,
+    x0: number,
+    x1: number,
+    x2: number,
+    x3: number,
+    mu: number,
+  ) => number
+  linearClipped: (data: number[], index: number, defaultValue: number) => number
+  hermiteClipped: (
+    data: number[],
     index: number,
-    defaultValue?: number,
+    defaultValue: number,
+  ) => number
+  linearWrapped: (data: number[], index: number, defaultValue: number) => number
+  hermiteWrapped: (
+    data: number[],
+    index: number,
+    defaultValue: number,
   ) => number
 }
 
@@ -450,6 +458,12 @@ export type RequestMessage<T extends ObjectType> =
       requestId: string
       objectType: string
       methodName: string
+      args: SerializedValue[]
+    }
+  | {
+      message: 'callFunction'
+      requestId: string
+      functionName: string
       args: SerializedValue[]
     }
   | {
@@ -1128,28 +1142,22 @@ export type SampleRate = Producer
 
 // ========== Utility Classes ==========
 
+export type RealImaginary = {
+  real: number[]
+  imaginary: number[]
+}
+
+export type MagnitudePhase = {
+  magnitude: number[]
+  phase: number[]
+}
+
 export type NormalizedFFT = Deletable & {
   setup: (size: number) => void
   getSize: () => number
   getComplexSize: () => number
-  toRealImaginary: (
-    timeChannel: Float64Array,
-    realChannel: Float64Array,
-    imaginaryChannel: Float64Array,
-  ) => void
-  fromRealImaginary: (
-    realChannel: Float64Array,
-    imaginaryChannel: Float64Array,
-    timeChannel: Float64Array,
-  ) => void
-  toMagnitudePhase: (
-    timeChannel: Float64Array,
-    magnitudeChannel: Float64Array,
-    phaseChannel: Float64Array,
-  ) => void
-  fromMagnitudePhase: (
-    magnitudeChannel: Float64Array,
-    phaseChannel: Float64Array,
-    timeChannel: Float64Array,
-  ) => void
+  toRealImaginary: (time: number[]) => RealImaginary
+  fromRealImaginary: (real: number[], imaginary: number[]) => number[]
+  toMagnitudePhase: (time: number[]) => MagnitudePhase
+  fromMagnitudePhase: (magnitude: number[], phase: number[]) => number[]
 }

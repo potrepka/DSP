@@ -1,5 +1,5 @@
 import { chainable } from '../../../helpers/proxy'
-import { Target } from '../../../types/module'
+import { MagnitudePhase, RealImaginary, Target } from '../../../types/module'
 import { Chainable, ProxyContext } from '../../../types/proxy'
 import { BaseProxy } from './BaseProxy'
 
@@ -16,32 +16,22 @@ export class NormalizedFFTProxy extends BaseProxy {
   getComplexSize = (): Chainable<number> => {
     return chainable(this.call('getComplexSize', []))
   }
-  toRealImaginary = (
-    _input: unknown,
-    _real: unknown,
-    _imaginary: unknown,
-  ): never => {
-    throw new Error('toRealImaginary is not implemented')
+  toRealImaginary = (time: number[]): Chainable<RealImaginary> => {
+    return chainable(this.call('toRealImaginary', [time]))
   }
   fromRealImaginary = (
-    _real: unknown,
-    _imaginary: unknown,
-    _output: unknown,
-  ): never => {
-    throw new Error('fromRealImaginary is not implemented')
+    real: number[],
+    imaginary: number[],
+  ): Chainable<number[]> => {
+    return chainable(this.call('fromRealImaginary', [real, imaginary]))
   }
-  toMagnitudePhase = (
-    _input: unknown,
-    _magnitude: unknown,
-    _phase: unknown,
-  ): never => {
-    throw new Error('toMagnitudePhase is not implemented')
+  toMagnitudePhase = (time: number[]): Chainable<MagnitudePhase> => {
+    return chainable(this.call('toMagnitudePhase', [time]))
   }
   fromMagnitudePhase = (
-    _magnitude: unknown,
-    _phase: unknown,
-    _output: unknown,
-  ): never => {
-    throw new Error('fromMagnitudePhase is not implemented')
+    magnitude: number[],
+    phase: number[],
+  ): Chainable<number[]> => {
+    return chainable(this.call('fromMagnitudePhase', [magnitude, phase]))
   }
 }

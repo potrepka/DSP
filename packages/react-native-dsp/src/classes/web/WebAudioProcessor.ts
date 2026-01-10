@@ -151,6 +151,11 @@ class WebAudioProcessor extends AudioWorkletProcessor {
         this.callStatic(requestId, objectType, methodName, args)
         break
       }
+      case 'callFunction': {
+        const { requestId, functionName, args } = data
+        this.callFunction(requestId, functionName, args)
+        break
+      }
       case 'call': {
         const { requestId, target, methodName, args } = data
         this.call(requestId, target, methodName, args)
@@ -256,6 +261,31 @@ class WebAudioProcessor extends AudioWorkletProcessor {
       }
       const resolvedArgs = args.map((arg) => this.deserialize(arg))
       const result = method.apply(null, resolvedArgs)
+      this.sendMessage({
+        message: 'response',
+        requestId,
+        result: this.serialize(result, undefined),
+      })
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error)
+      this.sendMessage({ message: 'response', requestId, error: errorMessage })
+    }
+  }
+
+  private callFunction = (
+    requestId: string,
+    functionName: string,
+    args: SerializedValue[],
+  ) => {
+    this.assertReady()
+    try {
+      const fn = (this.module as Record<string, unknown>)[functionName]
+      if (typeof fn !== 'function') {
+        throw new Error(`Function not found: ${functionName}`)
+      }
+      const resolvedArgs = args.map((arg) => this.deserialize(arg))
+      const result = fn.apply(null, resolvedArgs)
       this.sendMessage({
         message: 'response',
         requestId,
