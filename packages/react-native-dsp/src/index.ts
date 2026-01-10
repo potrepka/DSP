@@ -143,6 +143,7 @@ export type {
   Spread,
   StereoPanner,
   TableOscillator,
+  TableShaper,
   Target,
   Transformer,
   TriggerHold,

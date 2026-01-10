@@ -183,6 +183,14 @@ export const createObject = <T extends ObjectType>(
       reference = new module.Shaper(space ?? Space.TIME)
       break
     }
+    case 'TableShaper': {
+      const { outputType, space } = options as Options<'TableShaper'>
+      reference = new module.TableShaper(
+        outputType ?? Type.RATIO,
+        space ?? Space.TIME,
+      )
+      break
+    }
 
     // External Nodes
     case 'MidiInput': {

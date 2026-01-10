@@ -63,6 +63,7 @@ import { ShaperProxy } from './nodes/ShaperProxy'
 import { SpreadProxy } from './nodes/SpreadProxy'
 import { StereoPannerProxy } from './nodes/StereoPannerProxy'
 import { TableOscillatorProxy } from './nodes/TableOscillatorProxy'
+import { TableShaperProxy } from './nodes/TableShaperProxy'
 import { TriggerHoldProxy } from './nodes/TriggerHoldProxy'
 import { TrigonometricProxy } from './nodes/TrigonometricProxy'
 import { VariableDelayProxy } from './nodes/VariableDelayProxy'
@@ -379,6 +380,12 @@ export class DSP {
   createShaper = async (options?: Options<'Shaper'>): Promise<ShaperProxy> => {
     const target = await this.createObject('Shaper', options)
     return new ShaperProxy(this.#context, target)
+  }
+  createTableShaper = async (
+    options?: Options<'TableShaper'>,
+  ): Promise<TableShaperProxy> => {
+    const target = await this.createObject('TableShaper', options)
+    return new TableShaperProxy(this.#context, target)
   }
   createMidiInput = async (
     options?: Options<'MidiInput'>,

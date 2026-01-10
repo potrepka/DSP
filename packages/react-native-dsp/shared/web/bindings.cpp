@@ -738,6 +738,20 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getOutputSample", select_overload<Sample(size_t, Sample)>(
                                        &Shaper::getOutputSample));
 
+  // TableShaper
+  class_<TableShaper, base<Transformer>>("TableShaper")
+      .smart_ptr<std::shared_ptr<TableShaper>>("TableShaper")
+      .constructor(&std::make_shared<TableShaper, Type, Space>)
+      .function("getTables", &TableShaper::getTables,
+                return_value_policy::reference())
+      .function("getInputInterpolation", &TableShaper::getInputInterpolation)
+      .function("setInputInterpolation", &TableShaper::setInputInterpolation)
+      .function("getPositionInterpolation",
+                &TableShaper::getPositionInterpolation)
+      .function("setPositionInterpolation",
+                &TableShaper::setPositionInterpolation)
+      .function("getPosition", &TableShaper::getPosition);
+
   // ========== External Nodes ==========
 
   // MidiInput

@@ -177,6 +177,7 @@ export type NodeConstructorMap = {
   Envelope: new () => Envelope
   Lag: new (type: Type) => Lag
   Shaper: new (space: Space) => Shaper
+  TableShaper: new (outputType: Type, space: Space) => TableShaper
 
   // External Nodes
   MidiInput: new (midiBuffer: MidiBuffer, type: Type) => MidiInput
@@ -339,6 +340,7 @@ type OptionsMap = {
   Envelope: unknown
   Lag: { type: Type }
   Shaper: { space: Space }
+  TableShaper: { outputType: Type; space: Space }
 
   // Nodes - External
   MidiInput: { midiBuffer: MidiBuffer; type: Type }
@@ -873,6 +875,15 @@ export type Shaper = Transformer & {
   setMode: (mode: ShaperMode) => void
   getDrive: () => Input
   getOutputSample: (channel: number, input: number) => number
+}
+
+export type TableShaper = Transformer & {
+  getTables: () => BufferVector
+  getInputInterpolation: () => Interpolation
+  setInputInterpolation: (interpolation: Interpolation) => void
+  getPositionInterpolation: () => Interpolation
+  setPositionInterpolation: (interpolation: Interpolation) => void
+  getPosition: () => Input
 }
 
 // ========== External Nodes ==========
