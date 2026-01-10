@@ -137,8 +137,8 @@ void dsp::Biquad::processNoLock() {
 void dsp::Biquad::calculateCoefficients(
     const Sample sampleRate, const Sample oneOverSampleRate,
     const Sample& frequency, const Sample& resonance, const Sample& amplitude,
-    const Mode mode, Sample& a0, Sample& a1, Sample& a2, Sample& b0,
-    Sample& b1, Sample& b2) {
+    const Mode mode, Sample& a0, Sample& a1, Sample& a2, Sample& b0, Sample& b1,
+    Sample& b2) {
   const Sample posResonance = abs(resonance);
   const Sample posAmplitude = abs(amplitude);
   if (posResonance == 0.0 || posAmplitude == 0.0) {

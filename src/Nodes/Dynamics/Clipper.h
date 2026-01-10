@@ -13,16 +13,16 @@ public:
   Mode getMode() const;
   void setMode(Mode mode);
 
-  std::shared_ptr<Input> getMin() const;
-  std::shared_ptr<Input> getMax() const;
+  std::shared_ptr<Input> getMinimum() const;
+  std::shared_ptr<Input> getMaximum() const;
 
 protected:
   void processNoLock() override;
 
 private:
   Mode mode;
-  std::shared_ptr<Input> min;
-  std::shared_ptr<Input> max;
+  std::shared_ptr<Input> minimum;
+  std::shared_ptr<Input> maximum;
 };
 
 } // namespace dsp

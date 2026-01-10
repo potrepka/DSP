@@ -24,33 +24,84 @@ dsp::Sample dsp::wrap(const Sample signal, const Sample max) {
   return max == 0.0 ? 0.0 : signal - floor(signal / max) * max;
 }
 
-dsp::Sample dsp::linear(Sample* data, const size_t length, const Sample index,
-                        const Sample defaultValue) {
-  DSP_ASSERT(index >= 0.0);
-  if (length == 0) {
-    return defaultValue;
-  }
-  size_t indexFloor = static_cast<size_t>(index);
-  Sample mu = index - indexFloor;
-  Sample x1 = data[indexFloor % length];
-  Sample x2 = data[(indexFloor + 1) % length];
+dsp::Sample dsp::linear(const Sample x1, const Sample x2, const Sample mu) {
   return x1 + mu * (x2 - x1);
 }
 
-dsp::Sample dsp::hermite(Sample* data, const size_t length, const Sample index,
-                         const Sample defaultValue) {
-  DSP_ASSERT(index >= 0.0);
-  if (length == 0) {
-    return defaultValue;
-  }
-  size_t indexFloor = static_cast<size_t>(index);
-  Sample mu = index - indexFloor;
-  Sample x0 = data[(indexFloor + length - 1) % length];
-  Sample x1 = data[indexFloor % length];
-  Sample x2 = data[(indexFloor + 1) % length];
-  Sample x3 = data[(indexFloor + 2) % length];
+dsp::Sample dsp::hermite(const Sample x0, const Sample x1, const Sample x2,
+                         const Sample x3, const Sample mu) {
   Sample a = 0.5 * (3.0 * (x1 - x2) - x0 + x3);
   Sample b = x2 + x2 + x0 - 0.5 * (5.0 * x1 + x3);
   Sample c = 0.5 * (x2 - x0);
   return ((a * mu + b) * mu + c) * mu + x1;
+}
+
+dsp::Sample dsp::linearClipped(Sample* data, const size_t size,
+                               const Sample index, const Sample defaultValue) {
+  if (size == 0) {
+    return defaultValue;
+  }
+  size_t lastIndex = size - 1;
+  Sample clippedIndex = clip(index, 0.0, static_cast<Sample>(lastIndex));
+  size_t indexFloor = static_cast<size_t>(clippedIndex);
+  size_t i0 = indexFloor;
+  size_t i1 = indexFloor < lastIndex ? indexFloor + 1 : lastIndex;
+  Sample x0 = data[i0];
+  Sample x1 = data[i1];
+  Sample mu = clippedIndex - static_cast<Sample>(indexFloor);
+  return linear(x0, x1, mu);
+}
+
+dsp::Sample dsp::hermiteClipped(Sample* data, const size_t size,
+                                const Sample index, const Sample defaultValue) {
+  if (size == 0) {
+    return defaultValue;
+  }
+  size_t lastIndex = size - 1;
+  Sample clippedIndex = clip(index, 0.0, static_cast<Sample>(lastIndex));
+  size_t indexFloor = static_cast<size_t>(clippedIndex);
+  size_t i0 = indexFloor > 0 ? indexFloor - 1 : 0;
+  size_t i1 = indexFloor;
+  size_t i2 = indexFloor < lastIndex ? indexFloor + 1 : lastIndex;
+  size_t i3 = indexFloor + 1 < lastIndex ? indexFloor + 2 : lastIndex;
+  Sample x0 = data[i0];
+  Sample x1 = data[i1];
+  Sample x2 = data[i2];
+  Sample x3 = data[i3];
+  Sample mu = clippedIndex - static_cast<Sample>(indexFloor);
+  return hermite(x0, x1, x2, x3, mu);
+}
+
+dsp::Sample dsp::linearWrapped(Sample* data, const size_t size,
+                               const Sample index, const Sample defaultValue) {
+  if (size == 0) {
+    return defaultValue;
+  }
+  Sample wrappedIndex = wrap(index, static_cast<Sample>(size));
+  size_t indexFloor = static_cast<size_t>(wrappedIndex);
+  size_t i1 = indexFloor % size;
+  size_t i2 = (indexFloor + 1) % size;
+  Sample x1 = data[i1];
+  Sample x2 = data[i2];
+  Sample mu = wrappedIndex - static_cast<Sample>(indexFloor);
+  return linear(x1, x2, mu);
+}
+
+dsp::Sample dsp::hermiteWrapped(Sample* data, const size_t size,
+                                const Sample index, const Sample defaultValue) {
+  if (size == 0) {
+    return defaultValue;
+  }
+  Sample wrappedIndex = wrap(index, static_cast<Sample>(size));
+  size_t indexFloor = static_cast<size_t>(wrappedIndex);
+  size_t i0 = (indexFloor + size - 1) % size;
+  size_t i1 = indexFloor % size;
+  size_t i2 = (indexFloor + 1) % size;
+  size_t i3 = (indexFloor + 2) % size;
+  Sample x0 = data[i0];
+  Sample x1 = data[i1];
+  Sample x2 = data[i2];
+  Sample x3 = data[i3];
+  Sample mu = wrappedIndex - static_cast<Sample>(indexFloor);
+  return hermite(x0, x1, x2, x3, mu);
 }

@@ -1,8 +1,7 @@
 ﻿#include "BooleanMask.h"
 
 dsp::BooleanMask::BooleanMask(Type type, Space space)
-    : Transformer(type, space),
-      mask(std::make_shared<Input>(Type::BOOLEAN)) {
+    : Transformer(type, space), mask(std::make_shared<Input>(Type::BOOLEAN)) {
   getInputs().push_back(mask);
 }
 

@@ -7,17 +7,17 @@ dsp::Transformer::Transformer(Type type, Space space)
   getOutputs().push_back(output);
 }
 
-dsp::Transformer::Transformer(Type inType, Type outType, Space space)
-    : input(std::make_shared<Input>(inType, space)),
-      output(std::make_shared<Output>(outType, space)) {
+dsp::Transformer::Transformer(Type inputType, Type outputType, Space space)
+    : input(std::make_shared<Input>(inputType, space)),
+      output(std::make_shared<Output>(outputType, space)) {
   getInputs().push_back(input);
   getOutputs().push_back(output);
 }
 
-dsp::Transformer::Transformer(Type inType, Type outType, Space inSpace,
+dsp::Transformer::Transformer(Type inputType, Type outputType, Space inSpace,
                               Space outSpace)
-    : input(std::make_shared<Input>(inType, inSpace)),
-      output(std::make_shared<Output>(outType, outSpace)) {
+    : input(std::make_shared<Input>(inputType, inSpace)),
+      output(std::make_shared<Output>(outputType, outSpace)) {
   getInputs().push_back(input);
   getOutputs().push_back(output);
 }

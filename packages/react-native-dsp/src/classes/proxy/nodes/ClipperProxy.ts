@@ -15,6 +15,6 @@ export class ClipperProxy extends TransformerProxy {
   setMode = (mode: ClipperMode): Chainable<void> => {
     return chainable(this.call('setMode', [mode]))
   }
-  getMin = (): Chainable<InputProxy> => this.createInput('Min')
-  getMax = (): Chainable<InputProxy> => this.createInput('Max')
+  getMinimum = (): Chainable<InputProxy> => this.createInput('Minimum')
+  getMaximum = (): Chainable<InputProxy> => this.createInput('Maximum')
 }

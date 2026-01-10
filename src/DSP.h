@@ -24,6 +24,7 @@
 #include "Nodes/Dynamics/Envelope.h"
 #include "Nodes/Dynamics/Lag.h"
 #include "Nodes/Dynamics/Shaper.h"
+#include "Nodes/Dynamics/TableShaper.h"
 #include "Nodes/External/MidiInput.h"
 #include "Nodes/External/MidiOutput.h"
 #include "Nodes/Filters/Biquad.h"

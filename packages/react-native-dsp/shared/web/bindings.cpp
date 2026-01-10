@@ -136,8 +136,12 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   function("bipolarToShort", &bipolarToShort);
   function("clip", &clip);
   function("wrap", &wrap);
-  function("linear", &linear, allow_raw_pointers());
-  function("hermite", &hermite, allow_raw_pointers());
+  function("linear", &linear);
+  function("hermite", &hermite);
+  function("linearClipped", &linearClipped, allow_raw_pointers());
+  function("hermiteClipped", &hermiteClipped, allow_raw_pointers());
+  function("linearWrapped", &linearWrapped, allow_raw_pointers());
+  function("hermiteWrapped", &hermiteWrapped, allow_raw_pointers());
 
   // ========== Vectors ==========
 
@@ -676,8 +680,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .constructor(&std::make_shared<Clipper, Type, Space>)
       .function("getMode", &Clipper::getMode)
       .function("setMode", &Clipper::setMode)
-      .function("getMin", &Clipper::getMin)
-      .function("getMax", &Clipper::getMax);
+      .function("getMinimum", &Clipper::getMinimum)
+      .function("getMaximum", &Clipper::getMaximum);
 
   // CompressorGate
   class_<CompressorGate, base<Transformer>>("CompressorGate")

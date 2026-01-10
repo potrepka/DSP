@@ -1,14 +1,13 @@
 ﻿#include "Identity.h"
 
-dsp::Identity::Identity(Type type, Space space)
-    : Transformer(type, space) {}
+dsp::Identity::Identity(Type type, Space space) : Transformer(type, space) {}
 
-dsp::Identity::Identity(Type inType, Type outType, Space space)
-    : Transformer(inType, outType, space) {}
+dsp::Identity::Identity(Type inputType, Type outputType, Space space)
+    : Transformer(inputType, outputType, space) {}
 
-dsp::Identity::Identity(Type inType, Type outType, Space inSpace,
+dsp::Identity::Identity(Type inputType, Type outputType, Space inSpace,
                         Space outSpace)
-    : Transformer(inType, outType, inSpace, outSpace) {}
+    : Transformer(inputType, outputType, inSpace, outSpace) {}
 
 void dsp::Identity::processNoLock() {
   getOutput()->getWrapper().copyFrom(getInput()->getWrapper());

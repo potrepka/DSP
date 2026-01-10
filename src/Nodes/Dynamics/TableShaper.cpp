@@ -1,49 +1,42 @@
-﻿#include "TableOscillator.h"
+#include "TableShaper.h"
 
-dsp::TableOscillator::TableOscillator(Type type)
-    : Producer(type),
-      phaseInterpolation(Interpolation::LINEAR),
+dsp::TableShaper::TableShaper(Type outputType, Space space)
+    : Transformer(Type::RATIO, outputType, space),
+      inputInterpolation(Interpolation::LINEAR),
       positionInterpolation(Interpolation::LINEAR),
-      phase(std::make_shared<Input>(Type::RATIO)),
       position(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0)) {
-  getInputs().push_back(phase);
   getInputs().push_back(position);
 }
 
-std::vector<std::shared_ptr<dsp::Buffer>>& dsp::TableOscillator::getTables() {
+std::vector<std::shared_ptr<dsp::Buffer>>& dsp::TableShaper::getTables() {
   return tables;
 }
 
-dsp::Interpolation dsp::TableOscillator::getPhaseInterpolation() const {
-  return phaseInterpolation;
+dsp::Interpolation dsp::TableShaper::getInputInterpolation() const {
+  return inputInterpolation;
 }
 
-void dsp::TableOscillator::setPhaseInterpolation(Interpolation interpolation) {
+void dsp::TableShaper::setInputInterpolation(Interpolation interpolation) {
   lock();
-  this->phaseInterpolation = interpolation;
+  this->inputInterpolation = interpolation;
   unlock();
 }
 
-dsp::Interpolation dsp::TableOscillator::getPositionInterpolation() const {
+dsp::Interpolation dsp::TableShaper::getPositionInterpolation() const {
   return positionInterpolation;
 }
 
-void dsp::TableOscillator::setPositionInterpolation(
-    Interpolation interpolation) {
+void dsp::TableShaper::setPositionInterpolation(Interpolation interpolation) {
   lock();
   this->positionInterpolation = interpolation;
   unlock();
 }
 
-std::shared_ptr<dsp::Input> dsp::TableOscillator::getPhase() const {
-  return phase;
-}
-
-std::shared_ptr<dsp::Input> dsp::TableOscillator::getPosition() const {
+std::shared_ptr<dsp::Input> dsp::TableShaper::getPosition() const {
   return position;
 }
 
-void dsp::TableOscillator::processNoLock() {
+void dsp::TableShaper::processNoLock() {
   if (tables.size() > 0) {
     for (const auto& table : tables) {
       if (table != nullptr) {
@@ -63,8 +56,8 @@ void dsp::TableOscillator::processNoLock() {
         break;
     }
     for (size_t channel = 0; channel < getNumChannels(); ++channel) {
-      Sample* phaseChannel =
-          getPhase()->getWrapper().getChannelPointer(channel);
+      Sample* inputChannel =
+          getInput()->getWrapper().getChannelPointer(channel);
       Sample* positionChannel =
           getPosition()->getWrapper().getChannelPointer(channel);
       Sample* outputChannel =
@@ -82,20 +75,21 @@ void dsp::TableOscillator::processNoLock() {
           if (p < tables.size() && tables[p] != nullptr) {
             size_t numChannels = tables[p]->getNumChannels();
             size_t numSamples = tables[p]->getNumSamples();
-            if (numChannels > 0) {
+            if (numChannels > 0 && numSamples > 1) {
               size_t c = channel % numChannels;
               Sample* table = tables[p]->getWrapper().getChannelPointer(c);
-              Sample index = wrap(phaseChannel[sample], 1.0) * numSamples;
-              switch (phaseInterpolation) {
+              Sample clippedInput = clip(inputChannel[sample], -1.0, 1.0);
+              Sample index = 0.5 * (clippedInput + 1.0) * (numSamples - 1);
+              switch (inputInterpolation) {
                 case Interpolation::NONE:
-                  samples[j] = table[static_cast<size_t>(index)];
+                  samples[j] = table[static_cast<size_t>(index + 0.5)];
                   break;
                 case Interpolation::LINEAR:
-                  samples[j] = linearWrapped(table, numSamples, index,
+                  samples[j] = linearClipped(table, numSamples, index,
                                              tables[p]->getChannelValue(c));
                   break;
                 case Interpolation::HERMITE:
-                  samples[j] = hermiteWrapped(table, numSamples, index,
+                  samples[j] = hermiteClipped(table, numSamples, index,
                                               tables[p]->getChannelValue(c));
                   break;
               }

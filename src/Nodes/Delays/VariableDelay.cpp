@@ -126,10 +126,10 @@ void dsp::VariableDelay::processNoLock() {
             readIndex += getBuffer()->getNumSamples();
           }
           if (delayTimeClipped[channel] <= getOneOverSampleRate()) {
-            output[channel][sample] = linear(
+            output[channel][sample] = linearWrapped(
                 buffer[channel], getBuffer()->getNumSamples(), readIndex);
           } else {
-            output[channel][sample] = hermite(
+            output[channel][sample] = hermiteWrapped(
                 buffer[channel], getBuffer()->getNumSamples(), readIndex);
           }
         }

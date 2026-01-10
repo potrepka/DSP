@@ -828,8 +828,8 @@ export type VariableDelay = Transformer & {
 export type Clipper = Transformer & {
   getMode: () => ClipperMode
   setMode: (mode: ClipperMode) => void
-  getMin: () => Input
-  getMax: () => Input
+  getMinimum: () => Input
+  getMaximum: () => Input
 }
 
 export type CompressorGate = Transformer & {

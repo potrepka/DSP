@@ -48,8 +48,7 @@ void dsp::Shaper::processNoLock() {
 }
 
 dsp::Sample dsp::Shaper::getOutputSample(const Sample& input,
-                                         const Sample& drive,
-                                         const Mode mode) {
+                                         const Sample& drive, const Mode mode) {
   bool driveIsNegative = drive < 0.0;
   Sample clipped = clip(driveIsNegative ? -input : input, -1.0, 1.0);
   if (drive == 0.0) {

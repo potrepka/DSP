@@ -105,7 +105,8 @@ void dsp::SamplePlayer::processNoLock() {
                   points.resize(2);
                   points[0] = sampleChannel[k0];
                   points[1] = sampleChannel[k1];
-                  outputChannel[sample] = linear(points.data(), 2, index - k0);
+                  outputChannel[sample] =
+                      linearClipped(points.data(), 2, index - k0);
                 } break;
                 case Interpolation::HERMITE: {
                   size_t k1 = static_cast<size_t>(index);
@@ -118,7 +119,7 @@ void dsp::SamplePlayer::processNoLock() {
                   points[2] = sampleChannel[k2];
                   points[3] = sampleChannel[k3];
                   outputChannel[sample] =
-                      hermite(points.data(), 4, 1.0 + index - k1);
+                      hermiteClipped(points.data(), 4, 1.0 + index - k1);
                 } break;
               }
               currentTimeChannel[sample] = index * getOneOverSampleRate();

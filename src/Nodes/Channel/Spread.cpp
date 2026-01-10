@@ -32,9 +32,9 @@ void dsp::Spread::processNoLock() {
       Sample& input = inputChannel[sample];
       Sample& spread = spreadChannel[sample];
       Sample& output = outputChannel[sample];
-      output = input + spread * (numChannelsMinusOne > 0
-                                     ? amount - 0.5 * modeValue
-                                     : amount);
+      output =
+          input + spread * (numChannelsMinusOne > 0 ? amount - 0.5 * modeValue
+                                                    : amount);
     }
   }
 }
