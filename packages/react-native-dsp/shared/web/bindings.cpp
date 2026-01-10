@@ -41,13 +41,15 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .value("FREQUENCY", Space::FREQUENCY);
 
   // Shape
-  constant("SHAPE_LINEAR", Shape::LINEAR);
-  constant("SHAPE_EXPONENTIAL", Shape::EXPONENTIAL);
+  enum_<Shape>("Shape")
+      .value("LINEAR", Shape::LINEAR)
+      .value("EXPONENTIAL", Shape::EXPONENTIAL);
 
   // Interpolation
-  constant("INTERPOLATION_NONE", Interpolation::NONE);
-  constant("INTERPOLATION_LINEAR", Interpolation::LINEAR);
-  constant("INTERPOLATION_HERMITE", Interpolation::HERMITE);
+  enum_<Interpolation>("Interpolation")
+      .value("NONE", Interpolation::NONE)
+      .value("LINEAR", Interpolation::LINEAR)
+      .value("HERMITE", Interpolation::HERMITE);
 
   // Input::Mode
   enum_<Input::Mode>("InputMode")
@@ -64,49 +66,67 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .value("VARIABLE", Recorder::Mode::VARIABLE);
 
   // Spread::Mode
-  constant("SPREAD_MODE_UNIPOLAR", Spread::Mode::UNIPOLAR);
-  constant("SPREAD_MODE_BIPOLAR", Spread::Mode::BIPOLAR);
+  enum_<Spread::Mode>("SpreadMode")
+      .value("UNIPOLAR", Spread::Mode::UNIPOLAR)
+      .value("BIPOLAR", Spread::Mode::BIPOLAR);
 
   // Clipper::Mode
-  constant("CLIPPER_MODE_CLIP", Clipper::Mode::CLIP);
-  constant("CLIPPER_MODE_WRAP", Clipper::Mode::WRAP);
-  constant("CLIPPER_MODE_FOLD", Clipper::Mode::FOLD);
+  enum_<Clipper::Mode>("ClipperMode")
+      .value("CLIP", Clipper::Mode::CLIP)
+      .value("WRAP", Clipper::Mode::WRAP)
+      .value("FOLD", Clipper::Mode::FOLD);
 
   // Shaper::Mode
-  constant("SHAPER_MODE_HYPERBOLIC", Shaper::Mode::HYPERBOLIC);
-  constant("SHAPER_MODE_RATIONAL", Shaper::Mode::RATIONAL);
+  enum_<Shaper::Mode>("ShaperMode")
+      .value("HYPERBOLIC", Shaper::Mode::HYPERBOLIC)
+      .value("RATIONAL", Shaper::Mode::RATIONAL);
 
   // Biquad::Mode
-  constant("BIQUAD_MODE_LOW_PASS", Biquad::Mode::LOW_PASS);
-  constant("BIQUAD_MODE_HIGH_PASS", Biquad::Mode::HIGH_PASS);
-  constant("BIQUAD_MODE_BAND_PASS", Biquad::Mode::BAND_PASS);
-  constant("BIQUAD_MODE_BAND_STOP", Biquad::Mode::BAND_STOP);
-  constant("BIQUAD_MODE_LOW_SHELF", Biquad::Mode::LOW_SHELF);
-  constant("BIQUAD_MODE_HIGH_SHELF", Biquad::Mode::HIGH_SHELF);
-  constant("BIQUAD_MODE_PEAK", Biquad::Mode::PEAK);
-  constant("BIQUAD_MODE_ALL_PASS", Biquad::Mode::ALL_PASS);
+  enum_<Biquad::Mode>("BiquadMode")
+      .value("LOW_PASS", Biquad::Mode::LOW_PASS)
+      .value("HIGH_PASS", Biquad::Mode::HIGH_PASS)
+      .value("BAND_PASS", Biquad::Mode::BAND_PASS)
+      .value("BAND_STOP", Biquad::Mode::BAND_STOP)
+      .value("LOW_SHELF", Biquad::Mode::LOW_SHELF)
+      .value("HIGH_SHELF", Biquad::Mode::HIGH_SHELF)
+      .value("PEAK", Biquad::Mode::PEAK)
+      .value("ALL_PASS", Biquad::Mode::ALL_PASS);
 
   // OnePole::Mode
-  constant("ONEPOLE_MODE_LOW_PASS", OnePole::Mode::LOW_PASS);
-  constant("ONEPOLE_MODE_HIGH_PASS", OnePole::Mode::HIGH_PASS);
+  enum_<OnePole::Mode>("OnePoleMode")
+      .value("LOW_PASS", OnePole::Mode::LOW_PASS)
+      .value("HIGH_PASS", OnePole::Mode::HIGH_PASS);
 
   // Noise::Mode
-  constant("NOISE_MODE_WHITE", Noise::Mode::WHITE);
-  constant("NOISE_MODE_PINK", Noise::Mode::PINK);
+  enum_<Noise::Mode>("NoiseMode")
+      .value("WHITE", Noise::Mode::WHITE)
+      .value("PINK", Noise::Mode::PINK);
 
   // Phasor::Mode
-  constant("PHASOR_MODE_WRAPPED", Phasor::Mode::WRAPPED);
-  constant("PHASOR_MODE_UNBOUNDED", Phasor::Mode::UNBOUNDED);
+  enum_<Phasor::Mode>("PhasorMode")
+      .value("WRAPPED", Phasor::Mode::WRAPPED)
+      .value("UNBOUNDED", Phasor::Mode::UNBOUNDED);
+
+  // Comparison::Mode
+  enum_<Comparison::Mode>("ComparisonMode")
+      .value("EQUAL", Comparison::Mode::EQUAL)
+      .value("NOT_EQUAL", Comparison::Mode::NOT_EQUAL)
+      .value("LESS_THAN", Comparison::Mode::LESS_THAN)
+      .value("LESS_THAN_OR_EQUAL", Comparison::Mode::LESS_THAN_OR_EQUAL)
+      .value("GREATER_THAN", Comparison::Mode::GREATER_THAN)
+      .value("GREATER_THAN_OR_EQUAL", Comparison::Mode::GREATER_THAN_OR_EQUAL);
 
   // Hyperbolic::Mode
-  constant("HYPERBOLIC_MODE_SINE", Hyperbolic::Mode::SINE);
-  constant("HYPERBOLIC_MODE_COSINE", Hyperbolic::Mode::COSINE);
-  constant("HYPERBOLIC_MODE_TANGENT", Hyperbolic::Mode::TANGENT);
+  enum_<Hyperbolic::Mode>("HyperbolicMode")
+      .value("SINE", Hyperbolic::Mode::SINE)
+      .value("COSINE", Hyperbolic::Mode::COSINE)
+      .value("TANGENT", Hyperbolic::Mode::TANGENT);
 
   // Trigonometric::Mode
-  constant("TRIGONOMETRIC_MODE_SINE", Trigonometric::Mode::SINE);
-  constant("TRIGONOMETRIC_MODE_COSINE", Trigonometric::Mode::COSINE);
-  constant("TRIGONOMETRIC_MODE_TANGENT", Trigonometric::Mode::TANGENT);
+  enum_<Trigonometric::Mode>("TrigonometricMode")
+      .value("SINE", Trigonometric::Mode::SINE)
+      .value("COSINE", Trigonometric::Mode::COSINE)
+      .value("TANGENT", Trigonometric::Mode::TANGENT);
 
   // ========== Global Functions ==========
 
@@ -609,8 +629,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<Spread, base<Transformer>>("Spread")
       .smart_ptr<std::shared_ptr<Spread>>("Spread")
       .constructor(&std::make_shared<Spread, Type, Space>)
-      .function("getSpread", &Spread::getSpread)
-      .function("getMode", &Spread::getMode);
+      .function("getMode", &Spread::getMode)
+      .function("setMode", &Spread::setMode)
+      .function("getSpread", &Spread::getSpread);
 
   // StereoPanner
   class_<StereoPanner, base<Consumer>>("StereoPanner")
@@ -653,9 +674,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<Clipper, base<Transformer>>("Clipper")
       .smart_ptr<std::shared_ptr<Clipper>>("Clipper")
       .constructor(&std::make_shared<Clipper, Type, Space>)
+      .function("getMode", &Clipper::getMode)
+      .function("setMode", &Clipper::setMode)
       .function("getMin", &Clipper::getMin)
-      .function("getMax", &Clipper::getMax)
-      .function("getMode", &Clipper::getMode);
+      .function("getMax", &Clipper::getMax);
 
   // CompressorGate
   class_<CompressorGate, base<Transformer>>("CompressorGate")
@@ -686,10 +708,12 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<Envelope, base<Producer>>("Envelope")
       .smart_ptr<std::shared_ptr<Envelope>>("Envelope")
       .constructor(&std::make_shared<Envelope>)
+      .function("getAttackShape", &Envelope::getAttackShape)
+      .function("setAttackShape", &Envelope::setAttackShape)
+      .function("getReleaseShape", &Envelope::getReleaseShape)
+      .function("setReleaseShape", &Envelope::setReleaseShape)
       .function("getAttack", &Envelope::getAttack)
       .function("getRelease", &Envelope::getRelease)
-      .function("getAttackShape", &Envelope::getAttackShape)
-      .function("getReleaseShape", &Envelope::getReleaseShape)
       .function("getGate", &Envelope::getGate)
       .function("getReset", &Envelope::getReset)
       .function("getCurrentTime", &Envelope::getCurrentTime);
@@ -704,10 +728,11 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<Shaper, base<Transformer>>("Shaper")
       .smart_ptr<std::shared_ptr<Shaper>>("Shaper")
       .constructor(&std::make_shared<Shaper, Space>)
-      .function("getDrive", &Shaper::getDrive)
       .function("getMode", &Shaper::getMode)
-      .function("getOutputSignal", select_overload<Sample(size_t, Sample)>(
-                                       &Shaper::getOutputSignal));
+      .function("setMode", &Shaper::setMode)
+      .function("getDrive", &Shaper::getDrive)
+      .function("getOutputSample", select_overload<Sample(size_t, Sample)>(
+                                       &Shaper::getOutputSample));
 
   // ========== External Nodes ==========
 
@@ -767,10 +792,11 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<Biquad, base<Transformer>>("Biquad")
       .smart_ptr<std::shared_ptr<Biquad>>("Biquad")
       .constructor(&std::make_shared<Biquad>)
+      .function("getMode", &Biquad::getMode)
+      .function("setMode", &Biquad::setMode)
       .function("getFrequency", &Biquad::getFrequency)
       .function("getResonance", &Biquad::getResonance)
       .function("getAmplitude", &Biquad::getAmplitude)
-      .function("getMode", &Biquad::getMode)
       .function("getFrequencyResponse", &Biquad::getFrequencyResponse);
 
   // Crossover
@@ -786,8 +812,9 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<OnePole, base<Transformer>>("OnePole")
       .smart_ptr<std::shared_ptr<OnePole>>("OnePole")
       .constructor(&std::make_shared<OnePole, Type>)
-      .function("getFrequency", &OnePole::getFrequency)
-      .function("getMode", &OnePole::getMode);
+      .function("getMode", &OnePole::getMode)
+      .function("setMode", &OnePole::setMode)
+      .function("getFrequency", &OnePole::getFrequency);
 
   // ========== Generator Nodes ==========
 
@@ -795,14 +822,16 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<Noise, base<Producer>>("Noise")
       .smart_ptr<std::shared_ptr<Noise>>("Noise")
       .constructor(&std::make_shared<Noise>)
-      .function("getMode", &Noise::getMode);
+      .function("getMode", &Noise::getMode)
+      .function("setMode", &Noise::setMode);
 
   // Phasor
   class_<Phasor, base<Producer>>("Phasor")
       .smart_ptr<std::shared_ptr<Phasor>>("Phasor")
       .constructor(&std::make_shared<Phasor>)
-      .function("getFrequency", &Phasor::getFrequency)
       .function("getMode", &Phasor::getMode)
+      .function("setMode", &Phasor::setMode)
+      .function("getFrequency", &Phasor::getFrequency)
       .function("getReset", &Phasor::getReset);
 
   // SamplePlayer
@@ -811,10 +840,11 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .constructor(&std::make_shared<SamplePlayer, Type>)
       .function("getSamples", &SamplePlayer::getSamples,
                 return_value_policy::reference())
+      .function("getInterpolation", &SamplePlayer::getInterpolation)
+      .function("setInterpolation", &SamplePlayer::setInterpolation)
       .function("getSpeed", &SamplePlayer::getSpeed)
       .function("getStartTime", &SamplePlayer::getStartTime)
       .function("getSampleIndex", &SamplePlayer::getSampleIndex)
-      .function("getInterpolation", &SamplePlayer::getInterpolation)
       .function("getGate", &SamplePlayer::getGate)
       .function("getReset", &SamplePlayer::getReset)
       .function("getCurrentTime", &SamplePlayer::getCurrentTime);
@@ -825,12 +855,16 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .constructor(&std::make_shared<TableOscillator, Type>)
       .function("getTables", &TableOscillator::getTables,
                 return_value_policy::reference())
-      .function("getPhase", &TableOscillator::getPhase)
-      .function("getPosition", &TableOscillator::getPosition)
       .function("getPhaseInterpolation",
                 &TableOscillator::getPhaseInterpolation)
+      .function("setPhaseInterpolation",
+                &TableOscillator::setPhaseInterpolation)
       .function("getPositionInterpolation",
-                &TableOscillator::getPositionInterpolation);
+                &TableOscillator::getPositionInterpolation)
+      .function("setPositionInterpolation",
+                &TableOscillator::setPositionInterpolation)
+      .function("getPhase", &TableOscillator::getPhase)
+      .function("getPosition", &TableOscillator::getPosition);
 
   // ========== Math Nodes ==========
 
@@ -889,7 +923,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<Hyperbolic, base<Transformer>>("Hyperbolic")
       .smart_ptr<std::shared_ptr<Hyperbolic>>("Hyperbolic")
       .constructor(&std::make_shared<Hyperbolic, Space>)
-      .function("getMode", &Hyperbolic::getMode);
+      .function("getMode", &Hyperbolic::getMode)
+      .function("setMode", &Hyperbolic::setMode);
 
   // Identity
   class_<Identity, base<Transformer>>("Identity")
@@ -954,7 +989,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   class_<Trigonometric, base<Transformer>>("Trigonometric")
       .smart_ptr<std::shared_ptr<Trigonometric>>("Trigonometric")
       .constructor(&std::make_shared<Trigonometric, Space>)
-      .function("getMode", &Trigonometric::getMode);
+      .function("getMode", &Trigonometric::getMode)
+      .function("setMode", &Trigonometric::setMode);
 
   // ========== Trigger Nodes ==========
 

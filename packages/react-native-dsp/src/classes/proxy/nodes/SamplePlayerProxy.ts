@@ -1,3 +1,4 @@
+import { Interpolation } from '../../../enums/global'
 import { chainable } from '../../../helpers/proxy'
 import { Target } from '../../../types/module'
 import { Chainable, ProxyContext } from '../../../types/proxy'
@@ -19,11 +20,15 @@ export class SamplePlayerProxy extends ProducerProxy {
       ),
     )
   }
+  getInterpolation = (): Chainable<Interpolation> => {
+    return chainable(this.call('getInterpolation', []))
+  }
+  setInterpolation = (interpolation: Interpolation): Chainable<void> => {
+    return chainable(this.call('setInterpolation', [interpolation]))
+  }
   getSpeed = (): Chainable<InputProxy> => this.createInput('Speed')
   getStartTime = (): Chainable<InputProxy> => this.createInput('StartTime')
   getSampleIndex = (): Chainable<InputProxy> => this.createInput('SampleIndex')
-  getInterpolation = (): Chainable<InputProxy> =>
-    this.createInput('Interpolation')
   getGate = (): Chainable<InputProxy> => this.createInput('Gate')
   getReset = (): Chainable<InputProxy> => this.createInput('Reset')
   getCurrentTime = (): Chainable<number> => {

@@ -6,27 +6,23 @@ namespace dsp {
 
 class Clipper : public Transformer {
 public:
-  struct Mode {
-    static constexpr int MIN = 0;
-    static constexpr int MAX = 2;
-    static constexpr int CLIP = 0;
-    static constexpr int WRAP = 1;
-    static constexpr int FOLD = 2;
-  };
+  enum class Mode { CLIP, WRAP, FOLD };
 
   Clipper(Type type = Type::RATIO, Space space = Space::TIME);
 
+  Mode getMode() const;
+  void setMode(Mode mode);
+
   std::shared_ptr<Input> getMin() const;
   std::shared_ptr<Input> getMax() const;
-  std::shared_ptr<Input> getMode() const;
 
 protected:
   void processNoLock() override;
 
 private:
+  Mode mode;
   std::shared_ptr<Input> min;
   std::shared_ptr<Input> max;
-  std::shared_ptr<Input> mode;
 };
 
 } // namespace dsp

@@ -6,29 +6,26 @@ namespace dsp {
 
 class Shaper : public Transformer {
 public:
-  struct Mode {
-    static constexpr int MIN = 0;
-    static constexpr int MAX = 1;
-    static constexpr int HYPERBOLIC = 0;
-    static constexpr int RATIONAL = 1;
-  };
+  enum class Mode { HYPERBOLIC, RATIONAL };
 
   Shaper(Space space = Space::TIME);
 
-  std::shared_ptr<Input> getDrive() const;
-  std::shared_ptr<Input> getMode() const;
+  Mode getMode() const;
+  void setMode(Mode mode);
 
-  Sample getOutputSignal(size_t channel, Sample input);
+  std::shared_ptr<Input> getDrive() const;
+
+  Sample getOutputSample(size_t channel, Sample input);
 
 protected:
   void processNoLock() override;
 
 private:
+  Mode mode;
   const std::shared_ptr<Input> drive;
-  const std::shared_ptr<Input> mode;
 
-  static Sample getOutputSignal(const Sample& input, const Sample& drive,
-                                const Sample& mode);
+  static Sample getOutputSample(const Sample& input, const Sample& drive,
+                                const Mode mode);
 };
 
 } // namespace dsp

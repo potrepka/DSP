@@ -1,5 +1,4 @@
 import {
-  BiquadMode,
   DSP,
   initializeWebAudio,
   NodeProcessorOptions,
@@ -81,7 +80,6 @@ export const App = () => {
     // Set input values
     await phasor.getFrequency().setAllChannelValues(55)
     await filter.getFrequency().setAllChannelValues(880)
-    await filter.getMode().setAllChannelValues(BiquadMode.LOW_PASS)
     await gain.getFactor().setAllChannelValues(0.5)
 
     // Create wavetable

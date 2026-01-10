@@ -16,6 +16,7 @@ public:
 
   Sample getRecordingTime() const;
   void setRecordingTime(Sample seconds);
+
   std::shared_ptr<Buffer> getRecordingBuffer() const;
 
   std::shared_ptr<Input> getGate() const;
@@ -30,11 +31,11 @@ private:
   Mode mode;
   Sample recordingTime;
   Sample recordingNumSamples;
-  Array writeIndex;
   const std::shared_ptr<Buffer> primary;
   const std::shared_ptr<Buffer> secondary;
   const std::shared_ptr<Input> gate;
   const std::shared_ptr<Input> reset;
+  Array writeIndex;
 
   void setRecordingTimeNoLock(Sample seconds);
 };

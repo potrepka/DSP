@@ -2,17 +2,22 @@
 
 dsp::OnePole::OnePole(Type type)
     : Transformer(type, type),
-      frequency(std::make_shared<Input>(Type::HERTZ)),
-      mode(std::make_shared<Input>(Type::INTEGER, Space::TIME, Mode::MAX)) {
+      mode(Mode::LOW_PASS),
+      frequency(std::make_shared<Input>(Type::HERTZ)) {
   getInputs().push_back(frequency);
-  getInputs().push_back(mode);
+}
+
+dsp::OnePole::Mode dsp::OnePole::getMode() const { return mode; }
+
+void dsp::OnePole::setMode(Mode mode) {
+  lock();
+  this->mode = mode;
+  unlock();
 }
 
 std::shared_ptr<dsp::Input> dsp::OnePole::getFrequency() const {
   return frequency;
 }
-
-std::shared_ptr<dsp::Input> dsp::OnePole::getMode() const { return mode; }
 
 dsp::FrequencyResponse dsp::OnePole::getFrequencyResponse(size_t channel,
                                                           Sample frequency) {
@@ -24,7 +29,6 @@ dsp::FrequencyResponse dsp::OnePole::getFrequencyResponse(size_t channel,
     const Sample oneOverSampleRate = getOneOverSampleRate();
     const Sample f =
         getFrequency()->getWrapper().getSample(channel, lastSample);
-    const Sample mode = getMode()->getWrapper().getSample(channel, lastSample);
     unlock();
     const Sample radians =
         PI * clip(f, 0.0, 0.5 * sampleRate) * oneOverSampleRate;
@@ -34,7 +38,7 @@ dsp::FrequencyResponse dsp::OnePole::getFrequencyResponse(size_t channel,
     const Sample cosW = cos(omega);
     const Sample sinW = sin(omega);
     Sample a, b;
-    switch (static_cast<int>(mode)) {
+    switch (mode) {
       case Mode::LOW_PASS: {
         a = g * (1.0 + cosW);
         b = -g * sinW;
@@ -73,13 +77,11 @@ void dsp::OnePole::processNoLock() {
     Sample* inputChannel = getInput()->getWrapper().getChannelPointer(channel);
     Sample* frequencyChannel =
         getFrequency()->getWrapper().getChannelPointer(channel);
-    Sample* modeChannel = getMode()->getWrapper().getChannelPointer(channel);
     Sample* outputChannel =
         getOutput()->getWrapper().getChannelPointer(channel);
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
       Sample& input = inputChannel[sample];
       Sample& frequency = frequencyChannel[sample];
-      Sample& mode = modeChannel[sample];
       Sample& output = outputChannel[sample];
       if (isnan(state[channel])) {
         state[channel] = 0.0;
@@ -91,7 +93,7 @@ void dsp::OnePole::processNoLock() {
       const Sample g = tan(radians / (1.0 + radians));
       const Sample delta = g * (input - state[channel]);
       state[channel] += delta;
-      switch (static_cast<int>(mode)) {
+      switch (mode) {
         case Mode::LOW_PASS:
           output = state[channel];
           break;

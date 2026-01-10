@@ -1,5 +1,17 @@
-import { InputMode, Space, Type } from '../enums/global'
-import { RecorderMode } from '../enums/node'
+import { InputMode, Interpolation, Shape, Space, Type } from '../enums/global'
+import {
+  BiquadMode,
+  ClipperMode,
+  ComparisonMode,
+  HyperbolicMode,
+  NoiseMode,
+  OnePoleMode,
+  PhasorMode,
+  RecorderMode,
+  ShaperMode,
+  SpreadMode,
+  TrigonometricMode,
+} from '../enums/node'
 
 export type AudioModule = GlobalFunctionMap & ObjectConstructorMap
 
@@ -777,8 +789,9 @@ export type MidSide = Consumer & {
 }
 
 export type Spread = Transformer & {
+  getMode: () => SpreadMode
+  setMode: (mode: SpreadMode) => void
   getSpread: () => Input
-  getMode: () => Input
 }
 
 export type StereoPanner = Consumer & {
@@ -813,9 +826,10 @@ export type VariableDelay = Transformer & {
 // ========== Dynamics Nodes ==========
 
 export type Clipper = Transformer & {
+  getMode: () => ClipperMode
+  setMode: (mode: ClipperMode) => void
   getMin: () => Input
   getMax: () => Input
-  getMode: () => Input
 }
 
 export type CompressorGate = Transformer & {
@@ -839,10 +853,12 @@ export type DryWet = Producer & {
 }
 
 export type Envelope = Producer & {
+  getAttackShape: () => Shape
+  setAttackShape: (shape: Shape) => void
+  getReleaseShape: () => Shape
+  setReleaseShape: (shape: Shape) => void
   getAttack: () => Input
   getRelease: () => Input
-  getAttackShape: () => Input
-  getReleaseShape: () => Input
   getGate: () => Input
   getReset: () => Input
   getCurrentTime: () => number
@@ -853,9 +869,10 @@ export type Lag = Transformer & {
 }
 
 export type Shaper = Transformer & {
+  getMode: () => ShaperMode
+  setMode: (mode: ShaperMode) => void
   getDrive: () => Input
-  getMode: () => Input
-  getOutputSignal: (channel: number, input: number) => number
+  getOutputSample: (channel: number, input: number) => number
 }
 
 // ========== External Nodes ==========
@@ -905,10 +922,11 @@ export type MidiOutput = Consumer & {
 // ========== Filter Nodes ==========
 
 export type Biquad = Transformer & {
+  getMode: () => BiquadMode
+  setMode: (mode: BiquadMode) => void
   getFrequency: () => Input
   getResonance: () => Input
   getAmplitude: () => Input
-  getMode: () => Input
   getFrequencyResponse: (frequency: number) => number
 }
 
@@ -920,28 +938,32 @@ export type Crossover = Node & {
 }
 
 export type OnePole = Transformer & {
+  getMode: () => OnePoleMode
+  setMode: (mode: OnePoleMode) => void
   getFrequency: () => Input
-  getMode: () => Input
 }
 
 // ========== Generator Nodes ==========
 
 export type Noise = Producer & {
-  getMode: () => Input
+  getMode: () => NoiseMode
+  setMode: (mode: NoiseMode) => void
 }
 
 export type Phasor = Producer & {
+  getMode: () => PhasorMode
+  setMode: (mode: PhasorMode) => void
   getFrequency: () => Input
-  getMode: () => Input
   getReset: () => Input
 }
 
 export type SamplePlayer = Producer & {
   getSamples: () => BufferVector
+  getInterpolation: () => Interpolation
+  setInterpolation: (interpolation: Interpolation) => void
   getSpeed: () => Input
   getStartTime: () => Input
   getSampleIndex: () => Input
-  getInterpolation: () => Input
   getGate: () => Input
   getReset: () => Input
   getCurrentTime: () => number
@@ -949,10 +971,12 @@ export type SamplePlayer = Producer & {
 
 export type TableOscillator = Producer & {
   getTables: () => BufferVector
+  getPhaseInterpolation: () => Interpolation
+  setPhaseInterpolation: (interpolation: Interpolation) => void
+  getPositionInterpolation: () => Interpolation
+  setPositionInterpolation: (interpolation: Interpolation) => void
   getPhase: () => Input
   getPosition: () => Input
-  getPhaseInterpolation: () => Input
-  getPositionInterpolation: () => Input
 }
 
 // ========== Math Nodes ==========
@@ -964,6 +988,8 @@ export type BooleanMask = Transformer & {
 }
 
 export type Comparison = Transformer & {
+  getMode: () => ComparisonMode
+  setMode: (mode: ComparisonMode) => void
   getThreshold: () => Input
 }
 
@@ -992,7 +1018,8 @@ export type Function = Transformer & {
 }
 
 export type Hyperbolic = Transformer & {
-  getMode: () => Input
+  getMode: () => HyperbolicMode
+  setMode: (mode: HyperbolicMode) => void
 }
 
 export type Identity = Transformer
@@ -1029,7 +1056,8 @@ export type Power = Transformer & {
 export type Reciprocal = Transformer
 
 export type Trigonometric = Transformer & {
-  getMode: () => Input
+  getMode: () => TrigonometricMode
+  setMode: (mode: TrigonometricMode) => void
 }
 
 // ========== Trigger Nodes ==========

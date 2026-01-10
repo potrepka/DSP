@@ -6,22 +6,18 @@ namespace dsp {
 
 class Trigonometric : public Transformer {
 public:
-  struct Mode {
-    static constexpr int MIN = 0;
-    static constexpr int MAX = 2;
-    static constexpr int SINE = 0;
-    static constexpr int COSINE = 1;
-    static constexpr int TANGENT = 2;
-  };
+  enum class Mode { SINE, COSINE, TANGENT };
 
   Trigonometric(Space space = Space::TIME);
 
-  std::shared_ptr<Input> getMode() const;
+  Mode getMode() const;
+  void setMode(Mode mode);
 
 protected:
   void processNoLock() override;
 
-  const std::shared_ptr<Input> mode;
+private:
+  Mode mode;
 };
 
 } // namespace dsp

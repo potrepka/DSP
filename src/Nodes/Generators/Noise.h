@@ -6,16 +6,12 @@ namespace dsp {
 
 class Noise : public Producer {
 public:
-  struct Mode {
-    static constexpr int MIN = 0;
-    static constexpr int MAX = 1;
-    static constexpr int WHITE = 0;
-    static constexpr int PINK = 1;
-  };
+  enum class Mode { WHITE, PINK };
 
   Noise();
 
-  std::shared_ptr<Input> getMode() const;
+  Mode getMode() const;
+  void setMode(Mode mode);
 
 protected:
   void setNumOutputChannelsNoLock(size_t numChannels) override;
@@ -29,7 +25,7 @@ private:
   static Wrapper noiseCoefficients;
   static const Sample delayedNoiseCoefficient;
 
-  const std::shared_ptr<Input> mode;
+  Mode mode;
   std::vector<int> seed;
   Data whiteData;
   Data memoryData;

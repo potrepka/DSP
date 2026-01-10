@@ -1,3 +1,4 @@
+import { Interpolation } from '../../../enums/global'
 import { chainable } from '../../../helpers/proxy'
 import { Target } from '../../../types/module'
 import { Chainable, ProxyContext } from '../../../types/proxy'
@@ -19,10 +20,20 @@ export class TableOscillatorProxy extends ProducerProxy {
       ),
     )
   }
+  getPhaseInterpolation = (): Chainable<Interpolation> => {
+    return chainable(this.call('getPhaseInterpolation', []))
+  }
+  setPhaseInterpolation = (interpolation: Interpolation): Chainable<void> => {
+    return chainable(this.call('setPhaseInterpolation', [interpolation]))
+  }
+  getPositionInterpolation = (): Chainable<Interpolation> => {
+    return chainable(this.call('getPositionInterpolation', []))
+  }
+  setPositionInterpolation = (
+    interpolation: Interpolation,
+  ): Chainable<void> => {
+    return chainable(this.call('setPositionInterpolation', [interpolation]))
+  }
   getPhase = (): Chainable<InputProxy> => this.createInput('Phase')
   getPosition = (): Chainable<InputProxy> => this.createInput('Position')
-  getPhaseInterpolation = (): Chainable<InputProxy> =>
-    this.createInput('PhaseInterpolation')
-  getPositionInterpolation = (): Chainable<InputProxy> =>
-    this.createInput('PositionInterpolation')
 }

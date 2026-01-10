@@ -6,25 +6,25 @@ namespace dsp {
 
 class Biquad : public Transformer {
 public:
-  struct Mode {
-    static constexpr int MIN = 0;
-    static constexpr int MAX = 7;
-    static constexpr int LOW_PASS = 0;
-    static constexpr int HIGH_PASS = 1;
-    static constexpr int BAND_PASS = 2;
-    static constexpr int BAND_STOP = 3;
-    static constexpr int LOW_SHELF = 4;
-    static constexpr int HIGH_SHELF = 5;
-    static constexpr int PEAK = 6;
-    static constexpr int ALL_PASS = 7;
+  enum class Mode {
+    LOW_PASS,
+    HIGH_PASS,
+    BAND_PASS,
+    BAND_STOP,
+    LOW_SHELF,
+    HIGH_SHELF,
+    PEAK,
+    ALL_PASS
   };
 
   Biquad();
 
+  Mode getMode() const;
+  void setMode(Mode mode);
+
   std::shared_ptr<Input> getFrequency() const;
   std::shared_ptr<Input> getResonance() const;
   std::shared_ptr<Input> getAmplitude() const;
-  std::shared_ptr<Input> getMode() const;
 
   FrequencyResponse getFrequencyResponse(size_t channel, Sample frequency);
 
@@ -33,10 +33,10 @@ protected:
   void processNoLock() override;
 
 private:
+  Mode mode;
   const std::shared_ptr<Input> frequency;
   const std::shared_ptr<Input> resonance;
   const std::shared_ptr<Input> amplitude;
-  const std::shared_ptr<Input> mode;
   Array xx1;
   Array xx2;
   Array yy1;
@@ -52,7 +52,7 @@ private:
                                     const Sample oneOverSampleRate,
                                     const Sample& frequency,
                                     const Sample& resonance,
-                                    const Sample& amplitude, const Sample& mode,
+                                    const Sample& amplitude, const Mode mode,
                                     Sample& a0, Sample& a1, Sample& a2,
                                     Sample& b0, Sample& b1, Sample& b2);
 };

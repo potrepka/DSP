@@ -2,36 +2,40 @@
 
 dsp::Envelope::Envelope()
     : Producer(Type::RATIO),
+      attackShape(Shape::LINEAR),
+      releaseShape(Shape::LINEAR),
       attack(std::make_shared<Input>(Type::SECONDS)),
       release(std::make_shared<Input>(Type::SECONDS)),
-      attackShape(
-          std::make_shared<Input>(Type::INTEGER, Space::TIME, Shape::MAX)),
-      releaseShape(
-          std::make_shared<Input>(Type::INTEGER, Space::TIME, Shape::MAX)),
       gate(std::make_shared<Input>(Type::BOOLEAN)),
       reset(std::make_shared<Input>(Type::BOOLEAN)),
       currentTime(std::make_shared<Output>(Type::SECONDS)) {
   getInputs().push_back(attack);
   getInputs().push_back(release);
-  getInputs().push_back(attackShape);
-  getInputs().push_back(releaseShape);
   getInputs().push_back(gate);
   getInputs().push_back(reset);
   getOutputs().push_back(currentTime);
+}
+
+dsp::Shape dsp::Envelope::getAttackShape() const { return attackShape; }
+
+void dsp::Envelope::setAttackShape(Shape shape) {
+  lock();
+  this->attackShape = shape;
+  unlock();
+}
+
+dsp::Shape dsp::Envelope::getReleaseShape() const { return releaseShape; }
+
+void dsp::Envelope::setReleaseShape(Shape shape) {
+  lock();
+  this->releaseShape = shape;
+  unlock();
 }
 
 std::shared_ptr<dsp::Input> dsp::Envelope::getAttack() const { return attack; }
 
 std::shared_ptr<dsp::Input> dsp::Envelope::getRelease() const {
   return release;
-}
-
-std::shared_ptr<dsp::Input> dsp::Envelope::getAttackShape() const {
-  return attackShape;
-}
-
-std::shared_ptr<dsp::Input> dsp::Envelope::getReleaseShape() const {
-  return releaseShape;
 }
 
 std::shared_ptr<dsp::Input> dsp::Envelope::getGate() const { return gate; }
@@ -55,10 +59,6 @@ void dsp::Envelope::processNoLock() {
         getAttack()->getWrapper().getChannelPointer(channel);
     Sample* releaseChannel =
         getRelease()->getWrapper().getChannelPointer(channel);
-    Sample* attackShapeChannel =
-        getAttackShape()->getWrapper().getChannelPointer(channel);
-    Sample* releaseShapeChannel =
-        getReleaseShape()->getWrapper().getChannelPointer(channel);
     Sample* gateChannel = getGate()->getWrapper().getChannelPointer(channel);
     Sample* resetChannel = getReset()->getWrapper().getChannelPointer(channel);
     Sample* outputChannel =
@@ -72,13 +72,12 @@ void dsp::Envelope::processNoLock() {
       Sample& currentTime = currentTimeChannel[sample];
       if (gate) {
         Sample& attack = attackChannel[sample];
-        Sample& attackShape = attackShapeChannel[sample];
         if (reset) {
           attackIndex[channel] = 0;
           state[channel] = 0.0;
         }
         Sample attackSamples = attack * getSampleRate();
-        switch (static_cast<int>(attackShape)) {
+        switch (attackShape) {
           case Shape::LINEAR:
             state[channel] += 1.0 / attackSamples;
             if (state[channel] > 1.0) {
@@ -95,13 +94,12 @@ void dsp::Envelope::processNoLock() {
         releaseIndex[channel] = 0;
       } else {
         Sample& release = releaseChannel[sample];
-        Sample& releaseShape = releaseShapeChannel[sample];
         if (reset) {
           releaseIndex[channel] = 0;
           state[channel] = 1.0;
         }
         Sample releaseSamples = release * getSampleRate();
-        switch (static_cast<int>(releaseShape)) {
+        switch (releaseShape) {
           case Shape::LINEAR:
             state[channel] -= 1.0 / releaseSamples;
             if (state[channel] < 0.0) {

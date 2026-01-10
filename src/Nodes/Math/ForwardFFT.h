@@ -19,7 +19,6 @@ protected:
 private:
   const std::shared_ptr<Output> magnitude;
   const std::shared_ptr<Output> phase;
-
   NormalizedFFT fft;
 };
 

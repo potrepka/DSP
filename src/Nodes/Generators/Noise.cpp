@@ -30,15 +30,19 @@ const dsp::Sample dsp::Noise::delayedNoiseCoefficient = 0.115926;
 
 dsp::Noise::Noise()
     : Producer(Type::RATIO),
-      mode(std::make_shared<Input>(Type::INTEGER, Space::TIME, Mode::MAX)),
+      mode(Mode::WHITE),
       whiteData(0, 0),
       memoryData(0, 8),
       white(whiteData),
-      memory(memoryData) {
-  getInputs().push_back(mode);
-}
+      memory(memoryData) {}
 
-std::shared_ptr<dsp::Input> dsp::Noise::getMode() const { return mode; }
+dsp::Noise::Mode dsp::Noise::getMode() const { return mode; }
+
+void dsp::Noise::setMode(Mode mode) {
+  lock();
+  this->mode = mode;
+  unlock();
+}
 
 void dsp::Noise::setNumOutputChannelsNoLock(size_t numChannels) {
   Node::setNumOutputChannelsNoLock(numChannels);
@@ -69,16 +73,14 @@ void dsp::Noise::processNoLock() {
   }
   white.multiplyBy(4.656612873077392578125e-10);
   for (size_t channel = 0; channel < getNumOutputChannels(); ++channel) {
-    Sample* modeChannel = getMode()->getWrapper().getChannelPointer(channel);
     Sample* outputChannel =
         getOutput()->getWrapper().getChannelPointer(channel);
     Sample* whiteChannel = white.getChannelPointer(channel);
     Wrapper memoryWrapper = memory.getSingleChannel(channel);
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-      Sample& mode = modeChannel[sample];
       Sample& output = outputChannel[sample];
       Sample& white = whiteChannel[sample];
-      switch (static_cast<int>(mode)) {
+      switch (mode) {
         case Mode::WHITE:
           output = white;
           break;

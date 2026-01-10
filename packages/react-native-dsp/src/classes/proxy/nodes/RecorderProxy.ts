@@ -1,3 +1,4 @@
+import { RecorderMode } from '../../../enums/node'
 import { chainable } from '../../../helpers/proxy'
 import { Target } from '../../../types/module'
 import { Chainable, ProxyContext } from '../../../types/proxy'
@@ -8,7 +9,12 @@ export class RecorderProxy extends ConsumerProxy {
   constructor(context: ProxyContext, target: Target) {
     super(context, target)
   }
-  getMode = (): Chainable<InputProxy> => this.createInput('Mode')
+  getMode = (): Chainable<RecorderMode> => {
+    return chainable(this.call('getMode', []))
+  }
+  setMode = (mode: RecorderMode): Chainable<void> => {
+    return chainable(this.call('setMode', [mode]))
+  }
   getRecordingTime = (): Chainable<number> => {
     return chainable(this.call('getRecordingTime', []))
   }

@@ -71,6 +71,18 @@ export enum PhasorMode {
 }
 
 /**
+ * Comparison operator mode
+ */
+export enum ComparisonMode {
+  EQUAL = 0,
+  NOT_EQUAL = 1,
+  LESS_THAN = 2,
+  LESS_THAN_OR_EQUAL = 3,
+  GREATER_THAN = 4,
+  GREATER_THAN_OR_EQUAL = 5,
+}
+
+/**
  * Hyperbolic function mode
  */
 export enum HyperbolicMode {
