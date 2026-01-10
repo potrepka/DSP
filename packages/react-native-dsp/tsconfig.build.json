@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "exclude": [
+    "**/*.test.ts",
+    "android",
+    "dist",
+    "ios",
+    "node_modules",
+    "shared",
+    "web"
+  ]
+}

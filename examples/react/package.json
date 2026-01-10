@@ -23,8 +23,8 @@
     "directory": "examples/react"
   },
   "scripts": {
-    "build": "tsc && vite build",
-    "clean": "rm -rf .turbo/ dist/ node_modules/",
+    "build": "tsc -p tsconfig.build.json && vite build",
+    "clean": "rm -rf .turbo dist node_modules",
     "dev": "vite",
     "lint": "eslint .",
     "start": "vite preview"

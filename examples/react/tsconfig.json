@@ -9,11 +9,11 @@
     "module": "esnext",
     "moduleDetection": "force",
     "moduleResolution": "bundler",
-    "outDir": "dist",
+    "noEmit": true,
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext"
   },
-  "include": ["src"],
-  "exclude": ["**/*.test.ts", "dist", "node_modules"]
+  "include": ["src", "vite.config.ts"],
+  "exclude": ["dist", "node_modules"]
 }

@@ -57,9 +57,9 @@
   },
   "scripts": {
     "build": "npm run build:ts && npm run build:web",
-    "build:ts": "tsc",
+    "build:ts": "tsc -p tsconfig.build.json",
     "build:web": "bash scripts/build-web.sh",
-    "clean": "rm -rf dist/ node_modules/ shared/lib/ shared/src/ web/build/",
+    "clean": "rm -rf .turbo dist node_modules shared/lib shared/src web/build",
     "lint": "eslint .",
     "test": "bun test"
   },

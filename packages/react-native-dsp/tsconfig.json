@@ -9,20 +9,11 @@
     "module": "esnext",
     "moduleDetection": "force",
     "moduleResolution": "bundler",
-    "outDir": "dist",
-    "rootDir": "src",
+    "noEmit": true,
     "skipLibCheck": true,
     "strict": true,
     "target": "esnext"
   },
   "include": ["src"],
-  "exclude": [
-    "**/*.test.ts",
-    "android",
-    "dist",
-    "ios",
-    "node_modules",
-    "shared",
-    "web"
-  ]
+  "exclude": ["android", "dist", "ios", "node_modules", "shared", "web"]
 }
