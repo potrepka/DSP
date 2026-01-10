@@ -1,7 +1,7 @@
 ﻿#include "Division.h"
 
 dsp::Division::Division(Type type, Space space)
-    : Transformer(type, type, space),
+    : Transformer(type, space),
       divisor(std::make_shared<Input>(Type::RATIO, space)) {
   getInputs().push_back(divisor);
 }

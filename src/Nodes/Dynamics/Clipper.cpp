@@ -1,7 +1,7 @@
 ﻿#include "Clipper.h"
 
 dsp::Clipper::Clipper(Type type, Space space)
-    : Transformer(type, type, space),
+    : Transformer(type, space),
       min(std::make_shared<Input>(type, space, 0.0, -1.0)),
       max(std::make_shared<Input>(type, space, 0.0, 1.0)),
       mode(std::make_shared<Input>(Type::INTEGER, space, Mode::MAX)) {

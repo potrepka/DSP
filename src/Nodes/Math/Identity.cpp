@@ -1,7 +1,7 @@
 ﻿#include "Identity.h"
 
 dsp::Identity::Identity(Type type, Space space)
-    : Transformer(type, type, space) {}
+    : Transformer(type, space) {}
 
 dsp::Identity::Identity(Type inType, Type outType, Space space)
     : Transformer(inType, outType, space) {}

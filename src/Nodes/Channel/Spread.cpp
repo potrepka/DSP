@@ -1,7 +1,7 @@
 ﻿#include "Spread.h"
 
 dsp::Spread::Spread(Type type, Space space)
-    : Transformer(type, type, space),
+    : Transformer(type, space),
       spread(std::make_shared<Input>(type, space)),
       mode(std::make_shared<Input>(Type::INTEGER, space, Mode::MAX)) {
   getInputs().push_back(spread);

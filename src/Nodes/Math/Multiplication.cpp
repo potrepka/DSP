@@ -1,7 +1,7 @@
 ﻿#include "Multiplication.h"
 
 dsp::Multiplication::Multiplication(Type type, Space space)
-    : Transformer(type, type, space),
+    : Transformer(type, space),
       factor(std::make_shared<Input>(Type::RATIO)) {
   getInputs().push_back(factor);
 }
