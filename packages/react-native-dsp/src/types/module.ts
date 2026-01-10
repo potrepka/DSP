@@ -189,7 +189,10 @@ export type NodeConstructorMap = {
   Floor: new (type: Type, space: Space) => Floor
   ForwardFFT: new () => ForwardFFT
   FrequencyToNote: new (space: Space) => FrequencyToNote
-  Function: new (type: Type) => Function
+  Function: {
+    new (type: Type, space: Space): Function
+    new (aType: Type, bType: Type, outputType: Type, space: Space): Function
+  }
   Hyperbolic: new (space: Space) => Hyperbolic
   Identity: {
     new (type: Type, space: Space): Identity
@@ -304,7 +307,6 @@ type OptionsMap = {
     type: Type
     space: Space
     defaultValue: number
-    numChannels: number
   }
 
   // Nodes - Channel
@@ -349,16 +351,21 @@ type OptionsMap = {
   Floor: { type: Type; space: Space }
   ForwardFFT: unknown
   FrequencyToNote: { space: Space }
-  Function: { type: Type }
+  Function: {
+    type: Type
+    space: Space
+    aType?: Type
+    bType?: Type
+    outputType?: Type
+  }
   Hyperbolic: { space: Space }
   Identity: {
-    type?: Type
-    space?: Space
+    type: Type
+    space: Space
     inputType?: Type
     outputType?: Type
     inputSpace?: Space
     outputSpace?: Space
-    numChannels: number
   }
   InverseFFT: unknown
   Logarithm: { space: Space }
@@ -977,10 +984,11 @@ export type FrequencyToNote = Transformer & {
   getTuningFrequency: () => Input
 }
 
-export type Function = Producer & {
-  getFunction: () => unknown
-  setFunction: (fn: (phase: number) => number) => void
-  getPhase: () => Input
+export type Function = Transformer & {
+  getFunction: () => (a: number, b: number) => number
+  setFunction: (f: (a: number, b: number) => number) => void
+  getA: () => Input
+  getB: () => Input
 }
 
 export type Hyperbolic = Transformer & {

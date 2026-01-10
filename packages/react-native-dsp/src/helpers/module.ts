@@ -274,8 +274,22 @@ export const createObject = <T extends ObjectType>(
       break
     }
     case 'Function': {
-      const { type } = options as Options<'Function'>
-      reference = new module.Function(type ?? Type.RATIO)
+      const { type, space, aType, bType, outputType } =
+        options as Options<'Function'>
+      if (
+        aType !== undefined ||
+        bType !== undefined ||
+        outputType !== undefined
+      ) {
+        reference = new module.Function(
+          aType ?? type ?? Type.RATIO,
+          bType ?? type ?? Type.RATIO,
+          outputType ?? type ?? Type.RATIO,
+          space ?? Space.TIME,
+        )
+      } else {
+        reference = new module.Function(type ?? Type.RATIO, space ?? Space.TIME)
+      }
       break
     }
     case 'Hyperbolic': {

@@ -1,11 +1,12 @@
 import { Target } from '../../../types/module'
 import { Chainable, ProxyContext } from '../../../types/proxy'
 import { InputProxy } from '../core/BufferProxy'
-import { ProducerProxy } from '../core/ProducerProxy'
+import { TransformerProxy } from '../core/TransformerProxy'
 
-export class FunctionProxy extends ProducerProxy {
+export class FunctionProxy extends TransformerProxy {
   constructor(context: ProxyContext, target: Target) {
     super(context, target)
   }
-  getPhase = (): Chainable<InputProxy> => this.createInput('Phase')
+  getA = (): Chainable<InputProxy> => this.createInput('A')
+  getB = (): Chainable<InputProxy> => this.createInput('B')
 }

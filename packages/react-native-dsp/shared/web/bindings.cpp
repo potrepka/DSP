@@ -877,12 +877,13 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("getTuningFrequency", &FrequencyToNote::getTuningFrequency);
 
   // Function
-  class_<Function, base<Producer>>("Function")
+  class_<Function, base<Transformer>>("Function")
       .smart_ptr<std::shared_ptr<Function>>("Function")
-      .constructor(&std::make_shared<Function, Type>)
+      .constructor(&std::make_shared<Function, Type, Space>)
       .function("getFunction", &Function::getFunction)
       .function("setFunction", &Function::setFunction)
-      .function("getPhase", &Function::getPhase);
+      .function("getA", &Function::getA)
+      .function("getB", &Function::getB);
 
   // Hyperbolic
   class_<Hyperbolic, base<Transformer>>("Hyperbolic")

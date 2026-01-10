@@ -1,32 +1,36 @@
 ﻿#include "Function.h"
 
-dsp::Function::Function(Type type)
-    : Producer(type), phase(std::make_shared<Input>(Type::RATIO)) {
-  getInputs().push_back(phase);
+dsp::Function::Function(Type type, Space space)
+    : Transformer(type, space),
+      a(getInput()),
+      b(std::make_shared<Input>(type, space)) {
+  getInputs().push_back(b);
 }
 
-std::shared_ptr<std::function<dsp::Sample(dsp::Sample)>>
+dsp::Function::Function(Type aType, Type bType, Type outputType, Space space)
+    : Transformer(aType, outputType, space),
+      a(getInput()),
+      b(std::make_shared<Input>(bType, space)) {
+  getInputs().push_back(b);
+}
+
+std::shared_ptr<std::function<dsp::Sample(dsp::Sample, dsp::Sample)>>
 dsp::Function::getFunction() const {
   return function;
 }
 
 void dsp::Function::setFunction(
-    std::shared_ptr<std::function<Sample(Sample)>> function) {
+    std::shared_ptr<std::function<Sample(Sample, Sample)>> function) {
   this->function = function;
 }
 
-std::shared_ptr<dsp::Input> dsp::Function::getPhase() const { return phase; }
+std::shared_ptr<dsp::Input> dsp::Function::getA() const { return a; }
+
+std::shared_ptr<dsp::Input> dsp::Function::getB() const { return b; }
 
 void dsp::Function::processNoLock() {
   if (function != nullptr) {
-    for (size_t channel = 0; channel < getNumChannels(); ++channel) {
-      Sample* phaseChannel =
-          getPhase()->getWrapper().getChannelPointer(channel);
-      Sample* outputChannel =
-          getOutput()->getWrapper().getChannelPointer(channel);
-      for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-        outputChannel[sample] = (*function)(phaseChannel[sample]);
-      }
-    }
+    getOutput()->getWrapper().replaceWithApplicationOf(
+        *function, getA()->getWrapper(), getB()->getWrapper());
   }
 }
