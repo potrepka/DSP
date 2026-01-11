@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include <string>
-#include <thread>
 
 #include "../Core/Lockable.h"
 #include "MidiBuffer.h"

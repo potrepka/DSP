@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <algorithm>
-#include <cmath>
 #include <vector>
 
 #include "Constants.h"

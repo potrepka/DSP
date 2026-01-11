@@ -1,5 +1,8 @@
 ﻿#include "AudioBuffer.h"
 
+#include <algorithm>
+#include <cmath>
+
 template <typename T>
 dsp::AudioBuffer<T>::AudioBuffer(size_t numChannels, size_t numSamples) {
   setSize(numChannels, numSamples);

@@ -1,5 +1,7 @@
 #include "NormalizedFFT.h"
 
+#include <cmath>
+
 dsp::NormalizedFFT::NormalizedFFT() : size(0), oneOverSize(0.0) {}
 
 void dsp::NormalizedFFT::setup(size_t size) {

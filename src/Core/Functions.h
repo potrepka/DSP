@@ -1,8 +1,5 @@
 ﻿#pragma once
 
-#include <algorithm>
-#include <cmath>
-
 #include "../Midi/MidiBuffer.h"
 #include "Constants.h"
 

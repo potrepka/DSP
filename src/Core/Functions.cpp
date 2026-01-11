@@ -1,5 +1,8 @@
 ﻿#include "Functions.h"
 
+#include <algorithm>
+#include <cmath>
+
 dsp::Sample dsp::byteToUnipolar(const int value) {
   int v = std::max(0, std::min(127, value));
   return (v + (v > 0)) * 0.0078125;
