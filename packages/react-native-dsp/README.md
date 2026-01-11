@@ -13,10 +13,13 @@ High-performance audio DSP library for TypeScript with Web and React Native supp
   - [Node Processor](#node-processor)
   - [Buffers, Wrappers, and Data](#buffers-wrappers-and-data)
   - [Nodes](#nodes)
+  - [Node Creation Defaults](#node-creation-defaults)
   - [Chainable API](#chainable-api)
+  - [Connecting Nodes](#connecting-nodes)
   - [Locking](#locking)
   - [Vectors](#vectors)
   - [Deleting Objects](#deleting-objects)
+  - [TypeScript Support](#typescript-support)
 - [Node Types](#node-types)
   - [Analyzer Nodes](#analyzer-nodes)
   - [Channel Nodes](#channel-nodes)
@@ -32,6 +35,8 @@ High-performance audio DSP library for TypeScript with Web and React Native supp
   - [MIDI Buffers](#midi-buffers)
   - [MIDI Messages](#midi-messages)
 - [FFT Support](#fft-support)
+  - [FFT Nodes](#fft-nodes)
+  - [NormalizedFFT](#normalizedfft)
 - [Enums](#enums)
   - [Global Enums](#global-enums)
   - [Node Enums](#node-enums)
@@ -183,15 +188,15 @@ For `Type.INTEGER` buffers, values are quantized to the greatest integer less th
 ```typescript
 const buffer = await dsp.createBuffer({
   numChannels: 2,
-  numSamples: 1024,
+  numSamples: 128,
 })
 await buffer.setType(Type.RATIO)
 await buffer.setSpace(Space.TIME)
-await buffer.setRange(1.0)
-await buffer.setDefaultValue(0)
+await buffer.setRange(0.0)
+await buffer.setDefaultValue(0.0)
 await buffer.setNumChannels(2)
-await buffer.setNumSamples(1024)
-await buffer.setSize(2, 1024)
+await buffer.setNumSamples(128)
+await buffer.setSize(2, 128)
 
 await buffer.setChannelValue(0, 0.5)
 await buffer.setChannelValues(new Float64Array([0.5, 0.5]))
@@ -239,21 +244,21 @@ const singleChannelWrapper = await wrapper.getSingleChannel(0)
 const sampleRangeWrapper = await wrapper.getSampleRange(0, 512)
 ```
 
-**Data** is the underlying raw sample storage. You can get Data from a Buffer.
+**Data** is the underlying raw sample storage. You can get Data from a Buffer. The `getReadChannelData()` method returns a single channel as an array, while `getReadData()` returns all channels as a 2D array (channels × samples).
 
 ```typescript
 const data = await buffer.getData()
 
 const numChannels = await data.getNumChannels()
 const numSamples = await data.getNumSamples()
-await data.setSize(2, 1024)
+await data.setSize(2, 128)
 await data.clear()
 
 const channelData = await data.getReadChannelData(0)
 const allData = await data.getReadData()
 
-const magnitude = await data.getMagnitude(0, 0, 1024)
-const rmsLevel = await data.getRMSLevel(0, 0, 1024)
+const peakLevel = await data.getPeakLevel(0, 0, 128)
+const rmsLevel = await data.getRMSLevel(0, 0, 128)
 ```
 
 ### Nodes
@@ -304,6 +309,20 @@ const input = await transformer.getInput()
 const output = await transformer.getOutput()
 ```
 
+### Node Creation Defaults
+
+When creating nodes, most parameters are optional. Default values are:
+
+- `type`: `Type.RATIO`
+- `space`: `Space.TIME`
+
+Some nodes require specific parameters:
+
+- `MidiInput` requires a `midiBuffer`.
+- `MidiOutput` requires a `midiBuffer`.
+
+Check individual node documentation for required options.
+
 ### Chainable API
 
 All proxy methods return `Chainable<T>` objects that support both `await` and method chaining.
@@ -314,6 +333,37 @@ const freq = await phasor.getFrequency()
 await freq.setAllChannelValues(440)
 
 await phasor.getFrequency().setAllChannelValues(440)
+```
+
+### Connecting Nodes
+
+Nodes are connected by linking outputs to inputs. An output can connect to multiple inputs, and an input can receive connections from multiple outputs.
+
+```typescript
+const phasor = await dsp.createPhasor()
+const osc = await dsp.createTableOscillator()
+const filter = await dsp.createBiquad()
+
+await phasor.getOutput().connect(await osc.getPhase())
+await osc.getOutput().connect(await filter.getInput())
+
+const connections = await filter.getInput().getConnections()
+
+await oscOutput.disconnect(filterInput)
+await phasorOutput.disconnectAll()
+```
+
+Inputs support different modes for combining multiple connections:
+
+```typescript
+import { InputMode } from '@potrepka/react-native-dsp'
+
+const input = await node.getInput()
+const mode = await input.getMode()
+
+await input.setMode(InputMode.SUM) // Sum all connected inputs (default)
+await input.setMode(InputMode.MINIMUM) // Use minimum of all connected inputs
+await input.setMode(InputMode.MAXIMUM) // Use maximum of all connected inputs
 ```
 
 ### Locking
@@ -332,11 +382,11 @@ await lockable.unlock()
 C++ vectors are exposed to TypeScript for certain operations, such as managing tables or sequences. The `VectorProxy` class provides access to vector operations.
 
 ```typescript
-const tables = await tableOsc.getTables()
+const tables = await tableOscillator.getTables()
 
+const table = await tables.get(0)
 await tables.push_back(buffer)
 await tables.set(0, buffer)
-const table = await tables.get(0)
 const count = await tables.size()
 await tables.resize(4, defaultBuffer)
 ```
@@ -347,6 +397,23 @@ When you are finished using the DSP instance, you must call the `delete()` metho
 
 ```typescript
 await dsp.delete()
+```
+
+### TypeScript Support
+
+The library provides full TypeScript support with exported types for all classes and enums. All proxy methods return `Chainable<T>` for type-safe chaining, and node creation options are fully typed.
+
+```typescript
+import type {
+  Buffer,
+  Input,
+  Output,
+  Node,
+  Consumer,
+  Producer,
+  Transformer,
+  Chainable,
+} from '@potrepka/react-native-dsp'
 ```
 
 ## Node Types
@@ -580,7 +647,7 @@ const gain = await compressorGate.getGain()
 // Outputs
 const output = await compressorGate.getOutput()
 
-// Miscellaneous
+// Analysis: get gain reduction for a given input level (useful for drawing gain curves)
 const gainResponse = await compressorGate.getGainResponse(0, 0.5)
 ```
 
@@ -665,6 +732,8 @@ const output = await shaper.getOutput()
 // Miscellaneous
 await shaper.getMode()
 await shaper.setMode(ShaperMode.HYPERBOLIC)
+
+// Analysis: get shaped output for a given input value (useful for drawing waveshaper curves)
 const outputSample = await shaper.getOutputSample(0, 0.5)
 ```
 
@@ -756,12 +825,14 @@ const output = await biquad.getOutput()
 // Miscellaneous
 await biquad.getMode()
 await biquad.setMode(BiquadMode.LOW_PASS)
+
+// Analysis: get magnitude response at a specific frequency (useful for visualization)
 const frequencyResponse = await biquad.getFrequencyResponse(1000)
 ```
 
 #### Crossover
 
-Splits signal into low and high frequency bands. Extends Node.
+Splits signal into low and high frequency bands. Extends Node directly (not Consumer/Producer/Transformer) because it uses child nodes for processing.
 
 ```typescript
 const crossover = await dsp.createCrossover()
@@ -1444,12 +1515,17 @@ await sampleRate.setNumChannels(2)
 
 ### MIDI Buffers
 
-MIDI buffers store timestamped MIDI events.
+MIDI buffers store timestamped MIDI events. Each event contains a MIDI message and its sample position within the buffer.
 
 ```typescript
 const midiBuffer = await dsp.createMidiBuffer()
 
 const events = await midiBuffer.getEvents()
+for (const event of events) {
+  const message = event.message
+  const samplePosition = event.samplePosition
+}
+
 await midiBuffer.addEvent(midiMessage, samplePosition)
 await midiBuffer.addEvents(
   otherMidiBuffer,
@@ -1534,17 +1610,44 @@ await message.delete()
 
 ## FFT Support
 
-The library provides FFT nodes and a standalone NormalizedFFT utility.
+The library provides FFT nodes for real-time processing and a standalone NormalizedFFT utility for offline analysis.
+
+### FFT Nodes
+
+Use ForwardFFT and InverseFFT nodes within the audio graph:
 
 ```typescript
 const fft = await dsp.createForwardFFT()
 const ifft = await dsp.createInverseFFT()
 
+// Outputs
 const magnitudeOutput = await fft.getMagnitude()
 const phaseOutput = await fft.getPhase()
 
+// Inputs
 const magnitudeInput = await ifft.getMagnitude()
 const phaseInput = await ifft.getPhase()
+```
+
+### NormalizedFFT
+
+The NormalizedFFT utility provides standalone FFT operations for offline processing:
+
+```typescript
+const normalizedFFT = await dsp.createNormalizedFFT()
+await normalizedFFT.setup(2048)
+
+const size = await normalizedFFT.getSize()
+const complexSize = await normalizedFFT.getComplexSize()
+
+const timeData = [
+  /* 2048 samples */
+]
+const { real, imaginary } = await normalizedFFT.toRealImaginary(timeData)
+const { magnitude, phase } = await normalizedFFT.toMagnitudePhase(timeData)
+
+const timeFromRI = await normalizedFFT.fromRealImaginary(real, imaginary)
+const timeFromMP = await normalizedFFT.fromMagnitudePhase(magnitude, phase)
 ```
 
 ## Enums
@@ -1578,13 +1681,13 @@ Space.FREQUENCY // Frequency domain
 
 #### Shape
 
-Curve shape for envelopes.
+Curve shape for envelope attack and release phases. Linear curves change at a constant rate, while exponential curves change more rapidly at the start and slow down toward the end.
 
 ```typescript
 import { Shape } from '@potrepka/react-native-dsp'
 
-Shape.LINEAR // Linear curve
-Shape.EXPONENTIAL // Exponential curve
+Shape.LINEAR // Linear curve (constant rate of change)
+Shape.EXPONENTIAL // Exponential curve (faster initial change)
 ```
 
 #### Interpolation
@@ -1601,14 +1704,14 @@ Interpolation.HERMITE // Hermite interpolation
 
 #### InputMode
 
-Input summing mode.
+Input summing mode for combining multiple connections.
 
 ```typescript
 import { InputMode } from '@potrepka/react-native-dsp'
 
-InputMode.SUM // Sum all inputs
-InputMode.MINIMUM // Take minimum
-InputMode.MAXIMUM // Take maximum
+InputMode.SUM // Sum all connected inputs
+InputMode.MINIMUM // Use minimum of all connected inputs
+InputMode.MAXIMUM // Use maximum of all connected inputs
 ```
 
 ### Node Enums
@@ -1656,14 +1759,14 @@ ShaperMode.RATIONAL // Rational function
 ```typescript
 import { BiquadMode } from '@potrepka/react-native-dsp'
 
-BiquadMode.LOW_PASS // Lowpass filter
-BiquadMode.HIGH_PASS // Highpass filter
-BiquadMode.BAND_PASS // Bandpass filter
+BiquadMode.LOW_PASS // Low-pass filter
+BiquadMode.HIGH_PASS // High-pass filter
+BiquadMode.BAND_PASS // Band-pass filter
 BiquadMode.BAND_STOP // Band-reject filter
 BiquadMode.LOW_SHELF // Low shelf EQ
 BiquadMode.HIGH_SHELF // High shelf EQ
 BiquadMode.PEAK // Peaking EQ
-BiquadMode.ALL_PASS // Allpass filter
+BiquadMode.ALL_PASS // All-pass filter
 ```
 
 #### OnePoleMode
@@ -1671,8 +1774,8 @@ BiquadMode.ALL_PASS // Allpass filter
 ```typescript
 import { OnePoleMode } from '@potrepka/react-native-dsp'
 
-OnePoleMode.LOW_PASS // Lowpass filter
-OnePoleMode.HIGH_PASS // Highpass filter
+OnePoleMode.LOW_PASS // Low-pass filter
+OnePoleMode.HIGH_PASS // High-pass filter
 ```
 
 #### NoiseMode
@@ -1698,12 +1801,12 @@ PhasorMode.UNBOUNDED // Continue accumulating
 ```typescript
 import { ComparisonMode } from '@potrepka/react-native-dsp'
 
-ComparisonMode.EQUAL // Equal to
-ComparisonMode.NOT_EQUAL // Not equal to
-ComparisonMode.LESS_THAN // Less than
-ComparisonMode.LESS_THAN_OR_EQUAL // Less than or equal to
-ComparisonMode.GREATER_THAN // Greater than
-ComparisonMode.GREATER_THAN_OR_EQUAL // Greater than or equal to
+ComparisonMode.EQUAL // Output 1 if input == threshold, else 0
+ComparisonMode.NOT_EQUAL // Output 1 if input != threshold, else 0
+ComparisonMode.LESS_THAN // Output 1 if input < threshold, else 0
+ComparisonMode.LESS_THAN_OR_EQUAL // Output 1 if input <= threshold, else 0
+ComparisonMode.GREATER_THAN // Output 1 if input > threshold, else 0
+ComparisonMode.GREATER_THAN_OR_EQUAL // Output 1 if input >= threshold, else 0
 ```
 
 #### HyperbolicMode

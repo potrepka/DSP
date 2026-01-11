@@ -104,7 +104,7 @@ dsp::Array dsp::Buffer::getPeak() {
   lock();
   Array peak(getNumChannels());
   for (size_t channel = 0; channel < getNumChannels(); ++channel) {
-    peak[channel] = data.getMagnitude(channel, 0, getNumSamples());
+    peak[channel] = data.getPeakLevel(channel, 0, getNumSamples());
   }
   unlock();
   return peak;

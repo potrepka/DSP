@@ -23,7 +23,7 @@ public:
   const T* getReadPointer(size_t channel) const;
   T* getWritePointer(size_t channel);
 
-  T getMagnitude(size_t channel, size_t startSample, size_t numSamples) const;
+  T getPeakLevel(size_t channel, size_t startSample, size_t numSamples) const;
   T getRMSLevel(size_t channel, size_t startSample, size_t numSamples) const;
 
   const T* const* getArrayOfReadPointers() const;

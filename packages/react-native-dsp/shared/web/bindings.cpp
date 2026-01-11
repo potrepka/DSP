@@ -203,7 +203,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
             size_t length = data.getNumSamples();
             return val(typed_memory_view(length, pointer));
           }))
-      .function("getMagnitude", &Data::getMagnitude)
+      .function("getPeakLevel", &Data::getPeakLevel)
       .function("getRMSLevel", &Data::getRMSLevel)
       .function("getReadData",
                 std::function<val(const Data& data)>([](const Data& data) {

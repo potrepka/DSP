@@ -25,13 +25,13 @@ export class DataProxy extends BaseProxy {
   getWriteChannelData = (_channel: number): never => {
     throw new Error('getWriteChannelData is not implemented')
   }
-  getMagnitude = (
+  getPeakLevel = (
     channel: number,
     startSample: number,
     numSamples: number,
   ): Chainable<number> => {
     return chainable(
-      this.call('getMagnitude', [channel, startSample, numSamples]),
+      this.call('getPeakLevel', [channel, startSample, numSamples]),
     )
   }
   getRMSLevel = (

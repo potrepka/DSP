@@ -50,7 +50,7 @@ T* dsp::AudioBuffer<T>::getWritePointer(size_t channel) {
 }
 
 template <typename T>
-T dsp::AudioBuffer<T>::getMagnitude(size_t channel, size_t startSample,
+T dsp::AudioBuffer<T>::getPeakLevel(size_t channel, size_t startSample,
                                     size_t numSamples) const {
   DSP_ASSERT(channel < numChannels);
   DSP_ASSERT(startSample + numSamples <= this->numSamples);
