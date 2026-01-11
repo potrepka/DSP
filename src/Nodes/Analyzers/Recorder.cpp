@@ -87,8 +87,8 @@ void dsp::Recorder::processNoLock() {
             continue;
           }
           if (writeIndex[channel] >= recordingNumSamples) {
-            Sample bufferSize = ceil(recordingNumSamples);
-            if (writeIndex[channel] < bufferSize) {
+            Sample numSamples = ceil(recordingNumSamples);
+            if (writeIndex[channel] < numSamples) {
               size_t i1 = static_cast<size_t>(writeIndex[channel]);
               targetChannel[i1] = inputChannel[sample];
             }
