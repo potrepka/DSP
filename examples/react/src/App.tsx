@@ -65,7 +65,7 @@ export const App = () => {
     // Wait for the module to initialize
     await dsp.isReady()
 
-    // Create nodes using the fluent API
+    // Create nodes
     const phasor = await dsp.createPhasor()
     const osc = await dsp.createTableOscillator()
     const filter = await dsp.createBiquad()
@@ -94,6 +94,8 @@ export const App = () => {
       const value = 2 * ((phase + 0.5) % 1) - 1
       sawtoothWrapper.setSample(0, sample, value)
     }
+
+    // Add wavetable to oscillator
     await osc.getTables().push_back(sawtooth)
 
     // Connect the graph
@@ -103,6 +105,8 @@ export const App = () => {
     await gain
       .getOutput()
       .connect(await dsp.getNodeProcessor().getAudioOutput())
+
+    return dsp
   }
   const testOutput = async () => {
     if (!addModule || !createAudioWorkletNode) {
@@ -135,12 +139,12 @@ export const App = () => {
           sampleRate,
         },
       )
-      offlineAudioWorkletNode.connect(offlineAudioContext.destination)
       addLog('\nRunning test...')
-      await setupTest(offlineAudioWorkletNode)
+      const dsp = await setupTest(offlineAudioWorkletNode)
+      offlineAudioWorkletNode.connect(offlineAudioContext.destination)
       const renderedBuffer = await offlineAudioContext.startRendering()
       offlineAudioWorkletNode.disconnect()
-      await offlineAudioWorkletNode.port.postMessage({ message: 'delete' })
+      await dsp.delete()
       addLog('\nOutput analysis:')
       const left = renderedBuffer.getChannelData(0)
       const right = renderedBuffer.getChannelData(1)
@@ -222,16 +226,16 @@ export const App = () => {
         numSamples: 128,
         sampleRate: audioContext.sampleRate,
       })
-      audioWorkletNode.connect(audioContext.destination)
       addLog(`\nRunning test...`)
-      await setupTest(audioWorkletNode)
+      const dsp = await setupTest(audioWorkletNode)
+      audioWorkletNode.connect(audioContext.destination)
       const numSeconds = 2
       addLog(`\nPlaying for ${numSeconds} seconds...`)
       await new Promise((resolve) => setTimeout(resolve, numSeconds * 1000))
       addLog('\nStopping...')
       audioWorkletNode.disconnect()
       await audioContext.close()
-      await audioWorkletNode.port.postMessage({ message: 'delete' })
+      await dsp.delete()
       setStatus({ message: 'Playback completed', type: 'success' })
       addLog('\n✅ Playback completed')
       setIsPlaying(false)
