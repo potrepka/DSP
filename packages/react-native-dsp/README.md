@@ -349,8 +349,8 @@ await osc.getOutput().connect(await filter.getInput())
 
 const connections = await filter.getInput().getConnections()
 
-await oscOutput.disconnect(filterInput)
-await phasorOutput.disconnectAll()
+await osc.getOutput().disconnect(await filter.getInput())
+await phasor.getOutput().disconnectAll()
 ```
 
 Inputs support different modes for combining multiple connections:
@@ -382,6 +382,7 @@ await lockable.unlock()
 C++ vectors are exposed to TypeScript for certain operations, such as managing tables or sequences. The `VectorProxy` class provides access to vector operations.
 
 ```typescript
+const tableOscillator = await dsp.createTableOscillator()
 const tables = await tableOscillator.getTables()
 
 const table = await tables.get(0)
@@ -1509,6 +1510,9 @@ Outputs the sample rate in Hz. Extends Producer.
 ```typescript
 const sampleRate = await dsp.createSampleRate()
 await sampleRate.setNumChannels(2)
+
+// Outputs
+const output = await sampleRate.getOutput()
 ```
 
 ## MIDI Support
