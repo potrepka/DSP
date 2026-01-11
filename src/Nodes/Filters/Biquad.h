@@ -48,13 +48,10 @@ private:
   Array bb1;
   Array bb2;
 
-  static void calculateCoefficients(const Sample sampleRate,
-                                    const Sample oneOverSampleRate,
-                                    const Sample& frequency,
-                                    const Sample& resonance,
-                                    const Sample& amplitude, const Mode mode,
-                                    Sample& a0, Sample& a1, Sample& a2,
-                                    Sample& b0, Sample& b1, Sample& b2);
+  void calculateCoefficients(
+      const Sample sampleRate, const Sample oneOverSampleRate,
+      const Sample frequency, const Sample resonance, const Sample amplitude,
+      Sample& a0, Sample& a1, Sample& a2, Sample& b0, Sample& b1, Sample& b2);
 };
 
 } // namespace dsp

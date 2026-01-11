@@ -20,8 +20,8 @@ private:
   const std::shared_ptr<Input> mixAmount;
   const std::shared_ptr<Output> mid;
   const std::shared_ptr<Output> side;
-  Data data;
-  Wrapper wrapper;
+  Data mixedData;
+  Wrapper mixed;
 };
 
 } // namespace dsp

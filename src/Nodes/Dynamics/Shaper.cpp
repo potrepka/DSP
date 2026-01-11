@@ -39,8 +39,8 @@ void dsp::Shaper::processNoLock() {
     Sample* outputChannel =
         getOutput()->getWrapper().getChannelPointer(channel);
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-      Sample& input = inputChannel[sample];
-      Sample& drive = driveChannel[sample];
+      Sample input = inputChannel[sample];
+      Sample drive = driveChannel[sample];
       Sample& output = outputChannel[sample];
       output = getOutputSample(input, drive, mode);
     }

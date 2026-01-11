@@ -2,7 +2,7 @@
 
 dsp::StereoPanner::StereoPanner(Type type, Domain domain)
     : Consumer(type, domain),
-      direction(std::make_shared<Input>(Type::RATIO, domain, 1.0, 0.5)),
+      direction(std::make_shared<Input>(Type::RATIO, domain)),
       left(std::make_shared<Output>(type, domain)),
       right(std::make_shared<Output>(type, domain)) {
   getInputs().push_back(direction);
@@ -28,11 +28,11 @@ void dsp::StereoPanner::processNoLock() {
     Sample* leftChannel = getLeft()->getWrapper().getChannelPointer(channel);
     Sample* rightChannel = getRight()->getWrapper().getChannelPointer(channel);
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-      Sample& direction = directionChannel[sample];
+      Sample direction = directionChannel[sample];
+      Sample amount = 0.5 * (direction + 1.0);
       leftChannel[sample] =
-          SQRT_OF_TWO * cos(PI_OVER_TWO * direction) * inputChannel[sample];
-      rightChannel[sample] = SQRT_OF_TWO *
-                             cos(PI_OVER_TWO * (1.0 - direction)) *
+          SQRT_OF_TWO * cos(PI_OVER_TWO * amount) * inputChannel[sample];
+      rightChannel[sample] = SQRT_OF_TWO * cos(PI_OVER_TWO * (1.0 - amount)) *
                              inputChannel[sample];
     }
   }

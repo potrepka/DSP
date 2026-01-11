@@ -29,8 +29,8 @@ void dsp::Spread::processNoLock() {
     Sample amount =
         numChannelsMinusOne > 0 ? channel / numChannelsMinusOne : 0.0;
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-      Sample& input = inputChannel[sample];
-      Sample& spread = spreadChannel[sample];
+      Sample input = inputChannel[sample];
+      Sample spread = spreadChannel[sample];
       Sample& output = outputChannel[sample];
       output =
           input + spread * (numChannelsMinusOne > 0 ? amount - 0.5 * modeValue

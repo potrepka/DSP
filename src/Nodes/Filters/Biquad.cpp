@@ -53,7 +53,7 @@ dsp::FrequencyResponse dsp::Biquad::getFrequencyResponse(size_t channel,
     Sample b1;
     Sample b2;
     calculateCoefficients(sampleRate, oneOverSampleRate, f, resonance,
-                          amplitude, mode, a0, a1, a2, b0, b1, b2);
+                          amplitude, a0, a1, a2, b0, b1, b2);
     const Sample omega = TAU * frequency * oneOverSampleRate;
     const Sample sinW = sin(omega);
     const Sample cosW = cos(omega);
@@ -113,21 +113,22 @@ void dsp::Biquad::processNoLock() {
     Sample& b1 = bb1[channel];
     Sample& b2 = bb2[channel];
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+      Sample input = inputChannel[sample];
+      Sample frequency = frequencyChannel[sample];
+      Sample resonance = resonanceChannel[sample];
+      Sample amplitude = amplitudeChannel[sample];
+      Sample& output = outputChannel[sample];
       if (isnan(x1) || isnan(x2) || isnan(y1) || isnan(y2)) {
         x1 = 0.0;
         x2 = 0.0;
         y1 = 0.0;
         y2 = 0.0;
       }
-      calculateCoefficients(getSampleRate(), getOneOverSampleRate(),
-                            frequencyChannel[sample], resonanceChannel[sample],
-                            amplitudeChannel[sample], mode, a0, a1, a2, b0, b1,
-                            b2);
-      outputChannel[sample] =
-          (b0 * inputChannel[sample] + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2) /
-          a0;
+      calculateCoefficients(getSampleRate(), getOneOverSampleRate(), frequency,
+                            resonance, amplitude, a0, a1, a2, b0, b1, b2);
+      output = (b0 * input + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2) / a0;
       x2 = x1;
-      x1 = inputChannel[sample];
+      x1 = input;
       y2 = y1;
       y1 = outputChannel[sample];
     }
@@ -136,9 +137,8 @@ void dsp::Biquad::processNoLock() {
 
 void dsp::Biquad::calculateCoefficients(
     const Sample sampleRate, const Sample oneOverSampleRate,
-    const Sample& frequency, const Sample& resonance, const Sample& amplitude,
-    const Mode mode, Sample& a0, Sample& a1, Sample& a2, Sample& b0, Sample& b1,
-    Sample& b2) {
+    const Sample frequency, const Sample resonance, const Sample amplitude,
+    Sample& a0, Sample& a1, Sample& a2, Sample& b0, Sample& b1, Sample& b2) {
   const Sample posResonance = abs(resonance);
   const Sample posAmplitude = abs(amplitude);
   if (posResonance == 0.0 || posAmplitude == 0.0) {

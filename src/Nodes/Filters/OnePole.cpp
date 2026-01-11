@@ -80,8 +80,8 @@ void dsp::OnePole::processNoLock() {
     Sample* outputChannel =
         getOutput()->getWrapper().getChannelPointer(channel);
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-      Sample& input = inputChannel[sample];
-      Sample& frequency = frequencyChannel[sample];
+      Sample input = inputChannel[sample];
+      Sample frequency = frequencyChannel[sample];
       Sample& output = outputChannel[sample];
       if (isnan(state[channel])) {
         state[channel] = 0.0;

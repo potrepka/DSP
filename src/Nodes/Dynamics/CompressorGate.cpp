@@ -102,14 +102,14 @@ void dsp::CompressorGate::processNoLock() {
         getOutput()->getWrapper().getChannelPointer(channel);
     Sample* gainChannel = getGain()->getWrapper().getChannelPointer(channel);
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-      Sample& input = inputChannel[sample];
-      Sample& control = controlChannel[sample];
-      Sample& threshold = thresholdChannel[sample];
-      Sample& softness = softnessChannel[sample];
-      Sample& compressionRatio = compressionRatioChannel[sample];
-      Sample& gateRatio = gateRatioChannel[sample];
-      Sample& attack = attackChannel[sample];
-      Sample& release = releaseChannel[sample];
+      Sample input = inputChannel[sample];
+      Sample control = controlChannel[sample];
+      Sample threshold = thresholdChannel[sample];
+      Sample softness = softnessChannel[sample];
+      Sample compressionRatio = compressionRatioChannel[sample];
+      Sample gateRatio = gateRatioChannel[sample];
+      Sample attack = attackChannel[sample];
+      Sample release = releaseChannel[sample];
       Sample& output = outputChannel[sample];
       Sample& gain = gainChannel[sample];
       if (isnan(state[channel])) {

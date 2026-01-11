@@ -2,242 +2,211 @@
 
 This document categorizes all node inputs and outputs by signal type.
 
-## BOOLEAN
+## Type Definitions
 
-Signals that are either 0 or 1.
-
-| Node           | Input/Output | Name       |
-| -------------- | ------------ | ---------- |
-| Recorder       | Input        | gate       |
-| Recorder       | Input        | reset      |
-| VariableDelay  | Input        | reset      |
-| Envelope       | Input        | gate       |
-| Envelope       | Input        | reset      |
-| SamplePlayer   | Input        | gate       |
-| SamplePlayer   | Input        | reset      |
-| Phasor         | Input        | reset      |
-| BooleanMask    | Input        | mask       |
-| Comparison     | Output       | output     |
-| NotGate        | Input        | input      |
-| NotGate        | Output       | output     |
-| ClockTrigger   | Output       | output     |
-| ClockTrigger   | Input        | reset      |
-| Differentiator | Output       | gate       |
-| Differentiator | Input        | reset      |
-| Integrator     | Input        | gate       |
-| Integrator     | Input        | reset      |
-| OnOff          | Input        | onTrigger  |
-| OnOff          | Input        | offTrigger |
-| OnOff          | Output       | output     |
-| ResetTrigger   | Output       | output     |
-| SampleAndHold  | Input        | gate       |
-| SampleAndHold  | Input        | reset      |
-| TriggerHold    | Input        | input      |
-| TriggerHold    | Output       | output     |
-
-## UNIPOLAR
-
-Signals in the range [0, 1].
-
-| Node            | Input/Output | Name      | Notes          |
-| --------------- | ------------ | --------- | -------------- |
-| MidSide         | Input        | mixAmount | 0=dry, 1=wet   |
-| DryWet          | Input        | mixAmount | 0=dry, 1=wet   |
-| Envelope        | Output       | output    | envelope level |
-| TableShaper     | Input        | position  | table position |
-| Phasor          | Output       | output    | phase ramp     |
-| TableOscillator | Input        | phase     | 0-1 phase      |
-| TableOscillator | Input        | position  | table position |
-
-## BIPOLAR
-
-Signals in the range [-1, 1].
-
-| Node            | Input/Output | Name           | Notes           |
-| --------------- | ------------ | -------------- | --------------- |
-| ChannelMerger   | Input        | input(n)       | audio           |
-| ChannelMerger   | Output       | output         | audio           |
-| ChannelSplitter | Input        | input          | audio           |
-| ChannelSplitter | Output       | output(n)      | audio           |
-| MidSide         | Input        | input          | stereo audio    |
-| MidSide         | Output       | mid            | audio           |
-| MidSide         | Output       | side           | audio           |
-| Spread          | Input        | input          | audio           |
-| Spread          | Output       | output         | audio           |
-| StereoPanner    | Input        | input          | mono audio      |
-| StereoPanner    | Input        | direction      | -1=L, +1=R      |
-| StereoPanner    | Output       | left           | audio           |
-| StereoPanner    | Output       | right          | audio           |
-| Convolver       | Input        | input          | audio           |
-| Convolver       | Output       | output         | audio           |
-| VariableDelay   | Input        | input          | audio           |
-| VariableDelay   | Output       | output         | audio           |
-| VariableDelay   | Output       | feedbackSource | audio           |
-| VariableDelay   | Input        | feedbackSink   | audio           |
-| CompressorGate  | Input        | input          | audio           |
-| CompressorGate  | Output       | output         | audio           |
-| CompressorGate  | Input        | control        | sidechain audio |
-| DryWet          | Input        | dry            | audio           |
-| DryWet          | Input        | wet            | audio           |
-| DryWet          | Input        | a              | audio           |
-| DryWet          | Input        | b              | audio           |
-| DryWet          | Output       | output         | audio           |
-| Shaper          | Input        | input          | audio           |
-| Shaper          | Output       | output         | audio           |
-| TableShaper     | Input        | input          | audio           |
-| TableShaper     | Output       | output         | audio           |
-| Biquad          | Input        | input          | audio           |
-| Biquad          | Output       | output         | audio           |
-| Crossover       | Input        | input          | audio           |
-| Crossover       | Output       | low            | audio           |
-| Crossover       | Output       | high           | audio           |
-| OnePole         | Input        | input          | audio           |
-| OnePole         | Output       | output         | audio           |
-| Noise           | Output       | output         | audio           |
-| SamplePlayer    | Output       | output         | audio           |
-| TableOscillator | Output       | output         | audio           |
-| InverseFFT      | Output       | output         | audio           |
-| Recorder        | Input        | input          | audio           |
-
-## INTEGER
-
-Whole number signals.
-
-| Node         | Input/Output | Name          | Notes        |
-| ------------ | ------------ | ------------- | ------------ |
-| Sequencer    | Input        | sequenceIndex | buffer index |
-| Sequencer    | Input        | positionIndex | step index   |
-| SamplePlayer | Input        | sampleIndex   | buffer index |
-
-## SECONDS
-
-Time duration signals.
-
-| Node           | Input/Output | Name      |
-| -------------- | ------------ | --------- |
-| VariableDelay  | Input        | delayTime |
-| VariableDelay  | Input        | decayTime |
-| Envelope       | Input        | attack    |
-| Envelope       | Input        | release   |
-| CompressorGate | Input        | attack    |
-| CompressorGate | Input        | release   |
-| Lag            | Input        | lagTime   |
-| ClockTrigger   | Input        | interval  |
-| ClockTrigger   | Input        | delayTime |
-| TriggerHold    | Input        | holdTime  |
-| SamplePlayer   | Input        | startTime |
-| BufferDuration | Output       | output    |
-| SampleDuration | Output       | output    |
-
-## HERTZ
-
-Frequency signals.
-
-| Node            | Input/Output | Name            |
-| --------------- | ------------ | --------------- |
-| Phasor          | Input        | frequency       |
-| Biquad          | Input        | frequency       |
-| Crossover       | Input        | frequency       |
-| OnePole         | Input        | frequency       |
-| FrequencyToNote | Input        | input           |
-| FrequencyToNote | Input        | tuningFrequency |
-| NoteToFrequency | Output       | output          |
-| NoteToFrequency | Input        | tuningFrequency |
-| SampleRate      | Output       | output          |
-| BufferRate      | Output       | output          |
-
-## RATIO
-
-Arbitrary floating-point signals that don't fit the above categories.
-
-| Node            | Input/Output | Name             | Notes                                 |
-| --------------- | ------------ | ---------------- | ------------------------------------- |
-| Clipper         | Input        | minimum          | arbitrary clipping bounds             |
-| Clipper         | Input        | maximum          | arbitrary clipping bounds             |
-| Clipper         | Input        | input            | any signal being clipped              |
-| Clipper         | Output       | output           | clipped signal                        |
-| CompressorGate  | Input        | threshold        | dB, unbounded negative                |
-| CompressorGate  | Input        | softness         | knee width, arbitrary                 |
-| CompressorGate  | Input        | compressionRatio | 1:1 to infinity                       |
-| CompressorGate  | Input        | gateRatio        | 1:1 to infinity                       |
-| CompressorGate  | Input        | gain             | dB, any value                         |
-| Shaper          | Input        | drive            | arbitrary positive                    |
-| Biquad          | Input        | resonance        | Q factor, 0.1 to 100+                 |
-| Biquad          | Input        | amplitude        | dB gain for shelf/peak                |
-| SamplePlayer    | Input        | speed            | 0.5=half, 2.0=double                  |
-| Spread          | Input        | spread           | stereo width factor                   |
-| MidiInput       | Output       | output           | MIDI values (0-127, pitch bend, etc.) |
-| MidiOutput      | Input        | input            | MIDI values                           |
-| ForwardFFT      | Input        | input            | time-domain signal                    |
-| ForwardFFT      | Output       | magnitude        | FFT bins, unbounded                   |
-| ForwardFFT      | Output       | phase            | radians, unbounded                    |
-| InverseFFT      | Input        | magnitude        | FFT bins                              |
-| InverseFFT      | Input        | phase            | radians                               |
-| FrequencyToNote | Output       | output           | MIDI note (fractional, 0-127+)        |
-| NoteToFrequency | Input        | input            | MIDI note                             |
-| Division        | Input        | input            | any                                   |
-| Division        | Input        | divisor          | any                                   |
-| Division        | Output       | output           | any                                   |
-| Floor           | Input        | input            | any                                   |
-| Floor           | Input        | divisor          | any                                   |
-| Floor           | Output       | output           | any                                   |
-| Modulo          | Input        | input            | any                                   |
-| Modulo          | Input        | divisor          | any                                   |
-| Modulo          | Output       | output           | any                                   |
-| Multiplication  | Input        | input            | any                                   |
-| Multiplication  | Input        | factor           | any                                   |
-| Multiplication  | Output       | output           | any                                   |
-| Logarithm       | Input        | input            | positive values                       |
-| Logarithm       | Input        | base             | log base (2, 10, e)                   |
-| Logarithm       | Output       | output           | any                                   |
-| Power           | Input        | input            | any                                   |
-| Power           | Input        | exponent         | any                                   |
-| Power           | Output       | output           | any                                   |
-| Reciprocal      | Input        | input            | any                                   |
-| Reciprocal      | Output       | output           | any                                   |
-| Negative        | Input        | input            | any                                   |
-| Negative        | Output       | output           | any                                   |
-| AbsoluteValue   | Input        | input            | any                                   |
-| AbsoluteValue   | Output       | output           | positive any                          |
-| Hyperbolic      | Input        | input            | any                                   |
-| Hyperbolic      | Output       | output           | any                                   |
-| Trigonometric   | Input        | input            | radians (unbounded)                   |
-| Trigonometric   | Output       | output           | depends on function                   |
-| Comparison      | Input        | input            | any                                   |
-| Comparison      | Input        | threshold        | any                                   |
-| Function        | Input        | a                | any                                   |
-| Function        | Input        | b                | any                                   |
-| Function        | Output       | output           | any                                   |
-| Identity        | Input        | input            | pass-through                          |
-| Identity        | Output       | output           | pass-through                          |
-| BooleanMask     | Input        | input            | any (masked)                          |
-| BooleanMask     | Output       | output           | any                                   |
-| SampleAndHold   | Input        | input            | any                                   |
-| SampleAndHold   | Output       | output           | any                                   |
-| Differentiator  | Input        | input            | any                                   |
-| Differentiator  | Output       | output           | rate of change                        |
-| Integrator      | Input        | input            | any                                   |
-| Integrator      | Output       | output           | accumulated                           |
-| Sequencer       | Output       | output           | sequence values                       |
-| Lag             | Input        | input            | any                                   |
-| Lag             | Output       | output           | any                                   |
-
-## Summary
-
-RATIO is necessary as a catch-all type. The math nodes (Division, Multiplication, Power, Logarithm, etc.) operate on arbitrary values by design. Additionally:
-
-1. **dB values** (threshold, gain, amplitude) are unbounded negative/positive
-2. **Ratios** (compression ratio, speed, Q factor) are arbitrary positive floats
-3. **Radians** (phase, trig input) are unbounded
-4. **FFT data** (magnitude, phase bins) are arbitrary
-5. **Generic pass-through** (Identity, Function, SampleAndHold) must accept anything
-
-The complete taxonomy:
-
-- **BOOLEAN** - 0 or 1
-- **UNIPOLAR** - [0, 1]
+- **UNIPOLAR** - [0, 1], where 1 is a recommended maximum
 - **BIPOLAR** - [-1, 1]
+- **BOOLEAN** - 0 or 1
 - **INTEGER** - whole numbers
 - **SECONDS** - time duration
 - **HERTZ** - frequency
-- **RATIO** - everything else (catch-all for arbitrary float)
+- **NUMBER** - defined meaning that doesn't fit other categories
+- **arbitrary** - constructor-defined type (can be any type)
+
+## Complete Node Reference
+
+| Node            | Input/Output | Name             | Type      | Notes                    |
+| --------------- | ------------ | ---------------- | --------- | ------------------------ |
+| AbsoluteValue   | Input        | input            | arbitrary |                          |
+| AbsoluteValue   | Output       | output           | arbitrary |                          |
+| Biquad          | Input        | amplitude        | UNIPOLAR  | linear gain              |
+| Biquad          | Input        | frequency        | HERTZ     |                          |
+| Biquad          | Input        | input            | BIPOLAR   | audio                    |
+| Biquad          | Input        | resonance        | NUMBER    | (0.0, inf), default: 1.0 |
+| Biquad          | Output       | output           | BIPOLAR   | audio                    |
+| BooleanMask     | Input        | input            | arbitrary |                          |
+| BooleanMask     | Input        | mask             | BOOLEAN   |                          |
+| BooleanMask     | Output       | output           | arbitrary |                          |
+| BufferDuration  | Output       | output           | SECONDS   |                          |
+| BufferRate      | Output       | output           | HERTZ     |                          |
+| ChannelMerger   | Input        | input(n)         | arbitrary |                          |
+| ChannelMerger   | Output       | output           | arbitrary |                          |
+| ChannelSplitter | Input        | input            | arbitrary |                          |
+| ChannelSplitter | Output       | output(n)        | arbitrary |                          |
+| Clipper         | Input        | input            | arbitrary |                          |
+| Clipper         | Input        | maximum          | arbitrary | clipping bound           |
+| Clipper         | Input        | minimum          | arbitrary | clipping bound           |
+| Clipper         | Output       | output           | arbitrary |                          |
+| ClockTrigger    | Input        | delayTime        | SECONDS   |                          |
+| ClockTrigger    | Input        | interval         | SECONDS   |                          |
+| ClockTrigger    | Input        | reset            | BOOLEAN   |                          |
+| ClockTrigger    | Output       | output           | BOOLEAN   |                          |
+| Comparison      | Input        | input            | arbitrary |                          |
+| Comparison      | Input        | threshold        | arbitrary | same type as input       |
+| Comparison      | Output       | output           | BOOLEAN   |                          |
+| CompressorGate  | Input        | attack           | SECONDS   |                          |
+| CompressorGate  | Input        | compressionRatio | NUMBER    | (0.0, inf], default: 1.0 |
+| CompressorGate  | Input        | control          | BIPOLAR   | sidechain audio          |
+| CompressorGate  | Input        | gain             | UNIPOLAR  | linear                   |
+| CompressorGate  | Input        | gateRatio        | NUMBER    | (0.0, inf], default: 1.0 |
+| CompressorGate  | Input        | input            | BIPOLAR   | audio                    |
+| CompressorGate  | Input        | release          | SECONDS   |                          |
+| CompressorGate  | Input        | softness         | NUMBER    | [0.0, inf], default: 0.0 |
+| CompressorGate  | Input        | threshold        | UNIPOLAR  | linear                   |
+| CompressorGate  | Output       | output           | BIPOLAR   | audio                    |
+| Convolver       | Input        | input            | BIPOLAR   | audio                    |
+| Convolver       | Output       | output           | BIPOLAR   | audio                    |
+| Crossover       | Input        | frequency        | HERTZ     |                          |
+| Crossover       | Input        | input            | BIPOLAR   | audio                    |
+| Crossover       | Output       | high             | BIPOLAR   | audio                    |
+| Crossover       | Output       | low              | BIPOLAR   | audio                    |
+| Differentiator  | Input        | input            | arbitrary |                          |
+| Differentiator  | Input        | reset            | BOOLEAN   |                          |
+| Differentiator  | Output       | gate             | BOOLEAN   |                          |
+| Differentiator  | Output       | output           | NUMBER    | derivative               |
+| Division        | Input        | divisor          | arbitrary |                          |
+| Division        | Input        | input            | arbitrary |                          |
+| Division        | Output       | output           | arbitrary |                          |
+| DryWet          | Input        | dry              | arbitrary |                          |
+| DryWet          | Input        | mixAmount        | UNIPOLAR  | 0=dry, 1=wet             |
+| DryWet          | Input        | wet              | arbitrary |                          |
+| DryWet          | Output       | a                | arbitrary |                          |
+| DryWet          | Output       | b                | arbitrary |                          |
+| DryWet          | Output       | output           | arbitrary |                          |
+| Envelope        | Input        | attack           | SECONDS   |                          |
+| Envelope        | Input        | gate             | BOOLEAN   |                          |
+| Envelope        | Input        | release          | SECONDS   |                          |
+| Envelope        | Input        | reset            | BOOLEAN   |                          |
+| Envelope        | Output       | output           | UNIPOLAR  | envelope level           |
+| Floor           | Input        | divisor          | arbitrary |                          |
+| Floor           | Input        | input            | arbitrary |                          |
+| Floor           | Output       | output           | arbitrary |                          |
+| ForwardFFT      | Input        | input            | BIPOLAR   | audio                    |
+| ForwardFFT      | Output       | magnitude        | NUMBER    | FFT bins                 |
+| ForwardFFT      | Output       | phase            | NUMBER    | radians                  |
+| FrequencyToNote | Input        | input            | HERTZ     |                          |
+| FrequencyToNote | Input        | tuningFrequency  | HERTZ     |                          |
+| FrequencyToNote | Output       | output           | NUMBER    | MIDI note                |
+| Function        | Input        | a                | arbitrary |                          |
+| Function        | Input        | b                | arbitrary |                          |
+| Function        | Output       | output           | arbitrary |                          |
+| Hyperbolic      | Input        | input            | NUMBER    |                          |
+| Hyperbolic      | Output       | output           | NUMBER    |                          |
+| Identity        | Input        | input            | arbitrary |                          |
+| Identity        | Output       | output           | arbitrary |                          |
+| Integrator      | Input        | gate             | BOOLEAN   |                          |
+| Integrator      | Input        | input            | arbitrary |                          |
+| Integrator      | Input        | reset            | BOOLEAN   |                          |
+| Integrator      | Output       | output           | NUMBER    | accumulated              |
+| InverseFFT      | Input        | magnitude        | NUMBER    | FFT bins                 |
+| InverseFFT      | Input        | phase            | NUMBER    | radians                  |
+| InverseFFT      | Output       | output           | BIPOLAR   | audio                    |
+| Lag             | Input        | input            | arbitrary |                          |
+| Lag             | Input        | lagTime          | SECONDS   |                          |
+| Lag             | Output       | output           | arbitrary |                          |
+| Logarithm       | Input        | base             | NUMBER    | log base                 |
+| Logarithm       | Input        | input            | NUMBER    | positive values          |
+| Logarithm       | Output       | output           | NUMBER    |                          |
+| MidiInput       | Output       | output           | arbitrary |                          |
+| MidiOutput      | Input        | input            | arbitrary |                          |
+| MidSide         | Input        | input            | arbitrary |                          |
+| MidSide         | Input        | mixAmount        | UNIPOLAR  | 0=dry, 1=wet             |
+| MidSide         | Output       | mid              | arbitrary |                          |
+| MidSide         | Output       | side             | arbitrary |                          |
+| Modulo          | Input        | divisor          | arbitrary |                          |
+| Modulo          | Input        | input            | arbitrary |                          |
+| Modulo          | Output       | output           | arbitrary |                          |
+| Multiplication  | Input        | factor           | arbitrary |                          |
+| Multiplication  | Input        | input            | arbitrary |                          |
+| Multiplication  | Output       | output           | arbitrary |                          |
+| Negative        | Input        | input            | arbitrary |                          |
+| Negative        | Output       | output           | arbitrary |                          |
+| Noise           | Output       | output           | BIPOLAR   | audio                    |
+| NoteToFrequency | Input        | input            | NUMBER    | MIDI note                |
+| NoteToFrequency | Input        | tuningFrequency  | HERTZ     |                          |
+| NoteToFrequency | Output       | output           | HERTZ     |                          |
+| NotGate         | Input        | input            | BOOLEAN   |                          |
+| NotGate         | Output       | output           | BOOLEAN   |                          |
+| OnePole         | Input        | frequency        | HERTZ     |                          |
+| OnePole         | Input        | input            | arbitrary |                          |
+| OnePole         | Output       | output           | arbitrary |                          |
+| OnOff           | Input        | offTrigger       | BOOLEAN   |                          |
+| OnOff           | Input        | onTrigger        | BOOLEAN   |                          |
+| OnOff           | Output       | output           | BOOLEAN   |                          |
+| Phasor          | Input        | frequency        | HERTZ     |                          |
+| Phasor          | Input        | reset            | BOOLEAN   |                          |
+| Phasor          | Output       | output           | UNIPOLAR  | phase ramp               |
+| Power           | Input        | exponent         | NUMBER    |                          |
+| Power           | Input        | input            | NUMBER    |                          |
+| Power           | Output       | output           | NUMBER    |                          |
+| Reciprocal      | Input        | input            | arbitrary |                          |
+| Reciprocal      | Output       | output           | arbitrary |                          |
+| Recorder        | Input        | gate             | BOOLEAN   |                          |
+| Recorder        | Input        | input            | arbitrary |                          |
+| Recorder        | Input        | reset            | BOOLEAN   |                          |
+| ResetTrigger    | Output       | output           | BOOLEAN   |                          |
+| SampleAndHold   | Input        | gate             | BOOLEAN   |                          |
+| SampleAndHold   | Input        | input            | arbitrary |                          |
+| SampleAndHold   | Input        | reset            | BOOLEAN   |                          |
+| SampleAndHold   | Output       | output           | arbitrary |                          |
+| SampleDuration  | Output       | output           | SECONDS   |                          |
+| SamplePlayer    | Input        | gate             | BOOLEAN   |                          |
+| SamplePlayer    | Input        | reset            | BOOLEAN   |                          |
+| SamplePlayer    | Input        | sampleIndex      | INTEGER   | buffer index             |
+| SamplePlayer    | Input        | speed            | NUMBER    | [0.0, inf), default: 1.0 |
+| SamplePlayer    | Input        | startTime        | SECONDS   |                          |
+| SamplePlayer    | Output       | output           | arbitrary |                          |
+| SampleRate      | Output       | output           | HERTZ     |                          |
+| Sequencer       | Input        | positionIndex    | INTEGER   | step index               |
+| Sequencer       | Input        | sequenceIndex    | INTEGER   | buffer index             |
+| Sequencer       | Output       | output           | arbitrary |                          |
+| Shaper          | Input        | drive            | NUMBER    | [0.0, inf), default: 0.0 |
+| Shaper          | Input        | input            | BIPOLAR   | audio                    |
+| Shaper          | Output       | output           | BIPOLAR   | audio                    |
+| Spread          | Input        | input            | arbitrary |                          |
+| Spread          | Input        | spread           | arbitrary | stereo width factor      |
+| Spread          | Output       | output           | arbitrary |                          |
+| StereoPanner    | Input        | direction        | BIPOLAR   | -1=L, +1=R               |
+| StereoPanner    | Input        | input            | arbitrary |                          |
+| StereoPanner    | Output       | left             | arbitrary |                          |
+| StereoPanner    | Output       | right            | arbitrary |                          |
+| TableOscillator | Input        | phase            | UNIPOLAR  | 0-1 phase                |
+| TableOscillator | Input        | position         | UNIPOLAR  | table position           |
+| TableOscillator | Output       | output           | arbitrary |                          |
+| TableShaper     | Input        | input            | BIPOLAR   | table lookup             |
+| TableShaper     | Input        | position         | UNIPOLAR  | table position           |
+| TableShaper     | Output       | output           | arbitrary |                          |
+| TriggerHold     | Input        | holdTime         | SECONDS   |                          |
+| TriggerHold     | Input        | input            | BOOLEAN   |                          |
+| TriggerHold     | Output       | output           | BOOLEAN   |                          |
+| Trigonometric   | Input        | input            | NUMBER    | radians                  |
+| Trigonometric   | Output       | output           | NUMBER    |                          |
+| VariableDelay   | Input        | decayTime        | SECONDS   |                          |
+| VariableDelay   | Input        | delayTime        | SECONDS   |                          |
+| VariableDelay   | Input        | feedbackSink     | arbitrary |                          |
+| VariableDelay   | Input        | input            | arbitrary |                          |
+| VariableDelay   | Input        | reset            | BOOLEAN   |                          |
+| VariableDelay   | Output       | feedbackSource   | arbitrary |                          |
+| VariableDelay   | Output       | output           | arbitrary |                          |
+
+## Summary
+
+The **arbitrary** type is necessary for nodes with constructor-defined types, allowing flexibility in signal routing. The **NUMBER** type serves as a catch-all for defined numeric values that don't fit other categories:
+
+1. **Ratios** (compression ratio, Q factor, playback speed)
+2. **Radians** (trigonometric input, FFT phase)
+3. **FFT data** (magnitude bins)
+4. **Derivatives** (Differentiator output)
+5. **Accumulated values** (Integrator output)
+6. **MIDI notes** (FrequencyToNote output, NoteToFrequency input)
+
+The complete taxonomy:
+
+- **UNIPOLAR** - [0, 1], where 1 is a recommended maximum
+- **BIPOLAR** - [-1, 1]
+- **BOOLEAN** - 0 or 1
+- **INTEGER** - whole numbers
+- **SECONDS** - time duration
+- **HERTZ** - frequency
+- **NUMBER** - defined meaning that doesn't fit other categories
+- **arbitrary** - constructor-defined type (can be any type)

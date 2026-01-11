@@ -864,8 +864,8 @@ export type DryWet = Producer & {
   getDry: () => Input
   getWet: () => Input
   getMixAmount: () => Input
-  getA: () => Input
-  getB: () => Input
+  getA: () => Output
+  getB: () => Output
 }
 
 export type Envelope = Producer & {

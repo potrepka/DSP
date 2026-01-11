@@ -34,9 +34,9 @@ void dsp::DryWet::processNoLock() {
     Sample* aChannel = getA()->getWrapper().getChannelPointer(channel);
     Sample* bChannel = getB()->getWrapper().getChannelPointer(channel);
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-      Sample& dry = dryChannel[sample];
-      Sample& wet = wetChannel[sample];
-      Sample& mixAmount = mixAmountChannel[sample];
+      Sample dry = dryChannel[sample];
+      Sample wet = wetChannel[sample];
+      Sample mixAmount = mixAmountChannel[sample];
       Sample& a = aChannel[sample];
       Sample& b = bChannel[sample];
       Sample difference = mixAmount * (wet - dry);

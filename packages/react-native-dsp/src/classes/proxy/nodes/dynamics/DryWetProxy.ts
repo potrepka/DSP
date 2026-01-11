@@ -1,6 +1,6 @@
 import { Target } from '../../../../types/module'
 import { Chainable, ProxyContext } from '../../../../types/proxy'
-import { InputProxy } from '../../core/BufferProxy'
+import { InputProxy, OutputProxy } from '../../core/BufferProxy'
 import { ProducerProxy } from '../../core/ProducerProxy'
 
 export class DryWetProxy extends ProducerProxy {
@@ -10,6 +10,6 @@ export class DryWetProxy extends ProducerProxy {
   getDry = (): Chainable<InputProxy> => this.createInput('Dry')
   getWet = (): Chainable<InputProxy> => this.createInput('Wet')
   getMixAmount = (): Chainable<InputProxy> => this.createInput('MixAmount')
-  getA = (): Chainable<InputProxy> => this.createInput('A')
-  getB = (): Chainable<InputProxy> => this.createInput('B')
+  getA = (): Chainable<OutputProxy> => this.createOutput('A')
+  getB = (): Chainable<OutputProxy> => this.createOutput('B')
 }

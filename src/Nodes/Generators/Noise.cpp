@@ -73,13 +73,13 @@ void dsp::Noise::processNoLock() {
   }
   white.multiplyBy(4.656612873077392578125e-10);
   for (size_t channel = 0; channel < getNumOutputChannels(); ++channel) {
+    Sample* whiteChannel = white.getChannelPointer(channel);
     Sample* outputChannel =
         getOutput()->getWrapper().getChannelPointer(channel);
-    Sample* whiteChannel = white.getChannelPointer(channel);
     Wrapper memoryWrapper = memory.getSingleChannel(channel);
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
+      Sample white = whiteChannel[sample];
       Sample& output = outputChannel[sample];
-      Sample& white = whiteChannel[sample];
       switch (mode) {
         case Mode::WHITE:
           output = white;

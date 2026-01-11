@@ -66,12 +66,12 @@ void dsp::Envelope::processNoLock() {
     Sample* currentTimeChannel =
         getCurrentTime()->getWrapper().getChannelPointer(channel);
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-      Sample& gate = gateChannel[sample];
-      Sample& reset = resetChannel[sample];
+      Sample gate = gateChannel[sample];
+      Sample reset = resetChannel[sample];
       Sample& output = outputChannel[sample];
       Sample& currentTime = currentTimeChannel[sample];
       if (gate) {
-        Sample& attack = attackChannel[sample];
+        Sample attack = attackChannel[sample];
         if (reset) {
           attackIndex[channel] = 0;
           state[channel] = 0.0;
@@ -93,7 +93,7 @@ void dsp::Envelope::processNoLock() {
         ++attackIndex[channel];
         releaseIndex[channel] = 0;
       } else {
-        Sample& release = releaseChannel[sample];
+        Sample release = releaseChannel[sample];
         if (reset) {
           releaseIndex[channel] = 0;
           state[channel] = 1.0;
