@@ -38,6 +38,7 @@ private:
   Array writeIndex;
 
   void setRecordingTimeNoLock(Sample seconds);
+  size_t getMaxWriteIndex() const;
 };
 
 } // namespace dsp

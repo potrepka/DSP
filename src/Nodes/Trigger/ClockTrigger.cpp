@@ -50,15 +50,19 @@ void dsp::ClockTrigger::processNoLock() {
       }
       const Sample interval = abs(intervalChannel[sample] * getSampleRate());
       const Sample delayTime = delayTimeChannel[sample] * getSampleRate();
-      Sample adjusted = index[channel] - delayTime;
-      if (adjusted >= interval) {
-        index[channel] =
-            interval ? index[channel] - floor(adjusted / interval) * interval
-                     : delayTime;
-        adjusted = interval ? index[channel] - delayTime : 0.0;
+      Sample delayed = index[channel] - delayTime;
+      if (delayed >= interval) {
+        if (interval > 0.0) {
+          const Sample adjustment = floor(delayed / interval) * interval;
+          index[channel] -= adjustment;
+          delayed -= adjustment;
+        } else {
+          index[channel] = delayTime;
+          delayed = 0.0;
+        }
       }
-      outputChannel[sample] = adjusted >= 0.0 && adjusted < 1.0;
-      currentTimeChannel[sample] = adjusted * getOneOverSampleRate();
+      outputChannel[sample] = delayed >= 0.0 && delayed < 1.0;
+      currentTimeChannel[sample] = delayed * getOneOverSampleRate();
       index[channel] += 1.0;
     }
   }

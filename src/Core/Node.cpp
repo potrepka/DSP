@@ -25,8 +25,7 @@ void dsp::Node::setActive(bool active) {
 }
 
 size_t dsp::Node::getNumChannels() const {
-  return numInputChannels < numOutputChannels ? numInputChannels
-                                              : numOutputChannels;
+  return std::min(numInputChannels, numOutputChannels);
 }
 
 void dsp::Node::setNumChannels(size_t numChannels) {

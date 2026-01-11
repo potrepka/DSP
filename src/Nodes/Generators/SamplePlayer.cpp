@@ -92,35 +92,20 @@ void dsp::SamplePlayer::processNoLock() {
                 channel % numChannels);
             if (gateChannel[sample]) {
               Sample offset = startTimeChannel[sample] * getSampleRate();
-              Sample index = clip(readIndex[channel] + offset, 0.0, numSamples);
-              Array points;
+              Sample index = readIndex[channel] + offset;
               switch (interpolation) {
                 case Interpolation::NONE:
-                  outputChannel[sample] =
-                      sampleChannel[static_cast<size_t>(index)];
+                  outputChannel[sample] = sampleChannel[static_cast<size_t>(
+                      clip(index, 0.0, numSamples))];
                   break;
-                case Interpolation::LINEAR: {
-                  size_t k0 = static_cast<size_t>(index);
-                  size_t k1 = (k0 + 1) % numSamples;
-                  points.resize(2);
-                  points[0] = sampleChannel[k0];
-                  points[1] = sampleChannel[k1];
+                case Interpolation::LINEAR:
                   outputChannel[sample] =
-                      linearClipped(points.data(), 2, index - k0);
-                } break;
-                case Interpolation::HERMITE: {
-                  size_t k1 = static_cast<size_t>(index);
-                  size_t k2 = (k1 + 1) % numSamples;
-                  size_t k3 = (k1 + 2) % numSamples;
-                  size_t k0 = (k1 + numSamples - 1) % numSamples;
-                  points.resize(4);
-                  points[0] = sampleChannel[k0];
-                  points[1] = sampleChannel[k1];
-                  points[2] = sampleChannel[k2];
-                  points[3] = sampleChannel[k3];
+                      linearClipped(sampleChannel, numSamples, index);
+                  break;
+                case Interpolation::HERMITE:
                   outputChannel[sample] =
-                      hermiteClipped(points.data(), 4, 1.0 + index - k1);
-                } break;
+                      hermiteClipped(sampleChannel, numSamples, index);
+                  break;
               }
               currentTimeChannel[sample] = index * getOneOverSampleRate();
               readIndex[channel] += speedChannel[sample];

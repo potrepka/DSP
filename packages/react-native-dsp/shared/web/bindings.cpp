@@ -139,26 +139,22 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   function("linear", &linear);
   function("hermite", &hermite);
   function(
-      "linearClipped",
-      +[](val data, Sample index, Sample defaultValue) {
+      "linearClipped", +[](val data, Sample index, Sample defaultValue) {
         std::vector<Sample> vec = vecFromJSArray<Sample>(data);
         return linearClipped(vec.data(), vec.size(), index, defaultValue);
       });
   function(
-      "hermiteClipped",
-      +[](val data, Sample index, Sample defaultValue) {
+      "hermiteClipped", +[](val data, Sample index, Sample defaultValue) {
         std::vector<Sample> vec = vecFromJSArray<Sample>(data);
         return hermiteClipped(vec.data(), vec.size(), index, defaultValue);
       });
   function(
-      "linearWrapped",
-      +[](val data, Sample index, Sample defaultValue) {
+      "linearWrapped", +[](val data, Sample index, Sample defaultValue) {
         std::vector<Sample> vec = vecFromJSArray<Sample>(data);
         return linearWrapped(vec.data(), vec.size(), index, defaultValue);
       });
   function(
-      "hermiteWrapped",
-      +[](val data, Sample index, Sample defaultValue) {
+      "hermiteWrapped", +[](val data, Sample index, Sample defaultValue) {
         std::vector<Sample> vec = vecFromJSArray<Sample>(data);
         return hermiteWrapped(vec.data(), vec.size(), index, defaultValue);
       });
@@ -473,19 +469,19 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .function("setup", &NormalizedFFT::setup)
       .function("getSize", &NormalizedFFT::getSize)
       .function("getComplexSize", &NormalizedFFT::getComplexSize)
-      .function(
-          "toRealImaginary",
-          std::function<val(NormalizedFFT&, val)>(
-              [](NormalizedFFT& fft, val time) {
-                std::vector<Sample> timeVec = vecFromJSArray<Sample>(time);
-                std::vector<Sample> realVec(fft.getComplexSize());
-                std::vector<Sample> imagVec(fft.getComplexSize());
-                fft.toRealImaginary(timeVec.data(), realVec.data(), imagVec.data());
-                val result = val::object();
-                result.set("real", val::array(realVec));
-                result.set("imaginary", val::array(imagVec));
-                return result;
-              }))
+      .function("toRealImaginary",
+                std::function<val(NormalizedFFT&, val)>([](NormalizedFFT& fft,
+                                                           val time) {
+                  std::vector<Sample> timeVec = vecFromJSArray<Sample>(time);
+                  std::vector<Sample> realVec(fft.getComplexSize());
+                  std::vector<Sample> imagVec(fft.getComplexSize());
+                  fft.toRealImaginary(timeVec.data(), realVec.data(),
+                                      imagVec.data());
+                  val result = val::object();
+                  result.set("real", val::array(realVec));
+                  result.set("imaginary", val::array(imagVec));
+                  return result;
+                }))
       .function(
           "fromRealImaginary",
           std::function<val(NormalizedFFT&, val, val)>(
@@ -493,22 +489,23 @@ EMSCRIPTEN_BINDINGS(native_audio) {
                 std::vector<Sample> realVec = vecFromJSArray<Sample>(real);
                 std::vector<Sample> imagVec = vecFromJSArray<Sample>(imaginary);
                 std::vector<Sample> timeVec(fft.getSize());
-                fft.fromRealImaginary(realVec.data(), imagVec.data(), timeVec.data());
+                fft.fromRealImaginary(realVec.data(), imagVec.data(),
+                                      timeVec.data());
                 return val::array(timeVec);
               }))
-      .function(
-          "toMagnitudePhase",
-          std::function<val(NormalizedFFT&, val)>(
-              [](NormalizedFFT& fft, val time) {
-                std::vector<Sample> timeVec = vecFromJSArray<Sample>(time);
-                std::vector<Sample> magVec(fft.getComplexSize());
-                std::vector<Sample> phaseVec(fft.getComplexSize());
-                fft.toMagnitudePhase(timeVec.data(), magVec.data(), phaseVec.data());
-                val result = val::object();
-                result.set("magnitude", val::array(magVec));
-                result.set("phase", val::array(phaseVec));
-                return result;
-              }))
+      .function("toMagnitudePhase",
+                std::function<val(NormalizedFFT&, val)>([](NormalizedFFT& fft,
+                                                           val time) {
+                  std::vector<Sample> timeVec = vecFromJSArray<Sample>(time);
+                  std::vector<Sample> magVec(fft.getComplexSize());
+                  std::vector<Sample> phaseVec(fft.getComplexSize());
+                  fft.toMagnitudePhase(timeVec.data(), magVec.data(),
+                                       phaseVec.data());
+                  val result = val::object();
+                  result.set("magnitude", val::array(magVec));
+                  result.set("phase", val::array(phaseVec));
+                  return result;
+                }))
       .function(
           "fromMagnitudePhase",
           std::function<val(NormalizedFFT&, val, val)>(
@@ -516,7 +513,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
                 std::vector<Sample> magVec = vecFromJSArray<Sample>(magnitude);
                 std::vector<Sample> phaseVec = vecFromJSArray<Sample>(phase);
                 std::vector<Sample> timeVec(fft.getSize());
-                fft.fromMagnitudePhase(magVec.data(), phaseVec.data(), timeVec.data());
+                fft.fromMagnitudePhase(magVec.data(), phaseVec.data(),
+                                       timeVec.data());
                 return val::array(timeVec);
               }));
 

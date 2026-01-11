@@ -382,6 +382,7 @@ std::vector<unsigned int> dsp::Engine::getInputSampleRates(
 #endif
   return inputSampleRates;
 }
+
 std::vector<unsigned int> dsp::Engine::getOutputSampleRates(
     unsigned int outputDevice) {
   std::vector<unsigned int> outputSampleRates;

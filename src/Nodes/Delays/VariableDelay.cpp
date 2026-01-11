@@ -82,84 +82,13 @@ void dsp::VariableDelay::processNoLock() {
   feedbackSink->lock();
   feedbackProcessor->lock();
   if (getBuffer()->getNumSamples() > 0) {
-    std::vector<Sample> delayTimeClipped(getNumChannels());
-    std::vector<Sample*> buffer(getNumChannels());
-    std::vector<Sample*> input(getNumChannels());
-    std::vector<Sample*> delayTime(getNumChannels());
-    std::vector<Sample*> decayTime(getNumChannels());
-    std::vector<Sample*> reset(getNumChannels());
-    std::vector<Sample*> output(getNumChannels());
-    std::vector<Sample*> feedbackSource(getNumChannels());
-    std::vector<Sample*> feedbackSink(getNumChannels());
-    for (size_t channel = 0; channel < getNumChannels(); ++channel) {
-      buffer[channel] = getBuffer()->getWrapper().getChannelPointer(channel);
-      input[channel] = getInput()->getWrapper().getChannelPointer(channel);
-      delayTime[channel] =
-          getDelayTime()->getWrapper().getChannelPointer(channel);
-      decayTime[channel] =
-          getDecayTime()->getWrapper().getChannelPointer(channel);
-      reset[channel] = getReset()->getWrapper().getChannelPointer(channel);
-      output[channel] = getOutput()->getWrapper().getChannelPointer(channel);
-      feedbackSource[channel] =
-          getFeedbackSource()->getWrapper().getChannelPointer(channel);
-      feedbackSink[channel] =
-          getFeedbackSink()->getWrapper().getChannelPointer(channel);
-    }
+    Channels ch = getChannels();
     for (size_t sample = 0; sample < getNumSamples(); ++sample) {
-      for (size_t channel = 0; channel < getNumChannels(); ++channel) {
-        // RESET
-        if (reset[channel][sample]) {
-          getBuffer()->getWrapper().getSingleChannel(channel).clear();
-        }
-        // WRITE
-        buffer[channel][writeIndex] = input[channel][sample];
-        // CLIP DELAY TIME
-        delayTimeClipped[channel] =
-            clip(delayTime[channel][sample], 0.0, maxDelayTime);
-        // READ
-        if (delayTimeClipped[channel] == 0.0) {
-          output[channel][sample] = buffer[channel][writeIndex];
-        } else {
-          Sample readIndex =
-              writeIndex - delayTimeClipped[channel] * getSampleRate();
-          if (readIndex < 0.0) {
-            readIndex += getBuffer()->getNumSamples();
-          }
-          if (delayTimeClipped[channel] <= getOneOverSampleRate()) {
-            output[channel][sample] = linearWrapped(
-                buffer[channel], getBuffer()->getNumSamples(), readIndex);
-          } else {
-            output[channel][sample] = hermiteWrapped(
-                buffer[channel], getBuffer()->getNumSamples(), readIndex);
-          }
-        }
-        feedbackSource[channel][0] = output[channel][sample];
-      }
-      // PROCESS FEEDBACK
-      if (feedbackProcessor->isActive()) {
-        for (const auto& child : feedbackProcessor->getChildren()) {
-          child->process();
-        }
-      }
-      getFeedbackSink()->processNoLock();
-      // ADD FEEDBACK
-      for (size_t channel = 0; channel < getNumChannels(); ++channel) {
-        Sample feedbackAmount =
-            pow(0.001, delayTimeClipped[channel] / decayTime[channel][sample]);
-        if (isnan(feedbackAmount)) {
-          feedbackAmount = 0.0;
-        }
-        if (feedbackAmount > 1.0) {
-          feedbackAmount = 1.0;
-        }
-        buffer[channel][writeIndex] +=
-            feedbackSink[channel][0] * feedbackAmount;
-      }
-      // INCREMENT INDEX
-      ++writeIndex;
-      if (writeIndex == getBuffer()->getNumSamples()) {
-        writeIndex = 0;
-      }
+      writeInputToBuffer(ch, sample);
+      readOutputFromBuffer(ch, sample);
+      processFeedback();
+      addFeedbackToBuffer(ch, sample);
+      incrementWriteIndex();
     }
   }
   feedbackProcessor->unlock();
@@ -173,4 +102,98 @@ const std::shared_ptr<dsp::Buffer> dsp::VariableDelay::getBuffer() const {
 
 size_t dsp::VariableDelay::getDelayBufferSize() {
   return static_cast<size_t>(ceil(maxDelayTime * getSampleRate())) + 2;
+}
+
+dsp::VariableDelay::Channels dsp::VariableDelay::getChannels() {
+  Channels ch;
+  size_t numChannels = getNumChannels();
+  ch.clippedDelayTime.resize(numChannels);
+  ch.buffer.resize(numChannels);
+  ch.input.resize(numChannels);
+  ch.delayTime.resize(numChannels);
+  ch.decayTime.resize(numChannels);
+  ch.reset.resize(numChannels);
+  ch.output.resize(numChannels);
+  ch.feedbackSource.resize(numChannels);
+  ch.feedbackSink.resize(numChannels);
+  for (size_t channel = 0; channel < numChannels; ++channel) {
+    ch.buffer[channel] = getBuffer()->getWrapper().getChannelPointer(channel);
+    ch.input[channel] = getInput()->getWrapper().getChannelPointer(channel);
+    ch.delayTime[channel] =
+        getDelayTime()->getWrapper().getChannelPointer(channel);
+    ch.decayTime[channel] =
+        getDecayTime()->getWrapper().getChannelPointer(channel);
+    ch.reset[channel] = getReset()->getWrapper().getChannelPointer(channel);
+    ch.output[channel] = getOutput()->getWrapper().getChannelPointer(channel);
+    ch.feedbackSource[channel] =
+        getFeedbackSource()->getWrapper().getChannelPointer(channel);
+    ch.feedbackSink[channel] =
+        getFeedbackSink()->getWrapper().getChannelPointer(channel);
+  }
+  return ch;
+}
+
+void dsp::VariableDelay::writeInputToBuffer(Channels& ch, size_t sample) {
+  for (size_t channel = 0; channel < getNumChannels(); ++channel) {
+    if (ch.reset[channel][sample]) {
+      getBuffer()->getWrapper().getSingleChannel(channel).clear();
+    }
+    ch.buffer[channel][writeIndex] = ch.input[channel][sample];
+    ch.clippedDelayTime[channel] =
+        clip(ch.delayTime[channel][sample], 0.0, maxDelayTime);
+  }
+}
+
+void dsp::VariableDelay::readOutputFromBuffer(Channels& ch, size_t sample) {
+  for (size_t channel = 0; channel < getNumChannels(); ++channel) {
+    Sample delayTime = ch.clippedDelayTime[channel];
+    if (delayTime == 0.0) {
+      ch.output[channel][sample] = ch.buffer[channel][writeIndex];
+    } else {
+      Sample readIndex = writeIndex - delayTime * getSampleRate();
+      if (readIndex < 0.0) {
+        readIndex += getBuffer()->getNumSamples();
+      }
+      size_t bufferSize = getBuffer()->getNumSamples();
+      if (delayTime <= getOneOverSampleRate()) {
+        ch.output[channel][sample] =
+            linearWrapped(ch.buffer[channel], bufferSize, readIndex);
+      } else {
+        ch.output[channel][sample] =
+            hermiteWrapped(ch.buffer[channel], bufferSize, readIndex);
+      }
+    }
+    ch.feedbackSource[channel][0] = ch.output[channel][sample];
+  }
+}
+
+void dsp::VariableDelay::processFeedback() {
+  if (feedbackProcessor->isActive()) {
+    for (const auto& child : feedbackProcessor->getChildren()) {
+      child->process();
+    }
+  }
+  getFeedbackSink()->processNoLock();
+}
+
+void dsp::VariableDelay::addFeedbackToBuffer(Channels& ch, size_t sample) {
+  for (size_t channel = 0; channel < getNumChannels(); ++channel) {
+    Sample feedbackAmount = pow(
+        0.001, ch.clippedDelayTime[channel] / ch.decayTime[channel][sample]);
+    if (isnan(feedbackAmount)) {
+      feedbackAmount = 0.0;
+    }
+    if (feedbackAmount > 1.0) {
+      feedbackAmount = 1.0;
+    }
+    ch.buffer[channel][writeIndex] +=
+        ch.feedbackSink[channel][0] * feedbackAmount;
+  }
+}
+
+void dsp::VariableDelay::incrementWriteIndex() {
+  ++writeIndex;
+  if (writeIndex == getBuffer()->getNumSamples()) {
+    writeIndex = 0;
+  }
 }

@@ -59,67 +59,53 @@ void dsp::Recorder::processNoLock() {
   primary->lock();
   secondary->lock();
   if (mode == Mode::VARIABLE) {
-    recordingNumSamples += getNumSamples();
-    recordingTime = recordingNumSamples * getOneOverSampleRate();
+    recordingNumSamples = getMaxWriteIndex() + getNumSamples();
+    if (recordingNumSamples > primary->getNumSamples()) {
+      primary->setNumSamples(recordingNumSamples);
+    }
   }
-  if (recordingNumSamples > 0.0) {
+  if (recordingNumSamples > 0) {
     for (size_t channel = 0; channel < getNumChannels(); ++channel) {
       Sample* inputChannel =
           getInput()->getWrapper().getChannelPointer(channel);
       Sample* gateChannel = getGate()->getWrapper().getChannelPointer(channel);
       Sample* resetChannel =
           getReset()->getWrapper().getChannelPointer(channel);
+      Sample* targetChannel =
+          (mode == Mode::FIXED_DOUBLE)
+              ? secondary->getWrapper().getChannelPointer(channel)
+              : primary->getWrapper().getChannelPointer(channel);
       for (size_t sample = 0; sample < getNumSamples(); ++sample) {
         if (resetChannel[sample]) {
           writeIndex[channel] = 0.0;
         }
         if (gateChannel[sample]) {
-          switch (mode) {
-            case Mode::FIXED_SINGLE:
-              primary->getWrapper().getChannelPointer(
-                  channel)[static_cast<size_t>(writeIndex[channel])] =
-                  inputChannel[sample];
-              writeIndex[channel] += 1.0;
-              if (writeIndex[channel] >= recordingNumSamples) {
-                if (writeIndex[channel] <
-                    static_cast<int>(ceil(recordingNumSamples))) {
-                  primary->getWrapper().getChannelPointer(
-                      channel)[static_cast<int>(writeIndex[channel])] =
-                      inputChannel[sample];
-                }
-                writeIndex[channel] -= recordingNumSamples;
-              }
-              break;
-            case Mode::FIXED_DOUBLE:
-              secondary->getWrapper().getChannelPointer(
-                  channel)[static_cast<size_t>(writeIndex[channel])] =
-                  inputChannel[sample];
-              writeIndex[channel] += 1.0;
-              if (writeIndex[channel] >= recordingNumSamples) {
-                if (writeIndex[channel] <
-                    static_cast<int>(ceil(recordingNumSamples))) {
-                  primary->getWrapper().getChannelPointer(
-                      channel)[static_cast<int>(writeIndex[channel])] =
-                      inputChannel[sample];
-                }
-                writeIndex[channel] -= recordingNumSamples;
-                primary->getWrapper().copyFrom(secondary->getWrapper());
-              }
-              break;
-            case Mode::VARIABLE:
-              primary->getWrapper().getChannelPointer(
-                  channel)[static_cast<int>(writeIndex[channel])] =
-                  inputChannel[sample];
-              writeIndex[channel] += 1.0;
-              break;
+          size_t i0 = static_cast<size_t>(writeIndex[channel]);
+          targetChannel[i0] = inputChannel[sample];
+          writeIndex[channel] += 1.0;
+          if (mode == Mode::VARIABLE) {
+            continue;
+          }
+          if (writeIndex[channel] >= recordingNumSamples) {
+            Sample bufferSize = ceil(recordingNumSamples);
+            if (writeIndex[channel] < bufferSize) {
+              size_t i1 = static_cast<size_t>(writeIndex[channel]);
+              targetChannel[i1] = inputChannel[sample];
+            }
+            writeIndex[channel] -= recordingNumSamples;
+            if (mode == Mode::FIXED_DOUBLE) {
+              primary->getWrapper().copyFrom(secondary->getWrapper());
+            }
           }
         }
       }
     }
   }
   if (mode == Mode::VARIABLE) {
-    recordingNumSamples =
-        *std::max_element(writeIndex.begin(), writeIndex.end());
+    recordingNumSamples = getMaxWriteIndex();
+    if (recordingNumSamples < primary->getNumSamples()) {
+      primary->setNumSamples(recordingNumSamples);
+    }
     recordingTime = recordingNumSamples * getOneOverSampleRate();
   }
   secondary->unlock();
@@ -130,7 +116,12 @@ void dsp::Recorder::setRecordingTimeNoLock(Sample seconds) {
   recordingTime = seconds;
   recordingNumSamples = seconds * getSampleRate();
   std::fill(writeIndex.begin(), writeIndex.end(), 0.0);
-  size_t numSamples = static_cast<int>(ceil(recordingNumSamples));
+  size_t numSamples = static_cast<size_t>(ceil(recordingNumSamples));
   primary->setNumSamples(numSamples);
   secondary->setNumSamples(numSamples);
+}
+
+size_t dsp::Recorder::getMaxWriteIndex() const {
+  return static_cast<size_t>(
+      *std::max_element(writeIndex.begin(), writeIndex.end()));
 }

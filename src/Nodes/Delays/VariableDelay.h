@@ -27,6 +27,18 @@ protected:
   void processNoLock() override;
 
 private:
+  struct Channels {
+    std::vector<Sample> clippedDelayTime;
+    std::vector<Sample*> buffer;
+    std::vector<Sample*> input;
+    std::vector<Sample*> delayTime;
+    std::vector<Sample*> decayTime;
+    std::vector<Sample*> reset;
+    std::vector<Sample*> output;
+    std::vector<Sample*> feedbackSource;
+    std::vector<Sample*> feedbackSink;
+  };
+
   Sample maxDelayTime;
   const std::shared_ptr<Buffer> buffer;
   const std::shared_ptr<Input> delayTime;
@@ -39,6 +51,12 @@ private:
 
   const std::shared_ptr<Buffer> getBuffer() const;
   size_t getDelayBufferSize();
+  Channels getChannels();
+  void writeInputToBuffer(Channels& ch, size_t sample);
+  void readOutputFromBuffer(Channels& ch, size_t sample);
+  void processFeedback();
+  void addFeedbackToBuffer(Channels& ch, size_t sample);
+  void incrementWriteIndex();
 };
 
 } // namespace dsp

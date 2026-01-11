@@ -44,11 +44,6 @@ esbuild "$PROCESSOR_FILE" \
 
 echo "✓ Processor bundled"
 
-# Copy files to shared directory
-rm -rf "$LIB_DIR" "$SRC_DIR"
-cp -r "$ORIGINAL_LIB_DIR" "$LIB_DIR"
-cp -r "$ORIGINAL_SRC_DIR" "$SRC_DIR"
-
 # Create output directory
 mkdir -p "$OUTPUT_DIR"
 

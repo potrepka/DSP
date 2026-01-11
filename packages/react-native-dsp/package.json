@@ -56,6 +56,7 @@
     "directory": "packages/react-native-dsp"
   },
   "scripts": {
+    "prebuild": "rm -rf shared/lib shared/src && cp -r ../../lib shared/lib && cp -r ../../src shared/src",
     "build": "npm run build:ts && npm run build:web",
     "build:ts": "tsc -p tsconfig.build.json",
     "build:web": "bash scripts/build-web.sh",
