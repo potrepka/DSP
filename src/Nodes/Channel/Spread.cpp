@@ -1,9 +1,9 @@
 ﻿#include "Spread.h"
 
-dsp::Spread::Spread(Type type, Space space)
-    : Transformer(type, space),
+dsp::Spread::Spread(Type type, Domain domain)
+    : Transformer(type, domain),
       mode(Mode::UNIPOLAR),
-      spread(std::make_shared<Input>(type, space)) {
+      spread(std::make_shared<Input>(type, domain)) {
   getInputs().push_back(spread);
 }
 

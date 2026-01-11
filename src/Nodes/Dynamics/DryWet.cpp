@@ -1,12 +1,12 @@
 ﻿#include "DryWet.h"
 
-dsp::DryWet::DryWet(Type type, Space space)
-    : Producer(type, space),
-      dry(std::make_shared<Input>(type, space)),
-      wet(std::make_shared<Input>(type, space)),
-      mixAmount(std::make_shared<Input>(Type::RATIO, space, 1.0, 0.0)),
+dsp::DryWet::DryWet(Type type, Domain domain)
+    : Producer(type, domain),
+      dry(std::make_shared<Input>(type, domain)),
+      wet(std::make_shared<Input>(type, domain)),
+      mixAmount(std::make_shared<Input>(Type::RATIO, domain, 1.0, 0.0)),
       a(getOutput()),
-      b(std::make_shared<Output>(type, space)) {
+      b(std::make_shared<Output>(type, domain)) {
   getInputs().push_back(dry);
   getInputs().push_back(wet);
   getInputs().push_back(mixAmount);

@@ -1,8 +1,8 @@
 ﻿#include "Modulo.h"
 
-dsp::Modulo::Modulo(Type type, Space space)
-    : Transformer(type, space),
-      divisor(std::make_shared<Input>(type, space, 0.0, 1.0)) {
+dsp::Modulo::Modulo(Type type, Domain domain)
+    : Transformer(type, domain),
+      divisor(std::make_shared<Input>(type, domain, 0.0, 1.0)) {
   getInputs().push_back(divisor);
 }
 

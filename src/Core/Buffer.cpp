@@ -1,9 +1,9 @@
 ﻿#include "Buffer.h"
 
-dsp::Buffer::Buffer(Type type, Space space, Sample range, Sample defaultValue,
+dsp::Buffer::Buffer(Type type, Domain domain, Sample range, Sample defaultValue,
                     size_t numChannels, size_t numSamples)
     : type(type),
-      space(space),
+      domain(domain),
       range(range),
       defaultValue(defaultValue),
       data(numChannels, numSamples),
@@ -20,11 +20,11 @@ void dsp::Buffer::setType(Type type) {
   unlock();
 }
 
-dsp::Space dsp::Buffer::getSpace() const { return space; }
+dsp::Domain dsp::Buffer::getDomain() const { return domain; }
 
-void dsp::Buffer::setSpace(Space space) {
+void dsp::Buffer::setDomain(Domain domain) {
   lock();
-  this->space = space;
+  this->domain = domain;
   unlock();
 }
 
@@ -137,9 +137,9 @@ void dsp::Buffer::applyRange() {
   }
 }
 
-dsp::Input::Input(Type type, Space space, Sample range, Sample defaultValue,
+dsp::Input::Input(Type type, Domain domain, Sample range, Sample defaultValue,
                   size_t numChannels, size_t numSamples)
-    : Buffer(type, space, range, defaultValue, numChannels, numSamples),
+    : Buffer(type, domain, range, defaultValue, numChannels, numSamples),
       mode(Mode::SUM) {}
 
 dsp::Input::~Input() { disconnectAll(); }
@@ -254,9 +254,9 @@ void dsp::Input::removeConnection(std::shared_ptr<Output> output) {
                     connections.end());
 }
 
-dsp::Output::Output(Type type, Space space, Sample range, Sample defaultValue,
+dsp::Output::Output(Type type, Domain domain, Sample range, Sample defaultValue,
                     size_t numChannels, size_t numSamples)
-    : Buffer(type, space, range, defaultValue, numChannels, numSamples) {}
+    : Buffer(type, domain, range, defaultValue, numChannels, numSamples) {}
 
 dsp::Output::~Output() { disconnectAll(); }
 

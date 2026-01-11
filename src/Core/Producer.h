@@ -6,7 +6,7 @@ namespace dsp {
 
 class Producer : public Node {
 public:
-  Producer(Type type = Type::RATIO, Space space = Space::TIME);
+  Producer(Type type = Type::RATIO, Domain domain = Domain::TIME);
 
   std::shared_ptr<Output> getOutput() const;
 

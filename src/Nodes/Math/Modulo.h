@@ -6,7 +6,7 @@ namespace dsp {
 
 class Modulo : public Transformer {
 public:
-  Modulo(Type type = Type::RATIO, Space space = Space::TIME);
+  Modulo(Type type = Type::RATIO, Domain domain = Domain::TIME);
 
   std::shared_ptr<Input> getDivisor() const;
 

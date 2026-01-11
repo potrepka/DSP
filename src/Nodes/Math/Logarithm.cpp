@@ -1,8 +1,8 @@
 ﻿#include "Logarithm.h"
 
-dsp::Logarithm::Logarithm(Space space)
-    : Transformer(Type::RATIO, Type::RATIO, space),
-      base(std::make_shared<Input>(Type::RATIO, space)) {
+dsp::Logarithm::Logarithm(Domain domain)
+    : Transformer(Type::RATIO, Type::RATIO, domain),
+      base(std::make_shared<Input>(Type::RATIO, domain)) {
   getInputs().push_back(base);
 }
 

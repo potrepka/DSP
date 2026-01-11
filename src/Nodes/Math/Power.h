@@ -6,7 +6,7 @@ namespace dsp {
 
 class Power : public Transformer {
 public:
-  Power(Space space = Space::TIME);
+  Power(Domain domain = Domain::TIME);
 
   std::shared_ptr<Input> getExponent() const;
 

@@ -6,7 +6,7 @@ namespace dsp {
 
 class ChannelSplitter : public Consumer {
 public:
-  ChannelSplitter(Type type = Type::RATIO, Space space = Space::TIME);
+  ChannelSplitter(Type type = Type::RATIO, Domain domain = Domain::TIME);
 
   std::shared_ptr<Output> getOutput(size_t channel) const;
 

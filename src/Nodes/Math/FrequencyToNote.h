@@ -6,7 +6,7 @@ namespace dsp {
 
 class FrequencyToNote : public Transformer {
 public:
-  FrequencyToNote(Space space = Space::TIME);
+  FrequencyToNote(Domain domain = Domain::TIME);
 
   std::shared_ptr<Input> getTuningFrequency() const;
 

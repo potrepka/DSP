@@ -1,16 +1,16 @@
 ﻿#include "Function.h"
 
-dsp::Function::Function(Type type, Space space)
-    : Transformer(type, space),
+dsp::Function::Function(Type type, Domain domain)
+    : Transformer(type, domain),
       a(getInput()),
-      b(std::make_shared<Input>(type, space)) {
+      b(std::make_shared<Input>(type, domain)) {
   getInputs().push_back(b);
 }
 
-dsp::Function::Function(Type aType, Type bType, Type outputType, Space space)
-    : Transformer(aType, outputType, space),
+dsp::Function::Function(Type aType, Type bType, Type outputType, Domain domain)
+    : Transformer(aType, outputType, domain),
       a(getInput()),
-      b(std::make_shared<Input>(bType, space)) {
+      b(std::make_shared<Input>(bType, domain)) {
   getInputs().push_back(b);
 }
 

@@ -1,4 +1,4 @@
-import { InputMode, Interpolation, Shape, Space, Type } from '../enums/global'
+import { Domain, InputMode, Interpolation, Shape, Type } from '../enums/global'
 import {
   BiquadMode,
   ClipperMode,
@@ -72,7 +72,7 @@ export type CoreConsturctorMap = {
   }
   Buffer: new (
     type: Type,
-    space: Space,
+    domain: Domain,
     range: number,
     defaultValue: number,
     numChannels: number,
@@ -80,7 +80,7 @@ export type CoreConsturctorMap = {
   ) => Buffer
   Input: new (
     type: Type,
-    space: Space,
+    domain: Domain,
     range: number,
     defaultValue: number,
     numChannels: number,
@@ -88,7 +88,7 @@ export type CoreConsturctorMap = {
   ) => Input
   Output: new (
     type: Type,
-    space: Space,
+    domain: Domain,
     range: number,
     defaultValue: number,
     numChannels: number,
@@ -97,16 +97,16 @@ export type CoreConsturctorMap = {
   Lockable: new () => Lockable
   Engine: new () => Engine
   Node: new () => Node
-  Consumer: new (type: Type, space: Space) => Consumer
-  Producer: new (type: Type, space: Space) => Producer
+  Consumer: new (type: Type, domain: Domain) => Consumer
+  Producer: new (type: Type, domain: Domain) => Producer
   Transformer: {
-    new (type: Type, space: Space): Transformer
-    new (inputType: Type, outputType: Type, space: Space): Transformer
+    new (type: Type, domain: Domain): Transformer
+    new (inputType: Type, outputType: Type, domain: Domain): Transformer
     new (
       inputType: Type,
       outputType: Type,
-      inputSpace: Space,
-      outputSpace: Space,
+      inputDomain: Domain,
+      outputDomain: Domain,
     ): Transformer
   }
   NodeProcessor: new (
@@ -165,27 +165,27 @@ export type MidiConstructorMap = {
 
 export type NodeConstructorMap = {
   // Analyzer Nodes
-  Recorder: new (type: Type, space: Space, defaultValue: number) => Recorder
+  Recorder: new (type: Type, domain: Domain, defaultValue: number) => Recorder
 
   // Channel Nodes
-  ChannelMerger: new (type: Type, space: Space) => ChannelMerger
-  ChannelSplitter: new (type: Type, space: Space) => ChannelSplitter
-  MidSide: new (type: Type, space: Space) => MidSide
-  Spread: new (type: Type, space: Space) => Spread
-  StereoPanner: new (type: Type, space: Space) => StereoPanner
+  ChannelMerger: new (type: Type, domain: Domain) => ChannelMerger
+  ChannelSplitter: new (type: Type, domain: Domain) => ChannelSplitter
+  MidSide: new (type: Type, domain: Domain) => MidSide
+  Spread: new (type: Type, domain: Domain) => Spread
+  StereoPanner: new (type: Type, domain: Domain) => StereoPanner
 
   // Delay Nodes
   Convolver: new () => Convolver
   VariableDelay: new (type: Type) => VariableDelay
 
   // Dynamics Nodes
-  Clipper: new (type: Type, space: Space) => Clipper
+  Clipper: new (type: Type, domain: Domain) => Clipper
   CompressorGate: new () => CompressorGate
-  DryWet: new (type: Type, space: Space) => DryWet
+  DryWet: new (type: Type, domain: Domain) => DryWet
   Envelope: new () => Envelope
   Lag: new (type: Type) => Lag
-  Shaper: new (space: Space) => Shaper
-  TableShaper: new (outputType: Type, space: Space) => TableShaper
+  Shaper: new (domain: Domain) => Shaper
+  TableShaper: new (outputType: Type, domain: Domain) => TableShaper
 
   // External Nodes
   MidiInput: new (midiBuffer: MidiBuffer, type: Type) => MidiInput
@@ -203,38 +203,38 @@ export type NodeConstructorMap = {
   TableOscillator: new (type: Type) => TableOscillator
 
   // Math Nodes
-  AbsoluteValue: new (type: Type, space: Space) => AbsoluteValue
-  BooleanMask: new (type: Type, space: Space) => BooleanMask
-  Comparison: new (type: Type, space: Space) => Comparison
-  Division: new (type: Type, space: Space) => Division
-  Floor: new (type: Type, space: Space) => Floor
+  AbsoluteValue: new (type: Type, domain: Domain) => AbsoluteValue
+  BooleanMask: new (type: Type, domain: Domain) => BooleanMask
+  Comparison: new (type: Type, domain: Domain) => Comparison
+  Division: new (type: Type, domain: Domain) => Division
+  Floor: new (type: Type, domain: Domain) => Floor
   ForwardFFT: new () => ForwardFFT
-  FrequencyToNote: new (space: Space) => FrequencyToNote
+  FrequencyToNote: new (domain: Domain) => FrequencyToNote
   Function: {
-    new (type: Type, space: Space): Function
-    new (aType: Type, bType: Type, outputType: Type, space: Space): Function
+    new (type: Type, domain: Domain): Function
+    new (aType: Type, bType: Type, outputType: Type, domain: Domain): Function
   }
-  Hyperbolic: new (space: Space) => Hyperbolic
+  Hyperbolic: new (domain: Domain) => Hyperbolic
   Identity: {
-    new (type: Type, space: Space): Identity
-    new (inputType: Type, outputType: Type, space: Space): Identity
+    new (type: Type, domain: Domain): Identity
+    new (inputType: Type, outputType: Type, domain: Domain): Identity
     new (
       inputType: Type,
       outputType: Type,
-      inputSpace: Space,
-      outputSpace: Space,
+      inputDomain: Domain,
+      outputDomain: Domain,
     ): Identity
   }
   InverseFFT: new () => InverseFFT
-  Logarithm: new (space: Space) => Logarithm
-  Modulo: new (type: Type, space: Space) => Modulo
-  Multiplication: new (type: Type, space: Space) => Multiplication
-  Negative: new (type: Type, space: Space) => Negative
-  NoteToFrequency: new (space: Space) => NoteToFrequency
-  NotGate: new (space: Space) => NotGate
-  Power: new (space: Space) => Power
-  Reciprocal: new (type: Type, space: Space) => Reciprocal
-  Trigonometric: new (space: Space) => Trigonometric
+  Logarithm: new (domain: Domain) => Logarithm
+  Modulo: new (type: Type, domain: Domain) => Modulo
+  Multiplication: new (type: Type, domain: Domain) => Multiplication
+  Negative: new (type: Type, domain: Domain) => Negative
+  NoteToFrequency: new (domain: Domain) => NoteToFrequency
+  NotGate: new (domain: Domain) => NotGate
+  Power: new (domain: Domain) => Power
+  Reciprocal: new (type: Type, domain: Domain) => Reciprocal
+  Trigonometric: new (domain: Domain) => Trigonometric
 
   // Trigger Nodes
   ClockTrigger: new () => ClockTrigger
@@ -243,7 +243,7 @@ export type NodeConstructorMap = {
   OnOff: new () => OnOff
   ResetTrigger: new () => ResetTrigger
   SampleAndHold: new (type: Type) => SampleAndHold
-  Sequencer: new (type: Type, space: Space) => Sequencer
+  Sequencer: new (type: Type, domain: Domain) => Sequencer
   TriggerHold: new () => TriggerHold
 
   // Variable Nodes
@@ -273,7 +273,7 @@ type OptionsMap = {
   Wrapper: { data?: Data }
   Buffer: {
     type: Type
-    space: Space
+    domain: Domain
     range: number
     defaultValue: number
     numChannels: number
@@ -281,7 +281,7 @@ type OptionsMap = {
   }
   Input: {
     type: Type
-    space: Space
+    domain: Domain
     range: number
     defaultValue: number
     numChannels: number
@@ -289,7 +289,7 @@ type OptionsMap = {
   }
   Output: {
     type: Type
-    space: Space
+    domain: Domain
     range: number
     defaultValue: number
     numChannels: number
@@ -298,15 +298,15 @@ type OptionsMap = {
   Lockable: unknown
   Engine: unknown
   Node: unknown
-  Consumer: { type: Type; space: Space }
-  Producer: { type: Type; space: Space }
+  Consumer: { type: Type; domain: Domain }
+  Producer: { type: Type; domain: Domain }
   Transformer: {
     type?: Type
-    space?: Space
+    domain?: Domain
     inputType?: Type
     outputType?: Type
-    inputSpace?: Space
-    outputSpace?: Space
+    inputDomain?: Domain
+    outputDomain?: Domain
   }
   NodeProcessor: {
     numInputChannels: number
@@ -326,29 +326,29 @@ type OptionsMap = {
   // Nodes - Analyzer
   Recorder: {
     type: Type
-    space: Space
+    domain: Domain
     defaultValue: number
   }
 
   // Nodes - Channel
-  ChannelMerger: { type: Type; space: Space }
-  ChannelSplitter: { type: Type; space: Space }
-  MidSide: { type: Type; space: Space }
-  Spread: { type: Type; space: Space }
-  StereoPanner: { type: Type; space: Space }
+  ChannelMerger: { type: Type; domain: Domain }
+  ChannelSplitter: { type: Type; domain: Domain }
+  MidSide: { type: Type; domain: Domain }
+  Spread: { type: Type; domain: Domain }
+  StereoPanner: { type: Type; domain: Domain }
 
   // Nodes - Delay
   Convolver: unknown
   VariableDelay: { type: Type }
 
   // Nodes - Dynamics
-  Clipper: { type: Type; space: Space }
+  Clipper: { type: Type; domain: Domain }
   CompressorGate: unknown
-  DryWet: { type: Type; space: Space }
+  DryWet: { type: Type; domain: Domain }
   Envelope: unknown
   Lag: { type: Type }
-  Shaper: { space: Space }
-  TableShaper: { outputType: Type; space: Space }
+  Shaper: { domain: Domain }
+  TableShaper: { outputType: Type; domain: Domain }
 
   // Nodes - External
   MidiInput: { midiBuffer: MidiBuffer; type: Type }
@@ -366,39 +366,39 @@ type OptionsMap = {
   TableOscillator: { type: Type }
 
   // Nodes - Math
-  AbsoluteValue: { type: Type; space: Space }
-  BooleanMask: { type: Type; space: Space }
-  Comparison: { type: Type; space: Space }
-  Division: { type: Type; space: Space }
-  Floor: { type: Type; space: Space }
+  AbsoluteValue: { type: Type; domain: Domain }
+  BooleanMask: { type: Type; domain: Domain }
+  Comparison: { type: Type; domain: Domain }
+  Division: { type: Type; domain: Domain }
+  Floor: { type: Type; domain: Domain }
   ForwardFFT: unknown
-  FrequencyToNote: { space: Space }
+  FrequencyToNote: { domain: Domain }
   Function: {
     type: Type
-    space: Space
+    domain: Domain
     aType?: Type
     bType?: Type
     outputType?: Type
   }
-  Hyperbolic: { space: Space }
+  Hyperbolic: { domain: Domain }
   Identity: {
     type: Type
-    space: Space
+    domain: Domain
     inputType?: Type
     outputType?: Type
-    inputSpace?: Space
-    outputSpace?: Space
+    inputDomain?: Domain
+    outputDomain?: Domain
   }
   InverseFFT: unknown
-  Logarithm: { space: Space }
-  Modulo: { type: Type; space: Space }
-  Multiplication: { type: Type; space: Space }
-  Negative: { type: Type; space: Space }
-  NoteToFrequency: { space: Space }
-  NotGate: { space: Space }
-  Power: { space: Space }
-  Reciprocal: { type: Type; space: Space }
-  Trigonometric: { space: Space }
+  Logarithm: { domain: Domain }
+  Modulo: { type: Type; domain: Domain }
+  Multiplication: { type: Type; domain: Domain }
+  Negative: { type: Type; domain: Domain }
+  NoteToFrequency: { domain: Domain }
+  NotGate: { domain: Domain }
+  Power: { domain: Domain }
+  Reciprocal: { type: Type; domain: Domain }
+  Trigonometric: { domain: Domain }
 
   // Nodes - Trigger
   ClockTrigger: unknown
@@ -407,7 +407,7 @@ type OptionsMap = {
   OnOff: unknown
   ResetTrigger: unknown
   SampleAndHold: { type: Type }
-  Sequencer: { type: Type; space: Space }
+  Sequencer: { type: Type; domain: Domain }
   TriggerHold: unknown
 
   // Nodes - Variable
@@ -571,8 +571,8 @@ export type Wrapper = Deletable & {
 export type Buffer = Deletable & {
   getType: () => Type
   setType: (type: Type) => void
-  getSpace: () => Space
-  setSpace: (space: Space) => void
+  getDomain: () => Domain
+  setDomain: (domain: Domain) => void
   getRange: () => number
   setRange: (range: number) => void
   getDefaultValue: () => number

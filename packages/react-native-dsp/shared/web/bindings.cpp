@@ -35,10 +35,10 @@ EMSCRIPTEN_BINDINGS(native_audio) {
       .value("HERTZ", Type::HERTZ)
       .value("SECONDS", Type::SECONDS);
 
-  // Space
-  enum_<Space>("Space")
-      .value("TIME", Space::TIME)
-      .value("FREQUENCY", Space::FREQUENCY);
+  // Domain
+  enum_<Domain>("Domain")
+      .value("TIME", Domain::TIME)
+      .value("FREQUENCY", Domain::FREQUENCY);
 
   // Shape
   enum_<Shape>("Shape")
@@ -301,12 +301,12 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Buffer class
   class_<Buffer, base<Lockable>>("Buffer")
       .smart_ptr<std::shared_ptr<Buffer>>("Buffer")
-      .constructor(&std::make_shared<Buffer, Type, Space, Sample, Sample,
+      .constructor(&std::make_shared<Buffer, Type, Domain, Sample, Sample,
                                      size_t, size_t>)
       .function("getType", &Buffer::getType)
       .function("setType", &Buffer::setType)
-      .function("getSpace", &Buffer::getSpace)
-      .function("setSpace", &Buffer::setSpace)
+      .function("getDomain", &Buffer::getDomain)
+      .function("setDomain", &Buffer::setDomain)
       .function("getRange", &Buffer::getRange)
       .function("setRange", &Buffer::setRange)
       .function("getDefaultValue", &Buffer::getDefaultValue)
@@ -329,8 +329,8 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Input class (extends Buffer)
   class_<Input, base<Buffer>>("Input")
       .smart_ptr<std::shared_ptr<Input>>("Input")
-      .constructor(
-          &std::make_shared<Input, Type, Space, Sample, Sample, size_t, size_t>)
+      .constructor(&std::make_shared<Input, Type, Domain, Sample, Sample,
+                                     size_t, size_t>)
       .function("getMode", &Input::getMode)
       .function("setMode", &Input::setMode)
       .function("getConnections", &Input::getConnections)
@@ -343,7 +343,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Output class (extends Buffer)
   class_<Output, base<Buffer>>("Output")
       .smart_ptr<std::shared_ptr<Output>>("Output")
-      .constructor(&std::make_shared<Output, Type, Space, Sample, Sample,
+      .constructor(&std::make_shared<Output, Type, Domain, Sample, Sample,
                                      size_t, size_t>)
       .function("getConnections", &Output::getConnections)
       .function("connect", &Output::connect)
@@ -415,21 +415,21 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Consumer base class (extends Node)
   class_<Consumer, base<Node>>("Consumer")
       .smart_ptr<std::shared_ptr<Consumer>>("Consumer")
-      .constructor(&std::make_shared<Consumer, Type, Space>)
+      .constructor(&std::make_shared<Consumer, Type, Domain>)
       .function("getInput", &Consumer::getInput);
 
   // Producer base class (extends Node)
   class_<Producer, base<Node>>("Producer")
       .smart_ptr<std::shared_ptr<Producer>>("Producer")
-      .constructor(&std::make_shared<Producer, Type, Space>)
+      .constructor(&std::make_shared<Producer, Type, Domain>)
       .function("getOutput", &Producer::getOutput);
 
   // Transformer base class (extends Node)
   class_<Transformer, base<Node>>("Transformer")
       .smart_ptr<std::shared_ptr<Transformer>>("Transformer")
-      .constructor(&std::make_shared<Transformer, Type, Space>)
-      .constructor(&std::make_shared<Transformer, Type, Type, Space>)
-      .constructor(&std::make_shared<Transformer, Type, Type, Space, Space>)
+      .constructor(&std::make_shared<Transformer, Type, Domain>)
+      .constructor(&std::make_shared<Transformer, Type, Type, Domain>)
+      .constructor(&std::make_shared<Transformer, Type, Type, Domain, Domain>)
       .function("getInput", &Transformer::getInput)
       .function("getOutput", &Transformer::getOutput);
 
@@ -654,7 +654,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Recorder
   class_<Recorder, base<Consumer>>("Recorder")
       .smart_ptr<std::shared_ptr<Recorder>>("Recorder")
-      .constructor(&std::make_shared<Recorder, Type, Space, Sample>)
+      .constructor(&std::make_shared<Recorder, Type, Domain, Sample>)
       .function("getMode", &Recorder::getMode)
       .function("setMode", &Recorder::setMode)
       .function("getRecordingTime", &Recorder::getRecordingTime)
@@ -668,19 +668,19 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // ChannelMerger
   class_<ChannelMerger, base<Producer>>("ChannelMerger")
       .smart_ptr<std::shared_ptr<ChannelMerger>>("ChannelMerger")
-      .constructor(&std::make_shared<ChannelMerger, Type, Space>)
+      .constructor(&std::make_shared<ChannelMerger, Type, Domain>)
       .function("getInput", &ChannelMerger::getInput);
 
   // ChannelSplitter
   class_<ChannelSplitter, base<Consumer>>("ChannelSplitter")
       .smart_ptr<std::shared_ptr<ChannelSplitter>>("ChannelSplitter")
-      .constructor(&std::make_shared<ChannelSplitter, Type, Space>)
+      .constructor(&std::make_shared<ChannelSplitter, Type, Domain>)
       .function("getOutput", &ChannelSplitter::getOutput);
 
   // MidSide
   class_<MidSide, base<Consumer>>("MidSide")
       .smart_ptr<std::shared_ptr<MidSide>>("MidSide")
-      .constructor(&std::make_shared<MidSide, Type, Space>)
+      .constructor(&std::make_shared<MidSide, Type, Domain>)
       .function("getMixAmount", &MidSide::getMixAmount)
       .function("getMid", &MidSide::getMid)
       .function("getSide", &MidSide::getSide);
@@ -688,7 +688,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Spread
   class_<Spread, base<Transformer>>("Spread")
       .smart_ptr<std::shared_ptr<Spread>>("Spread")
-      .constructor(&std::make_shared<Spread, Type, Space>)
+      .constructor(&std::make_shared<Spread, Type, Domain>)
       .function("getMode", &Spread::getMode)
       .function("setMode", &Spread::setMode)
       .function("getSpread", &Spread::getSpread);
@@ -696,7 +696,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // StereoPanner
   class_<StereoPanner, base<Consumer>>("StereoPanner")
       .smart_ptr<std::shared_ptr<StereoPanner>>("StereoPanner")
-      .constructor(&std::make_shared<StereoPanner, Type, Space>)
+      .constructor(&std::make_shared<StereoPanner, Type, Domain>)
       .function("getDirection", &StereoPanner::getDirection)
       .function("getLeft", &StereoPanner::getLeft)
       .function("getRight", &StereoPanner::getRight);
@@ -733,7 +733,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Clipper
   class_<Clipper, base<Transformer>>("Clipper")
       .smart_ptr<std::shared_ptr<Clipper>>("Clipper")
-      .constructor(&std::make_shared<Clipper, Type, Space>)
+      .constructor(&std::make_shared<Clipper, Type, Domain>)
       .function("getMode", &Clipper::getMode)
       .function("setMode", &Clipper::setMode)
       .function("getMinimum", &Clipper::getMinimum)
@@ -757,7 +757,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // DryWet
   class_<DryWet, base<Producer>>("DryWet")
       .smart_ptr<std::shared_ptr<DryWet>>("DryWet")
-      .constructor(&std::make_shared<DryWet, Type, Space>)
+      .constructor(&std::make_shared<DryWet, Type, Domain>)
       .function("getDry", &DryWet::getDry)
       .function("getWet", &DryWet::getWet)
       .function("getMixAmount", &DryWet::getMixAmount)
@@ -787,7 +787,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Shaper
   class_<Shaper, base<Transformer>>("Shaper")
       .smart_ptr<std::shared_ptr<Shaper>>("Shaper")
-      .constructor(&std::make_shared<Shaper, Space>)
+      .constructor(&std::make_shared<Shaper, Domain>)
       .function("getMode", &Shaper::getMode)
       .function("setMode", &Shaper::setMode)
       .function("getDrive", &Shaper::getDrive)
@@ -797,7 +797,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // TableShaper
   class_<TableShaper, base<Transformer>>("TableShaper")
       .smart_ptr<std::shared_ptr<TableShaper>>("TableShaper")
-      .constructor(&std::make_shared<TableShaper, Type, Space>)
+      .constructor(&std::make_shared<TableShaper, Type, Domain>)
       .function("getTables", &TableShaper::getTables,
                 return_value_policy::reference())
       .function("getInputInterpolation", &TableShaper::getInputInterpolation)
@@ -945,30 +945,30 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // AbsoluteValue
   class_<AbsoluteValue, base<Transformer>>("AbsoluteValue")
       .smart_ptr<std::shared_ptr<AbsoluteValue>>("AbsoluteValue")
-      .constructor(&std::make_shared<AbsoluteValue, Type, Space>);
+      .constructor(&std::make_shared<AbsoluteValue, Type, Domain>);
 
   // BooleanMask
   class_<BooleanMask, base<Transformer>>("BooleanMask")
       .smart_ptr<std::shared_ptr<BooleanMask>>("BooleanMask")
-      .constructor(&std::make_shared<BooleanMask, Type, Space>)
+      .constructor(&std::make_shared<BooleanMask, Type, Domain>)
       .function("getMask", &BooleanMask::getMask);
 
   // Comparison
   class_<Comparison, base<Transformer>>("Comparison")
       .smart_ptr<std::shared_ptr<Comparison>>("Comparison")
-      .constructor(&std::make_shared<Comparison, Type, Space>)
+      .constructor(&std::make_shared<Comparison, Type, Domain>)
       .function("getThreshold", &Comparison::getThreshold);
 
   // Division
   class_<Division, base<Transformer>>("Division")
       .smart_ptr<std::shared_ptr<Division>>("Division")
-      .constructor(&std::make_shared<Division, Type, Space>)
+      .constructor(&std::make_shared<Division, Type, Domain>)
       .function("getDivisor", &Division::getDivisor);
 
   // Floor
   class_<Floor, base<Transformer>>("Floor")
       .smart_ptr<std::shared_ptr<Floor>>("Floor")
-      .constructor(&std::make_shared<Floor, Type, Space>)
+      .constructor(&std::make_shared<Floor, Type, Domain>)
       .function("getDivisor", &Floor::getDivisor);
 
   // ForwardFFT
@@ -981,13 +981,13 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // FrequencyToNote
   class_<FrequencyToNote, base<Transformer>>("FrequencyToNote")
       .smart_ptr<std::shared_ptr<FrequencyToNote>>("FrequencyToNote")
-      .constructor(&std::make_shared<FrequencyToNote, Space>)
+      .constructor(&std::make_shared<FrequencyToNote, Domain>)
       .function("getTuningFrequency", &FrequencyToNote::getTuningFrequency);
 
   // Function
   class_<Function, base<Transformer>>("Function")
       .smart_ptr<std::shared_ptr<Function>>("Function")
-      .constructor(&std::make_shared<Function, Type, Space>)
+      .constructor(&std::make_shared<Function, Type, Domain>)
       .function("getFunction", &Function::getFunction)
       .function("setFunction", &Function::setFunction)
       .function("getA", &Function::getA)
@@ -996,16 +996,16 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Hyperbolic
   class_<Hyperbolic, base<Transformer>>("Hyperbolic")
       .smart_ptr<std::shared_ptr<Hyperbolic>>("Hyperbolic")
-      .constructor(&std::make_shared<Hyperbolic, Space>)
+      .constructor(&std::make_shared<Hyperbolic, Domain>)
       .function("getMode", &Hyperbolic::getMode)
       .function("setMode", &Hyperbolic::setMode);
 
   // Identity
   class_<Identity, base<Transformer>>("Identity")
       .smart_ptr<std::shared_ptr<Identity>>("Identity")
-      .constructor(&std::make_shared<Identity, Type, Space>)
-      .constructor(&std::make_shared<Identity, Type, Type, Space>)
-      .constructor(&std::make_shared<Identity, Type, Type, Space, Space>);
+      .constructor(&std::make_shared<Identity, Type, Domain>)
+      .constructor(&std::make_shared<Identity, Type, Type, Domain>)
+      .constructor(&std::make_shared<Identity, Type, Type, Domain, Domain>);
 
   // InverseFFT
   class_<InverseFFT, base<Producer>>("InverseFFT")
@@ -1017,52 +1017,52 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Logarithm
   class_<Logarithm, base<Transformer>>("Logarithm")
       .smart_ptr<std::shared_ptr<Logarithm>>("Logarithm")
-      .constructor(&std::make_shared<Logarithm, Space>)
+      .constructor(&std::make_shared<Logarithm, Domain>)
       .function("getBase", &Logarithm::getBase);
 
   // Modulo
   class_<Modulo, base<Transformer>>("Modulo")
       .smart_ptr<std::shared_ptr<Modulo>>("Modulo")
-      .constructor(&std::make_shared<Modulo, Type, Space>)
+      .constructor(&std::make_shared<Modulo, Type, Domain>)
       .function("getDivisor", &Modulo::getDivisor);
 
   // Multiplication
   class_<Multiplication, base<Transformer>>("Multiplication")
       .smart_ptr<std::shared_ptr<Multiplication>>("Multiplication")
-      .constructor(&std::make_shared<Multiplication, Type, Space>)
+      .constructor(&std::make_shared<Multiplication, Type, Domain>)
       .function("getFactor", &Multiplication::getFactor);
 
   // Negative
   class_<Negative, base<Transformer>>("Negative")
       .smart_ptr<std::shared_ptr<Negative>>("Negative")
-      .constructor(&std::make_shared<Negative, Type, Space>);
+      .constructor(&std::make_shared<Negative, Type, Domain>);
 
   // NoteToFrequency
   class_<NoteToFrequency, base<Transformer>>("NoteToFrequency")
       .smart_ptr<std::shared_ptr<NoteToFrequency>>("NoteToFrequency")
-      .constructor(&std::make_shared<NoteToFrequency, Space>)
+      .constructor(&std::make_shared<NoteToFrequency, Domain>)
       .function("getTuningFrequency", &NoteToFrequency::getTuningFrequency);
 
   // NotGate
   class_<NotGate, base<Transformer>>("NotGate")
       .smart_ptr<std::shared_ptr<NotGate>>("NotGate")
-      .constructor(&std::make_shared<NotGate, Space>);
+      .constructor(&std::make_shared<NotGate, Domain>);
 
   // Power
   class_<Power, base<Transformer>>("Power")
       .smart_ptr<std::shared_ptr<Power>>("Power")
-      .constructor(&std::make_shared<Power, Space>)
+      .constructor(&std::make_shared<Power, Domain>)
       .function("getExponent", &Power::getExponent);
 
   // Reciprocal
   class_<Reciprocal, base<Transformer>>("Reciprocal")
       .smart_ptr<std::shared_ptr<Reciprocal>>("Reciprocal")
-      .constructor(&std::make_shared<Reciprocal, Type, Space>);
+      .constructor(&std::make_shared<Reciprocal, Type, Domain>);
 
   // Trigonometric
   class_<Trigonometric, base<Transformer>>("Trigonometric")
       .smart_ptr<std::shared_ptr<Trigonometric>>("Trigonometric")
-      .constructor(&std::make_shared<Trigonometric, Space>)
+      .constructor(&std::make_shared<Trigonometric, Domain>)
       .function("getMode", &Trigonometric::getMode)
       .function("setMode", &Trigonometric::setMode);
 
@@ -1116,7 +1116,7 @@ EMSCRIPTEN_BINDINGS(native_audio) {
   // Sequencer
   class_<Sequencer, base<Producer>>("Sequencer")
       .smart_ptr<std::shared_ptr<Sequencer>>("Sequencer")
-      .constructor(&std::make_shared<Sequencer, Type, Space>)
+      .constructor(&std::make_shared<Sequencer, Type, Domain>)
       .function("getSequences", &Sequencer::getSequences,
                 return_value_policy::reference())
       .function("getSequenceIndex", &Sequencer::getSequenceIndex)

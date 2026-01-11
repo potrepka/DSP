@@ -8,7 +8,7 @@ class Recorder : public Consumer {
 public:
   enum class Mode { FIXED_SINGLE, FIXED_DOUBLE, VARIABLE };
 
-  Recorder(Type type = Type::RATIO, Space space = Space::TIME,
+  Recorder(Type type = Type::RATIO, Domain domain = Domain::TIME,
            Sample defaultValue = 0.0);
 
   Mode getMode() const;

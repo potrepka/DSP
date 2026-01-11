@@ -15,7 +15,7 @@ public:
     GREATER_THAN_OR_EQUAL
   };
 
-  Comparison(Type type = Type::RATIO, Space space = Space::TIME);
+  Comparison(Type type = Type::RATIO, Domain domain = Domain::TIME);
 
   Mode getMode() const;
   void setMode(Mode mode);

@@ -38,7 +38,7 @@ int main() {
     // Create sawtooth wavetable
     std::shared_ptr<dsp::Buffer> sawtooth = std::make_shared<dsp::Buffer>(
         dsp::Type::RATIO,
-        dsp::Space::TIME,
+        dsp::Domain::TIME,
         0.0, // No range clipping
         0.0, // Default value is 0.0
         1,   // 1 channel

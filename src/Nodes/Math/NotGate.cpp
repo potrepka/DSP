@@ -1,7 +1,7 @@
 ﻿#include "NotGate.h"
 
-dsp::NotGate::NotGate(Space space)
-    : Transformer(Type::BOOLEAN, Type::BOOLEAN, space) {}
+dsp::NotGate::NotGate(Domain domain)
+    : Transformer(Type::BOOLEAN, Type::BOOLEAN, domain) {}
 
 void dsp::NotGate::processNoLock() {
   getOutput()->getWrapper().replaceWithApplicationOf(

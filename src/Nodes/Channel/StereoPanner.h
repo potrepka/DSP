@@ -6,7 +6,7 @@ namespace dsp {
 
 class StereoPanner : public Consumer {
 public:
-  StereoPanner(Type type = Type::RATIO, Space space = Space::TIME);
+  StereoPanner(Type type = Type::RATIO, Domain domain = Domain::TIME);
 
   std::shared_ptr<Input> getDirection() const;
   std::shared_ptr<Output> getLeft() const;

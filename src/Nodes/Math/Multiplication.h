@@ -6,7 +6,7 @@ namespace dsp {
 
 class Multiplication : public Transformer {
 public:
-  Multiplication(Type type = Type::RATIO, Space space = Space::TIME);
+  Multiplication(Type type = Type::RATIO, Domain domain = Domain::TIME);
 
   std::shared_ptr<Input> getFactor() const;
 

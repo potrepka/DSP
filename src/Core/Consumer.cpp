@@ -1,7 +1,7 @@
 ﻿#include "Consumer.h"
 
-dsp::Consumer::Consumer(Type type, Space space)
-    : input(std::make_shared<Input>(type, space)) {
+dsp::Consumer::Consumer(Type type, Domain domain)
+    : input(std::make_shared<Input>(type, domain)) {
   getInputs().push_back(input);
 }
 

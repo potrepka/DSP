@@ -1,4 +1,4 @@
-import { Space, Type } from '../enums/global'
+import { Domain, Type } from '../enums/global'
 import { AudioModule, Deletable, ObjectType, Options } from '../types/module'
 
 export const createObject = <T extends ObjectType>(
@@ -24,11 +24,11 @@ export const createObject = <T extends ObjectType>(
       break
     }
     case 'Buffer': {
-      const { type, space, range, defaultValue, numChannels, numSamples } =
+      const { type, domain, range, defaultValue, numChannels, numSamples } =
         options as Options<'Buffer'>
       reference = new module.Buffer(
         type ?? Type.RATIO,
-        space ?? Space.TIME,
+        domain ?? Domain.TIME,
         range ?? 0,
         defaultValue ?? 0,
         numChannels ?? 0,
@@ -37,11 +37,11 @@ export const createObject = <T extends ObjectType>(
       break
     }
     case 'Input': {
-      const { type, space, range, defaultValue, numChannels, numSamples } =
+      const { type, domain, range, defaultValue, numChannels, numSamples } =
         options as Options<'Input'>
       reference = new module.Input(
         type ?? Type.RATIO,
-        space ?? Space.TIME,
+        domain ?? Domain.TIME,
         range ?? 0,
         defaultValue ?? 0,
         numChannels ?? 0,
@@ -50,11 +50,11 @@ export const createObject = <T extends ObjectType>(
       break
     }
     case 'Output': {
-      const { type, space, range, defaultValue, numChannels, numSamples } =
+      const { type, domain, range, defaultValue, numChannels, numSamples } =
         options as Options<'Output'>
       reference = new module.Output(
         type ?? Type.RATIO,
-        space ?? Space.TIME,
+        domain ?? Domain.TIME,
         range ?? 0,
         defaultValue ?? 0,
         numChannels ?? 0,
@@ -101,10 +101,10 @@ export const createObject = <T extends ObjectType>(
 
     // Analyzer Nodes
     case 'Recorder': {
-      const { type, space, defaultValue } = options as Options<'Recorder'>
+      const { type, domain, defaultValue } = options as Options<'Recorder'>
       reference = new module.Recorder(
         type ?? Type.RATIO,
-        space ?? Space.TIME,
+        domain ?? Domain.TIME,
         defaultValue ?? 0,
       )
       break
@@ -112,36 +112,36 @@ export const createObject = <T extends ObjectType>(
 
     // Channel Nodes
     case 'ChannelMerger': {
-      const { type, space } = options as Options<'ChannelMerger'>
+      const { type, domain } = options as Options<'ChannelMerger'>
       reference = new module.ChannelMerger(
         type ?? Type.RATIO,
-        space ?? Space.TIME,
+        domain ?? Domain.TIME,
       )
       break
     }
     case 'ChannelSplitter': {
-      const { type, space } = options as Options<'ChannelSplitter'>
+      const { type, domain } = options as Options<'ChannelSplitter'>
       reference = new module.ChannelSplitter(
         type ?? Type.RATIO,
-        space ?? Space.TIME,
+        domain ?? Domain.TIME,
       )
       break
     }
     case 'MidSide': {
-      const { type, space } = options as Options<'MidSide'>
-      reference = new module.MidSide(type ?? Type.RATIO, space ?? Space.TIME)
+      const { type, domain } = options as Options<'MidSide'>
+      reference = new module.MidSide(type ?? Type.RATIO, domain ?? Domain.TIME)
       break
     }
     case 'Spread': {
-      const { type, space } = options as Options<'Spread'>
-      reference = new module.Spread(type ?? Type.RATIO, space ?? Space.TIME)
+      const { type, domain } = options as Options<'Spread'>
+      reference = new module.Spread(type ?? Type.RATIO, domain ?? Domain.TIME)
       break
     }
     case 'StereoPanner': {
-      const { type, space } = options as Options<'StereoPanner'>
+      const { type, domain } = options as Options<'StereoPanner'>
       reference = new module.StereoPanner(
         type ?? Type.RATIO,
-        space ?? Space.TIME,
+        domain ?? Domain.TIME,
       )
       break
     }
@@ -158,16 +158,16 @@ export const createObject = <T extends ObjectType>(
 
     // Dynamics Nodes
     case 'Clipper': {
-      const { type, space } = options as Options<'Clipper'>
-      reference = new module.Clipper(type ?? Type.RATIO, space ?? Space.TIME)
+      const { type, domain } = options as Options<'Clipper'>
+      reference = new module.Clipper(type ?? Type.RATIO, domain ?? Domain.TIME)
       break
     }
     case 'CompressorGate':
       reference = new module.CompressorGate()
       break
     case 'DryWet': {
-      const { type, space } = options as Options<'DryWet'>
-      reference = new module.DryWet(type ?? Type.RATIO, space ?? Space.TIME)
+      const { type, domain } = options as Options<'DryWet'>
+      reference = new module.DryWet(type ?? Type.RATIO, domain ?? Domain.TIME)
       break
     }
     case 'Envelope':
@@ -179,15 +179,15 @@ export const createObject = <T extends ObjectType>(
       break
     }
     case 'Shaper': {
-      const { space } = options as Options<'Shaper'>
-      reference = new module.Shaper(space ?? Space.TIME)
+      const { domain } = options as Options<'Shaper'>
+      reference = new module.Shaper(domain ?? Domain.TIME)
       break
     }
     case 'TableShaper': {
-      const { outputType, space } = options as Options<'TableShaper'>
+      const { outputType, domain } = options as Options<'TableShaper'>
       reference = new module.TableShaper(
         outputType ?? Type.RATIO,
-        space ?? Space.TIME,
+        domain ?? Domain.TIME,
       )
       break
     }
@@ -243,46 +243,49 @@ export const createObject = <T extends ObjectType>(
 
     // Math Nodes
     case 'AbsoluteValue': {
-      const { type, space } = options as Options<'AbsoluteValue'>
+      const { type, domain } = options as Options<'AbsoluteValue'>
       reference = new module.AbsoluteValue(
         type ?? Type.RATIO,
-        space ?? Space.TIME,
+        domain ?? Domain.TIME,
       )
       break
     }
     case 'BooleanMask': {
-      const { type, space } = options as Options<'BooleanMask'>
+      const { type, domain } = options as Options<'BooleanMask'>
       reference = new module.BooleanMask(
         type ?? Type.RATIO,
-        space ?? Space.TIME,
+        domain ?? Domain.TIME,
       )
       break
     }
     case 'Comparison': {
-      const { type, space } = options as Options<'Comparison'>
-      reference = new module.Comparison(type ?? Type.RATIO, space ?? Space.TIME)
+      const { type, domain } = options as Options<'Comparison'>
+      reference = new module.Comparison(
+        type ?? Type.RATIO,
+        domain ?? Domain.TIME,
+      )
       break
     }
     case 'Division': {
-      const { type, space } = options as Options<'Division'>
-      reference = new module.Division(type ?? Type.RATIO, space ?? Space.TIME)
+      const { type, domain } = options as Options<'Division'>
+      reference = new module.Division(type ?? Type.RATIO, domain ?? Domain.TIME)
       break
     }
     case 'Floor': {
-      const { type, space } = options as Options<'Floor'>
-      reference = new module.Floor(type ?? Type.RATIO, space ?? Space.TIME)
+      const { type, domain } = options as Options<'Floor'>
+      reference = new module.Floor(type ?? Type.RATIO, domain ?? Domain.TIME)
       break
     }
     case 'ForwardFFT':
       reference = new module.ForwardFFT()
       break
     case 'FrequencyToNote': {
-      const { space } = options as Options<'FrequencyToNote'>
-      reference = new module.FrequencyToNote(space ?? Space.TIME)
+      const { domain } = options as Options<'FrequencyToNote'>
+      reference = new module.FrequencyToNote(domain ?? Domain.TIME)
       break
     }
     case 'Function': {
-      const { type, space, aType, bType, outputType } =
+      const { type, domain, aType, bType, outputType } =
         options as Options<'Function'>
       if (
         aType !== undefined ||
@@ -293,39 +296,45 @@ export const createObject = <T extends ObjectType>(
           aType ?? type ?? Type.RATIO,
           bType ?? type ?? Type.RATIO,
           outputType ?? type ?? Type.RATIO,
-          space ?? Space.TIME,
+          domain ?? Domain.TIME,
         )
       } else {
-        reference = new module.Function(type ?? Type.RATIO, space ?? Space.TIME)
+        reference = new module.Function(
+          type ?? Type.RATIO,
+          domain ?? Domain.TIME,
+        )
       }
       break
     }
     case 'Hyperbolic': {
-      const { space } = options as Options<'Hyperbolic'>
-      reference = new module.Hyperbolic(space ?? Space.TIME)
+      const { domain } = options as Options<'Hyperbolic'>
+      reference = new module.Hyperbolic(domain ?? Domain.TIME)
       break
     }
     case 'Identity': {
-      const { type, space, inputType, outputType, inputSpace, outputSpace } =
+      const { type, domain, inputType, outputType, inputDomain, outputDomain } =
         options as Options<'Identity'>
       if (
         (inputType !== undefined || outputType !== undefined) &&
-        (inputSpace !== undefined || outputSpace !== undefined)
+        (inputDomain !== undefined || outputDomain !== undefined)
       ) {
         reference = new module.Identity(
           inputType ?? type ?? Type.RATIO,
           outputType ?? type ?? Type.RATIO,
-          inputSpace ?? space ?? Space.TIME,
-          outputSpace ?? space ?? Space.TIME,
+          inputDomain ?? domain ?? Domain.TIME,
+          outputDomain ?? domain ?? Domain.TIME,
         )
       } else if (inputType !== undefined || outputType !== undefined) {
         reference = new module.Identity(
           inputType ?? type ?? Type.RATIO,
           outputType ?? type ?? Type.RATIO,
-          space ?? Space.TIME,
+          domain ?? Domain.TIME,
         )
       } else {
-        reference = new module.Identity(type ?? Type.RATIO, space ?? Space.TIME)
+        reference = new module.Identity(
+          type ?? Type.RATIO,
+          domain ?? Domain.TIME,
+        )
       }
       break
     }
@@ -333,51 +342,54 @@ export const createObject = <T extends ObjectType>(
       reference = new module.InverseFFT()
       break
     case 'Logarithm': {
-      const { space } = options as Options<'Logarithm'>
-      reference = new module.Logarithm(space ?? Space.TIME)
+      const { domain } = options as Options<'Logarithm'>
+      reference = new module.Logarithm(domain ?? Domain.TIME)
       break
     }
     case 'Modulo': {
-      const { type, space } = options as Options<'Modulo'>
-      reference = new module.Modulo(type ?? Type.RATIO, space ?? Space.TIME)
+      const { type, domain } = options as Options<'Modulo'>
+      reference = new module.Modulo(type ?? Type.RATIO, domain ?? Domain.TIME)
       break
     }
     case 'Multiplication': {
-      const { type, space } = options as Options<'Multiplication'>
+      const { type, domain } = options as Options<'Multiplication'>
       reference = new module.Multiplication(
         type ?? Type.RATIO,
-        space ?? Space.TIME,
+        domain ?? Domain.TIME,
       )
       break
     }
     case 'Negative': {
-      const { type, space } = options as Options<'Negative'>
-      reference = new module.Negative(type ?? Type.RATIO, space ?? Space.TIME)
+      const { type, domain } = options as Options<'Negative'>
+      reference = new module.Negative(type ?? Type.RATIO, domain ?? Domain.TIME)
       break
     }
     case 'NoteToFrequency': {
-      const { space } = options as Options<'NoteToFrequency'>
-      reference = new module.NoteToFrequency(space ?? Space.TIME)
+      const { domain } = options as Options<'NoteToFrequency'>
+      reference = new module.NoteToFrequency(domain ?? Domain.TIME)
       break
     }
     case 'NotGate': {
-      const { space } = options as Options<'NotGate'>
-      reference = new module.NotGate(space ?? Space.TIME)
+      const { domain } = options as Options<'NotGate'>
+      reference = new module.NotGate(domain ?? Domain.TIME)
       break
     }
     case 'Power': {
-      const { space } = options as Options<'Power'>
-      reference = new module.Power(space ?? Space.TIME)
+      const { domain } = options as Options<'Power'>
+      reference = new module.Power(domain ?? Domain.TIME)
       break
     }
     case 'Reciprocal': {
-      const { type, space } = options as Options<'Reciprocal'>
-      reference = new module.Reciprocal(type ?? Type.RATIO, space ?? Space.TIME)
+      const { type, domain } = options as Options<'Reciprocal'>
+      reference = new module.Reciprocal(
+        type ?? Type.RATIO,
+        domain ?? Domain.TIME,
+      )
       break
     }
     case 'Trigonometric': {
-      const { space } = options as Options<'Trigonometric'>
-      reference = new module.Trigonometric(space ?? Space.TIME)
+      const { domain } = options as Options<'Trigonometric'>
+      reference = new module.Trigonometric(domain ?? Domain.TIME)
       break
     }
 
@@ -407,8 +419,11 @@ export const createObject = <T extends ObjectType>(
       break
     }
     case 'Sequencer': {
-      const { type, space } = options as Options<'Sequencer'>
-      reference = new module.Sequencer(type ?? Type.RATIO, space ?? Space.TIME)
+      const { type, domain } = options as Options<'Sequencer'>
+      reference = new module.Sequencer(
+        type ?? Type.RATIO,
+        domain ?? Domain.TIME,
+      )
       break
     }
     case 'TriggerHold':

@@ -1,8 +1,8 @@
 ﻿#include "NoteToFrequency.h"
 
-dsp::NoteToFrequency::NoteToFrequency(Space space)
-    : Transformer(Type::RATIO, Type::HERTZ, space),
-      tuningFrequency(std::make_shared<Input>(Type::HERTZ, space)) {
+dsp::NoteToFrequency::NoteToFrequency(Domain domain)
+    : Transformer(Type::RATIO, Type::HERTZ, domain),
+      tuningFrequency(std::make_shared<Input>(Type::HERTZ, domain)) {
   getInput()->setDefaultValue(69.0);
   getInputs().push_back(tuningFrequency);
 }

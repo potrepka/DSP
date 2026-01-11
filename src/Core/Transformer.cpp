@@ -1,23 +1,23 @@
 ﻿#include "Transformer.h"
 
-dsp::Transformer::Transformer(Type type, Space space)
-    : input(std::make_shared<Input>(type, space)),
-      output(std::make_shared<Output>(type, space)) {
+dsp::Transformer::Transformer(Type type, Domain domain)
+    : input(std::make_shared<Input>(type, domain)),
+      output(std::make_shared<Output>(type, domain)) {
   getInputs().push_back(input);
   getOutputs().push_back(output);
 }
 
-dsp::Transformer::Transformer(Type inputType, Type outputType, Space space)
-    : input(std::make_shared<Input>(inputType, space)),
-      output(std::make_shared<Output>(outputType, space)) {
+dsp::Transformer::Transformer(Type inputType, Type outputType, Domain domain)
+    : input(std::make_shared<Input>(inputType, domain)),
+      output(std::make_shared<Output>(outputType, domain)) {
   getInputs().push_back(input);
   getOutputs().push_back(output);
 }
 
-dsp::Transformer::Transformer(Type inputType, Type outputType, Space inSpace,
-                              Space outSpace)
-    : input(std::make_shared<Input>(inputType, inSpace)),
-      output(std::make_shared<Output>(outputType, outSpace)) {
+dsp::Transformer::Transformer(Type inputType, Type outputType, Domain inDomain,
+                              Domain outDomain)
+    : input(std::make_shared<Input>(inputType, inDomain)),
+      output(std::make_shared<Output>(outputType, outDomain)) {
   getInputs().push_back(input);
   getOutputs().push_back(output);
 }

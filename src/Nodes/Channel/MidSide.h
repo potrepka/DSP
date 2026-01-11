@@ -6,7 +6,7 @@ namespace dsp {
 
 class MidSide : public Consumer {
 public:
-  MidSide(Type type = Type::RATIO, Space space = Space::TIME);
+  MidSide(Type type = Type::RATIO, Domain domain = Domain::TIME);
 
   std::shared_ptr<Input> getMixAmount() const;
   std::shared_ptr<Output> getMid() const;

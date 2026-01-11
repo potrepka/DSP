@@ -6,7 +6,7 @@ namespace dsp {
 
 class ChannelMerger : public Producer {
 public:
-  ChannelMerger(Type type = Type::RATIO, Space space = Space::TIME);
+  ChannelMerger(Type type = Type::RATIO, Domain domain = Domain::TIME);
 
   std::shared_ptr<Input> getInput(size_t channel) const;
 

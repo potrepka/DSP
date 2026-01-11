@@ -1,4 +1,4 @@
-import { InputMode, Space, Type } from '../../../enums/global'
+import { Domain, InputMode, Type } from '../../../enums/global'
 import { chainable } from '../../../helpers/proxy'
 import { Target } from '../../../types/module'
 import { Chainable, ProxyContext } from '../../../types/proxy'
@@ -17,11 +17,11 @@ export class BufferProxy extends BaseProxy {
   setType = (type: Type): Chainable<void> => {
     return chainable(this.call('setType', [type]))
   }
-  getSpace = (): Chainable<Space> => {
-    return chainable(this.call('getSpace', []))
+  getDomain = (): Chainable<Domain> => {
+    return chainable(this.call('getDomain', []))
   }
-  setSpace = (space: Space): Chainable<void> => {
-    return chainable(this.call('setSpace', [space]))
+  setDomain = (domain: Domain): Chainable<void> => {
+    return chainable(this.call('setDomain', [domain]))
   }
   getRange = (): Chainable<number> => {
     return chainable(this.call('getRange', []))

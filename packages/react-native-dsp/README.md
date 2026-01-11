@@ -175,7 +175,7 @@ const outputMessages = await nodeProcessor.getOutputMessages()
 
 The library provides three related classes for working with audio data:
 
-**Buffer** is the high-level container used for inputs, outputs, and tables. Buffers contain audio data along with metadata (type, space, range, and default value). Input and Output both extend Buffer.
+**Buffer** is the high-level container used for inputs, outputs, and tables. Buffers contain audio data along with metadata (type, domain, range, and default value). Input and Output both extend Buffer.
 
 Each Buffer channel has a channel value, which is set to the default value when a channel is created. During processing, if an Input has connections, the connected data is used; otherwise, the Input's channel values are used. Consequently, the channel values can be used to set static, persistent input values for nodes.
 
@@ -191,7 +191,7 @@ const buffer = await dsp.createBuffer({
   numSamples: 128,
 })
 await buffer.setType(Type.RATIO)
-await buffer.setSpace(Space.TIME)
+await buffer.setDomain(Domain.TIME)
 await buffer.setRange(0.0)
 await buffer.setDefaultValue(0.0)
 await buffer.setNumChannels(2)
@@ -314,7 +314,7 @@ const output = await transformer.getOutput()
 When creating nodes, most parameters are optional. Default values are:
 
 - `type`: `Type.RATIO`
-- `space`: `Space.TIME`
+- `domain`: `Domain.TIME`
 
 Some nodes require specific parameters:
 
@@ -428,7 +428,7 @@ Records audio input to a buffer. Extends Consumer.
 ```typescript
 const recorder = await dsp.createRecorder({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
   defaultValue: 0,
 })
 await recorder.setNumChannels(2)
@@ -455,7 +455,7 @@ Merges multiple mono inputs into a multi-channel output. Extends Producer.
 ```typescript
 const channelMerger = await dsp.createChannelMerger({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await channelMerger.setNumChannels(2)
 
@@ -474,7 +474,7 @@ Splits a multi-channel input into separate mono outputs. Extends Consumer.
 ```typescript
 const channelSplitter = await dsp.createChannelSplitter({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await channelSplitter.setNumChannels(2)
 
@@ -493,7 +493,7 @@ Converts stereo to mid/side encoding. Extends Consumer.
 ```typescript
 const midSide = await dsp.createMidSide({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await midSide.setNumChannels(2)
 
@@ -513,7 +513,7 @@ Applies stereo spread to a signal. Extends Transformer.
 ```typescript
 const spread = await dsp.createSpread({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await spread.setNumChannels(2)
 
@@ -536,7 +536,7 @@ Pans a mono signal to stereo. Extends Consumer.
 ```typescript
 const stereoPanner = await dsp.createStereoPanner({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await stereoPanner.setNumChannels(2)
 
@@ -609,7 +609,7 @@ Clips, wraps, or folds signal amplitude. Extends Transformer.
 ```typescript
 const clipper = await dsp.createClipper({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await clipper.setNumChannels(2)
 
@@ -659,7 +659,7 @@ Mixes between dry and wet signals (or A and B). Extends Producer.
 ```typescript
 const dryWet = await dsp.createDryWet({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await dryWet.setNumChannels(2)
 
@@ -720,7 +720,7 @@ const output = await lag.getOutput()
 Waveshaping distortion. Extends Transformer.
 
 ```typescript
-const shaper = await dsp.createShaper({ space: Space.TIME })
+const shaper = await dsp.createShaper({ domain: Domain.TIME })
 await shaper.setNumChannels(2)
 
 // Inputs
@@ -745,7 +745,7 @@ Table-based waveshaping with interpolation. Extends Transformer.
 ```typescript
 const tableShaper = await dsp.createTableShaper({
   outputType: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await tableShaper.setNumChannels(2)
 
@@ -963,7 +963,7 @@ Outputs the absolute value of the input. Extends Transformer.
 ```typescript
 const absoluteValue = await dsp.createAbsoluteValue({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await absoluteValue.setNumChannels(2)
 
@@ -981,7 +981,7 @@ Applies a boolean mask to the input signal. Extends Transformer.
 ```typescript
 const booleanMask = await dsp.createBooleanMask({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await booleanMask.setNumChannels(2)
 
@@ -1000,7 +1000,7 @@ Compares input against a threshold. Extends Transformer.
 ```typescript
 const comparison = await dsp.createComparison({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await comparison.setNumChannels(2)
 
@@ -1023,7 +1023,7 @@ Divides input by a divisor. Extends Transformer.
 ```typescript
 const division = await dsp.createDivision({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await division.setNumChannels(2)
 
@@ -1042,7 +1042,7 @@ Quantizes input to integer multiples of divisor. Extends Transformer.
 ```typescript
 const floor = await dsp.createFloor({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await floor.setNumChannels(2)
 
@@ -1075,7 +1075,7 @@ const phase = await forwardFFT.getPhase()
 Converts frequency (Hz) to MIDI note number. Extends Transformer.
 
 ```typescript
-const frequencyToNote = await dsp.createFrequencyToNote({ space: Space.TIME })
+const frequencyToNote = await dsp.createFrequencyToNote({ domain: Domain.TIME })
 await frequencyToNote.setNumChannels(2)
 
 // Inputs
@@ -1093,7 +1093,7 @@ Custom two-input function node. Extends Transformer.
 ```typescript
 const func = await dsp.createFunction({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await func.setNumChannels(2)
 
@@ -1115,7 +1115,7 @@ await func.setFunction((a, b) => a + b)
 Hyperbolic trigonometric functions (sinh, cosh, tanh). Extends Transformer.
 
 ```typescript
-const hyperbolic = await dsp.createHyperbolic({ space: Space.TIME })
+const hyperbolic = await dsp.createHyperbolic({ domain: Domain.TIME })
 await hyperbolic.setNumChannels(2)
 
 // Inputs
@@ -1131,12 +1131,12 @@ await hyperbolic.setMode(HyperbolicMode.TANGENT)
 
 #### Identity
 
-Passes input through unchanged (useful for type/space conversion). Extends Transformer.
+Passes input through unchanged (useful for type/domain conversion). Extends Transformer.
 
 ```typescript
 const identity = await dsp.createIdentity({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await identity.setNumChannels(2)
 
@@ -1168,7 +1168,7 @@ const output = await inverseFFT.getOutput()
 Computes logarithm of input. Extends Transformer.
 
 ```typescript
-const logarithm = await dsp.createLogarithm({ space: Space.TIME })
+const logarithm = await dsp.createLogarithm({ domain: Domain.TIME })
 await logarithm.setNumChannels(2)
 
 // Inputs
@@ -1186,7 +1186,7 @@ Computes input modulo divisor. Extends Transformer.
 ```typescript
 const modulo = await dsp.createModulo({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await modulo.setNumChannels(2)
 
@@ -1205,7 +1205,7 @@ Multiplies input by a factor. Extends Transformer.
 ```typescript
 const multiplication = await dsp.createMultiplication({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await multiplication.setNumChannels(2)
 
@@ -1224,7 +1224,7 @@ Outputs the negative of the input. Extends Transformer.
 ```typescript
 const negative = await dsp.createNegative({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await negative.setNumChannels(2)
 
@@ -1240,7 +1240,7 @@ const output = await negative.getOutput()
 Converts MIDI note number to frequency (Hz). Extends Transformer.
 
 ```typescript
-const noteToFrequency = await dsp.createNoteToFrequency({ space: Space.TIME })
+const noteToFrequency = await dsp.createNoteToFrequency({ domain: Domain.TIME })
 await noteToFrequency.setNumChannels(2)
 
 // Inputs
@@ -1256,7 +1256,7 @@ const output = await noteToFrequency.getOutput()
 Boolean NOT operation. Extends Transformer.
 
 ```typescript
-const notGate = await dsp.createNotGate({ space: Space.TIME })
+const notGate = await dsp.createNotGate({ domain: Domain.TIME })
 await notGate.setNumChannels(2)
 
 // Inputs
@@ -1271,7 +1271,7 @@ const output = await notGate.getOutput()
 Raises input to an exponent. Extends Transformer.
 
 ```typescript
-const power = await dsp.createPower({ space: Space.TIME })
+const power = await dsp.createPower({ domain: Domain.TIME })
 await power.setNumChannels(2)
 
 // Inputs
@@ -1289,7 +1289,7 @@ Outputs 1/input. Extends Transformer.
 ```typescript
 const reciprocal = await dsp.createReciprocal({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await reciprocal.setNumChannels(2)
 
@@ -1305,7 +1305,7 @@ const output = await reciprocal.getOutput()
 Trigonometric functions (sin, cos, tan). Extends Transformer.
 
 ```typescript
-const trigonometric = await dsp.createTrigonometric({ space: Space.TIME })
+const trigonometric = await dsp.createTrigonometric({ domain: Domain.TIME })
 await trigonometric.setNumChannels(2)
 
 // Inputs
@@ -1431,7 +1431,7 @@ Step sequencer with multiple sequences. Extends Producer.
 ```typescript
 const sequencer = await dsp.createSequencer({
   type: Type.RATIO,
-  space: Space.TIME,
+  domain: Domain.TIME,
 })
 await sequencer.setNumChannels(2)
 
@@ -1672,15 +1672,15 @@ Type.HERTZ // Frequency in Hz
 Type.SECONDS // Time in seconds
 ```
 
-#### Space
+#### Domain
 
 Signal processing domain.
 
 ```typescript
-import { Space } from '@potrepka/react-native-dsp'
+import { Domain } from '@potrepka/react-native-dsp'
 
-Space.TIME // Time domain
-Space.FREQUENCY // Frequency domain
+Domain.TIME // Time domain
+Domain.FREQUENCY // Frequency domain
 ```
 
 #### Shape

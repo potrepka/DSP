@@ -5,7 +5,7 @@ dsp::TableOscillator::TableOscillator(Type type)
       phaseInterpolation(Interpolation::LINEAR),
       positionInterpolation(Interpolation::LINEAR),
       phase(std::make_shared<Input>(Type::RATIO)),
-      position(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0)) {
+      position(std::make_shared<Input>(Type::RATIO, Domain::TIME, 1.0)) {
   getInputs().push_back(phase);
   getInputs().push_back(position);
 }

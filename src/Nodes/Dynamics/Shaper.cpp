@@ -1,9 +1,9 @@
 ﻿#include "Shaper.h"
 
-dsp::Shaper::Shaper(Space space)
-    : Transformer(Type::RATIO, Type::RATIO, space),
+dsp::Shaper::Shaper(Domain domain)
+    : Transformer(Type::RATIO, Type::RATIO, domain),
       mode(Mode::HYPERBOLIC),
-      drive(std::make_shared<Input>(Type::RATIO, space, 0.0, 1.0)) {
+      drive(std::make_shared<Input>(Type::RATIO, domain, 0.0, 1.0)) {
   getInputs().push_back(drive);
 }
 

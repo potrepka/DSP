@@ -1,10 +1,10 @@
 #include "TableShaper.h"
 
-dsp::TableShaper::TableShaper(Type outputType, Space space)
-    : Transformer(Type::RATIO, outputType, space),
+dsp::TableShaper::TableShaper(Type outputType, Domain domain)
+    : Transformer(Type::RATIO, outputType, domain),
       inputInterpolation(Interpolation::LINEAR),
       positionInterpolation(Interpolation::LINEAR),
-      position(std::make_shared<Input>(Type::RATIO, Space::TIME, 1.0)) {
+      position(std::make_shared<Input>(Type::RATIO, Domain::TIME, 1.0)) {
   getInputs().push_back(position);
 }
 

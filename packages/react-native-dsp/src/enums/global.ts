@@ -12,7 +12,7 @@ export enum Type {
 /**
  * Signal processing domain
  */
-export enum Space {
+export enum Domain {
   TIME = 0,
   FREQUENCY = 1,
 }

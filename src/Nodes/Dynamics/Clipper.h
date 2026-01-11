@@ -8,7 +8,7 @@ class Clipper : public Transformer {
 public:
   enum class Mode { CLIP, WRAP, FOLD };
 
-  Clipper(Type type = Type::RATIO, Space space = Space::TIME);
+  Clipper(Type type = Type::RATIO, Domain domain = Domain::TIME);
 
   Mode getMode() const;
   void setMode(Mode mode);

@@ -8,15 +8,15 @@ namespace dsp {
 
 class Buffer : public Lockable {
 public:
-  Buffer(Type type = Type::RATIO, Space space = Space::TIME, Sample range = 0.0,
-         Sample defaultValue = 0.0, size_t numChannels = 0,
+  Buffer(Type type = Type::RATIO, Domain domain = Domain::TIME,
+         Sample range = 0.0, Sample defaultValue = 0.0, size_t numChannels = 0,
          size_t numSamples = 0);
 
   Type getType() const;
   void setType(Type type);
 
-  Space getSpace() const;
-  void setSpace(Space space);
+  Domain getDomain() const;
+  void setDomain(Domain domain);
 
   Sample getRange() const;
   void setRange(Sample range);
@@ -47,7 +47,7 @@ public:
 
 protected:
   Type type;
-  Space space;
+  Domain domain;
   Sample range;
   Sample defaultValue;
   Data data;
@@ -67,8 +67,8 @@ class Input : public Buffer, public std::enable_shared_from_this<Input> {
 public:
   enum class Mode { SUM, MINIMUM, MAXIMUM };
 
-  Input(Type type = Type::RATIO, Space space = Space::TIME, Sample range = 0.0,
-        Sample defaultValue = 0.0, size_t numChannels = 0,
+  Input(Type type = Type::RATIO, Domain domain = Domain::TIME,
+        Sample range = 0.0, Sample defaultValue = 0.0, size_t numChannels = 0,
         size_t numSamples = 0);
   ~Input();
 
@@ -94,8 +94,8 @@ class Output : public Buffer, public std::enable_shared_from_this<Output> {
   friend class Input;
 
 public:
-  Output(Type type = Type::RATIO, Space space = Space::TIME, Sample range = 0.0,
-         Sample defaultValue = 0.0, size_t numChannels = 0,
+  Output(Type type = Type::RATIO, Domain domain = Domain::TIME,
+         Sample range = 0.0, Sample defaultValue = 0.0, size_t numChannels = 0,
          size_t numSamples = 0);
   ~Output();
 

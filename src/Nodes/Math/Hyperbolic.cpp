@@ -1,7 +1,7 @@
 ﻿#include "Hyperbolic.h"
 
-dsp::Hyperbolic::Hyperbolic(Space space)
-    : Transformer(Type::RATIO, Type::RATIO, space), mode(Mode::SINE) {}
+dsp::Hyperbolic::Hyperbolic(Domain domain)
+    : Transformer(Type::RATIO, Type::RATIO, domain), mode(Mode::SINE) {}
 
 dsp::Hyperbolic::Mode dsp::Hyperbolic::getMode() const { return mode; }
 

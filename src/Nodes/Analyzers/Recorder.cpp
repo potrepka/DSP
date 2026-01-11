@@ -1,12 +1,13 @@
 ﻿#include "Recorder.h"
 
-dsp::Recorder::Recorder(Type type, Space space, Sample defaultValue)
-    : Consumer(type, space),
+dsp::Recorder::Recorder(Type type, Domain domain, Sample defaultValue)
+    : Consumer(type, domain),
       mode(Mode::FIXED_SINGLE),
       recordingTime(0.0),
       recordingNumSamples(0.0),
-      primary(std::make_shared<Buffer>(type, space, 0.0, defaultValue, 0, 0)),
-      secondary(std::make_shared<Buffer>(type, space, 0.0, defaultValue, 0, 0)),
+      primary(std::make_shared<Buffer>(type, domain, 0.0, defaultValue, 0, 0)),
+      secondary(
+          std::make_shared<Buffer>(type, domain, 0.0, defaultValue, 0, 0)),
       gate(std::make_shared<Input>(Type::BOOLEAN)),
       reset(std::make_shared<Input>(Type::BOOLEAN)) {
   getInputs().push_back(gate);

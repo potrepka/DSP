@@ -6,7 +6,7 @@ namespace dsp {
 
 class Logarithm : public Transformer {
 public:
-  Logarithm(Space space = Space::TIME);
+  Logarithm(Domain domain = Domain::TIME);
 
   std::shared_ptr<Input> getBase() const;
 

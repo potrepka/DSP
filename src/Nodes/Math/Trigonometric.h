@@ -8,7 +8,7 @@ class Trigonometric : public Transformer {
 public:
   enum class Mode { SINE, COSINE, TANGENT };
 
-  Trigonometric(Space space = Space::TIME);
+  Trigonometric(Domain domain = Domain::TIME);
 
   Mode getMode() const;
   void setMode(Mode mode);

@@ -1,7 +1,7 @@
 ﻿#include "Sequencer.h"
 
-dsp::Sequencer::Sequencer(Type type, Space space)
-    : Producer(type, space),
+dsp::Sequencer::Sequencer(Type type, Domain domain)
+    : Producer(type, domain),
       sequenceIndex(std::make_shared<Input>(Type::INTEGER)),
       positionIndex(std::make_shared<Input>(Type::INTEGER)) {
   getInputs().push_back(sequenceIndex);

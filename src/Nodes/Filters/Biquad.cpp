@@ -4,8 +4,8 @@ dsp::Biquad::Biquad()
     : Transformer(Type::RATIO, Type::RATIO),
       mode(Mode::LOW_PASS),
       frequency(std::make_shared<Input>(Type::HERTZ)),
-      resonance(std::make_shared<Input>(Type::RATIO, Space::TIME, 0.0, 1.0)),
-      amplitude(std::make_shared<Input>(Type::RATIO, Space::TIME, 0.0, 1.0)) {
+      resonance(std::make_shared<Input>(Type::RATIO, Domain::TIME, 0.0, 1.0)),
+      amplitude(std::make_shared<Input>(Type::RATIO, Domain::TIME, 0.0, 1.0)) {
   getInputs().push_back(frequency);
   getInputs().push_back(resonance);
   getInputs().push_back(amplitude);

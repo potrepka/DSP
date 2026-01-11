@@ -1,7 +1,7 @@
 ﻿#include "ChannelSplitter.h"
 
-dsp::ChannelSplitter::ChannelSplitter(Type type, Space space)
-    : Consumer(type, space) {}
+dsp::ChannelSplitter::ChannelSplitter(Type type, Domain domain)
+    : Consumer(type, domain) {}
 
 std::shared_ptr<dsp::Output> dsp::ChannelSplitter::getOutput(
     size_t channel) const {
@@ -17,8 +17,9 @@ void dsp::ChannelSplitter::setNumInputChannelsNoLock(size_t numChannels) {
     for (size_t channel = getNumInputChannels(); channel < numChannels;
          ++channel) {
       outputs.push_back(std::make_shared<Output>(
-          getInput()->getType(), getInput()->getSpace(), getInput()->getRange(),
-          getInput()->getDefaultValue(), 1, getInput()->getNumSamples()));
+          getInput()->getType(), getInput()->getDomain(),
+          getInput()->getRange(), getInput()->getDefaultValue(), 1,
+          getInput()->getNumSamples()));
     }
   }
   Node::setNumInputChannelsNoLock(numChannels);

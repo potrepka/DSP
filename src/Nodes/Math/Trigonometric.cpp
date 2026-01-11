@@ -1,7 +1,7 @@
 ﻿#include "Trigonometric.h"
 
-dsp::Trigonometric::Trigonometric(Space space)
-    : Transformer(Type::RATIO, Type::RATIO, space), mode(Mode::SINE) {}
+dsp::Trigonometric::Trigonometric(Domain domain)
+    : Transformer(Type::RATIO, Type::RATIO, domain), mode(Mode::SINE) {}
 
 dsp::Trigonometric::Mode dsp::Trigonometric::getMode() const { return mode; }
 

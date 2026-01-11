@@ -2,8 +2,8 @@
 
 dsp::ForwardFFT::ForwardFFT()
     : Consumer(Type::RATIO),
-      magnitude(std::make_shared<Output>(Type::RATIO, Space::FREQUENCY)),
-      phase(std::make_shared<Output>(Type::RATIO, Space::FREQUENCY)) {
+      magnitude(std::make_shared<Output>(Type::RATIO, Domain::FREQUENCY)),
+      phase(std::make_shared<Output>(Type::RATIO, Domain::FREQUENCY)) {
   getOutputs().push_back(magnitude);
   getOutputs().push_back(phase);
 }

@@ -1,10 +1,10 @@
 ﻿#include "StereoPanner.h"
 
-dsp::StereoPanner::StereoPanner(Type type, Space space)
-    : Consumer(type, space),
-      direction(std::make_shared<Input>(Type::RATIO, space, 1.0, 0.5)),
-      left(std::make_shared<Output>(type, space)),
-      right(std::make_shared<Output>(type, space)) {
+dsp::StereoPanner::StereoPanner(Type type, Domain domain)
+    : Consumer(type, domain),
+      direction(std::make_shared<Input>(Type::RATIO, domain, 1.0, 0.5)),
+      left(std::make_shared<Output>(type, domain)),
+      right(std::make_shared<Output>(type, domain)) {
   getInputs().push_back(direction);
   getOutputs().push_back(left);
   getOutputs().push_back(right);

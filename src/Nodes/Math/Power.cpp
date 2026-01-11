@@ -1,8 +1,8 @@
 ﻿#include "Power.h"
 
-dsp::Power::Power(Space space)
-    : Transformer(Type::RATIO, Type::RATIO, space),
-      exponent(std::make_shared<Input>(Type::RATIO, space)) {
+dsp::Power::Power(Domain domain)
+    : Transformer(Type::RATIO, Type::RATIO, domain),
+      exponent(std::make_shared<Input>(Type::RATIO, domain)) {
   getInputs().push_back(exponent);
 }
 

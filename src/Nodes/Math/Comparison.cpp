@@ -1,8 +1,8 @@
 ﻿#include "Comparison.h"
 
-dsp::Comparison::Comparison(Type type, Space space)
-    : Transformer(type, Type::BOOLEAN, space),
-      threshold(std::make_shared<Input>(type, space)) {
+dsp::Comparison::Comparison(Type type, Domain domain)
+    : Transformer(type, Type::BOOLEAN, domain),
+      threshold(std::make_shared<Input>(type, domain)) {
   getInputs().push_back(threshold);
 }
 

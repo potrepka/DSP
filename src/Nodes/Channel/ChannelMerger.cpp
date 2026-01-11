@@ -1,7 +1,7 @@
 ﻿#include "ChannelMerger.h"
 
-dsp::ChannelMerger::ChannelMerger(Type type, Space space)
-    : Producer(type, space) {}
+dsp::ChannelMerger::ChannelMerger(Type type, Domain domain)
+    : Producer(type, domain) {}
 
 std::shared_ptr<dsp::Input> dsp::ChannelMerger::getInput(size_t channel) const {
   DSP_ASSERT(channel < inputs.size());
@@ -18,7 +18,7 @@ void dsp::ChannelMerger::setNumOutputChannelsNoLock(size_t numChannels) {
     for (size_t channel = getNumOutputChannels(); channel < numChannels;
          ++channel) {
       inputs.push_back(std::make_shared<Input>(
-          getOutput()->getType(), getOutput()->getSpace(),
+          getOutput()->getType(), getOutput()->getDomain(),
           getOutput()->getRange(), getOutput()->getDefaultValue(), 1,
           getOutput()->getNumSamples()));
     }

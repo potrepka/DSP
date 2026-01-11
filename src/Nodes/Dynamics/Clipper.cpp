@@ -1,10 +1,10 @@
 ﻿#include "Clipper.h"
 
-dsp::Clipper::Clipper(Type type, Space space)
-    : Transformer(type, space),
+dsp::Clipper::Clipper(Type type, Domain domain)
+    : Transformer(type, domain),
       mode(Mode::CLIP),
-      minimum(std::make_shared<Input>(type, space, 0.0, -1.0)),
-      maximum(std::make_shared<Input>(type, space, 0.0, 1.0)) {
+      minimum(std::make_shared<Input>(type, domain, 0.0, -1.0)),
+      maximum(std::make_shared<Input>(type, domain, 0.0, 1.0)) {
   getInputs().push_back(minimum);
   getInputs().push_back(maximum);
 }

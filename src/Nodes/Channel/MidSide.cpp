@@ -1,10 +1,10 @@
 ﻿#include "MidSide.h"
 
-dsp::MidSide::MidSide(Type type, Space space)
-    : Consumer(type, space),
-      mixAmount(std::make_shared<Input>(Type::RATIO, space, 1.0, 1.0)),
-      mid(std::make_shared<Output>(type, space)),
-      side(std::make_shared<Output>(type, space)),
+dsp::MidSide::MidSide(Type type, Domain domain)
+    : Consumer(type, domain),
+      mixAmount(std::make_shared<Input>(Type::RATIO, domain, 1.0, 1.0)),
+      mid(std::make_shared<Output>(type, domain)),
+      side(std::make_shared<Output>(type, domain)),
       data(0, 0),
       wrapper(data) {
   getInputs().push_back(mixAmount);

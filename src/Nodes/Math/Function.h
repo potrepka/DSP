@@ -6,9 +6,9 @@ namespace dsp {
 
 class Function : public Transformer {
 public:
-  Function(Type type = Type::RATIO, Space space = Space::TIME);
+  Function(Type type = Type::RATIO, Domain domain = Domain::TIME);
   Function(Type aType = Type::RATIO, Type bType = Type::RATIO,
-           Type outputType = Type::RATIO, Space space = Space::TIME);
+           Type outputType = Type::RATIO, Domain domain = Domain::TIME);
 
   std::shared_ptr<std::function<Sample(Sample, Sample)>> getFunction() const;
   void setFunction(

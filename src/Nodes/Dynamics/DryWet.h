@@ -6,7 +6,7 @@ namespace dsp {
 
 class DryWet : public Producer {
 public:
-  DryWet(Type type = Type::RATIO, Space space = Space::TIME);
+  DryWet(Type type = Type::RATIO, Domain domain = Domain::TIME);
 
   std::shared_ptr<Input> getDry() const;
   std::shared_ptr<Input> getWet() const;

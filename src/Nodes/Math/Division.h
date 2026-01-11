@@ -6,7 +6,7 @@ namespace dsp {
 
 class Division : public Transformer {
 public:
-  Division(Type type = Type::RATIO, Space space = Space::TIME);
+  Division(Type type = Type::RATIO, Domain domain = Domain::TIME);
 
   std::shared_ptr<Input> getDivisor() const;
 

@@ -6,7 +6,7 @@ namespace dsp {
 
 class TableShaper : public Transformer {
 public:
-  TableShaper(Type outputType = Type::RATIO, Space space = Space::TIME);
+  TableShaper(Type outputType = Type::RATIO, Domain domain = Domain::TIME);
 
   std::vector<std::shared_ptr<Buffer>>& getTables();
 

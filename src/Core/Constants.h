@@ -36,7 +36,7 @@ const Sample E = 2.718281828459045;
 
 enum class Type { RATIO, INTEGER, BOOLEAN, HERTZ, SECONDS };
 
-enum class Space { TIME, FREQUENCY };
+enum class Domain { TIME, FREQUENCY };
 
 enum class Shape { LINEAR, EXPONENTIAL };
 

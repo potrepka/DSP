@@ -8,7 +8,7 @@ class Shaper : public Transformer {
 public:
   enum class Mode { HYPERBOLIC, RATIONAL };
 
-  Shaper(Space space = Space::TIME);
+  Shaper(Domain domain = Domain::TIME);
 
   Mode getMode() const;
   void setMode(Mode mode);

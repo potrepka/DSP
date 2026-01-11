@@ -2,8 +2,8 @@
 
 dsp::InverseFFT::InverseFFT()
     : Producer(Type::RATIO),
-      magnitude(std::make_shared<Input>(Type::RATIO, Space::FREQUENCY)),
-      phase(std::make_shared<Input>(Type::RATIO, Space::FREQUENCY)) {
+      magnitude(std::make_shared<Input>(Type::RATIO, Domain::FREQUENCY)),
+      phase(std::make_shared<Input>(Type::RATIO, Domain::FREQUENCY)) {
   getInputs().push_back(magnitude);
   getInputs().push_back(phase);
 }

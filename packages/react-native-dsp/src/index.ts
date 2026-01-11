@@ -86,7 +86,7 @@ export {
   TAU,
 } from './constants/math'
 export { ID_LENGTH, NODE_PROCESSOR_ID } from './constants/proxy'
-export { InputMode, Interpolation, Shape, Space, Type } from './enums/global'
+export { Domain, InputMode, Interpolation, Shape, Type } from './enums/global'
 export {
   BiquadMode,
   ClipperMode,

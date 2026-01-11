@@ -1,7 +1,7 @@
 ﻿#include "Producer.h"
 
-dsp::Producer::Producer(Type type, Space space)
-    : output(std::make_shared<Output>(type, space)) {
+dsp::Producer::Producer(Type type, Domain domain)
+    : output(std::make_shared<Output>(type, domain)) {
   getOutputs().push_back(output);
 }
 

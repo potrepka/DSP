@@ -8,7 +8,7 @@ class Hyperbolic : public Transformer {
 public:
   enum class Mode { SINE, COSINE, TANGENT };
 
-  Hyperbolic(Space space = Space::TIME);
+  Hyperbolic(Domain domain = Domain::TIME);
 
   Mode getMode() const;
   void setMode(Mode mode);
