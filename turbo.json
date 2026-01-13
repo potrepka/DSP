@@ -3,7 +3,7 @@
   "tasks": {
     "build": {
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**"],
+      "outputs": ["dist/**", "web/build/**"],
       "dependsOn": ["^build"]
     },
     "clean": {
@@ -15,6 +15,9 @@
     },
     "lint": {
       "dependsOn": ["^lint"]
+    },
+    "prebuild": {
+      "dependsOn": ["^prebuild"]
     },
     "test": {
       "dependsOn": ["^build"]

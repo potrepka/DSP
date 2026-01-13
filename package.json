@@ -35,6 +35,7 @@
     "lint:packages:update": "syncpack update",
     "lint:packages:update:minor": "syncpack update --target minor",
     "lint:packages:update:patch": "syncpack update --target patch",
+    "prebuild": "turbo run prebuild",
     "prepare": "husky",
     "reset": "bun run clean && bun install && bun run build",
     "start": "turbo run start",
