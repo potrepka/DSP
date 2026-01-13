@@ -16,7 +16,6 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "development": "./src/index.ts",
       "default": "./dist/index.js"
     },
@@ -64,5 +63,6 @@
     "prebuild": "rm -rf shared/lib shared/src && cp -r ../../lib shared/lib && cp -r ../../src shared/src",
     "test": "bun test"
   },
+  "type": "module",
   "types": "dist/index.d.ts"
 }
