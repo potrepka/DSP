@@ -28,7 +28,8 @@ Always use Bun package manager (`bun`/`bunx`).
 - `bun run lint:format:fix`: Format code and fix errors
 - `bun run lint:packages`: Lint package versions
 - `bun run lint:packages:fix`: Lint package versions and fix errors
-- `bun run lint:packages:format`: Format package list
+- `bun run lint:packages:format`: Lint package formatting
+- `bun run lint:packages:format:fix`: Lint package formatting and fix errors
 - `bun run lint:packages:update`: Update packages
 
 ## Code Style
