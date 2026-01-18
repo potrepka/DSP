@@ -41,7 +41,14 @@ Always use Bun package manager (`bun`/`bunx`).
 - Use single quotes for strings.
 - Use trailing commas.
 - Strictly use types over interfaces.
-- Avoid code duplication. Use helper functions and custom hooks for code reuse.
+- Use helper functions and custom hooks for code reuse and separation of
+  concerns.
+- Prefer `const` over `let`. Only use `let` when a variable needs to be
+  reassigned.
+- Use template literals instead of string concatenation.
+- Use object destructuring for accessing object properties.
+- Use array methods like `map`, `filter`, and `reduce` instead of loops where
+  possible.
 - Always use a code block for if statements. Do not write single-line if
   statements.
 - Prefer arrow functions, e.g. `const doSomething = () => {}` instead of
